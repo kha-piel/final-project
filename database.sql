@@ -1,9 +1,3 @@
--- ============================================================
---  DATABASE: THPTQG AI EXAM PREP SYSTEM
---  Phần mềm ôn thi THPT Quốc Gia có tích hợp AI
---  Version: 1.0.0
---  Encoding: UTF-8
--- ============================================================
 
 CREATE DATABASE IF NOT EXISTS thptqg_ai_db
     CHARACTER SET utf8mb4
@@ -127,10 +121,9 @@ INSERT INTO subjects (subject_code, subject_name, subject_color) VALUES
     ('GDCD',  'Giáo dục Công dân','#F97316');
 
 
--- -------------------------------------------------------------
+
 -- Bảng: topics
 -- Mục đích: Chương / Chuyên đề trong từng môn
--- -------------------------------------------------------------
 CREATE TABLE topics (
     topic_id        INT             NOT NULL AUTO_INCREMENT,
     subject_id      TINYINT         NOT NULL,
@@ -151,11 +144,9 @@ CREATE TABLE topics (
 ) ENGINE=InnoDB COMMENT='Chương và chuyên đề theo từng môn học';
 
 
--- -------------------------------------------------------------
 -- Bảng: questions
 -- Mục đích: Ngân hàng câu hỏi trắc nghiệm
 --           Thiết kế để AI có thể Query chính xác theo chuyên đề
--- -------------------------------------------------------------
 CREATE TABLE questions (
     question_id     INT             NOT NULL AUTO_INCREMENT,
     topic_id        INT             NOT NULL,
@@ -191,11 +182,9 @@ CREATE TABLE questions (
 ) ENGINE=InnoDB COMMENT='Ngân hàng câu hỏi trắc nghiệm THPTQG';
 
 
--- -------------------------------------------------------------
 -- Bảng: answers
 -- Mục đích: Các phương án trả lời (A,B,C,D) cho mỗi câu hỏi
 --           explanation là "thức ăn" cho AI giải thích cho học sinh
--- -------------------------------------------------------------
 CREATE TABLE answers (
     answer_id       INT             NOT NULL AUTO_INCREMENT,
     question_id     INT             NOT NULL,
@@ -218,14 +207,8 @@ CREATE TABLE answers (
 ) ENGINE=InnoDB COMMENT='Phương án trả lời A/B/C/D kèm lời giải chi tiết';
 
 
--- ============================================================
--- NHÓM 3: THI & LUYỆN TẬP (EXAMS & RESULTS)
--- ============================================================
-
--- -------------------------------------------------------------
 -- Bảng: exams
 -- Mục đích: Quản lý các bộ đề thi / đề luyện
--- -------------------------------------------------------------
 CREATE TABLE exams (
     exam_id         INT             NOT NULL AUTO_INCREMENT,
     title           VARCHAR(255)    NOT NULL
@@ -258,10 +241,8 @@ CREATE TABLE exams (
 ) ENGINE=InnoDB COMMENT='Quản lý đề thi và bộ câu hỏi luyện tập';
 
 
--- -------------------------------------------------------------
 -- Bảng: exam_questions
 -- Mục đích: Bảng trung gian - gắn câu hỏi vào đề thi
--- -------------------------------------------------------------
 CREATE TABLE exam_questions (
     exam_id         INT             NOT NULL,
     question_id     INT             NOT NULL,
@@ -276,10 +257,8 @@ CREATE TABLE exam_questions (
 ) ENGINE=InnoDB COMMENT='Bảng trung gian: Đề thi <-> Câu hỏi';
 
 
--- -------------------------------------------------------------
 -- Bảng: student_attempts
 -- Mục đích: Ghi nhận mỗi lần học sinh làm bài thi
--- -------------------------------------------------------------
 CREATE TABLE student_attempts (
     attempt_id          INT             NOT NULL AUTO_INCREMENT,
     user_id             CHAR(36)        NOT NULL,
@@ -312,11 +291,9 @@ CREATE TABLE student_attempts (
 ) ENGINE=InnoDB COMMENT='Lịch sử các lần làm bài thi của học sinh';
 
 
--- -------------------------------------------------------------
 -- Bảng: attempt_details
 -- Mục đích: Chi tiết từng câu học sinh chọn trong 1 lần thi
 --           AI quét bảng này để phân tích điểm yếu theo topic
--- -------------------------------------------------------------
 CREATE TABLE attempt_details (
     detail_id               BIGINT          NOT NULL AUTO_INCREMENT,
     attempt_id              INT             NOT NULL,
@@ -341,15 +318,9 @@ CREATE TABLE attempt_details (
 ) ENGINE=InnoDB COMMENT='Chi tiết từng câu trả lời trong 1 lần thi - nguồn phân tích AI';
 
 
--- ============================================================
--- NHÓM 4: THỐNG KÊ TỔNG HỢP THEO TOPIC (AI ANALYTICS)
--- ============================================================
-
--- -------------------------------------------------------------
 -- Bảng: user_topic_stats
 -- Mục đích: Thống kê hiệu suất học sinh theo từng chuyên đề
 --           AI quét bảng này để phát hiện điểm yếu & gửi gợi ý
--- -------------------------------------------------------------
 CREATE TABLE user_topic_stats (
     stat_id             INT             NOT NULL AUTO_INCREMENT,
     user_id             CHAR(36)        NOT NULL,
@@ -380,14 +351,8 @@ CREATE TABLE user_topic_stats (
 ) ENGINE=InnoDB COMMENT='Thống kê hiệu suất theo chuyên đề - AI dùng để gợi ý ôn luyện';
 
 
--- ============================================================
--- NHÓM 5: TƯƠNG TÁC AI CHATBOT (AI CHATBOT LOGIC)
--- ============================================================
-
--- -------------------------------------------------------------
 -- Bảng: chat_sessions
 -- Mục đích: Mỗi phiên hội thoại của học sinh với AI chatbot
--- -------------------------------------------------------------
 CREATE TABLE chat_sessions (
     session_id          CHAR(36)        NOT NULL DEFAULT (UUID()),
     user_id             CHAR(36)        NOT NULL,
@@ -414,10 +379,8 @@ CREATE TABLE chat_sessions (
 ) ENGINE=InnoDB COMMENT='Phiên hội thoại giữa học sinh và AI Chatbot';
 
 
--- -------------------------------------------------------------
 -- Bảng: chat_messages
 -- Mục đích: Lưu toàn bộ lịch sử tin nhắn trong mỗi phiên chat
--- -------------------------------------------------------------
 CREATE TABLE chat_messages (
     message_id              BIGINT          NOT NULL AUTO_INCREMENT,
     session_id              CHAR(36)        NOT NULL,
@@ -444,11 +407,9 @@ CREATE TABLE chat_messages (
 ) ENGINE=InnoDB COMMENT='Lịch sử tin nhắn giữa học sinh và AI Chatbot';
 
 
--- -------------------------------------------------------------
 -- Bảng: ai_notifications
 -- Mục đích: AI chủ động gửi thông báo/gợi ý đến học sinh
 --           VD: "Bạn đang yếu Tích phân, làm thêm 5 câu nhé!"
--- -------------------------------------------------------------
 CREATE TABLE ai_notifications (
     notification_id     INT             NOT NULL AUTO_INCREMENT,
     user_id             CHAR(36)        NOT NULL,
@@ -477,11 +438,9 @@ CREATE TABLE ai_notifications (
 ) ENGINE=InnoDB COMMENT='Thông báo AI chủ động gửi cho học sinh (gợi ý ôn luyện)';
 
 
--- -------------------------------------------------------------
 -- Bảng: knowledge_base
 -- Mục đích: Lưu nội dung tài liệu để AI dùng cho RAG (Retrieval-Augmented Generation)
 --           Lưu mẹo giải nhanh, lý thuyết SGK, công thức...
--- -------------------------------------------------------------
 CREATE TABLE knowledge_base (
     kb_id               INT             NOT NULL AUTO_INCREMENT,
     subject_id          TINYINT         NULL,
@@ -514,14 +473,8 @@ CREATE TABLE knowledge_base (
 ) ENGINE=InnoDB COMMENT='Kho kiến thức cho AI RAG: lý thuyết, công thức, mẹo giải nhanh';
 
 
--- ============================================================
--- NHÓM 6: BỔ SUNG - GAMIFICATION & TIẾN ĐỘ
--- ============================================================
-
--- -------------------------------------------------------------
 -- Bảng: study_streaks
 -- Mục đích: Theo dõi chuỗi ngày học liên tục (streak)
--- -------------------------------------------------------------
 CREATE TABLE study_streaks (
     streak_id           INT             NOT NULL AUTO_INCREMENT,
     user_id             CHAR(36)        NOT NULL,
@@ -539,10 +492,8 @@ CREATE TABLE study_streaks (
 ) ENGINE=InnoDB COMMENT='Chuỗi ngày học liên tục của học sinh';
 
 
--- -------------------------------------------------------------
 -- Bảng: achievements
 -- Mục đích: Huy hiệu / Thành tích (gamification)
--- -------------------------------------------------------------
 CREATE TABLE achievements (
     achievement_id      INT             NOT NULL AUTO_INCREMENT,
     name                VARCHAR(100)    NOT NULL,
@@ -568,11 +519,7 @@ CREATE TABLE user_achievements (
     CONSTRAINT uq_user_achievement      UNIQUE (user_id, achievement_id)
 ) ENGINE=InnoDB COMMENT='Huy hiệu thành tích của từng học sinh';
 
-
--- ============================================================
--- STORED PROCEDURES: LOGIC NGHIỆP VỤ TỰ ĐỘNG
--- ============================================================
-
+--logic tự động
 DELIMITER //
 
 -- Cập nhật thống kê topic sau mỗi câu trả lời
@@ -639,9 +586,7 @@ END //
 DELIMITER ;
 
 
--- ============================================================
 -- VIEWS: HỖ TRỢ QUERY NHANH CHO AI ENGINE
--- ============================================================
 
 -- View: Danh sách điểm yếu của tất cả học sinh (AI đọc để gợi ý)
 CREATE OR REPLACE VIEW vw_user_weak_topics AS
@@ -710,9 +655,9 @@ GROUP BY u.user_id, s.subject_id
 ORDER BY avg_score DESC;
 
 
--- ============================================================
+-- 
 -- INDEXES BỔ SUNG ĐỂ TỐI ƯU QUERY AI
--- ============================================================
+-- 
 
 -- Tối ưu query: "Tìm câu hỏi theo môn + chuyên đề + mức độ"
 CREATE INDEX idx_q_topic_level ON questions(topic_id, level, is_active);
@@ -724,6 +669,3 @@ CREATE INDEX idx_attempts_user_date ON student_attempts(user_id, completed_at, s
 CREATE INDEX idx_messages_session_role ON chat_messages(session_id, role, created_at);
 
 
--- ============================================================
--- END OF SCHEMA
--- ============================================================
