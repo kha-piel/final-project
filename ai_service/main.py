@@ -8,7 +8,14 @@
 import os
 import google.generativeai as genai
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+from dotenv import load_dotenv
+
+# ------------------------------------------------------------------------------
+# 0. NẠP BIẾN MÔI TRƯỜNG TỪ FILE .env
+# ------------------------------------------------------------------------------
+load_dotenv()
 
 # ------------------------------------------------------------------------------
 # 1. KHỞI TẠO FASTAPI APPLICATION
@@ -20,10 +27,26 @@ app = FastAPI(
 )
 
 # ------------------------------------------------------------------------------
-# 2. CẤU HÌNH GOOGLE GEMINI
-#    Điền API Key của bạn vào chuỗi dưới đây trước khi chạy server.
+# 1.1. CẤU HÌNH CORS - Cho phép Java Frontend gọi API chéo domain
 # ------------------------------------------------------------------------------
-GEMINI_API_KEY = "AIzaSyD_jxCXwGf-RwcMZ2D5N4M7AaIudlj6J38"
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# ------------------------------------------------------------------------------
+# 2. CẤU HÌNH GOOGLE GEMINI
+#    API Key được đọc từ biến môi trường GEMINI_API_KEY (file .env).
+# ------------------------------------------------------------------------------
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+if not GEMINI_API_KEY:
+    raise RuntimeError(
+        "GEMINI_API_KEY chưa được cấu hình! "
+        "Hãy tạo file .env với nội dung: GEMINI_API_KEY=your_key_here"
+    )
 genai.configure(api_key=GEMINI_API_KEY)
 
 # Sử dụng model Gemini 2.5 Flash
@@ -31,9 +54,9 @@ model = genai.GenerativeModel("gemini-2.5-flash")
 
 # ------------------------------------------------------------------------------
 # 3. THƯ MỤC GỐC CỦA OBSIDIAN VAULT
-#    Vault nằm ngang hàng với file main.py này.
+#    Vault nằm ở thư mục cha (thư mục gốc dự án), ngang hàng với ai_service.
 # ------------------------------------------------------------------------------
-BASE_VAULT_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Obsidian Vault")
+BASE_VAULT_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "Obsidian Vault")
 
 # ------------------------------------------------------------------------------
 # 4. ĐỊNH NGHĨA DATA MODEL (PYDANTIC)

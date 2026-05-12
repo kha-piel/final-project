@@ -4,6 +4,9 @@ import org.example.model.Question;
 import org.example.model.Question.DifficultyLevel;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,7 +41,20 @@ public class QuestionDAO {
 
     /** Tìm câu hỏi theo ID. */
     public Optional<Question> findById(int questionId) {
-        // TODO: SELECT * FROM questions WHERE id = ?
+        String sql = "SELECT * FROM questions WHERE question_id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, questionId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                Question q = new Question();
+                q.setQuestionId(rs.getInt("question_id"));
+                q.setQuestionText(rs.getString("content"));
+                q.setObsidianSourcePath(rs.getString("obsidian_source_path"));
+                return Optional.of(q);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return Optional.empty();
     }
 
