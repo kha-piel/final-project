@@ -12,7 +12,7 @@ import java.sql.SQLException;
  */
 public class DatabaseConnection {
 
-    private static final String DB_URL  = "jdbc:sqlite:thptqg_ai.db"; // hoặc MySQL
+    private static final String DB_URL  = "jdbc:sqlite:thptqg.db"; // hoặc MySQL
     private static final String DB_USER = "";
     private static final String DB_PASS = "";
 
