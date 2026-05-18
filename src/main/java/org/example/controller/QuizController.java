@@ -1,160 +1,200 @@
 package org.example.controller;
 
+import org.example.dao.AnswerDAO;
+import org.example.dao.ExamDAO;
 import org.example.dao.QuestionDAO;
+import org.example.model.Answer;
+import org.example.model.Exam;
 import org.example.model.Question;
-import org.example.model.Question.DifficultyLevel;
-import org.example.service.LLMIntegrationService;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 /**
- * QuizController — Điểm điều phối trung tâm cho tính năng làm bài.
+ * QuizController - Quan ly luong lam mot bai thi hoan chinh theo mo hinh MVC.
  *
- * <p><b>Nguyên tắc vận hành (theo MVC):</b>
- * <ol>
- *   <li>View (Swing panel) gọi các public method của Controller này.</li>
- *   <li>Controller gọi QuestionDAO để truy xuất dữ liệu từ DB.</li>
- *   <li>Controller gọi LLMIntegrationService khi cần AI hỗ trợ.</li>
- *   <li>Controller KHÔNG bao giờ trực tiếp render UI — chỉ trả về dữ liệu / trạng thái.</li>
- * </ol>
+ * Controller nay chi xu ly:
+ * - Tai danh sach cau hoi cua de thi
+ * - Quan ly vi tri cau hoi hien tai
+ * - Luu dap an hoc sinh da chon
+ * - Cham diem khi nop bai
  *
- * <p><b>Dependency Injection thủ công</b> (không dùng Spring) — inject qua constructor.
+ * Tam thoi KHONG goi AI trong controller nay.
  */
 public class QuizController {
 
-    // -------------------------------------------------------------------------
-    // Dependencies (injected qua constructor — Dependency Inversion Principle)
-    // -------------------------------------------------------------------------
-
+    private final ExamDAO examDAO;
     private final QuestionDAO questionDAO;
-    private final LLMIntegrationService llmService;
-
-    // -------------------------------------------------------------------------
-    // Session State (trạng thái phiên làm bài hiện tại)
-    // -------------------------------------------------------------------------
-
-    private List<Question> currentQuizSet;   // Danh sách câu hỏi trong đề hiện tại
-    private int currentIndex;                // Vị trí câu hỏi đang hiển thị
-    private int score;                       // Điểm tích lũy trong phiên
-
-    // -------------------------------------------------------------------------
-    // Constructor
-    // -------------------------------------------------------------------------
-
-    public QuizController(QuestionDAO questionDAO, LLMIntegrationService llmService) {
-        this.questionDAO = questionDAO;
-        this.llmService  = llmService;
-        this.currentIndex = 0;
-        this.score = 0;
-    }
-
-    // -------------------------------------------------------------------------
-    // Quiz Lifecycle — được gọi từ View
-    // -------------------------------------------------------------------------
+    private final AnswerDAO answerDAO;
 
     /**
-     * Khởi tạo đề thi mới dựa trên môn và độ khó.
-     * View gọi method này khi user nhấn "Bắt đầu làm bài".
-     *
-     * @param subject   môn học (vd: "Toán", "Lý")
-     * @param difficulty mức độ khó
-     * @param limit     số lượng câu hỏi tối đa
-     * @return danh sách câu hỏi đã lọc
+     * Danh sach cau hoi cua de thi hien tai.
      */
-    public List<Question> startQuiz(String subject, DifficultyLevel difficulty, int limit) {
-        // 1. Gọi DAO để lấy câu hỏi phù hợp từ CSDL
-        // 2. Xáo trộn danh sách (Collections.shuffle)
-        // 3. Reset session state
-        // TODO: implement
-        return List.of();
+    private List<Question> examQuestions;
+
+    /**
+     * Vi tri cau hoi hien tai trong de thi.
+     */
+    private int currentIndex = 0;
+
+    /**
+     * Luu lich su chon dap an cua hoc sinh.
+     * Key   = questionId
+     * Value = Answer da chon
+     */
+    private Map<Integer, Answer> userAnswers;
+
+    /**
+     * Thoi gian con lai cua bai thi, tinh theo giay.
+     */
+    private int timeRemaining;
+
+    public QuizController(ExamDAO examDAO, QuestionDAO questionDAO, AnswerDAO answerDAO) {
+        this.examDAO = examDAO;
+        this.questionDAO = questionDAO;
+        this.answerDAO = answerDAO;
+        this.examQuestions = new ArrayList<>();
+        this.userAnswers = new HashMap<>();
+        this.timeRemaining = 0;
     }
 
     /**
-     * Lấy câu hỏi tại vị trí hiện tại để View hiển thị.
+     * Bat dau mot de thi moi.
      *
-     * @return câu hỏi hiện tại, hoặc null nếu đã hết đề
+     * @param examId ID de thi can tai
+     * @throws IllegalArgumentException neu khong tim thay de thi
+     * @throws IllegalStateException neu de thi khong co cau hoi hop le
+     */
+    public void startExam(int examId) {
+        Optional<Exam> examOpt = examDAO.findById(examId);
+        if (examOpt.isEmpty()) {
+            throw new IllegalArgumentException("Khong tim thay de thi voi ID = " + examId);
+        }
+
+        Exam exam = examOpt.get();
+        List<Integer> questionIds = examDAO.findQuestionIdsByExamId(examId);
+        if (questionIds.isEmpty()) {
+            throw new IllegalStateException("De thi khong co cau hoi nao.");
+        }
+
+        List<Question> loadedQuestions = new ArrayList<>();
+        for (int questionId : questionIds) {
+            Optional<Question> questionOpt = questionDAO.findById(questionId);
+            if (questionOpt.isPresent()) {
+                loadedQuestions.add(questionOpt.get());
+            }
+        }
+
+        if (loadedQuestions.isEmpty()) {
+            throw new IllegalStateException("Khong tai duoc cau hoi hop le nao tu de thi.");
+        }
+
+        this.examQuestions = loadedQuestions;
+        this.userAnswers = new HashMap<>();
+        this.currentIndex = 0;
+        this.timeRemaining = exam.getDuration() * 60;
+    }
+
+    /**
+     * Tra ve cau hoi hien tai.
+     *
+     * @return Question hien tai, hoac null neu chua co de thi
      */
     public Question getCurrentQuestion() {
-        // TODO: implement — kiểm tra bounds trước khi trả về
-        return null;
+        if (examQuestions == null || examQuestions.isEmpty()) {
+            return null;
+        }
+        if (currentIndex < 0 || currentIndex >= examQuestions.size()) {
+            return null;
+        }
+        return examQuestions.get(currentIndex);
     }
 
     /**
-     * Xử lý đáp án người dùng chọn.
-     * View gọi method này khi user click vào một đáp án.
-     *
-     * @param selectedAnswer đáp án user chọn (vd: "A", "B", "C", "D")
-     * @return true nếu đáp án đúng
+     * Chuyen sang cau hoi tiep theo neu co.
      */
-    public boolean submitAnswer(String selectedAnswer) {
-        // 1. Lấy câu hỏi hiện tại
-        // 2. Gọi question.isCorrect(selectedAnswer)
-        // 3. Cập nhật score nếu đúng
-        // 4. Advance currentIndex
-        // TODO: implement
-        return false;
+    public void nextQuestion() {
+        if (examQuestions == null || examQuestions.isEmpty()) {
+            return;
+        }
+        if (currentIndex < examQuestions.size() - 1) {
+            currentIndex++;
+        }
     }
 
     /**
-     * Chuyển sang câu tiếp theo.
-     *
-     * @return false nếu đã là câu cuối (View biết để hiện màn hình kết quả)
+     * Quay lai cau hoi truoc neu co.
      */
-    public boolean nextQuestion() {
-        // TODO: implement
-        return false;
+    public void previousQuestion() {
+        if (examQuestions == null || examQuestions.isEmpty()) {
+            return;
+        }
+        if (currentIndex > 0) {
+            currentIndex--;
+        }
     }
 
     /**
-     * Kết thúc phiên làm bài và trả về kết quả tổng hợp.
+     * Luu dap an hoc sinh vua chon cho cau hoi hien tai.
      *
-     * @return QuizResult chứa điểm, số câu đúng/sai, thời gian (sẽ tạo class sau)
+     * @param answer dap an hoc sinh chon
      */
-    public Object finishQuiz() {
-        // TODO: implement — trả về QuizResult DTO
-        return null;
-    }
+    public void saveAnswer(Answer answer) {
+        Question currentQuestion = getCurrentQuestion();
+        if (currentQuestion == null || answer == null) {
+            return;
+        }
 
-    // -------------------------------------------------------------------------
-    // AI Integration — Controller là người duy nhất gọi LLMIntegrationService
-    // -------------------------------------------------------------------------
-
-    /**
-     * Yêu cầu AI giải thích câu hỏi hiện tại.
-     * View gọi khi user nhấn nút "Hỏi AI".
-     *
-     * @return chuỗi giải thích từ LLM (Markdown format)
-     */
-    public String requestAIExplanation() {
-        // 1. Lấy câu hỏi hiện tại
-        // 2. Gọi llmService.explainQuestion(currentQuestion)
-        // 3. Trả về kết quả về cho View render
-        // TODO: implement
-        return "";
+        userAnswers.put(currentQuestion.getQuestionId(), answer);
     }
 
     /**
-     * Yêu cầu AI gợi ý các câu hỏi liên quan đến chủ đề đang ôn.
+     * Cham diem bai thi va tra ve so cau dung.
      *
-     * @param topic chủ đề người dùng muốn ôn
-     * @return danh sách câu hỏi được AI đề xuất
+     * @return so cau dung
      */
-    public List<Question> requestAISuggestedQuestions(String topic) {
-        // 1. Gọi llmService.generateRelatedQuestions(topic)
-        // 2. Parse kết quả về List<Question>
-        // TODO: implement
-        return List.of();
+    public int submitExam() {
+        if (examQuestions == null || examQuestions.isEmpty()) {
+            return 0;
+        }
+
+        int correctCount = 0;
+
+        for (Question question : examQuestions) {
+            Answer selectedAnswer = userAnswers.get(question.getQuestionId());
+            if (selectedAnswer == null) {
+                continue;
+            }
+
+            Answer correctAnswer = answerDAO.findCorrectAnswer(question.getQuestionId());
+            if (correctAnswer != null && selectedAnswer.getAnswerId() == correctAnswer.getAnswerId()) {
+                correctCount++;
+            }
+        }
+
+        return correctCount;
     }
 
-    // -------------------------------------------------------------------------
-    // Getters (View đọc state qua đây, không access field trực tiếp)
-    // -------------------------------------------------------------------------
+    public List<Question> getExamQuestions() {
+        return examQuestions;
+    }
 
-    public int getScore() { return score; }
+    public int getCurrentIndex() {
+        return currentIndex;
+    }
 
-    public int getCurrentIndex() { return currentIndex; }
+    public Map<Integer, Answer> getUserAnswers() {
+        return userAnswers;
+    }
 
-    public int getTotalQuestions() {
-        return currentQuizSet != null ? currentQuizSet.size() : 0;
+    public int getTimeRemaining() {
+        return timeRemaining;
+    }
+
+    public void setTimeRemaining(int timeRemaining) {
+        this.timeRemaining = Math.max(timeRemaining, 0);
     }
 }

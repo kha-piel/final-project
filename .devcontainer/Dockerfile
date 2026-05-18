@@ -7,6 +7,7 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     python3 \
     python3-pip \
     python3-venv \
+    maven \
     git \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
