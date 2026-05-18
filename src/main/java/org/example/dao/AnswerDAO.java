@@ -43,6 +43,16 @@ public class AnswerDAO {
     }
 
     /**
+     * Alias rõ nghĩa cho UI layer khi tải đáp án theo question_id.
+     *
+     * @param questionId ID câu hỏi
+     * @return danh sách đáp án
+     */
+    public List<Answer> getAnswersByQuestionId(int questionId) {
+        return findByQuestionId(questionId);
+    }
+
+    /**
      * Tìm đáp án đúng của một câu hỏi.
      *
      * @param questionId ID câu hỏi

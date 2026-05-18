@@ -46,16 +46,26 @@ public class QuestionDAO {
             stmt.setInt(1, questionId);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                Question q = new Question();
-                q.setQuestionId(rs.getInt("question_id"));
-                q.setQuestionText(rs.getString("content"));
-                q.setObsidianSourcePath(rs.getString("obsidian_source_path"));
-                return Optional.of(q);
+                return Optional.of(mapRowToQuestion(rs));
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return Optional.empty();
+    }
+
+    /** Lấy ngẫu nhiên 1 câu hỏi đang có trong DB. */
+    public Question getRandomQuestion() {
+        String sql = "SELECT * FROM questions ORDER BY RANDOM() LIMIT 1";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return mapRowToQuestion(rs);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /** Lấy câu hỏi theo môn học và độ khó (dùng cho QuizController.startQuiz). */
@@ -74,5 +84,24 @@ public class QuestionDAO {
     public boolean existsByObsidianPath(String filePath) {
         // TODO: SELECT COUNT(*) FROM questions WHERE obsidian_source_path = ?
         return false;
+    }
+
+    private Question mapRowToQuestion(ResultSet rs) throws SQLException {
+        Question q = new Question();
+        q.setQuestionId(rs.getInt("question_id"));
+        q.setQuestionText(rs.getString("content"));
+        q.setSubject(readIfPresent(rs, "subject"));
+        q.setChapter(readIfPresent(rs, "chapter"));
+        q.setExplanation(readIfPresent(rs, "explanation"));
+        q.setObsidianSourcePath(readIfPresent(rs, "obsidian_source_path"));
+        return q;
+    }
+
+    private String readIfPresent(ResultSet rs, String columnName) {
+        try {
+            return rs.getString(columnName);
+        } catch (SQLException ignored) {
+            return null;
+        }
     }
 }

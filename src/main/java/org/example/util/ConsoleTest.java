@@ -11,6 +11,7 @@ import org.example.model.Answer;
 import org.example.service.AiServiceClient;
 
 import java.sql.Connection;
+import java.sql.Statement;
 import java.util.List;
 
 /**
@@ -55,6 +56,10 @@ public class ConsoleTest {
 
             Connection conn = DatabaseConnection.getInstance();
             System.out.println("[OK] Ket noi Database thanh cong: " + conn.getMetaData().getURL());
+
+            // Khoi tao schema + du lieu mock (idempotent — an toan khi chay nhieu lan)
+            initDatabaseMockData(conn);
+            System.out.println("[OK] Schema va du lieu mock da san sang.");
 
             ExamDAO examDAO = new ExamDAO(conn);
             QuestionDAO questionDAO = new QuestionDAO(conn);
@@ -299,5 +304,197 @@ public class ConsoleTest {
     private static String padRight(String text, int width) {
         if (text.length() >= width) return text;
         return text + " ".repeat(width - text.length());
+    }
+
+    // =========================================================================
+    // INIT DATABASE MOCK DATA — Force Insert (xoa sach roi insert lai)
+    // Goi moi lan chay de dam bao du lieu luon nhat quan, dung, day du.
+    // =========================================================================
+
+    /**
+     * Khoi tao schema va ep chen lai du lieu mock vao database.
+     *
+     * <p>Chien luoc Force Insert:
+     * 1. Tao bang neu chua co (CREATE TABLE IF NOT EXISTS).
+     * 2. Xoa sach du lieu cu cua exam_id=1 (DELETE theo thu tu khoa ngoai).
+     * 3. Insert lai toan bo: 1 de thi, 3 cau hoi, 12 dap an, 3 dong exam_questions.
+     *
+     * @param conn ket noi SQLite da mo
+     */
+    private static void initDatabaseMockData(Connection conn) {
+        try (Statement stmt = conn.createStatement()) {
+
+            // ------------------------------------------------------------------
+            // 1. TAO BANG (CREATE TABLE IF NOT EXISTS)
+            // ------------------------------------------------------------------
+
+            stmt.executeUpdate(
+                "CREATE TABLE IF NOT EXISTS exams (" +
+                "  exam_id         INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "  title           TEXT    NOT NULL," +
+                "  description     TEXT," +
+                "  subject_id      INTEGER," +
+                "  exam_type       TEXT    DEFAULT 'practice'," +
+                "  duration        INTEGER NOT NULL DEFAULT 90," +
+                "  total_questions INTEGER NOT NULL DEFAULT 0," +
+                "  pass_score      REAL    NOT NULL DEFAULT 5.0," +
+                "  shuffle_answers   INTEGER NOT NULL DEFAULT 1," +
+                "  shuffle_questions INTEGER NOT NULL DEFAULT 1," +
+                "  is_public       INTEGER NOT NULL DEFAULT 1," +
+                "  created_by      INTEGER," +
+                "  created_at      TEXT    DEFAULT (datetime('now'))," +
+                "  updated_at      TEXT    DEFAULT (datetime('now'))" +
+                ")"
+            );
+
+            stmt.executeUpdate(
+                "CREATE TABLE IF NOT EXISTS questions (" +
+                "  question_id          INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "  content              TEXT    NOT NULL," +
+                "  subject              TEXT," +
+                "  chapter              TEXT," +
+                "  difficulty           TEXT    DEFAULT 'NHAN_BIET'," +
+                "  question_type        TEXT    DEFAULT 'MULTIPLE_CHOICE'," +
+                "  obsidian_source_path TEXT," +
+                "  explanation          TEXT," +
+                "  created_at           TEXT    DEFAULT (datetime('now'))," +
+                "  updated_at           TEXT    DEFAULT (datetime('now'))" +
+                ")"
+            );
+
+            stmt.executeUpdate(
+                "CREATE TABLE IF NOT EXISTS answers (" +
+                "  answer_id     INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "  question_id   INTEGER NOT NULL," +
+                "  option_label  TEXT    NOT NULL," +
+                "  content       TEXT    NOT NULL," +
+                "  is_correct    INTEGER NOT NULL DEFAULT 0," +
+                "  explanation   TEXT," +
+                "  display_order INTEGER NOT NULL DEFAULT 0," +
+                "  FOREIGN KEY (question_id) REFERENCES questions(question_id)" +
+                ")"
+            );
+
+            stmt.executeUpdate(
+                "CREATE TABLE IF NOT EXISTS exam_questions (" +
+                "  exam_id        INTEGER NOT NULL," +
+                "  question_id    INTEGER NOT NULL," +
+                "  question_order INTEGER NOT NULL DEFAULT 0," +
+                "  point_weight   REAL    NOT NULL DEFAULT 0.25," +
+                "  PRIMARY KEY (exam_id, question_id)," +
+                "  FOREIGN KEY (exam_id)     REFERENCES exams(exam_id)," +
+                "  FOREIGN KEY (question_id) REFERENCES questions(question_id)" +
+                ")"
+            );
+
+            // DROP + CREATE de dam bao cau truc student_attempts luon dung
+            stmt.executeUpdate("DROP TABLE IF EXISTS student_attempts");
+            stmt.executeUpdate(
+                "CREATE TABLE IF NOT EXISTS student_attempts (" +
+                "  attempt_id       INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "  user_id          INTEGER NOT NULL," +
+                "  exam_id          INTEGER NOT NULL," +
+                "  status           TEXT    DEFAULT 'in_progress'," +
+                "  score            REAL," +
+                "  correct_count    INTEGER DEFAULT 0," +
+                "  wrong_count      INTEGER DEFAULT 0," +
+                "  skipped_count    INTEGER DEFAULT 0," +
+                "  total_time_taken INTEGER," +
+                "  started_at       TEXT    DEFAULT (datetime('now'))," +
+                "  completed_at     TEXT," +
+                "  ai_feedback      TEXT," +
+                "  FOREIGN KEY (exam_id) REFERENCES exams(exam_id)" +
+                ")"
+            );
+
+            System.out.println("[DB] 5 bang da duoc tao (hoac da ton tai).");
+
+            // ------------------------------------------------------------------
+            // 2. DON DEP DU LIEU CU (theo thu tu phu thuoc khoa ngoai)
+            // ------------------------------------------------------------------
+
+            stmt.executeUpdate("DELETE FROM exam_questions WHERE exam_id = 1");
+            stmt.executeUpdate("DELETE FROM answers WHERE question_id IN (1, 2, 3)");
+            stmt.executeUpdate("DELETE FROM questions WHERE question_id IN (1, 2, 3)");
+            stmt.executeUpdate("DELETE FROM exams WHERE exam_id = 1");
+
+            System.out.println("[DB] Da xoa du lieu cu cua exam_id=1.");
+
+            // ------------------------------------------------------------------
+            // 3. EP CHEN LAI DU LIEU CHUAN (Force Insert)
+            // ------------------------------------------------------------------
+
+            // --- INSERT De thi moi (exam_id = 1) ---
+            stmt.executeUpdate(
+                "INSERT INTO exams (exam_id, title, description, exam_type, " +
+                "duration, total_questions, pass_score, shuffle_answers, shuffle_questions, is_public) " +
+                "VALUES (1, 'De thi moi', 'De kiem thu: 3 cau Dao Ham co ban', 'practice', " +
+                "30, 3, 5.0, 1, 1, 1)"
+            );
+            System.out.println("[DB] Da INSERT exam_id=1: 'De thi moi'.");
+
+            // --- INSERT 3 cau hoi Toan hoc (Dao Ham) ---
+            stmt.executeUpdate(
+                "INSERT INTO questions (question_id, content, subject, chapter, difficulty, " +
+                "question_type, obsidian_source_path) VALUES " +
+                "(1, 'Dao ham cua ham so f(x) = x^2 la gi?', " +
+                "'Toan', 'Dao Ham', 'NHAN_BIET', 'MULTIPLE_CHOICE', 'Toan_Hoc/Dao_Ham.md')"
+            );
+            stmt.executeUpdate(
+                "INSERT INTO questions (question_id, content, subject, chapter, difficulty, " +
+                "question_type, obsidian_source_path) VALUES " +
+                "(2, 'Dao ham cua ham so f(x) = sin(x) la gi?', " +
+                "'Toan', 'Dao Ham', 'THONG_HIEU', 'MULTIPLE_CHOICE', 'Toan_Hoc/Dao_Ham.md')"
+            );
+            stmt.executeUpdate(
+                "INSERT INTO questions (question_id, content, subject, chapter, difficulty, " +
+                "question_type, obsidian_source_path) VALUES " +
+                "(3, 'Ham so f(x) = x^3 - 3x dong bien tren khoang nao?', " +
+                "'Toan', 'Dao Ham', 'VAN_DUNG', 'MULTIPLE_CHOICE', 'Toan_Hoc/Dao_Ham.md')"
+            );
+            System.out.println("[DB] Da INSERT 3 cau hoi Dao Ham.");
+
+            // --- INSERT 12 dap an (4 dap an / cau) ---
+            // Cau 1: dap an dung = answer_id 2 (f'(x) = 2x)
+            stmt.executeUpdate(
+                "INSERT INTO answers (answer_id, question_id, option_label, content, is_correct, display_order) VALUES" +
+                " (1,  1, 'A', 'f''(x) = x',   0, 1)," +
+                " (2,  1, 'B', 'f''(x) = 2x',  1, 2)," +
+                " (3,  1, 'C', 'f''(x) = x^2', 0, 3)," +
+                " (4,  1, 'D', 'f''(x) = 2',   0, 4)"
+            );
+            // Cau 2: dap an dung = answer_id 6 (f'(x) = cos(x))
+            stmt.executeUpdate(
+                "INSERT INTO answers (answer_id, question_id, option_label, content, is_correct, display_order) VALUES" +
+                " (5,  2, 'A', 'f''(x) = -sin(x)', 0, 1)," +
+                " (6,  2, 'B', 'f''(x) = cos(x)',  1, 2)," +
+                " (7,  2, 'C', 'f''(x) = tan(x)',  0, 3)," +
+                " (8,  2, 'D', 'f''(x) = sin(x)',  0, 4)"
+            );
+            // Cau 3: dap an dung = answer_id 11 ((-inf;-1) va (1;+inf))
+            stmt.executeUpdate(
+                "INSERT INTO answers (answer_id, question_id, option_label, content, is_correct, display_order) VALUES" +
+                " (9,  3, 'A', '(-inf; -1)',                    0, 1)," +
+                " (10, 3, 'B', '(-1; 1)',                       0, 2)," +
+                " (11, 3, 'C', '(-inf; -1) va (1; +inf)',       1, 3)," +
+                " (12, 3, 'D', '(1; +inf)',                     0, 4)"
+            );
+            System.out.println("[DB] Da INSERT 12 dap an (4 dap an / cau).");
+
+            // --- QUAN TRONG NHAT: Lien ket 3 cau hoi vao de thi (exam_questions) ---
+            stmt.executeUpdate(
+                "INSERT INTO exam_questions (exam_id, question_id, question_order, point_weight) VALUES" +
+                " (1, 1, 1, 0.34)," +
+                " (1, 2, 2, 0.33)," +
+                " (1, 3, 3, 0.33)"
+            );
+            System.out.println("[DB] Da lien ket 3 cau vao exam_id=1 trong bang exam_questions.");
+
+            System.out.println("[DB] Da nap lai toan bo du lieu moi thanh cong!");
+
+        } catch (Exception e) {
+            System.err.println("[DB ERROR] initDatabaseMockData that bai: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 }
