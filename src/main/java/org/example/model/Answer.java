@@ -1,22 +1,29 @@
 package org.example.model;
 
 /**
- * Answer — Đại diện cho một phương án trả lời (A, B, C, D) của câu hỏi.
- * Mapping trực tiếp đến bảng "answers" trong CSDL.
+ * Answer — Model đại diện cho một phương án trả lời (A/B/C/D).
+ * Ánh xạ 1:1 với bảng `answers` trong CSDL SQLite.
+ *
+ * <p>Mỗi câu hỏi (Question) có nhiều Answer (thường là 4).
+ * Trường {@code isCorrect} xác định đáp án đúng.
  */
 public class Answer {
 
-    private int answerId;
-    private int questionId;
-    private String optionLabel;    // 'A', 'B', 'C', 'D'
-    private String content;        // Nội dung phương án
-    private boolean isCorrect;     // true = đáp án đúng
-    private String explanation;    // Lời giải chi tiết
-    private int displayOrder;      // Thứ tự hiển thị
+    // -------------------------------------------------------------------------
+    // Fields (ánh xạ từ bảng answers trong database.sql)
+    // -------------------------------------------------------------------------
 
-    // -----------------------------------------------------------------
+    private int answerId;
+    private int questionId;        // FK đến bảng questions
+    private String optionLabel;    // 'A', 'B', 'C', 'D'
+    private String content;        // Nội dung phương án (Markdown/LaTeX)
+    private boolean isCorrect;     // true = đáp án đúng
+    private String explanation;    // Lời giải chi tiết (có thể null)
+    private int displayOrder;      // Thứ tự hiển thị gốc
+
+    // -------------------------------------------------------------------------
     // Constructors
-    // -----------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     public Answer() {}
 
@@ -29,9 +36,9 @@ public class Answer {
         this.isCorrect = isCorrect;
     }
 
-    // -----------------------------------------------------------------
+    // -------------------------------------------------------------------------
     // Getters & Setters
-    // -----------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     public int getAnswerId() { return answerId; }
     public void setAnswerId(int answerId) { this.answerId = answerId; }
@@ -54,8 +61,12 @@ public class Answer {
     public int getDisplayOrder() { return displayOrder; }
     public void setDisplayOrder(int displayOrder) { this.displayOrder = displayOrder; }
 
+    // -------------------------------------------------------------------------
+    // Utility
+    // -------------------------------------------------------------------------
+
     @Override
     public String toString() {
-        return "Answer{label='" + optionLabel + "', correct=" + isCorrect + "}";
+        return optionLabel + ". " + content + (isCorrect ? " [CORRECT]" : "");
     }
 }
