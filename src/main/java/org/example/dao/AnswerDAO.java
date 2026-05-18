@@ -2,12 +2,15 @@ package org.example.dao;
 
 import org.example.model.Answer;
 
-import java.sql.Connection;
+import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
- * AnswerDAO — Data Access Object cho bảng answers trong CSDL.
- * Tập trung toàn bộ SQL liên quan đến đáp án tại đây.
+ * AnswerDAO — Data Access Object cho bảng answers.
+ *
+ * <p>Cung cấp phương thức truy vấn đáp án theo question_id
+ * và tìm đáp án đúng cho một câu hỏi.
  */
 public class AnswerDAO {
 
@@ -17,25 +20,91 @@ public class AnswerDAO {
         this.connection = connection;
     }
 
-    /** Lấy tất cả đáp án của một câu hỏi theo question_id. */
+    /**
+     * Lấy tất cả đáp án (A, B, C, D) của một câu hỏi.
+     * Sắp xếp theo display_order gốc.
+     *
+     * @param questionId ID câu hỏi
+     * @return danh sách Answer, thường gồm 4 phương án
+     */
     public List<Answer> findByQuestionId(int questionId) {
-        // TODO: SELECT * FROM answers WHERE question_id = ? ORDER BY display_order
-        return List.of();
+        String sql = "SELECT * FROM answers WHERE question_id = ? ORDER BY display_order, option_label";
+        List<Answer> answers = new ArrayList<>();
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, questionId);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                answers.add(mapRowToAnswer(rs));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return answers;
     }
 
-    /** Lấy đáp án đúng của một câu hỏi. */
+    /**
+     * Alias rõ nghĩa cho UI layer khi tải đáp án theo question_id.
+     *
+     * @param questionId ID câu hỏi
+     * @return danh sách đáp án
+     */
+    public List<Answer> getAnswersByQuestionId(int questionId) {
+        return findByQuestionId(questionId);
+    }
+
+    /**
+     * Tìm đáp án đúng của một câu hỏi.
+     *
+     * @param questionId ID câu hỏi
+     * @return Answer đúng, hoặc null nếu không tìm thấy
+     */
     public Answer findCorrectAnswer(int questionId) {
-        // TODO: SELECT * FROM answers WHERE question_id = ? AND is_correct = 1
+        String sql = "SELECT * FROM answers WHERE question_id = ? AND is_correct = 1 LIMIT 1";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, questionId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return mapRowToAnswer(rs);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return null;
     }
 
-    /** Lưu đáp án mới. */
-    public void save(Answer answer) {
-        // TODO: INSERT INTO answers (...)
+    /**
+     * Tìm đáp án theo answer_id.
+     *
+     * @param answerId ID đáp án
+     * @return Answer hoặc null
+     */
+    public Answer findById(int answerId) {
+        String sql = "SELECT * FROM answers WHERE answer_id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, answerId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return mapRowToAnswer(rs);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
-    /** Xóa tất cả đáp án của một câu hỏi. */
-    public void deleteByQuestionId(int questionId) {
-        // TODO: DELETE FROM answers WHERE question_id = ?
+    // -------------------------------------------------------------------------
+    // Helper: Map ResultSet row -> Answer object
+    // -------------------------------------------------------------------------
+
+    private Answer mapRowToAnswer(ResultSet rs) throws SQLException {
+        Answer answer = new Answer();
+        answer.setAnswerId(rs.getInt("answer_id"));
+        answer.setQuestionId(rs.getInt("question_id"));
+        answer.setOptionLabel(rs.getString("option_label"));
+        answer.setContent(rs.getString("content"));
+        answer.setCorrect(rs.getInt("is_correct") == 1);
+        answer.setExplanation(rs.getString("explanation"));
+        answer.setDisplayOrder(rs.getInt("display_order"));
+        return answer;
     }
 }
