@@ -8,6 +8,14 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     python3-pip \
     python3-venv \
     maven \
+    libx11-6 \
+    libxext6 \
+    libxrender1 \
+    libxtst6 \
+    libxi6 \
+    libxrandr2 \
+    libgtk-3-0 \
+    libgl1 \
     git \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
