@@ -40,6 +40,7 @@ build/
 
 ### Database ###
 *.db
+*.class
 
 ### Python ###
 __pycache__/
