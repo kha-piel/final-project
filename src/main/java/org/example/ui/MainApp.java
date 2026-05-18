@@ -8,7 +8,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -82,43 +84,98 @@ public class MainApp extends Application {
     }
 
     private void buildLoginScene() {
-        Label title = new Label("Dang Nhap He Thong");
-        title.setFont(Font.font("System", FontWeight.BOLD, 26));
+        Label badge = new Label("THPTQG AI");
+        badge.getStyleClass().add("brand-badge");
 
-        Label subtitle = new Label("Dang nhap de vao trang chu, hoac tao tai khoan moi nhanh.");
+        Label brandTitle = new Label("On tap thong minh cho ky thi cua ban");
+        brandTitle.getStyleClass().add("brand-title");
+        brandTitle.setWrapText(true);
+
+        Label brandSubtitle = new Label("Theo doi tien do, lam de trac nghiem va nhan goi y hoc tap tu AI trong mot khong gian gon gang.");
+        brandSubtitle.getStyleClass().add("brand-subtitle");
+        brandSubtitle.setWrapText(true);
+
+        Label pointOne = new Label("De thi duoc sap xep theo tung phien hoc");
+        Label pointTwo = new Label("Ket qua hien thi ro rang sau khi nop bai");
+        Label pointThree = new Label("Tai khoan hoc sinh duoc luu truc tiep tren SQLite");
+        VBox featureList = new VBox(10, pointOne, pointTwo, pointThree);
+        featureList.getStyleClass().add("feature-list");
+
+        VBox brandPanel = new VBox(18, badge, brandTitle, brandSubtitle, featureList);
+        brandPanel.getStyleClass().add("brand-panel");
+        brandPanel.setAlignment(Pos.CENTER_LEFT);
+
+        Label title = new Label("Dang nhap");
+        title.getStyleClass().add("auth-title");
+
+        Label subtitle = new Label("Nhap tai khoan de tiep tuc vao he thong.");
+        subtitle.getStyleClass().add("auth-subtitle");
         subtitle.setWrapText(true);
 
         tfUsername = new TextField();
-        tfUsername.setPromptText("Username");
+        tfUsername.setPromptText("vi du: student01");
+        tfUsername.getStyleClass().add("auth-field");
 
         pfPassword = new PasswordField();
-        pfPassword.setPromptText("Password");
+        pfPassword.setPromptText("Mat khau");
+        pfPassword.getStyleClass().add("auth-field");
 
         tfFullName = new TextField();
-        tfFullName.setPromptText("Full name (chi can khi dang ky)");
+        tfFullName.setPromptText("Ten hien thi khi dang ky");
+        tfFullName.getStyleClass().add("auth-field");
+
+        VBox usernameGroup = createFieldGroup("Username", tfUsername);
+        VBox passwordGroup = createFieldGroup("Password", pfPassword);
+        VBox fullNameGroup = createFieldGroup("Ho ten", tfFullName);
 
         Button btnLogin = new Button("Dang nhap");
+        btnLogin.getStyleClass().add("primary-button");
+        btnLogin.setMaxWidth(Double.MAX_VALUE);
+
         Button btnRegister = new Button("Dang ky");
+        btnRegister.getStyleClass().add("secondary-button");
+        btnRegister.setMaxWidth(Double.MAX_VALUE);
 
         btnLogin.setOnAction(e -> handleLogin());
         btnRegister.setOnAction(e -> handleRegister());
 
         HBox buttonRow = new HBox(12, btnLogin, btnRegister);
+        buttonRow.getStyleClass().add("action-row");
         buttonRow.setAlignment(Pos.CENTER);
+        HBox.setHgrow(btnLogin, javafx.scene.layout.Priority.ALWAYS);
+        HBox.setHgrow(btnRegister, javafx.scene.layout.Priority.ALWAYS);
 
         lblLoginStatus = new Label();
+        lblLoginStatus.getStyleClass().add("status-label");
         lblLoginStatus.setWrapText(true);
+        lblLoginStatus.setMinHeight(24);
 
-        VBox root = new VBox(14, title, subtitle, tfUsername, pfPassword, tfFullName, buttonRow, lblLoginStatus);
-        root.setPadding(new Insets(28));
-        root.setAlignment(Pos.CENTER);
-        root.setMaxWidth(420);
+        VBox authCard = new VBox(16, title, subtitle, usernameGroup, passwordGroup, fullNameGroup, buttonRow, lblLoginStatus);
+        authCard.getStyleClass().add("auth-card");
+        authCard.setAlignment(Pos.CENTER_LEFT);
+        authCard.setMaxWidth(420);
 
-        VBox container = new VBox(root);
-        container.setAlignment(Pos.CENTER);
-        container.setPadding(new Insets(24));
+        StackPane authArea = new StackPane(authCard);
+        authArea.getStyleClass().add("auth-area");
+        authArea.setPadding(new Insets(32));
 
-        loginScene = new Scene(container, WINDOW_WIDTH, WINDOW_HEIGHT);
+        BorderPane root = new BorderPane();
+        root.getStyleClass().add("login-root");
+        root.setLeft(brandPanel);
+        root.setCenter(authArea);
+
+        loginScene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
+        attachStylesheet(loginScene);
+    }
+
+    private VBox createFieldGroup(String labelText, TextField field) {
+        Label label = new Label(labelText);
+        label.getStyleClass().add("field-label");
+
+        VBox group = new VBox(7, label, field);
+        group.setFillWidth(true);
+        field.setMaxWidth(Double.MAX_VALUE);
+        return group;
     }
 
     private void buildHomeScene() {
@@ -162,20 +219,20 @@ public class MainApp extends Application {
         String password = pfPassword.getText() != null ? pfPassword.getText().trim() : "";
 
         if (username.isEmpty() || password.isEmpty()) {
-            lblLoginStatus.setText("Vui long nhap day du username va password.");
+            setLoginStatus("Vui long nhap day du username va password.", false);
             return;
         }
 
         User authenticatedUser = userDAO.authenticate(username, password);
         if (authenticatedUser == null) {
-            lblLoginStatus.setText("Dang nhap that bai. Sai username hoac password.");
+            setLoginStatus("Dang nhap that bai. Sai username hoac password.", false);
             return;
         }
 
         currentUser = authenticatedUser;
         updateHomeForCurrentUser();
         clearLoginForm();
-        lblLoginStatus.setText("");
+        setLoginStatus("", false);
         primaryStage.setScene(homeScene);
     }
 
@@ -185,7 +242,7 @@ public class MainApp extends Application {
         String fullName = tfFullName.getText() != null ? tfFullName.getText().trim() : "";
 
         if (username.isEmpty() || password.isEmpty()) {
-            lblLoginStatus.setText("Can username va password de dang ky.");
+            setLoginStatus("Can username va password de dang ky.", false);
             return;
         }
 
@@ -197,11 +254,19 @@ public class MainApp extends Application {
 
         boolean registered = userDAO.register(newUser);
         if (registered) {
-            lblLoginStatus.setText("Dang ky thanh cong. Ban co the dang nhap ngay.");
+            setLoginStatus("Dang ky thanh cong. Ban co the dang nhap ngay.", true);
             tfFullName.clear();
         } else {
-            lblLoginStatus.setText("Dang ky that bai. Username co the da ton tai.");
+            setLoginStatus("Dang ky that bai. Username co the da ton tai.", false);
         }
+    }
+
+    private void setLoginStatus(String message, boolean success) {
+        lblLoginStatus.getStyleClass().removeAll("status-success", "status-error");
+        if (message != null && !message.isBlank()) {
+            lblLoginStatus.getStyleClass().add(success ? "status-success" : "status-error");
+        }
+        lblLoginStatus.setText(message);
     }
 
     private void updateHomeForCurrentUser() {
@@ -220,8 +285,15 @@ public class MainApp extends Application {
     private void logout() {
         currentUser = null;
         clearLoginForm();
-        lblLoginStatus.setText("");
+        setLoginStatus("", false);
         primaryStage.setScene(loginScene);
+    }
+
+    private void attachStylesheet(Scene scene) {
+        var css = getClass().getResource("/styles/login.css");
+        if (css != null) {
+            scene.getStylesheets().add(css.toExternalForm());
+        }
     }
 
     private void openExamScene(int examId) {
