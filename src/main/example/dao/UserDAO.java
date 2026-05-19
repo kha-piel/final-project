@@ -39,13 +39,14 @@ public class UserDAO {
         String sql = """
                 SELECT user_id, username, password_hash, full_name, role, email
                 FROM users
-                WHERE username = ? AND password_hash = ?
+                WHERE (username = ? OR email = ?) AND password_hash = ?
                 LIMIT 1
                 """;
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, username);
-            stmt.setString(2, password);
+            stmt.setString(2, username);
+            stmt.setString(3, password);
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
