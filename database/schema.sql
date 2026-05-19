@@ -90,7 +90,7 @@ CREATE INDEX IF NOT EXISTS idx_topics_parent  ON topics(parent_topic_id);
 -- Bảng: questions
 -- Mục đích: Ngân hàng câu hỏi trắc nghiệm
 -- Cột obsidian_source_path: đường dẫn đến file Markdown trong
---   Obsidian Vault, giúp AI biết cần đọc file nào cho RAG.
+--   docs/knowledge-base, giúp AI biết cần đọc file nào cho RAG.
 --   VD: 'Toan_Hoc/Giai_Tich/toan_tich_phan.md'
 -- -------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS questions (
@@ -106,7 +106,7 @@ CREATE TABLE IF NOT EXISTS questions (
     is_official           INTEGER NOT NULL DEFAULT 0     -- 1 = từ đề minh họa/chính thức Bộ GD&ĐT
                           CHECK (is_official IN (0, 1)),
     source                TEXT    NULL,                   -- VD: 'Đề minh họa 2024', 'Sách BT Cánh Diều'
-    obsidian_source_path  TEXT    NULL,                   -- Đường dẫn Obsidian Vault cho RAG
+    obsidian_source_path  TEXT    NULL,                   -- Đường dẫn file trong docs/knowledge-base cho RAG
     created_by            INTEGER NULL,                   -- user_id giáo viên tạo (NULL nếu nhập batch)
     is_active             INTEGER NOT NULL DEFAULT 1 CHECK (is_active IN (0, 1)),
     created_at            TEXT    NOT NULL DEFAULT (datetime('now', 'localtime')),

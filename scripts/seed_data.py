@@ -2,11 +2,11 @@
 Script tạo database SQLite và seed dữ liệu mẫu cho project THPTQG AI.
 
 Chức năng:
-1. Tạo database file `thptqg.db` (hoặc sử dụng file đã có)
-2. Chạy toàn bộ schema từ `database.sql`
+1. Tạo database file `data/thptqg_ai.db` (hoặc sử dụng file đã có)
+2. Chạy toàn bộ schema từ `database/schema.sql`
 3. Insert dữ liệu mẫu: Topics, Exams, Questions, Answers, Exam-Questions mapping
 
-Lưu ý: Schema trong database.sql đã có sẵn INSERT cho bảng subjects,
+Lưu ý: Schema trong database/schema.sql đã có sẵn INSERT cho bảng subjects,
 nên script này chỉ thêm topics, exams, questions, answers, exam_questions.
 """
 
@@ -20,8 +20,9 @@ sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='repla
 sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
 
 # --- Cấu hình ---
-DB_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "thptqg.db")
-SCHEMA_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "database.sql")
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DB_FILE = os.path.join(PROJECT_ROOT, "data", "thptqg_ai.db")
+SCHEMA_FILE = os.path.join(PROJECT_ROOT, "database", "schema.sql")
 
 
 def create_database():
@@ -40,7 +41,7 @@ def create_database():
     conn.execute("PRAGMA foreign_keys = ON;")
     cursor = conn.cursor()
 
-    # Chạy schema (tạo bảng + insert subjects mẫu từ database.sql)
+    # Chạy schema (tạo bảng + insert subjects mẫu từ database/schema.sql)
     try:
         cursor.executescript(schema_sql)
         conn.commit()
