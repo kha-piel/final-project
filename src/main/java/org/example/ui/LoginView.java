@@ -1,4 +1,11 @@
-package org.example.ui;
+    package org.example.ui;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+
+import org.example.dao.UserDAO;
+import org.example.model.User;
+import org.example.util.DatabaseConnection;
 
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -7,12 +14,6 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import org.example.dao.UserDAO;
-import org.example.model.User;
-import org.example.util.DatabaseConnection;
-
-import java.sql.Connection;
-import java.sql.SQLException;
 
 public class LoginView extends VBox {
 
