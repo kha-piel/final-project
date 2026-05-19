@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xác thực - AI System</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+</head>
+
+<body>
+
+    <div id="particles-js"></div>
+
+    <div class="auth-container" id="authCard">
+
+        <div class="form-container sign-in-container">
+            <form onsubmit="event.preventDefault(); handleLoginSubmit();">
+                <i class="fa-solid fa-brain logo-icon fade-up-element"></i>
+                <h2 class="title fade-up-element" id="typewriterText"></h2>
+
+                <div class="form-group w-100 fade-up-element">
+                    <label class="form-label">Tên đăng nhập hoặc Email</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-user input-icon"></i>
+                        <input type="text" id="loginIdentityInput" class="form-input" placeholder="Nhập tài khoản...">
+                    </div>
+                </div>
+
+                <div class="form-group w-100 fade-up-element">
+                    <label class="form-label">Mật khẩu</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-lock input-icon"></i>
+                        <input type="password" id="loginPasswordInput" class="form-input" placeholder="Nhập mật khẩu...">
+                    </div>
+                </div>
+
+                <a href="#" class="forgot-pass fade-up-element" style="align-self: flex-start;">Quên mật khẩu?</a>
+
+                <div class="w-100 fade-up-element">
+                    <button type="submit" class="login-btn pill-btn" id="loginBtn">
+                        <span class="hover-circle"></span>
+                        <span class="label-stack">
+                            <span class="pill-label">ĐĂNG NHẬP</span>
+                            <span class="pill-label-hover">ĐĂNG NHẬP</span>
+                        </span>
+                    </button>
+                </div>
+
+                <div id="loginStatus" class="status-text fade-up-element"></div>
+            </form>
+        </div>
+
+        <div class="form-container sign-up-container">
+            <form onsubmit="event.preventDefault(); handleRegisterSubmit();">
+                <i class="fa-solid fa-user-plus logo-icon fade-up-element"></i>
+                <h2 class="title fade-up-element">ĐĂNG KÍ TÀI KHOẢN</h2>
+
+                <div class="form-group w-100 fade-up-element">
+                    <label class="form-label">Họ và Tên</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-address-card input-icon" id="nameIcon"></i>
+                        <input type="text" class="form-input" id="nameInput" placeholder="Nhập họ tên...">
+                    </div>
+                </div>
+
+                <div class="form-group w-100 fade-up-element">
+                    <label class="form-label">Email</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-envelope input-icon" id="emailIcon"></i>
+                        <input type="email" class="form-input" id="emailInput" placeholder="...@gmail.com">
+                    </div>
+                </div>
+
+                <div class="form-group w-100 fade-up-element">
+                    <label class="form-label">Mật khẩu</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-lock input-icon" id="passIcon"></i>
+                        <input type="password" class="form-input" id="passInput"
+                            placeholder="Tối thiểu 8 ký tự, 1 kí tự hoa, đặc biệt...">
+                    </div>
+                </div>
+
+                <div class="form-group w-100 fade-up-element">
+                    <label class="form-label">Xác nhận mật khẩu</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-check-double input-icon" id="confirmIcon"></i>
+                        <input type="password" class="form-input" id="confirmInput" placeholder="Nhập lại mật khẩu...">
+                    </div>
+                </div>
+
+                <div class="w-100 fade-up-element">
+                    <button type="submit" class="login-btn pill-btn" id="registerBtn">
+                        <span class="hover-circle"></span>
+                        <span class="label-stack">
+                            <span class="pill-label">ĐĂNG KÝ NGAY</span>
+                            <span class="pill-label-hover">ĐĂNG KÝ NGAY</span>
+                        </span>
+                    </button>
+                </div>
+
+                <div id="registerStatus" class="status-text fade-up-element"></div>
+            </form>
+        </div>
+
+        <div class="overlay-layer">
+            <div class="overlay-panel overlay-left">
+                <h2 class="wipe-element" style="--i: 0;">Đã có tài khoản?</h2>
+                <p class="wipe-element" style="--i: 1;"></p>
+                <button class="ghost-btn wipe-element" id="signInToggle" style="--i: 2;">ĐĂNG NHẬP</button>
+            </div>
+
+            <div class="overlay-panel overlay-right">
+                <h2 class="wipe-element" style="--i: 0;">Chưa có tài khoản?</h2>
+                <p class="wipe-element" style="--i: 1;"></p>
+                <button class="ghost-btn wipe-element" id="signUpToggle" style="--i: 2;">ĐĂNG KÝ NGAY</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function setStatus(targetId, message, success) {
+            const el = document.getElementById(targetId);
+            if (!el) return;
+            el.textContent = message || '';
+            el.classList.remove('success', 'error', 'visible');
+            if (message) {
+                el.classList.add(success ? 'success' : 'error', 'visible');
+            }
+        }
+
+        function showLoginStatus(message, success) {
+            setStatus('loginStatus', message, success);
+        }
+
+        function showRegisterStatus(message, success) {
+            setStatus('registerStatus', message, success);
+        }
+
+        function prefillLoginIdentity(value) {
+            document.getElementById('loginIdentityInput').value = value || '';
+            document.getElementById('loginPasswordInput').value = '';
+        }
+
+        function clearAuthForms() {
+            document.getElementById('loginIdentityInput').value = '';
+            document.getElementById('loginPasswordInput').value = '';
+            document.getElementById('nameInput').value = '';
+            document.getElementById('emailInput').value = '';
+            document.getElementById('passInput').value = '';
+            document.getElementById('confirmInput').value = '';
+        }
+
+        function showLoginForm() {
+            const container = document.getElementById('authCard');
+            container.classList.remove("to-register");
+            container.classList.add("to-login");
+        }
+
+        function handleLoginSubmit() {
+            const identity = document.getElementById('loginIdentityInput').value;
+            const password = document.getElementById('loginPasswordInput').value;
+            if (window.javaBridge && typeof window.javaBridge.login === 'function') {
+                window.javaBridge.login(identity, password);
+            }
+        }
+
+        function handleRegisterSubmit() {
+            const fullName = document.getElementById('nameInput').value;
+            const email = document.getElementById('emailInput').value;
+            const password = document.getElementById('passInput').value;
+            const confirm = document.getElementById('confirmInput').value;
+            if (window.javaBridge && typeof window.javaBridge.register === 'function') {
+                window.javaBridge.register(fullName, email, password, confirm);
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+
+            const signUpButton = document.getElementById('signUpToggle');
+            const signInButton = document.getElementById('signInToggle');
+            const container = document.getElementById('authCard');
+
+            signUpButton.addEventListener('click', () => {
+                container.classList.remove("to-login");
+                container.classList.add("to-register");
+            });
+
+            signInButton.addEventListener('click', () => {
+                container.classList.remove("to-register");
+                container.classList.add("to-login");
+            });
+
+            particlesJS("particles-js", {
+                "particles": {
+                    "number": { "value": 60, "density": { "enable": true, "value_area": 800 } },
+                    "color": { "value": "#ffffff" },
+                    "shape": { "type": "circle" },
+                    "opacity": { "value": 0.3 },
+                    "size": { "value": 3, "random": true },
+                    "line_linked": { "enable": true, "distance": 150, "color": "#ffffff", "opacity": 0.2, "width": 1 },
+                    "move": { "enable": true, "speed": 2 }
+                },
+                "interactivity": {
+                    "detect_on": "canvas",
+                    "events": { "onhover": { "enable": true, "mode": "grab" }, "onclick": { "enable": true, "mode": "push" } },
+                    "modes": { "grab": { "distance": 140, "line_linked": { "opacity": 0.5 } } }
+                },
+                "retina_detect": true
+            });
+
+            const setupPillNavForButton = (btn) => {
+                const circle = btn.querySelector('.hover-circle');
+                const label = btn.querySelector('.pill-label');
+                const labelHover = btn.querySelector('.pill-label-hover');
+
+                const calculateMath = () => {
+                    const rect = btn.getBoundingClientRect();
+                    const w = rect.width || 320;
+                    const h = rect.height || 44;
+                    const R = ((w * w) / 4 + h * h) / (2 * h);
+                    const D = Math.ceil(2 * R) + 2;
+                    const delta = Math.ceil(R - Math.sqrt(Math.max(0, R * R - (w * w) / 4))) + 1;
+                    const originY = D - delta;
+
+                    circle.style.width = `${D}px`; circle.style.height = `${D}px`; circle.style.bottom = `-${delta}px`;
+                    gsap.set(circle, { xPercent: -50, scale: 0, transformOrigin: `50% ${originY}px` });
+                    gsap.set(label, { y: 0 }); gsap.set(labelHover, { y: h + 12, opacity: 0 });
+
+                    const btnTl = gsap.timeline({ paused: true });
+                    btnTl.to(circle, { scale: 1.2, xPercent: -50, duration: 0.6, ease: "power3.out", overwrite: 'auto' }, 0);
+                    btnTl.to(label, { y: -(h + 8), duration: 0.6, ease: "power3.out", overwrite: 'auto' }, 0);
+                    btnTl.to(labelHover, { y: 0, opacity: 1, duration: 0.6, ease: "power3.out", overwrite: 'auto' }, 0);
+
+                    return btnTl;
+                };
+
+                let btnTl = calculateMath();
+                window.addEventListener('resize', () => { btnTl = calculateMath(); });
+
+                let activeTween;
+                btn.addEventListener('mouseenter', () => {
+                    if (activeTween) activeTween.kill();
+                    activeTween = btnTl.tweenTo(btnTl.duration(), { duration: 0.4, ease: "power3.out", overwrite: 'auto' });
+                });
+
+                btn.addEventListener('mouseleave', () => {
+                    if (activeTween) activeTween.kill();
+                    activeTween = btnTl.tweenTo(0, { duration: 0.3, ease: "power3.out", overwrite: 'auto' });
+                });
+            };
+
+            document.querySelectorAll('.pill-btn').forEach(btn => setupPillNavForButton(btn));
+
+            const masterTl = gsap.timeline();
+            gsap.set('#authCard', { autoAlpha: 1 });
+            masterTl.from('#authCard', { y: 40, opacity: 0, duration: 0.8, ease: "back.out(1.2)" });
+
+            const fullText = "HỆ THỐNG AI-QUIZ";
+            const titleEl = document.getElementById('typewriterText');
+            masterTl.add(() => {
+                let i = 0;
+                titleEl.innerHTML = '';
+                function typeWriter() {
+                    if (i < fullText.length) { titleEl.innerHTML += fullText.charAt(i); i++; setTimeout(typeWriter, 40); }
+                }
+                typeWriter();
+            }, "-=0.3");
+
+            masterTl.fromTo('.fade-up-element',
+                { y: 20, opacity: 0 },
+                { y: 0, opacity: 1, duration: 0.5, stagger: 0.05, ease: "power2.out", delay: 0 }, "-=0.2"
+            );
+
+            const colorValid = "#4CAF50";
+            const colorInvalid = "#f44336";
+            const colorDefault = "var(--text-gray)";
+
+            const handleValidation = (inputId, iconId, validationFn) => {
+                const input = document.getElementById(inputId);
+                const icon = document.getElementById(iconId);
+                input.addEventListener('input', () => {
+                    const val = input.value;
+                    if (val === '') {
+                        icon.style.color = colorDefault;
+                        icon.style.transition = "color 0.3s ease";
+                    } else {
+                        icon.style.color = validationFn(val) ? colorValid : colorInvalid;
+                    }
+                });
+            };
+
+            handleValidation('nameInput', 'nameIcon', (val) => val.trim().length >= 2);
+            handleValidation('emailInput', 'emailIcon', (val) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val));
+            const passRegex = /^(?=.*[A-Z])(?=.*[!@#\$%\^&\*\(\)_\+\-=\[\]\{\};':"\\|,.<>\/?]).{8,}$/;
+            handleValidation('passInput', 'passIcon', (val) => {
+                if (document.getElementById('confirmInput').value !== '') { document.getElementById('confirmInput').dispatchEvent(new Event('input')); }
+                return passRegex.test(val);
+            });
+            handleValidation('confirmInput', 'confirmIcon', (val) => val === document.getElementById('passInput').value);
+        });
+    </script>
+</body>
+
+</html>

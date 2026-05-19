@@ -1,0 +1,453 @@
+:root {
+    --primary-color: #6379F2;
+    --primary-hover: #4B5EDB;
+    --bg-gradient-start: #5a73e8;
+    --bg-gradient-end: #8b5a96;
+    --text-dark: #333333;
+    --text-gray: #888888;
+    --input-border: #e0e0e0;
+    --white: #ffffff;
+    --success-color: #4CAF50;
+    --error-color: #f44336;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+    position: relative;
+    background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#particles-js {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.auth-container {
+    background-color: var(--white);
+    border-radius: 24px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+    position: relative;
+    overflow: hidden;
+    width: 800px;
+    height: 560px;
+    z-index: 2;
+    opacity: 0;
+    visibility: hidden;
+}
+
+.form-container {
+    position: absolute;
+    top: 0;
+    width: 50%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 40px;
+}
+
+.sign-in-container {
+    left: 0;
+    opacity: 1;
+    pointer-events: auto;
+    transition: opacity 0s;
+}
+
+.sign-up-container {
+    left: 50%;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0s;
+}
+
+.auth-container.to-register .sign-in-container {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0s 0.9s;
+}
+
+.auth-container.to-register .sign-up-container {
+    opacity: 1;
+    pointer-events: auto;
+    transition: opacity 0s 0.9s;
+}
+
+.auth-container.to-login .sign-in-container {
+    opacity: 1;
+    pointer-events: auto;
+    transition: opacity 0s 0.9s;
+}
+
+.auth-container.to-login .sign-up-container {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0s 0.9s;
+}
+
+.overlay-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+    z-index: 100;
+    clip-path: inset(0% 0% 0% 50% round 80px 0px 0px 80px);
+}
+
+.auth-container.to-register .overlay-layer {
+    animation: wipeMaskToLeft 1.8s cubic-bezier(0.77, 0, 0.175, 1) forwards;
+}
+
+.auth-container.to-login .overlay-layer {
+    animation: wipeMaskToRight 1.8s cubic-bezier(0.77, 0, 0.175, 1) forwards;
+}
+
+@keyframes wipeMaskToLeft {
+    0% {
+        clip-path: inset(0% 0% 0% 50% round 80px 0px 0px 80px);
+    }
+
+    50% {
+        clip-path: inset(0% 0% 0% 0% round 0px 0px 0px 0px);
+    }
+
+    100% {
+        clip-path: inset(0% 50% 0% 0% round 0px 80px 80px 0px);
+    }
+}
+
+@keyframes wipeMaskToRight {
+    0% {
+        clip-path: inset(0% 50% 0% 0% round 0px 80px 80px 0px);
+    }
+
+    50% {
+        clip-path: inset(0% 0% 0% 0% round 0px 0px 0px 0px);
+    }
+
+    100% {
+        clip-path: inset(0% 0% 0% 50% round 80px 0px 0px 80px);
+    }
+}
+
+.overlay-panel {
+    position: absolute;
+    top: 0;
+    width: 50%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 0 40px;
+    text-align: center;
+    color: var(--white);
+}
+
+.overlay-left {
+    left: 0;
+    pointer-events: none;
+}
+
+.overlay-right {
+    left: 50%;
+    pointer-events: auto;
+}
+
+.auth-container.to-register .overlay-left {
+    pointer-events: auto;
+}
+
+.auth-container.to-register .overlay-right {
+    pointer-events: none;
+}
+
+.wipe-element {
+    opacity: 0;
+}
+
+.auth-container:not(.to-register):not(.to-login) .overlay-right .wipe-element {
+    animation: slideInFromRight 1s cubic-bezier(0.77, 0, 0.175, 1) forwards;
+    animation-delay: calc(0.3s + (0.05s * var(--i)));
+}
+
+.auth-container.to-register .overlay-right .wipe-element {
+    animation: slideOutToRight 0.8s cubic-bezier(0.77, 0, 0.175, 1) forwards;
+    animation-delay: calc(0.03s * var(--i));
+}
+
+.auth-container.to-register .overlay-left .wipe-element {
+    animation: slideInFromLeft 0.8s cubic-bezier(0.77, 0, 0.175, 1) forwards;
+    animation-delay: calc(0.9s + (0.03s * var(--i)));
+}
+
+.auth-container.to-login .overlay-left .wipe-element {
+    animation: slideOutToLeft 0.8s cubic-bezier(0.77, 0, 0.175, 1) forwards;
+    animation-delay: calc(0.03s * var(--i));
+}
+
+.auth-container.to-login .overlay-right .wipe-element {
+    animation: slideInFromRight 0.8s cubic-bezier(0.77, 0, 0.175, 1) forwards;
+    animation-delay: calc(0.9s + (0.03s * var(--i)));
+}
+
+@keyframes slideOutToRight {
+    0% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateX(80px);
+        opacity: 0;
+    }
+}
+
+@keyframes slideInFromLeft {
+    0% {
+        transform: translateX(-80px);
+        opacity: 0;
+    }
+
+    100% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOutToLeft {
+    0% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateX(-80px);
+        opacity: 0;
+    }
+}
+
+@keyframes slideInFromRight {
+    0% {
+        transform: translateX(80px);
+        opacity: 0;
+    }
+
+    100% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.overlay-panel h2 {
+    font-size: 26px;
+    font-weight: 800;
+    margin-bottom: 12px;
+}
+
+.overlay-panel p {
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.5;
+    margin-bottom: 25px;
+    opacity: 0.9;
+}
+
+.ghost-btn {
+    background-color: transparent;
+    border: 2px solid var(--white);
+    border-radius: 8px;
+    color: var(--white);
+    font-size: 13px;
+    font-weight: bold;
+    padding: 10px 38px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: transform 0.2s, background-color 0.3s;
+}
+
+.ghost-btn:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+    transform: scale(1.05);
+}
+
+.ghost-btn:active {
+    transform: scale(0.95);
+}
+
+form {
+    width: 100%;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.w-100 {
+    width: 100%;
+}
+
+.logo-icon {
+    font-size: 38px;
+    color: var(--primary-color);
+    margin-bottom: 8px;
+}
+
+.title {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--text-dark);
+    margin-bottom: 15px;
+    height: 30px;
+}
+
+.form-group {
+    text-align: left;
+    margin-bottom: 12px;
+}
+
+.form-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 4px;
+}
+
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-icon {
+    position: absolute;
+    left: 14px;
+    color: var(--text-gray);
+    font-size: 13px;
+    transition: color 0.3s ease;
+}
+
+.form-input {
+    width: 100%;
+    padding: 10px 12px 10px 38px;
+    border: 1px solid var(--input-border);
+    border-radius: 8px;
+    font-size: 13px;
+    color: var(--text-dark);
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+.form-input:focus {
+    border-color: var(--primary-color);
+}
+
+.form-input::placeholder {
+    color: #bbb;
+}
+
+.login-btn {
+    width: 100%;
+    height: 44px;
+    margin-top: 10px;
+    background: var(--primary-color);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-btn .hover-circle {
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    border-radius: 50%;
+    background: var(--primary-hover);
+    z-index: 1;
+    display: block;
+    pointer-events: none;
+    will-change: transform;
+}
+
+.login-btn .label-stack {
+    position: relative;
+    display: inline-block;
+    z-index: 2;
+}
+
+.login-btn .pill-label,
+.login-btn .pill-label-hover {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--white);
+    display: block;
+    will-change: transform, opacity;
+}
+
+.login-btn .pill-label-hover {
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: var(--white);
+}
+
+.forgot-pass {
+    color: var(--primary-color);
+    font-size: 12px;
+    text-decoration: none;
+    font-weight: 600;
+    margin-top: 8px;
+}
+
+.forgot-pass:hover {
+    opacity: 0.8;
+}
+
+.fade-up-element {
+    opacity: 0;
+}
+
+.status-text {
+    min-height: 22px;
+    width: 100%;
+    margin-top: 10px;
+    font-size: 12px;
+    font-weight: 700;
+    text-align: left;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+}
+
+.status-text.visible {
+    opacity: 1;
+}
+
+.status-text.success {
+    color: var(--success-color);
+}
+
+.status-text.error {
+    color: var(--error-color);
+}
