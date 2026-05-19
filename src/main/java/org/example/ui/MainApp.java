@@ -136,7 +136,7 @@ public class MainApp extends Application {
         Button btnLogout = new Button("Dang xuat");
 
         btnStartQuiz.setOnAction(e -> {
-            openExamScene(1);
+            openDashboardScene();
         });
         btnLogout.setOnAction(e -> logout());
 
@@ -176,7 +176,7 @@ public class MainApp extends Application {
         updateHomeForCurrentUser();
         clearLoginForm();
         lblLoginStatus.setText("");
-        primaryStage.setScene(homeScene);
+        openDashboardScene();
     }
 
     private void handleRegister() {
@@ -224,6 +224,17 @@ public class MainApp extends Application {
         primaryStage.setScene(loginScene);
     }
 
+    private void openDashboardScene() {
+        if (currentUser == null) {
+            primaryStage.setScene(loginScene);
+            return;
+        }
+
+        DashboardView dashboardView = new DashboardView(currentUser, primaryStage);
+        Scene dashboardScene = new Scene(dashboardView, WINDOW_WIDTH, WINDOW_HEIGHT);
+        primaryStage.setScene(dashboardScene);
+    }
+
     private void openExamScene(int examId) {
         try {
             quizController.startExam(examId);
@@ -246,7 +257,4 @@ public class MainApp extends Application {
         DatabaseConnection.closeConnection();
     }
 
-    public static void main(String[] args) {
-        launch(args);
-    }
 }

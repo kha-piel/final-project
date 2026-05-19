@@ -28,6 +28,8 @@ import java.util.List;
  */
 public class ConsoleTest {
 
+    private static final String RESET_FLAG = "--reset-mock";
+
     // =========================================================================
     // Ky tu trang tri console
     // =========================================================================
@@ -58,8 +60,12 @@ public class ConsoleTest {
             System.out.println("[OK] Ket noi Database thanh cong: " + conn.getMetaData().getURL());
 
             // Khoi tao schema + du lieu mock (idempotent — an toan khi chay nhieu lan)
-            initDatabaseMockData(conn);
-            System.out.println("[OK] Schema va du lieu mock da san sang.");
+            if (shouldResetMockData(args)) {
+                initDatabaseMockData(conn);
+                System.out.println("[OK] Schema va du lieu mock da san sang.");
+            } else {
+                System.out.println("[INFO] Bo qua reset mock data. Dang dung du lieu hien co trong database.");
+            }
 
             ExamDAO examDAO = new ExamDAO(conn);
             QuestionDAO questionDAO = new QuestionDAO(conn);
@@ -287,6 +293,20 @@ public class ConsoleTest {
             System.err.println(LINE);
             e.printStackTrace();
         }
+    }
+
+    private static boolean shouldResetMockData(String[] args) {
+        if (args == null) {
+            return false;
+        }
+
+        for (String arg : args) {
+            if (RESET_FLAG.equalsIgnoreCase(arg)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     // =========================================================================
