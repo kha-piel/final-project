@@ -2,16 +2,17 @@ package org.example.dao;
 
 import org.example.model.Exam;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 /**
- * ExamDAO — Data Access Object cho bảng exams và exam_questions.
- *
- * <p>Cung cấp các thao tác CRUD với đề thi và truy vấn danh sách
- * question_id thuộc một đề thi cụ thể.
+ * ExamDAO - Data Access Object cho bang exams va exam_questions.
  */
 public class ExamDAO {
 
@@ -21,11 +22,7 @@ public class ExamDAO {
         this.connection = connection;
     }
 
-    // -------------------------------------------------------------------------
-    // CRUD cơ bản cho bảng exams
-    // -------------------------------------------------------------------------
-
-    /** Tìm đề thi theo ID. */
+    /** Tim de thi theo ID. */
     public Optional<Exam> findById(int examId) {
         String sql = "SELECT * FROM exams WHERE exam_id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -40,7 +37,7 @@ public class ExamDAO {
         return Optional.empty();
     }
 
-    /** Lấy tất cả đề thi công khai. */
+    /** Lay tat ca de thi cong khai. */
     public List<Exam> findAllPublic() {
         String sql = "SELECT * FROM exams WHERE is_public = 1 ORDER BY created_at DESC";
         List<Exam> exams = new ArrayList<>();
@@ -55,16 +52,34 @@ public class ExamDAO {
         return exams;
     }
 
-    // -------------------------------------------------------------------------
-    // Truy vấn bảng exam_questions (liên kết đề thi - câu hỏi)
-    // -------------------------------------------------------------------------
+    /** Lay danh sach tat ca de thi de hien thi len giao dien. */
+    public List<Exam> getAllExams() {
+        List<Exam> exams = new ArrayList<>();
+        String sql = "SELECT exam_id, title, duration FROM exams";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                Exam exam = new Exam();
+                exam.setExamId(rs.getInt("exam_id"));
+                exam.setTitle(rs.getString("title"));
+                exam.setDuration(rs.getInt("duration"));
+                exams.add(exam);
+            }
+        } catch (SQLException e) {
+            System.err.println("Loi khi lay danh sach de thi: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return exams;
+    }
 
     /**
-     * Lấy danh sách question_id thuộc một đề thi, sắp xếp theo question_order.
-     * ExamController dùng danh sách này để lấy chi tiết câu hỏi từ QuestionDAO.
+     * Lay danh sach question_id thuoc mot de thi, sap xep theo question_order.
      *
-     * @param examId ID đề thi
-     * @return danh sách question_id theo thứ tự gốc
+     * @param examId ID de thi
+     * @return danh sach question_id theo thu tu goc
      */
     public List<Integer> findQuestionIdsByExamId(int examId) {
         String sql = "SELECT question_id FROM exam_questions WHERE exam_id = ? ORDER BY question_order";
@@ -82,12 +97,11 @@ public class ExamDAO {
     }
 
     /**
-     * Lấy trọng số điểm (point_weight) của từng câu hỏi trong đề thi.
-     * Dùng để tính điểm khi nộp bài.
+     * Lay trong so diem cua tung cau hoi trong de thi.
      *
-     * @param examId     ID đề thi
-     * @param questionId ID câu hỏi
-     * @return trọng số điểm, mặc định 0.25 nếu không tìm thấy
+     * @param examId ID de thi
+     * @param questionId ID cau hoi
+     * @return trong so diem, mac dinh 0.25 neu khong tim thay
      */
     public double getPointWeight(int examId, int questionId) {
         String sql = "SELECT point_weight FROM exam_questions WHERE exam_id = ? AND question_id = ?";
@@ -101,12 +115,8 @@ public class ExamDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return 0.25; // Mặc định: 10 điểm / 40 câu
+        return 0.25;
     }
-
-    // -------------------------------------------------------------------------
-    // Helper: Map ResultSet row -> Exam object
-    // -------------------------------------------------------------------------
 
     private Exam mapRowToExam(ResultSet rs) throws SQLException {
         Exam exam = new Exam();
