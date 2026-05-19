@@ -318,7 +318,7 @@ public class MainApp extends Application {
         DatabaseConnection.closeConnection();
     }
 
-    public static void main(String[] args) {
+    static void launchApp(String[] args) {
         launch(args);
     }
 }

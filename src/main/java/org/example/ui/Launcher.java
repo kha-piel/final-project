@@ -11,7 +11,7 @@ package org.example.ui;
  * </pre>
  *
  * <p>Giải pháp: Tạo một class trung gian (Launcher) <b>KHÔNG</b> kế thừa
- * {@code Application}. Class này chỉ đơn giản gọi {@code MainApp.main()},
+ * {@code Application}. Class này chỉ đơn giản gọi {@code MainApp.launchApp()},
  * nhờ đó JVM khởi động bình thường trước khi JavaFX được load.
  *
  * <p><b>Cách chạy:</b>
@@ -26,6 +26,6 @@ package org.example.ui;
 public class Launcher {
 
     public static void main(String[] args) {
-        MainApp.main(args);
+        MainApp.launchApp(args);
     }
 }

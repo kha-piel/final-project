@@ -22,7 +22,7 @@ load_dotenv()
 # ------------------------------------------------------------------------------
 app = FastAPI(
     title="RAG Explanation Service",
-    description="Microservice tích hợp Gemini để giải thích đáp án bài kiểm tra dựa trên Obsidian Vault.",
+    description="Microservice tích hợp Gemini để giải thích đáp án bài kiểm tra dựa trên knowledge base Markdown.",
     version="1.0.0",
 )
 
@@ -53,10 +53,15 @@ genai.configure(api_key=GEMINI_API_KEY)
 model = genai.GenerativeModel("gemini-2.5-flash")
 
 # ------------------------------------------------------------------------------
-# 3. THƯ MỤC GỐC CỦA OBSIDIAN VAULT
-#    Vault nằm ở thư mục cha (thư mục gốc dự án), ngang hàng với ai_service.
+# 3. THƯ MỤC GỐC CỦA KNOWLEDGE BASE
+#    Tài liệu được đặt trong docs/knowledge-base để tách khỏi source code.
 # ------------------------------------------------------------------------------
-BASE_VAULT_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "Obsidian Vault")
+BASE_VAULT_PATH = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)),
+    "..",
+    "docs",
+    "knowledge-base",
+)
 
 # ------------------------------------------------------------------------------
 # 4. ĐỊNH NGHĨA DATA MODEL (PYDANTIC)
@@ -77,10 +82,10 @@ class QuestionRequest(BaseModel):
 async def explain_answer(request: QuestionRequest):
     """
     Giải thích nguyên nhân học sinh trả lời sai và hướng dẫn cách giải đúng
-    dựa trên tài liệu kiến thức trong Obsidian Vault.
+    dựa trên tài liệu kiến thức trong knowledge base Markdown.
     """
 
-    # --- Bước 5.1: RETRIEVAL - Đọc file kiến thức từ Obsidian Vault ---
+    # --- Bước 5.1: RETRIEVAL - Đọc file kiến thức từ knowledge base ---
     file_path = os.path.join(BASE_VAULT_PATH, request.obsidian_source_path)
 
     try:

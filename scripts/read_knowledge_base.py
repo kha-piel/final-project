@@ -7,15 +7,16 @@ if hasattr(sys.stdout, "reconfigure"):
 
 # ==============================================================
 #   MODULE: Retrieval Test - Đọc dữ liệu từ Knowledge Base
-#   Mô tả: Đọc file Markdown từ Obsidian Vault và in ra Terminal
+#   Mô tả: Đọc file Markdown từ docs/knowledge-base và in ra Terminal
 # ==============================================================
 
 FILE_PATH = os.path.join(
-    os.path.dirname(os.path.abspath(__file__)),
-    "Obsidian_Vault",
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+    "docs",
+    "knowledge-base",
     "Toan_Hoc",
-    "Giai_Tich",
-    "toan_tich_phan.md"
+    "4_Nguyen_Ham_Tich_Phan",
+    "2_tich_phan.md"
 )
 
 SEPARATOR = "=" * 60

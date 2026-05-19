@@ -3,6 +3,7 @@ package org.example.util;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.nio.file.Path;
 
 /**
  * DatabaseConnection — Singleton quản lý kết nối CSDL.
@@ -12,7 +13,7 @@ import java.sql.SQLException;
  */
 public class DatabaseConnection {
 
-    private static final String DB_URL = "jdbc:sqlite:thptqg_ai.db";// hoặc MySQL
+    private static final String DB_URL = "jdbc:sqlite:" + Path.of("data", "thptqg_ai.db").toString();
     private static final String DB_USER = "";
     private static final String DB_PASS = "";
 
