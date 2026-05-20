@@ -62,3 +62,4 @@ final-project/
 
 ### Frontend build artifacts ###
 src/main/resources/auth/auth-app.js
+node_modules/
