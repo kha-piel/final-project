@@ -7,320 +7,387 @@
     <title>Xác thực - AI System</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 </head>
 
 <body>
-
     <div id="particles-js"></div>
+    <div id="root"></div>
 
-    <div class="auth-container" id="authCard">
+    <script type="text/babel">
+        const { useEffect, useRef, useState } = React;
 
-        <div class="form-container sign-in-container">
-            <form onsubmit="event.preventDefault(); handleLoginSubmit();">
-                <i class="fa-solid fa-brain logo-icon fade-up-element"></i>
-                <h2 class="title fade-up-element" id="typewriterText"></h2>
+        const STATUS_EMPTY = { message: '', success: true };
+        const DEFAULT_LOGIN_FORM = { identity: '', password: '' };
+        const DEFAULT_REGISTER_FORM = { fullName: '', email: '', password: '', confirmPassword: '' };
+        const PASSWORD_REGEX = /^(?=.*[A-Z])(?=.*[!@#\$%\^&\*\(\)_\+\-=\[\]\{\};':"\\|,.<>\/?]).{8,}$/;
 
-                <div class="form-group w-100 fade-up-element">
-                    <label class="form-label">Tên đăng nhập hoặc Email</label>
-                    <div class="input-wrapper">
-                        <i class="fa-solid fa-user input-icon"></i>
-                        <input type="text" id="loginIdentityInput" class="form-input" placeholder="Nhập tài khoản...">
-                    </div>
-                </div>
+        function AuthApp() {
+            const [mode, setMode] = useState('login');
+            const [title, setTitle] = useState('');
+            const [loginForm, setLoginForm] = useState(DEFAULT_LOGIN_FORM);
+            const [registerForm, setRegisterForm] = useState(DEFAULT_REGISTER_FORM);
+            const [loginStatus, setLoginStatus] = useState(STATUS_EMPTY);
+            const [registerStatus, setRegisterStatus] = useState(STATUS_EMPTY);
+            const registerSuccessTimeoutRef = useRef(null);
 
-                <div class="form-group w-100 fade-up-element">
-                    <label class="form-label">Mật khẩu</label>
-                    <div class="input-wrapper">
-                        <i class="fa-solid fa-lock input-icon"></i>
-                        <input type="password" id="loginPasswordInput" class="form-input" placeholder="Nhập mật khẩu...">
-                    </div>
-                </div>
+            useEffect(() => {
+                particlesJS('particles-js', {
+                    particles: {
+                        number: { value: 60, density: { enable: true, value_area: 800 } },
+                        color: { value: '#ffffff' },
+                        shape: { type: 'circle' },
+                        opacity: { value: 0.3 },
+                        size: { value: 3, random: true },
+                        line_linked: { enable: true, distance: 150, color: '#ffffff', opacity: 0.2, width: 1 },
+                        move: { enable: true, speed: 2 }
+                    },
+                    interactivity: {
+                        detect_on: 'canvas',
+                        events: { onhover: { enable: true, mode: 'grab' }, onclick: { enable: true, mode: 'push' } },
+                        modes: { grab: { distance: 140, line_linked: { opacity: 0.5 } } }
+                    },
+                    retina_detect: true
+                });
 
-                <a href="#" class="forgot-pass fade-up-element" style="align-self: flex-start;">Quên mật khẩu?</a>
+                const fullText = 'HỆ THỐNG AI-QUIZ';
+                let index = 0;
+                const typingTimer = window.setInterval(() => {
+                    index += 1;
+                    setTitle(fullText.slice(0, index));
+                    if (index >= fullText.length) {
+                        window.clearInterval(typingTimer);
+                    }
+                }, 40);
 
-                <div class="w-100 fade-up-element">
-                    <button type="submit" class="login-btn pill-btn" id="loginBtn">
-                        <span class="hover-circle"></span>
-                        <span class="label-stack">
-                            <span class="pill-label">ĐĂNG NHẬP</span>
-                            <span class="pill-label-hover">ĐĂNG NHẬP</span>
-                        </span>
-                    </button>
-                </div>
+                gsap.set('#authCard', { autoAlpha: 1 });
+                gsap.from('#authCard', { y: 40, opacity: 0, duration: 0.8, ease: 'back.out(1.2)' });
+                gsap.fromTo(
+                    '.fade-up-element',
+                    { y: 20, opacity: 0 },
+                    { y: 0, opacity: 1, duration: 0.5, stagger: 0.05, ease: 'power2.out', delay: 0.15 }
+                );
 
-                <div id="loginStatus" class="status-text fade-up-element"></div>
-            </form>
-        </div>
+                const buttons = Array.from(document.querySelectorAll('.pill-btn'));
+                const resizeHandlers = [];
 
-        <div class="form-container sign-up-container">
-            <form onsubmit="event.preventDefault(); handleRegisterSubmit();">
-                <i class="fa-solid fa-user-plus logo-icon fade-up-element"></i>
-                <h2 class="title fade-up-element">ĐĂNG KÍ TÀI KHOẢN</h2>
+                buttons.forEach((btn) => {
+                    const circle = btn.querySelector('.hover-circle');
+                    const label = btn.querySelector('.pill-label');
+                    const labelHover = btn.querySelector('.pill-label-hover');
+                    let activeTween;
+                    let buttonTimeline;
 
-                <div class="form-group w-100 fade-up-element">
-                    <label class="form-label">Họ và Tên</label>
-                    <div class="input-wrapper">
-                        <i class="fa-solid fa-address-card input-icon" id="nameIcon"></i>
-                        <input type="text" class="form-input" id="nameInput" placeholder="Nhập họ tên...">
-                    </div>
-                </div>
+                    const calculateMath = () => {
+                        const rect = btn.getBoundingClientRect();
+                        const width = rect.width || 320;
+                        const height = rect.height || 44;
+                        const radius = ((width * width) / 4 + height * height) / (2 * height);
+                        const diameter = Math.ceil(2 * radius) + 2;
+                        const delta = Math.ceil(radius - Math.sqrt(Math.max(0, radius * radius - (width * width) / 4))) + 1;
+                        const originY = diameter - delta;
 
-                <div class="form-group w-100 fade-up-element">
-                    <label class="form-label">Email</label>
-                    <div class="input-wrapper">
-                        <i class="fa-solid fa-envelope input-icon" id="emailIcon"></i>
-                        <input type="email" class="form-input" id="emailInput" placeholder="...@gmail.com">
-                    </div>
-                </div>
+                        circle.style.width = `${diameter}px`;
+                        circle.style.height = `${diameter}px`;
+                        circle.style.bottom = `-${delta}px`;
 
-                <div class="form-group w-100 fade-up-element">
-                    <label class="form-label">Mật khẩu</label>
-                    <div class="input-wrapper">
-                        <i class="fa-solid fa-lock input-icon" id="passIcon"></i>
-                        <input type="password" class="form-input" id="passInput"
-                            placeholder="Tối thiểu 8 ký tự, 1 kí tự hoa, đặc biệt...">
-                    </div>
-                </div>
+                        gsap.set(circle, { xPercent: -50, scale: 0, transformOrigin: `50% ${originY}px` });
+                        gsap.set(label, { y: 0 });
+                        gsap.set(labelHover, { y: height + 12, opacity: 0 });
 
-                <div class="form-group w-100 fade-up-element">
-                    <label class="form-label">Xác nhận mật khẩu</label>
-                    <div class="input-wrapper">
-                        <i class="fa-solid fa-check-double input-icon" id="confirmIcon"></i>
-                        <input type="password" class="form-input" id="confirmInput" placeholder="Nhập lại mật khẩu...">
-                    </div>
-                </div>
+                        buttonTimeline = gsap.timeline({ paused: true });
+                        buttonTimeline.to(circle, { scale: 1.2, xPercent: -50, duration: 0.6, ease: 'power3.out', overwrite: 'auto' }, 0);
+                        buttonTimeline.to(label, { y: -(height + 8), duration: 0.6, ease: 'power3.out', overwrite: 'auto' }, 0);
+                        buttonTimeline.to(labelHover, { y: 0, opacity: 1, duration: 0.6, ease: 'power3.out', overwrite: 'auto' }, 0);
+                    };
 
-                <div class="w-100 fade-up-element">
-                    <button type="submit" class="login-btn pill-btn" id="registerBtn">
-                        <span class="hover-circle"></span>
-                        <span class="label-stack">
-                            <span class="pill-label">ĐĂNG KÝ NGAY</span>
-                            <span class="pill-label-hover">ĐĂNG KÝ NGAY</span>
-                        </span>
-                    </button>
-                </div>
+                    calculateMath();
+                    const onResize = () => calculateMath();
+                    resizeHandlers.push(onResize);
+                    window.addEventListener('resize', onResize);
 
-                <div id="registerStatus" class="status-text fade-up-element"></div>
-            </form>
-        </div>
+                    btn.addEventListener('mouseenter', () => {
+                        if (activeTween) {
+                            activeTween.kill();
+                        }
+                        activeTween = buttonTimeline.tweenTo(buttonTimeline.duration(), {
+                            duration: 0.4,
+                            ease: 'power3.out',
+                            overwrite: 'auto'
+                        });
+                    });
 
-        <div class="overlay-layer">
-            <div class="overlay-panel overlay-left">
-                <h2 class="wipe-element" style="--i: 0;">Đã có tài khoản?</h2>
-                <p class="wipe-element" style="--i: 1;"></p>
-                <button class="ghost-btn wipe-element" id="signInToggle" style="--i: 2;">ĐĂNG NHẬP</button>
-            </div>
+                    btn.addEventListener('mouseleave', () => {
+                        if (activeTween) {
+                            activeTween.kill();
+                        }
+                        activeTween = buttonTimeline.tweenTo(0, {
+                            duration: 0.3,
+                            ease: 'power3.out',
+                            overwrite: 'auto'
+                        });
+                    });
+                });
 
-            <div class="overlay-panel overlay-right">
-                <h2 class="wipe-element" style="--i: 0;">Chưa có tài khoản?</h2>
-                <p class="wipe-element" style="--i: 1;"></p>
-                <button class="ghost-btn wipe-element" id="signUpToggle" style="--i: 2;">ĐĂNG KÝ NGAY</button>
-            </div>
-        </div>
-    </div>
+                return () => {
+                    window.clearInterval(typingTimer);
+                    resizeHandlers.forEach((handler) => window.removeEventListener('resize', handler));
+                    if (registerSuccessTimeoutRef.current) {
+                        window.clearTimeout(registerSuccessTimeoutRef.current);
+                    }
+                };
+            }, []);
 
-    <script>
-        function setStatus(targetId, message, success) {
-            const el = document.getElementById(targetId);
-            if (!el) return;
-            el.textContent = message || '';
-            el.classList.remove('success', 'error', 'visible');
-            if (message) {
-                el.classList.add(success ? 'success' : 'error', 'visible');
-            }
-        }
+            useEffect(() => {
+                window.showLoginStatus = (message, success) => {
+                    setLoginStatus({ message: message || '', success: success !== false });
+                };
+                window.showRegisterStatus = (message, success) => {
+                    setRegisterStatus({ message: message || '', success: success !== false });
+                };
+                window.prefillLoginIdentity = (value) => {
+                    setLoginForm((current) => ({ ...current, identity: value || '', password: '' }));
+                };
+                window.clearAuthForms = () => {
+                    setLoginForm(DEFAULT_LOGIN_FORM);
+                    setRegisterForm(DEFAULT_REGISTER_FORM);
+                };
+                window.showLoginForm = () => {
+                    setMode('login');
+                };
+                window.handleRegisterSuccess = (message, loginIdentity) => {
+                    const safeMessage = message || 'Đăng ký thành công.';
+                    setRegisterStatus({ message: safeMessage, success: true });
+                    setLoginForm((current) => ({ ...current, identity: loginIdentity || '', password: '' }));
+                    setRegisterForm(DEFAULT_REGISTER_FORM);
 
-        function showLoginStatus(message, success) {
-            setStatus('loginStatus', message, success);
-        }
+                    if (registerSuccessTimeoutRef.current) {
+                        window.clearTimeout(registerSuccessTimeoutRef.current);
+                    }
 
-        function showRegisterStatus(message, success) {
-            setStatus('registerStatus', message, success);
-        }
-
-        function prefillLoginIdentity(value) {
-            document.getElementById('loginIdentityInput').value = value || '';
-            document.getElementById('loginPasswordInput').value = '';
-        }
-
-        function clearAuthForms() {
-            document.getElementById('loginIdentityInput').value = '';
-            document.getElementById('loginPasswordInput').value = '';
-            document.getElementById('nameInput').value = '';
-            document.getElementById('emailInput').value = '';
-            document.getElementById('passInput').value = '';
-            document.getElementById('confirmInput').value = '';
-        }
-
-        function clearRegisterForm() {
-            document.getElementById('nameInput').value = '';
-            document.getElementById('emailInput').value = '';
-            document.getElementById('passInput').value = '';
-            document.getElementById('confirmInput').value = '';
-        }
-
-        function showLoginForm() {
-            const container = document.getElementById('authCard');
-            container.classList.remove("to-register");
-            container.classList.add("to-login");
-        }
-
-        function handleRegisterSuccess(message, loginIdentity) {
-            showRegisterStatus(message, true);
-            prefillLoginIdentity(loginIdentity || '');
-            clearRegisterForm();
-
-            window.setTimeout(() => {
-                showLoginForm();
-                showLoginStatus(message + ' Vui lòng đăng nhập bằng tài khoản vừa tạo.', true);
-                showRegisterStatus('', true);
-            }, 900);
-        }
-
-        function handleLoginSubmit() {
-            const identity = document.getElementById('loginIdentityInput').value;
-            const password = document.getElementById('loginPasswordInput').value;
-            if (window.javaBridge && typeof window.javaBridge.login === 'function') {
-                window.javaBridge.login(identity, password);
-            }
-        }
-
-        function handleRegisterSubmit() {
-            const fullName = document.getElementById('nameInput').value;
-            const email = document.getElementById('emailInput').value;
-            const password = document.getElementById('passInput').value;
-            const confirm = document.getElementById('confirmInput').value;
-            if (window.javaBridge && typeof window.javaBridge.register === 'function') {
-                window.javaBridge.register(fullName, email, password, confirm);
-            }
-        }
-
-        document.addEventListener("DOMContentLoaded", () => {
-
-            const signUpButton = document.getElementById('signUpToggle');
-            const signInButton = document.getElementById('signInToggle');
-            const container = document.getElementById('authCard');
-
-            signUpButton.addEventListener('click', () => {
-                container.classList.remove("to-login");
-                container.classList.add("to-register");
-            });
-
-            signInButton.addEventListener('click', () => {
-                container.classList.remove("to-register");
-                container.classList.add("to-login");
-            });
-
-            particlesJS("particles-js", {
-                "particles": {
-                    "number": { "value": 60, "density": { "enable": true, "value_area": 800 } },
-                    "color": { "value": "#ffffff" },
-                    "shape": { "type": "circle" },
-                    "opacity": { "value": 0.3 },
-                    "size": { "value": 3, "random": true },
-                    "line_linked": { "enable": true, "distance": 150, "color": "#ffffff", "opacity": 0.2, "width": 1 },
-                    "move": { "enable": true, "speed": 2 }
-                },
-                "interactivity": {
-                    "detect_on": "canvas",
-                    "events": { "onhover": { "enable": true, "mode": "grab" }, "onclick": { "enable": true, "mode": "push" } },
-                    "modes": { "grab": { "distance": 140, "line_linked": { "opacity": 0.5 } } }
-                },
-                "retina_detect": true
-            });
-
-            const setupPillNavForButton = (btn) => {
-                const circle = btn.querySelector('.hover-circle');
-                const label = btn.querySelector('.pill-label');
-                const labelHover = btn.querySelector('.pill-label-hover');
-
-                const calculateMath = () => {
-                    const rect = btn.getBoundingClientRect();
-                    const w = rect.width || 320;
-                    const h = rect.height || 44;
-                    const R = ((w * w) / 4 + h * h) / (2 * h);
-                    const D = Math.ceil(2 * R) + 2;
-                    const delta = Math.ceil(R - Math.sqrt(Math.max(0, R * R - (w * w) / 4))) + 1;
-                    const originY = D - delta;
-
-                    circle.style.width = `${D}px`; circle.style.height = `${D}px`; circle.style.bottom = `-${delta}px`;
-                    gsap.set(circle, { xPercent: -50, scale: 0, transformOrigin: `50% ${originY}px` });
-                    gsap.set(label, { y: 0 }); gsap.set(labelHover, { y: h + 12, opacity: 0 });
-
-                    const btnTl = gsap.timeline({ paused: true });
-                    btnTl.to(circle, { scale: 1.2, xPercent: -50, duration: 0.6, ease: "power3.out", overwrite: 'auto' }, 0);
-                    btnTl.to(label, { y: -(h + 8), duration: 0.6, ease: "power3.out", overwrite: 'auto' }, 0);
-                    btnTl.to(labelHover, { y: 0, opacity: 1, duration: 0.6, ease: "power3.out", overwrite: 'auto' }, 0);
-
-                    return btnTl;
+                    registerSuccessTimeoutRef.current = window.setTimeout(() => {
+                        setMode('login');
+                        setLoginStatus({
+                            message: `${safeMessage} Vui lòng đăng nhập bằng tài khoản vừa tạo.`,
+                            success: true
+                        });
+                        setRegisterStatus(STATUS_EMPTY);
+                    }, 900);
                 };
 
-                let btnTl = calculateMath();
-                window.addEventListener('resize', () => { btnTl = calculateMath(); });
+                return () => {
+                    delete window.showLoginStatus;
+                    delete window.showRegisterStatus;
+                    delete window.prefillLoginIdentity;
+                    delete window.clearAuthForms;
+                    delete window.showLoginForm;
+                    delete window.handleRegisterSuccess;
+                };
+            }, []);
 
-                let activeTween;
-                btn.addEventListener('mouseenter', () => {
-                    if (activeTween) activeTween.kill();
-                    activeTween = btnTl.tweenTo(btnTl.duration(), { duration: 0.4, ease: "power3.out", overwrite: 'auto' });
-                });
-
-                btn.addEventListener('mouseleave', () => {
-                    if (activeTween) activeTween.kill();
-                    activeTween = btnTl.tweenTo(0, { duration: 0.3, ease: "power3.out", overwrite: 'auto' });
-                });
-            };
-
-            document.querySelectorAll('.pill-btn').forEach(btn => setupPillNavForButton(btn));
-
-            const masterTl = gsap.timeline();
-            gsap.set('#authCard', { autoAlpha: 1 });
-            masterTl.from('#authCard', { y: 40, opacity: 0, duration: 0.8, ease: "back.out(1.2)" });
-
-            const fullText = "HỆ THỐNG AI-QUIZ";
-            const titleEl = document.getElementById('typewriterText');
-            masterTl.add(() => {
-                let i = 0;
-                titleEl.innerHTML = '';
-                function typeWriter() {
-                    if (i < fullText.length) { titleEl.innerHTML += fullText.charAt(i); i++; setTimeout(typeWriter, 40); }
+            const setStatusClass = (status) => {
+                const classes = ['status-text', 'fade-up-element'];
+                if (status.message) {
+                    classes.push(status.success ? 'success' : 'error', 'visible');
                 }
-                typeWriter();
-            }, "-=0.3");
-
-            masterTl.fromTo('.fade-up-element',
-                { y: 20, opacity: 0 },
-                { y: 0, opacity: 1, duration: 0.5, stagger: 0.05, ease: "power2.out", delay: 0 }, "-=0.2"
-            );
-
-            const colorValid = "#4CAF50";
-            const colorInvalid = "#f44336";
-            const colorDefault = "var(--text-gray)";
-
-            const handleValidation = (inputId, iconId, validationFn) => {
-                const input = document.getElementById(inputId);
-                const icon = document.getElementById(iconId);
-                input.addEventListener('input', () => {
-                    const val = input.value;
-                    if (val === '') {
-                        icon.style.color = colorDefault;
-                        icon.style.transition = "color 0.3s ease";
-                    } else {
-                        icon.style.color = validationFn(val) ? colorValid : colorInvalid;
-                    }
-                });
+                return classes.join(' ');
             };
 
-            handleValidation('nameInput', 'nameIcon', (val) => val.trim().length >= 2);
-            handleValidation('emailInput', 'emailIcon', (val) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val));
-            const passRegex = /^(?=.*[A-Z])(?=.*[!@#\$%\^&\*\(\)_\+\-=\[\]\{\};':"\\|,.<>\/?]).{8,}$/;
-            handleValidation('passInput', 'passIcon', (val) => {
-                if (document.getElementById('confirmInput').value !== '') { document.getElementById('confirmInput').dispatchEvent(new Event('input')); }
-                return passRegex.test(val);
-            });
-            handleValidation('confirmInput', 'confirmIcon', (val) => val === document.getElementById('passInput').value);
-        });
+            const iconColor = (value, isValid) => {
+                if (!value) {
+                    return 'var(--text-gray)';
+                }
+                return isValid ? '#4CAF50' : '#f44336';
+            };
+
+            const isNameValid = registerForm.fullName.trim().length >= 2;
+            const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(registerForm.email);
+            const isPasswordValid = PASSWORD_REGEX.test(registerForm.password);
+            const isConfirmValid = registerForm.confirmPassword !== '' && registerForm.confirmPassword === registerForm.password;
+
+            const handleLoginSubmit = (event) => {
+                event.preventDefault();
+                if (window.javaBridge && typeof window.javaBridge.login === 'function') {
+                    window.javaBridge.login(loginForm.identity, loginForm.password);
+                }
+            };
+
+            const handleRegisterSubmit = (event) => {
+                event.preventDefault();
+                if (window.javaBridge && typeof window.javaBridge.register === 'function') {
+                    window.javaBridge.register(
+                        registerForm.fullName,
+                        registerForm.email,
+                        registerForm.password,
+                        registerForm.confirmPassword
+                    );
+                }
+            };
+
+            return (
+                <div className={`auth-container ${mode === 'register' ? 'to-register' : 'to-login'}`} id="authCard">
+                    <div className="form-container sign-in-container">
+                        <form onSubmit={handleLoginSubmit}>
+                            <i className="fa-solid fa-brain logo-icon fade-up-element"></i>
+                            <h2 className="title fade-up-element" id="typewriterText">{title}</h2>
+
+                            <div className="form-group w-100 fade-up-element">
+                                <label className="form-label">Tên đăng nhập hoặc Email</label>
+                                <div className="input-wrapper">
+                                    <i className="fa-solid fa-user input-icon"></i>
+                                    <input
+                                        type="text"
+                                        className="form-input"
+                                        placeholder="Nhập tài khoản..."
+                                        value={loginForm.identity}
+                                        onChange={(event) => setLoginForm((current) => ({ ...current, identity: event.target.value }))}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="form-group w-100 fade-up-element">
+                                <label className="form-label">Mật khẩu</label>
+                                <div className="input-wrapper">
+                                    <i className="fa-solid fa-lock input-icon"></i>
+                                    <input
+                                        type="password"
+                                        className="form-input"
+                                        placeholder="Nhập mật khẩu..."
+                                        value={loginForm.password}
+                                        onChange={(event) => setLoginForm((current) => ({ ...current, password: event.target.value }))}
+                                    />
+                                </div>
+                            </div>
+
+                            <a href="#" className="forgot-pass fade-up-element" style={{ alignSelf: 'flex-start' }}>Quên mật khẩu?</a>
+
+                            <div className="w-100 fade-up-element">
+                                <button type="submit" className="login-btn pill-btn" id="loginBtn">
+                                    <span className="hover-circle"></span>
+                                    <span className="label-stack">
+                                        <span className="pill-label">ĐĂNG NHẬP</span>
+                                        <span className="pill-label-hover">ĐĂNG NHẬP</span>
+                                    </span>
+                                </button>
+                            </div>
+
+                            <div id="loginStatus" className={setStatusClass(loginStatus)}>{loginStatus.message}</div>
+                        </form>
+                    </div>
+
+                    <div className="form-container sign-up-container">
+                        <form onSubmit={handleRegisterSubmit}>
+                            <i className="fa-solid fa-user-plus logo-icon fade-up-element"></i>
+                            <h2 className="title fade-up-element">ĐĂNG KÍ TÀI KHOẢN</h2>
+
+                            <div className="form-group w-100 fade-up-element">
+                                <label className="form-label">Họ và Tên</label>
+                                <div className="input-wrapper">
+                                    <i className="fa-solid fa-address-card input-icon" style={{ color: iconColor(registerForm.fullName, isNameValid) }}></i>
+                                    <input
+                                        type="text"
+                                        className="form-input"
+                                        placeholder="Nhập họ tên..."
+                                        value={registerForm.fullName}
+                                        onChange={(event) => setRegisterForm((current) => ({ ...current, fullName: event.target.value }))}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="form-group w-100 fade-up-element">
+                                <label className="form-label">Email</label>
+                                <div className="input-wrapper">
+                                    <i className="fa-solid fa-envelope input-icon" style={{ color: iconColor(registerForm.email, isEmailValid) }}></i>
+                                    <input
+                                        type="email"
+                                        className="form-input"
+                                        placeholder="...@gmail.com"
+                                        value={registerForm.email}
+                                        onChange={(event) => setRegisterForm((current) => ({ ...current, email: event.target.value }))}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="form-group w-100 fade-up-element">
+                                <label className="form-label">Mật khẩu</label>
+                                <div className="input-wrapper">
+                                    <i className="fa-solid fa-lock input-icon" style={{ color: iconColor(registerForm.password, isPasswordValid) }}></i>
+                                    <input
+                                        type="password"
+                                        className="form-input"
+                                        placeholder="Tối thiểu 8 ký tự, 1 kí tự hoa, đặc biệt..."
+                                        value={registerForm.password}
+                                        onChange={(event) => setRegisterForm((current) => ({ ...current, password: event.target.value }))}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="form-group w-100 fade-up-element">
+                                <label className="form-label">Xác nhận mật khẩu</label>
+                                <div className="input-wrapper">
+                                    <i className="fa-solid fa-check-double input-icon" style={{ color: iconColor(registerForm.confirmPassword, isConfirmValid) }}></i>
+                                    <input
+                                        type="password"
+                                        className="form-input"
+                                        placeholder="Nhập lại mật khẩu..."
+                                        value={registerForm.confirmPassword}
+                                        onChange={(event) => setRegisterForm((current) => ({ ...current, confirmPassword: event.target.value }))}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="w-100 fade-up-element">
+                                <button type="submit" className="login-btn pill-btn" id="registerBtn">
+                                    <span className="hover-circle"></span>
+                                    <span className="label-stack">
+                                        <span className="pill-label">ĐĂNG KÝ NGAY</span>
+                                        <span className="pill-label-hover">ĐĂNG KÝ NGAY</span>
+                                    </span>
+                                </button>
+                            </div>
+
+                            <div id="registerStatus" className={setStatusClass(registerStatus)}>{registerStatus.message}</div>
+                        </form>
+                    </div>
+
+                    <div className="overlay-layer">
+                        <div className="overlay-panel overlay-left">
+                            <h2 className="wipe-element" style={{ '--i': 0 }}>Đã có tài khoản?</h2>
+                            <p className="wipe-element" style={{ '--i': 1 }}></p>
+                            <button
+                                className="ghost-btn wipe-element"
+                                id="signInToggle"
+                                style={{ '--i': 2 }}
+                                type="button"
+                                onClick={() => setMode('login')}
+                            >
+                                ĐĂNG NHẬP
+                            </button>
+                        </div>
+
+                        <div className="overlay-panel overlay-right">
+                            <h2 className="wipe-element" style={{ '--i': 0 }}>Chưa có tài khoản?</h2>
+                            <p className="wipe-element" style={{ '--i': 1 }}></p>
+                            <button
+                                className="ghost-btn wipe-element"
+                                id="signUpToggle"
+                                style={{ '--i': 2 }}
+                                type="button"
+                                onClick={() => setMode('register')}
+                            >
+                                ĐĂNG KÝ NGAY
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        ReactDOM.createRoot(document.getElementById('root')).render(<AuthApp />);
     </script>
 </body>
 
