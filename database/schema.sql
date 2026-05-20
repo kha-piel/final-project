@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS subjects (
 );
 
 -- Dữ liệu mẫu môn học
-INSERT INTO subjects (subject_code, subject_name) VALUES
+INSERT OR IGNORE INTO subjects (subject_code, subject_name) VALUES
     ('TOAN',  'Toán học'),
     ('LY',    'Vật Lý'),
     ('HOA',   'Hóa học'),

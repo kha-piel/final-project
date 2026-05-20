@@ -45,6 +45,18 @@
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+            <resource>
+                <directory>database</directory>
+                <includes>
+                    <include>schema.sql</include>
+                </includes>
+                <targetPath>database</targetPath>
+            </resource>
+        </resources>
         <plugins>
             <!-- JavaFX Maven Plugin — chạy bằng: mvn javafx:run -->
             <plugin>

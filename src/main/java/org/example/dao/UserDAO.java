@@ -6,7 +6,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 /**
  * UserDAO - Data Access Object cho bang users.
@@ -24,7 +23,6 @@ public class UserDAO {
 
     public UserDAO(Connection connection) {
         this.connection = connection;
-        ensureUsersTable();
     }
 
     /**
@@ -101,26 +99,6 @@ public class UserDAO {
         user.setRole(rs.getString("role"));
         user.setEmail(rs.getString("email"));
         return user;
-    }
-
-    private void ensureUsersTable() {
-        String sql = """
-                CREATE TABLE IF NOT EXISTS users (
-                    user_id       INTEGER PRIMARY KEY AUTOINCREMENT,
-                    username      TEXT NOT NULL UNIQUE,
-                    password_hash TEXT NOT NULL,
-                    email         TEXT NOT NULL UNIQUE,
-                    full_name     TEXT,
-                    role          TEXT NOT NULL DEFAULT 'student'
-                )
-                """;
-
-        try (Statement stmt = connection.createStatement()) {
-            stmt.executeUpdate(sql);
-        } catch (SQLException e) {
-            System.err.println("Loi tao bang users: " + e.getMessage());
-            e.printStackTrace();
-        }
     }
 
     private String buildEmailForUser(User user) {

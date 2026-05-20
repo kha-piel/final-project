@@ -1,18 +1,15 @@
 package org.example.util;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class DbChecker {
 
-    private static final String DB_URL = "jdbc:sqlite:thptqg_ai.db";
-
     public static void main(String[] args) {
-        try (Connection connection = DriverManager.getConnection(DB_URL)) {
-            System.out.println("Ket noi DB thanh cong: " + DB_URL);
+        try (Connection connection = DatabaseConnection.getInstance()) {
+            System.out.println("Ket noi DB thanh cong: jdbc:sqlite:" + DatabaseConnection.getDatabasePath());
             System.out.println();
 
             printExamCount(connection);
