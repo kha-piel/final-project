@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
+import { getSupabaseConfig } from "./supabase-client";
 
 const STATUS_EMPTY = { message: "", success: true };
 const DEFAULT_LOGIN_FORM = { identity: "", password: "" };
@@ -15,6 +16,10 @@ const PASSWORD_REGEX =
 function AuthApp() {
   const [mode, setMode] = useState("login");
   const [title, setTitle] = useState("");
+  const [supabaseConfigured] = useState(() => getSupabaseConfig().configured);
+  const [bridgeReady, setBridgeReady] = useState(
+    Boolean(window.__javaBridgeReady && window.javaBridge)
+  );
   const [loginForm, setLoginForm] = useState(DEFAULT_LOGIN_FORM);
   const [registerForm, setRegisterForm] = useState(DEFAULT_REGISTER_FORM);
   const [loginStatus, setLoginStatus] = useState(STATUS_EMPTY);
@@ -99,6 +104,12 @@ function AuthApp() {
       }
     }
 
+    if (!supabaseConfigured) {
+      console.warn(
+        "Supabase env is not configured. Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY before using Supabase features."
+      );
+    }
+
     return () => {
       window.clearInterval(typingTimer);
       if (registerSuccessTimeoutRef.current) {
@@ -108,6 +119,13 @@ function AuthApp() {
   }, []);
 
   useEffect(() => {
+    const handleBridgeReady = () => {
+      setBridgeReady(Boolean(window.javaBridge));
+    };
+
+    window.addEventListener("java-bridge-ready", handleBridgeReady);
+    handleBridgeReady();
+
     window.showLoginStatus = (message, success) => {
       setLoginStatus({ message: message || "", success: success !== false });
     };
@@ -158,6 +176,7 @@ function AuthApp() {
     };
 
     return () => {
+      window.removeEventListener("java-bridge-ready", handleBridgeReady);
       delete window.showLoginStatus;
       delete window.showRegisterStatus;
       delete window.prefillLoginIdentity;
@@ -191,6 +210,13 @@ function AuthApp() {
 
   function handleLoginSubmit(event) {
     event.preventDefault();
+    if (!bridgeReady) {
+      setLoginStatus({
+        message: "Ứng dụng Java chưa sẵn sàng. Vui lòng đợi 1 giây rồi thử lại.",
+        success: false,
+      });
+      return;
+    }
     if (window.javaBridge && typeof window.javaBridge.login === "function") {
       window.javaBridge.login(loginForm.identity, loginForm.password);
     } else {
@@ -203,6 +229,13 @@ function AuthApp() {
 
   function handleRegisterSubmit(event) {
     event.preventDefault();
+    if (!bridgeReady) {
+      setRegisterStatus({
+        message: "Ứng dụng Java chưa sẵn sàng. Vui lòng đợi 1 giây rồi thử lại.",
+        success: false,
+      });
+      return;
+    }
     if (
       window.javaBridge &&
       typeof window.javaBridge.register === "function"

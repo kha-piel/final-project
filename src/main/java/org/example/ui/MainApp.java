@@ -57,6 +57,7 @@ public class MainApp extends Application {
 
     private User currentUser;
     private WebEngine authEngine;
+    private final AuthBridge authBridge = new AuthBridge();
     private Label lblWelcome;
 
     @Override
@@ -96,8 +97,7 @@ public class MainApp extends Application {
         authEngine.setJavaScriptEnabled(true);
         authEngine.getLoadWorker().stateProperty().addListener((obs, oldState, newState) -> {
             if (newState == Worker.State.SUCCEEDED) {
-                JSObject window = (JSObject) authEngine.executeScript("window");
-                window.setMember("javaBridge", new AuthBridge());
+                attachJavaBridge();
             }
         });
 
@@ -108,6 +108,19 @@ public class MainApp extends Application {
         authEngine.load(authPage.toExternalForm());
 
         loginScene = new Scene(webView, WINDOW_WIDTH, WINDOW_HEIGHT);
+    }
+
+    private void attachJavaBridge() {
+        try {
+            JSObject window = (JSObject) authEngine.executeScript("window");
+            window.setMember("javaBridge", authBridge);
+            authEngine.executeScript(
+                    "window.__javaBridgeReady = true;" +
+                    "window.dispatchEvent(new Event('java-bridge-ready'));"
+            );
+        } catch (Exception ex) {
+            System.err.println("Khong the gan javaBridge vao WebView: " + ex.getMessage());
+        }
     }
 
     private void buildHomeScene() {
