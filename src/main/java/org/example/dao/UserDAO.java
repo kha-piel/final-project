@@ -96,6 +96,23 @@ public class UserDAO {
         }
     }
 
+    public boolean deleteByEmail(String email) {
+        String normalizedEmail = email == null ? "" : email.trim().toLowerCase();
+        if (normalizedEmail.isBlank()) {
+            return false;
+        }
+
+        String sql = "DELETE FROM users WHERE lower(email) = lower(?)";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, normalizedEmail);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.err.println("Loi xoa user theo email: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     private int insertUserAccount(User user) throws SQLException {
         String sql = """
                 INSERT INTO users (

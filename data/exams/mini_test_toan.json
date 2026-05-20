@@ -1,0 +1,97 @@
+{
+  "subject_code": "TOAN",
+  "topic_name": "Đạo Hàm và Tích Phân",
+  "exam": {
+    "title": "Đề thi thử Toán - Mini Test",
+    "description": "Đề thi thử mini 3 câu về đạo hàm",
+    "duration": 15,
+    "total_questions": 3,
+    "exam_type": "practice"
+  },
+  "questions": [
+    {
+      "content": "Tính đạo hàm của hàm số y = x^2",
+      "level": 1,
+      "question_type": "single_choice",
+      "obsidian_source_path": "Toan_Hoc/Dao_Ham.md",
+      "answers": [
+        {
+          "option_label": "A",
+          "content": "y' = x",
+          "is_correct": false
+        },
+        {
+          "option_label": "B",
+          "content": "y' = 2x",
+          "is_correct": true
+        },
+        {
+          "option_label": "C",
+          "content": "y' = 2",
+          "is_correct": false
+        },
+        {
+          "option_label": "D",
+          "content": "y' = x^2",
+          "is_correct": false
+        }
+      ]
+    },
+    {
+      "content": "Đạo hàm của một hằng số (ví dụ y = 5) bằng bao nhiêu?",
+      "level": 1,
+      "question_type": "single_choice",
+      "obsidian_source_path": "Toan_Hoc/Dao_Ham.md",
+      "answers": [
+        {
+          "option_label": "A",
+          "content": "y' = 0",
+          "is_correct": true
+        },
+        {
+          "option_label": "B",
+          "content": "y' = 1",
+          "is_correct": false
+        },
+        {
+          "option_label": "C",
+          "content": "y' = 5",
+          "is_correct": false
+        },
+        {
+          "option_label": "D",
+          "content": "Không có đạo hàm",
+          "is_correct": false
+        }
+      ]
+    },
+    {
+      "content": "Đạo hàm của hàm số y = 3x là gì?",
+      "level": 2,
+      "question_type": "single_choice",
+      "obsidian_source_path": "Toan_Hoc/Dao_Ham.md",
+      "answers": [
+        {
+          "option_label": "A",
+          "content": "y' = x",
+          "is_correct": false
+        },
+        {
+          "option_label": "B",
+          "content": "y' = 3",
+          "is_correct": true
+        },
+        {
+          "option_label": "C",
+          "content": "y' = 3x",
+          "is_correct": false
+        },
+        {
+          "option_label": "D",
+          "content": "y' = 0",
+          "is_correct": false
+        }
+      ]
+    }
+  ]
+}

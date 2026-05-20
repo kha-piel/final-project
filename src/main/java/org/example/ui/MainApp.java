@@ -22,6 +22,7 @@ import org.example.dao.ExamDAO;
 import org.example.dao.QuestionDAO;
 import org.example.dao.UserDAO;
 import org.example.model.User;
+import org.example.service.SupabaseAuthService;
 import org.example.util.DatabaseConnection;
 
 import java.net.URL;
@@ -54,6 +55,7 @@ public class MainApp extends Application {
     private ExamDAO examDAO;
     private UserDAO userDAO;
     private QuizController quizController;
+    private SupabaseAuthService supabaseAuthService;
 
     private User currentUser;
     private WebEngine authEngine;
@@ -83,6 +85,7 @@ public class MainApp extends Application {
             examDAO = new ExamDAO(connection);
             userDAO = new UserDAO(connection);
             quizController = new QuizController(examDAO, questionDAO, answerDAO);
+            supabaseAuthService = new SupabaseAuthService();
         } catch (SQLException ex) {
             throw new RuntimeException("Khong the khoi tao ket noi SQLite: " + ex.getMessage(), ex);
         }
@@ -172,6 +175,18 @@ public class MainApp extends Application {
             return;
         }
 
+        if (!supabaseAuthService.isConfigured()) {
+            runScript("showLoginStatus(" + quoteJs("Chua cau hinh Supabase env cho ung dung Java.") + ", false);");
+            return;
+        }
+
+        SupabaseAuthService.SyncResult loginSyncResult =
+                supabaseAuthService.ensureUserSaved(authenticatedUser, safePassword);
+        if (!loginSyncResult.isSuccess()) {
+            runScript("showLoginStatus(" + quoteJs(loginSyncResult.getMessage()) + ", false);");
+            return;
+        }
+
         currentUser = authenticatedUser;
         updateHomeForCurrentUser();
         runScript("clearAuthForms(); showLoginStatus('', true); showRegisterStatus('', true);");
@@ -200,6 +215,10 @@ public class MainApp extends Application {
             runScript("showRegisterStatus(" + quoteJs("Xac nhan mat khau khong khop.") + ", false);");
             return;
         }
+        if (!supabaseAuthService.isConfigured()) {
+            runScript("showRegisterStatus(" + quoteJs("Chua cau hinh Supabase env cho ung dung Java.") + ", false);");
+            return;
+        }
 
         User newUser = new User();
         newUser.setUsername(safeEmail);
@@ -211,6 +230,14 @@ public class MainApp extends Application {
         boolean registered = userDAO.register(newUser);
         if (!registered) {
             runScript("showRegisterStatus(" + quoteJs("Dang ky that bai. Email co the da ton tai.") + ", false);");
+            return;
+        }
+
+        SupabaseAuthService.SyncResult registerSyncResult =
+                supabaseAuthService.ensureUserSaved(newUser, safePassword);
+        if (!registerSyncResult.isSuccess()) {
+            userDAO.deleteByEmail(safeEmail);
+            runScript("showRegisterStatus(" + quoteJs(registerSyncResult.getMessage()) + ", false);");
             return;
         }
 
