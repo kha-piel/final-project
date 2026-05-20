@@ -41,6 +41,7 @@ build/
 ### Database ###
 *.db
 *.class
+data/*.db
 
 ### Python ###
 __pycache__/
@@ -58,3 +59,6 @@ venv/
 
 ### Misc ###
 final-project/
+
+### Frontend build artifacts ###
+src/main/resources/auth/auth-app.js
