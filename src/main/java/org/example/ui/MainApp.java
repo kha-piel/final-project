@@ -201,12 +201,11 @@ public class MainApp extends Application {
             return;
         }
 
-        runScript(
-                "showRegisterStatus(" + quoteJs("Dang ky thanh cong. Ban co the dang nhap ngay.") + ", true);" +
-                "prefillLoginIdentity(" + quoteJs(safeEmail) + ");" +
-                "showLoginForm();" +
-                "showLoginStatus(" + quoteJs("Tai khoan moi da san sang. Dang nhap bang email va mat khau vua tao.") + ", true);"
-        );
+        runScript("handleRegisterSuccess("
+                + quoteJs("Dang ky thanh cong.")
+                + ", "
+                + quoteJs(safeEmail)
+                + ");");
     }
 
     private void runScript(String script) {

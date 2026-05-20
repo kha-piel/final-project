@@ -154,10 +154,29 @@
             document.getElementById('confirmInput').value = '';
         }
 
+        function clearRegisterForm() {
+            document.getElementById('nameInput').value = '';
+            document.getElementById('emailInput').value = '';
+            document.getElementById('passInput').value = '';
+            document.getElementById('confirmInput').value = '';
+        }
+
         function showLoginForm() {
             const container = document.getElementById('authCard');
             container.classList.remove("to-register");
             container.classList.add("to-login");
+        }
+
+        function handleRegisterSuccess(message, loginIdentity) {
+            showRegisterStatus(message, true);
+            prefillLoginIdentity(loginIdentity || '');
+            clearRegisterForm();
+
+            window.setTimeout(() => {
+                showLoginForm();
+                showLoginStatus(message + ' Vui lòng đăng nhập bằng tài khoản vừa tạo.', true);
+                showRegisterStatus('', true);
+            }, 900);
         }
 
         function handleLoginSubmit() {

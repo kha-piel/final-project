@@ -45,7 +45,6 @@
     </dependencies>
 
     <build>
-        <sourceDirectory>src/main/example</sourceDirectory>
         <plugins>
             <!-- JavaFX Maven Plugin — chạy bằng: mvn javafx:run -->
             <plugin>
