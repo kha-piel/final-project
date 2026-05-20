@@ -31,6 +31,7 @@ public final class DatabaseInitializer {
         try {
             enableForeignKeys(connection);
             runSchemaScript(connection);
+            migrateLegacyUsersToProfiles(connection);
             seedCoreData(connection);
             connection.commit();
         } catch (SQLException | IOException ex) {
@@ -146,6 +147,66 @@ public final class DatabaseInitializer {
                 {"D", "4", "0"}
         });
         linkQuestionToExam(connection, DEFAULT_EXAM_ID, q3, order++);
+    }
+
+    private static void migrateLegacyUsersToProfiles(Connection connection) throws SQLException {
+        String sql = """
+                INSERT OR IGNORE INTO user_profiles (
+                    user_id, username, email, full_name, phone, date_of_birth,
+                    role, status, created_at, updated_at, last_login_at
+                )
+                SELECT
+                    user_id,
+                    username,
+                    email,
+                    full_name,
+                    %s AS phone,
+                    %s AS date_of_birth,
+                    %s AS role,
+                    %s AS status,
+                    %s AS created_at,
+                    %s AS updated_at,
+                    %s AS last_login_at
+                FROM users
+                """.formatted(
+                selectOrNull(connection, "users", "phone"),
+                selectOrNull(connection, "users", "date_of_birth"),
+                selectOrDefault(connection, "users", "role", "'student'"),
+                selectOrDefault(connection, "users", "status", "'active'"),
+                selectOrDefault(connection, "users", "created_at", "datetime('now', 'localtime')"),
+                selectOrDefault(connection, "users", "updated_at", "datetime('now', 'localtime')"),
+                selectOrNull(connection, "users", "last_login_at")
+        );
+
+        try (Statement stmt = connection.createStatement()) {
+            stmt.executeUpdate(sql);
+        }
+    }
+
+    private static boolean hasColumn(Connection connection, String tableName, String columnName) throws SQLException {
+        String sql = "PRAGMA table_info(" + tableName + ")";
+        try (Statement stmt = connection.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                if (columnName.equalsIgnoreCase(rs.getString("name"))) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private static String selectOrNull(Connection connection, String tableName, String columnName) throws SQLException {
+        return hasColumn(connection, tableName, columnName) ? columnName : "NULL";
+    }
+
+    private static String selectOrDefault(
+            Connection connection,
+            String tableName,
+            String columnName,
+            String fallbackExpression
+    ) throws SQLException {
+        return hasColumn(connection, tableName, columnName) ? columnName : fallbackExpression;
     }
 
     private static boolean hasQuestionsForExam(Connection connection, int examId) throws SQLException {

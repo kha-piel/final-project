@@ -1,21 +1,17 @@
 package org.example.dao;
 
 import org.example.model.User;
+import org.example.util.PasswordHasher;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
- * UserDAO - Data Access Object cho bang users.
- *
- * Bang users gom cac cot:
- * - id
- * - username
- * - password_hash
- * - full_name
- * - role
+ * UserDAO quan ly account dang nhap trong bang users
+ * va profile nghiep vu trong bang user_profiles.
  */
 public class UserDAO {
 
@@ -25,71 +21,147 @@ public class UserDAO {
         this.connection = connection;
     }
 
-    /**
-     * Xac thuc nguoi dung bang username va password.
-     * Tam thoi so sanh password chuoi thuan voi cot password_hash.
-     *
-     * @param username ten dang nhap
-     * @param password mat khau nguoi dung nhap
-     * @return User neu dung thong tin, nguoc lai tra ve null
-     */
-    public User authenticate(String username, String password) {
+    public User authenticate(String identity, String password) {
         String sql = """
-                SELECT user_id, username, password_hash, full_name, role, email
-                FROM users
-                WHERE (username = ? OR email = ?) AND password_hash = ?
+                SELECT
+                    u.user_id,
+                    u.username,
+                    u.password_hash,
+                    p.full_name,
+                    p.role,
+                    p.email,
+                    p.status
+                FROM users u
+                JOIN user_profiles p ON p.user_id = u.user_id
+                WHERE lower(u.username) = lower(?)
+                   OR lower(p.email) = lower(?)
                 LIMIT 1
                 """;
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setString(1, username);
-            stmt.setString(2, username);
-            stmt.setString(3, password);
+            stmt.setString(1, identity);
+            stmt.setString(2, identity);
 
             try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    return mapRowToUser(rs);
+                if (!rs.next()) {
+                    return null;
                 }
+
+                String storedHash = rs.getString("password_hash");
+                if (!PasswordHasher.matches(password, storedHash)) {
+                    return null;
+                }
+
+                int userId = rs.getInt("user_id");
+                if (PasswordHasher.isLegacyPlaintext(storedHash)) {
+                    upgradeLegacyPasswordHash(userId, password);
+                }
+                touchLastLogin(userId);
+
+                return mapRowToUser(rs);
             }
         } catch (SQLException e) {
             System.err.println("Loi xac thuc nguoi dung: " + e.getMessage());
             e.printStackTrace();
+            return null;
         }
-
-        return null;
     }
 
-    /**
-     * Dang ky tai khoan moi vao bang users.
-     *
-     * @param user doi tuong User can dang ky
-     * @return true neu insert thanh cong, false neu that bai
-     */
     public boolean register(User user) {
-        String sql = """
-                INSERT INTO users (username, password_hash, email, full_name, role)
-                VALUES (?, ?, ?, ?, ?)
-                """;
+        boolean originalAutoCommit = true;
+        try {
+            originalAutoCommit = connection.getAutoCommit();
+            connection.setAutoCommit(false);
 
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setString(1, user.getUsername());
-            stmt.setString(2, user.getPasswordHash());
-            stmt.setString(3, buildEmailForUser(user));
-            stmt.setString(4, user.getFullName());
-            stmt.setString(5, user.getRole());
+            int userId = insertUserAccount(user);
+            insertUserProfile(userId, user);
 
-            int rowsAffected = stmt.executeUpdate();
-            return rowsAffected > 0;
+            connection.commit();
+            user.setId(userId);
+            return true;
         } catch (SQLException e) {
+            try {
+                connection.rollback();
+            } catch (SQLException rollbackEx) {
+                rollbackEx.printStackTrace();
+            }
             System.err.println("Loi dang ky tai khoan: " + e.getMessage());
             e.printStackTrace();
             return false;
+        } finally {
+            try {
+                connection.setAutoCommit(originalAutoCommit);
+            } catch (SQLException ignored) {
+            }
         }
     }
 
-    /**
-     * Map 1 dong du lieu trong ResultSet thanh doi tuong User.
-     */
+    private int insertUserAccount(User user) throws SQLException {
+        String sql = """
+                INSERT INTO users (
+                    username, password_hash, email, full_name, role
+                ) VALUES (?, ?, ?, ?, ?)
+                """;
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            stmt.setString(1, normalizeUsername(user));
+            stmt.setString(2, PasswordHasher.hash(user.getPasswordHash()));
+            stmt.setString(3, normalizeEmail(user));
+            stmt.setString(4, normalizeFullName(user));
+            stmt.setString(5, normalizeRole(user));
+            stmt.executeUpdate();
+
+            try (ResultSet rs = stmt.getGeneratedKeys()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        }
+
+        throw new SQLException("Khong lay duoc user_id moi.");
+    }
+
+    private void insertUserProfile(int userId, User user) throws SQLException {
+        String sql = """
+                INSERT INTO user_profiles (
+                    user_id, username, email, full_name, role, status, created_at, updated_at
+                ) VALUES (?, ?, ?, ?, ?, ?, datetime('now', 'localtime'), datetime('now', 'localtime'))
+                """;
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, userId);
+            stmt.setString(2, normalizeUsername(user));
+            stmt.setString(3, normalizeEmail(user));
+            stmt.setString(4, normalizeFullName(user));
+            stmt.setString(5, normalizeRole(user));
+            stmt.setString(6, "active");
+            stmt.executeUpdate();
+        }
+    }
+
+    private void touchLastLogin(int userId) throws SQLException {
+        String sql = """
+                UPDATE user_profiles
+                SET last_login_at = datetime('now', 'localtime'),
+                    updated_at = datetime('now', 'localtime')
+                WHERE user_id = ?
+                """;
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, userId);
+            stmt.executeUpdate();
+        }
+    }
+
+    private void upgradeLegacyPasswordHash(int userId, String rawPassword) throws SQLException {
+        String sql = "UPDATE users SET password_hash = ? WHERE user_id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, PasswordHasher.hash(rawPassword));
+            stmt.setInt(2, userId);
+            stmt.executeUpdate();
+        }
+    }
+
     private User mapRowToUser(ResultSet rs) throws SQLException {
         User user = new User();
         user.setId(rs.getInt("user_id"));
@@ -101,10 +173,28 @@ public class UserDAO {
         return user;
     }
 
-    private String buildEmailForUser(User user) {
-        if (user.getEmail() != null && !user.getEmail().isBlank()) {
-            return user.getEmail().trim();
+    private String normalizeUsername(User user) {
+        if (user.getUsername() != null && !user.getUsername().isBlank()) {
+            return user.getUsername().trim();
         }
-        return user.getUsername().trim().toLowerCase() + "@local.app";
+        return normalizeEmail(user);
+    }
+
+    private String normalizeEmail(User user) {
+        if (user.getEmail() != null && !user.getEmail().isBlank()) {
+            return user.getEmail().trim().toLowerCase();
+        }
+        return normalizeUsername(user).toLowerCase() + "@local.app";
+    }
+
+    private String normalizeFullName(User user) {
+        return user.getFullName() == null ? null : user.getFullName().trim();
+    }
+
+    private String normalizeRole(User user) {
+        if (user.getRole() == null || user.getRole().isBlank()) {
+            return "student";
+        }
+        return user.getRole().trim().toLowerCase();
     }
 }

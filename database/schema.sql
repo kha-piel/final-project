@@ -35,6 +35,35 @@ CREATE TABLE IF NOT EXISTS users (
     CONSTRAINT uq_users_email    UNIQUE (email)
 );
 
+-- -------------------------------------------------------------
+-- Bảng: user_profiles
+-- Mục đích: Tách dữ liệu hồ sơ nghiệp vụ khỏi account đăng nhập,
+--           mô phỏng gần hơn mô hình public.user_profiles của Supabase.
+-- -------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS user_profiles (
+    user_id         INTEGER PRIMARY KEY,
+    username        TEXT    NOT NULL,
+    email           TEXT    NOT NULL,
+    full_name       TEXT    NULL,
+    phone           TEXT    NULL,
+    date_of_birth   TEXT    NULL,
+    role            TEXT    NOT NULL DEFAULT 'student'
+                    CHECK (role IN ('student', 'teacher', 'admin')),
+    status          TEXT    NOT NULL DEFAULT 'active'
+                    CHECK (status IN ('active', 'inactive', 'banned')),
+    avatar_url      TEXT    NULL,
+    created_at      TEXT    NOT NULL DEFAULT (datetime('now', 'localtime')),
+    updated_at      TEXT    NOT NULL DEFAULT (datetime('now', 'localtime')),
+    last_login_at   TEXT    NULL,
+
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    CONSTRAINT uq_user_profiles_username UNIQUE (username),
+    CONSTRAINT uq_user_profiles_email    UNIQUE (email)
+);
+
+CREATE INDEX IF NOT EXISTS idx_user_profiles_role   ON user_profiles(role);
+CREATE INDEX IF NOT EXISTS idx_user_profiles_status ON user_profiles(status);
+
 -- ============================================================
 -- NHÓM 2: NGÂN HÀNG CÂU HỎI (QUESTION BANK)
 -- ============================================================
