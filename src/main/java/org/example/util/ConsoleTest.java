@@ -61,10 +61,10 @@ public class ConsoleTest {
 
             // Khoi tao schema + du lieu mock (idempotent — an toan khi chay nhieu lan)
             if (shouldResetMockData(args)) {
-                initDatabaseMockData(conn);
-                System.out.println("[OK] Schema va du lieu mock da san sang.");
+                System.out.println("[WARN] Tham so --reset-mock da bi vo hieu hoa.");
+                System.out.println("[WARN] Su dung scripts/sync_database.py de dong bo database theo schema chuan.");
             } else {
-                System.out.println("[INFO] Bo qua reset mock data. Dang dung du lieu hien co trong database.");
+                System.out.println("[INFO] Dang dung du lieu hien co trong database.");
             }
 
             ExamDAO examDAO = new ExamDAO(conn);

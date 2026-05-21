@@ -1,8 +1,16 @@
 package org.example.dao;
 
+import org.example.model.ExamHistoryDTO;
 import org.example.model.StudentAttempt;
+import org.example.util.DatabaseConnection;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -118,6 +126,71 @@ public class StudentAttemptDAO {
         return attempts;
     }
 
+    public List<ExamHistoryDTO> getHistoryByUserId(int userId) {
+        List<ExamHistoryDTO> history = new ArrayList<>();
+
+        try {
+            Connection connection = DatabaseConnection.getInstance();
+            String attemptIdColumn = hasColumn(connection, "student_attempts", "id") ? "id" : "attempt_id";
+            String correctColumn = hasColumn(connection, "student_attempts", "correct_answers")
+                    ? "correct_answers"
+                    : "correct_count";
+            String submitTimeColumn = hasColumn(connection, "student_attempts", "end_time")
+                    ? "end_time"
+                    : "completed_at";
+            String examIdColumn = hasColumn(connection, "exams", "id") ? "id" : "exam_id";
+            String totalQuestionsColumn = hasColumn(connection, "exams", "total_questions")
+                    ? "total_questions"
+                    : null;
+
+            StringBuilder sqlBuilder = new StringBuilder()
+                    .append("SELECT a.")
+                    .append(attemptIdColumn)
+                    .append(" AS attemptId, e.title AS examTitle, a.")
+                    .append(submitTimeColumn)
+                    .append(" AS submitTime, a.score, a.")
+                    .append(correctColumn)
+                    .append(" AS correctAnswers");
+
+            if (totalQuestionsColumn != null) {
+                sqlBuilder.append(", e.").append(totalQuestionsColumn).append(" AS totalQuestions");
+            }
+
+            sqlBuilder.append(" FROM student_attempts a ")
+                    .append("JOIN exams e ON a.exam_id = e.")
+                    .append(examIdColumn)
+                    .append(" WHERE a.user_id = ? ")
+                    .append("ORDER BY a.")
+                    .append(submitTimeColumn)
+                    .append(" DESC");
+
+            try (PreparedStatement stmt = connection.prepareStatement(sqlBuilder.toString())) {
+                stmt.setInt(1, userId);
+
+                try (ResultSet rs = stmt.executeQuery()) {
+                    while (rs.next()) {
+                        ExamHistoryDTO dto = new ExamHistoryDTO();
+                        dto.setAttemptId(rs.getInt("attemptId"));
+                        dto.setExamTitle(rs.getString("examTitle"));
+                        dto.setSubmitTime(rs.getString("submitTime"));
+                        dto.setScore(rs.getDouble("score"));
+
+                        int correctAnswers = rs.getInt("correctAnswers");
+                        int totalQuestions = totalQuestionsColumn == null ? 0 : rs.getInt("totalQuestions");
+                        dto.setCorrectRatio(buildCorrectRatio(correctAnswers, totalQuestions));
+
+                        history.add(dto);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Loi khi lay lich su thi theo userId: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return history;
+    }
+
     // -------------------------------------------------------------------------
     // Helper: Map ResultSet row -> StudentAttempt object
     // -------------------------------------------------------------------------
@@ -143,5 +216,19 @@ public class StudentAttemptDAO {
         attempt.setCompletedAt(rs.getString("completed_at"));
         attempt.setAiFeedback(rs.getString("ai_feedback"));
         return attempt;
+    }
+
+    private String buildCorrectRatio(int correctAnswers, int totalQuestions) {
+        if (totalQuestions <= 0) {
+            return correctAnswers + "/-";
+        }
+        return correctAnswers + "/" + totalQuestions;
+    }
+
+    private boolean hasColumn(Connection connection, String tableName, String columnName) throws SQLException {
+        DatabaseMetaData metaData = connection.getMetaData();
+        try (ResultSet rs = metaData.getColumns(null, null, tableName, columnName)) {
+            return rs.next();
+        }
     }
 }

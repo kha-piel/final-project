@@ -1,104 +1,148 @@
 package org.example.ui;
 
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import org.example.dao.StudentAttemptDAO;
-import org.example.model.StudentAttempt;
-import org.example.model.User;
-import org.example.util.DatabaseConnection;
+import javafx.util.StringConverter;
+import org.example.model.ExamHistoryDTO;
+import org.example.model.Subject;
+import org.example.model.Topic;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.List;
+public class DashboardView extends VBox {
 
-public class DashboardView extends BorderPane {
+    public final Button btnBackToHome;
+    public final ComboBox<Subject> cbSubject;
+    public final ComboBox<Topic> cbTopic;
+    public final ComboBox<String> cbDifficulty;
+    public final Button btnStartCustomExam;
+    public final TableView<ExamHistoryDTO> tableHistory;
 
-    private final User currentUser;
+    public DashboardView() {
+        setSpacing(20);
+        setPadding(new Insets(20));
 
-    public DashboardView(User user) {
-        this.currentUser = user;
+        btnBackToHome = new Button("Quay lai Trang chu");
+        btnBackToHome.setStyle(
+                "-fx-background-color: #ffffff;" +
+                        "-fx-text-fill: #1d4ed8;" +
+                        "-fx-font-weight: bold;" +
+                        "-fx-padding: 10 16 10 16;" +
+                        "-fx-background-radius: 10;" +
+                        "-fx-border-radius: 10;" +
+                        "-fx-border-color: #bfdbfe;"
+        );
 
-        // Thiết lập Padding chung
-        this.setPadding(new Insets(20));
+        Label lblTitle = new Label("ON TAP KIEN THUC");
+        lblTitle.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
 
-        // Phần Top: Xin chào
-        setupTop();
+        HBox headerBox = new HBox(12, btnBackToHome, lblTitle);
+        headerBox.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
 
-        // Phần Center: Chọn đề thi
-        setupCenter();
+        cbSubject = new ComboBox<>();
+        cbSubject.setPromptText("Chon mon hoc");
+        cbSubject.setPrefWidth(220);
+        cbSubject.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(Subject subject) {
+                return subject == null ? "" : subject.getName();
+            }
 
-        // Phần Right: Lịch sử thi
-        setupRight();
+            @Override
+            public Subject fromString(String string) {
+                return null;
+            }
+        });
+
+        cbTopic = new ComboBox<>();
+        cbTopic.setPromptText("Chon chuyen de");
+        cbTopic.setPrefWidth(220);
+        cbTopic.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(Topic topic) {
+                return topic == null ? "" : topic.getName();
+            }
+
+            @Override
+            public Topic fromString(String string) {
+                return null;
+            }
+        });
+
+        cbDifficulty = new ComboBox<>();
+        cbDifficulty.setPromptText("Do kho");
+        cbDifficulty.setPrefWidth(180);
+        cbDifficulty.getItems().addAll(
+                "Nh\u1eadn bi\u1ebft",
+                "Th\u00f4ng hi\u1ec3u",
+                "V\u1eadn d\u1ee5ng",
+                "V\u1eadn d\u1ee5ng cao"
+        );
+
+        btnStartCustomExam = new Button("Tao de & Bat dau thi");
+        btnStartCustomExam.setStyle(
+                "-fx-background-color: #2e7d32;" +
+                        "-fx-text-fill: white;" +
+                        "-fx-font-weight: bold;" +
+                        "-fx-padding: 10 18 10 18;" +
+                        "-fx-background-radius: 6;"
+        );
+
+        HBox filterBox = new HBox(15);
+        filterBox.getChildren().addAll(cbSubject, cbTopic, cbDifficulty, btnStartCustomExam);
+
+        Label lblHistory = new Label("Lich su lam bai cua ban");
+        lblHistory.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
+
+        tableHistory = new TableView<>();
+        tableHistory.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
+        TableColumn<ExamHistoryDTO, String> colExamTitle = new TableColumn<>("Ten de thi");
+        colExamTitle.setCellValueFactory(new PropertyValueFactory<>("examTitle"));
+
+        TableColumn<ExamHistoryDTO, String> colSubmitTime = new TableColumn<>("Thoi gian nop");
+        colSubmitTime.setCellValueFactory(new PropertyValueFactory<>("submitTime"));
+
+        TableColumn<ExamHistoryDTO, Double> colScore = new TableColumn<>("Diem so");
+        colScore.setCellValueFactory(new PropertyValueFactory<>("score"));
+
+        TableColumn<ExamHistoryDTO, String> colCorrectRatio = new TableColumn<>("Ty le dung");
+        colCorrectRatio.setCellValueFactory(new PropertyValueFactory<>("correctRatio"));
+
+        tableHistory.getColumns().addAll(colExamTitle, colSubmitTime, colScore, colCorrectRatio);
+        tableHistory.setPrefHeight(400);
+
+        VBox.setVgrow(tableHistory, Priority.ALWAYS);
+        getChildren().addAll(headerBox, filterBox, lblHistory, tableHistory);
     }
 
-    private void setupTop() {
-        Label welcomeLabel = new Label("Xin chào, " + currentUser.getFullName() + "!");
-        welcomeLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
-        BorderPane.setMargin(welcomeLabel, new Insets(0, 0, 20, 0));
-        this.setTop(welcomeLabel);
+    public Button getBtnBackToHome() {
+        return btnBackToHome;
     }
 
-    private void setupCenter() {
-        VBox centerBox = new VBox(15);
-        centerBox.setAlignment(Pos.CENTER);
-
-        Label chooseExamLabel = new Label("Chọn đề thi");
-        chooseExamLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
-
-        Button mathExamBtn = new Button("Bắt đầu thi Đề Toán 01 (ID: 1)");
-        mathExamBtn.setOnAction(e -> System.out.println("Đang chuyển sang phòng thi với Exam ID = 1..."));
-
-        Button physicsExamBtn = new Button("Bắt đầu thi Đề Lý 01 (ID: 2)");
-        physicsExamBtn.setOnAction(e -> System.out.println("Đang chuyển sang phòng thi với Exam ID = 2..."));
-
-        centerBox.getChildren().addAll(chooseExamLabel, mathExamBtn, physicsExamBtn);
-        this.setCenter(centerBox);
+    public ComboBox<Subject> getCbSubject() {
+        return cbSubject;
     }
 
-    private void setupRight() {
-        VBox rightBox = new VBox(10);
-        rightBox.setPadding(new Insets(0, 0, 0, 20)); // Margin left for spacing
-
-        Label historyLabel = new Label("Lịch sử thi");
-        historyLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold;");
-
-        TableView<StudentAttempt> historyTable = new TableView<>();
-
-        TableColumn<StudentAttempt, Integer> examIdCol = new TableColumn<>("ID Đề");
-        examIdCol.setCellValueFactory(new PropertyValueFactory<>("examId"));
-
-        TableColumn<StudentAttempt, Double> scoreCol = new TableColumn<>("Điểm số");
-        scoreCol.setCellValueFactory(new PropertyValueFactory<>("score"));
-
-        TableColumn<StudentAttempt, String> timeCol = new TableColumn<>("Thời gian nộp");
-        timeCol.setCellValueFactory(new PropertyValueFactory<>("completedAt"));
-        timeCol.setPrefWidth(150);
-
-        historyTable.getColumns().addAll(examIdCol, scoreCol, timeCol);
-
-        // Load data từ database
-        loadHistoryData(historyTable);
-
-        rightBox.getChildren().addAll(historyLabel, historyTable);
-        this.setRight(rightBox);
+    public ComboBox<Topic> getCbTopic() {
+        return cbTopic;
     }
 
-    private void loadHistoryData(TableView<StudentAttempt> table) {
-        try {
-            Connection conn = DatabaseConnection.getInstance();
-            StudentAttemptDAO attemptDAO = new StudentAttemptDAO(conn);
-            List<StudentAttempt> attempts = attemptDAO.findByUserId(currentUser.getId());
-            table.getItems().addAll(attempts);
-        } catch (SQLException e) {
-            System.err.println("Lỗi khi tải lịch sử thi: " + e.getMessage());
-            e.printStackTrace();
-        }
+    public ComboBox<String> getCbDifficulty() {
+        return cbDifficulty;
+    }
+
+    public Button getBtnStartCustomExam() {
+        return btnStartCustomExam;
+    }
+
+    public TableView<ExamHistoryDTO> getTableHistory() {
+        return tableHistory;
     }
 }
