@@ -12,8 +12,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import org.example.controller.QuizController;
 import org.example.dao.AnswerDAO;
@@ -54,8 +52,6 @@ public class MainApp extends Application {
     private TextField tfUsername;
     private PasswordField pfPassword;
     private TextField tfFullName;
-
-    private Label lblWelcome;
 
     @Override
     public void start(Stage primaryStage) {
@@ -179,32 +175,10 @@ public class MainApp extends Application {
     }
 
     private void buildHomeScene() {
-        Label title = new Label("Trang Chu");
-        title.setFont(Font.font("System", FontWeight.BOLD, 28));
-
-        lblWelcome = new Label("Xin chao!");
-        lblWelcome.setFont(Font.font("System", FontWeight.NORMAL, 18));
-        lblWelcome.setWrapText(true);
-
-        Label description = new Label("Ban co the vao man hinh lam bai trac nghiem va hoi AI giai thich khi tra loi sai.");
-        description.setWrapText(true);
-
-        Button btnStartQuiz = new Button("Bat dau lam bai");
-        Button btnLogout = new Button("Dang xuat");
-
-        btnStartQuiz.setOnAction(e -> {
-            openExamScene(1);
-        });
-        btnLogout.setOnAction(e -> logout());
-
-        HBox actions = new HBox(12, btnStartQuiz, btnLogout);
-        actions.setAlignment(Pos.CENTER);
-
-        VBox root = new VBox(18, title, lblWelcome, description, actions);
-        root.setPadding(new Insets(28));
-        root.setAlignment(Pos.CENTER);
-
-        homeScene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
+        VBox placeholder = new VBox(new Label("Dang tai trang chu..."));
+        placeholder.setAlignment(Pos.CENTER);
+        placeholder.setPadding(new Insets(24));
+        homeScene = new Scene(placeholder, WINDOW_WIDTH, WINDOW_HEIGHT);
     }
 
     private void buildQuizScene() {
@@ -270,10 +244,8 @@ public class MainApp extends Application {
     }
 
     private void updateHomeForCurrentUser() {
-        String displayName = currentUser.getFullName() != null && !currentUser.getFullName().isBlank()
-                ? currentUser.getFullName()
-                : currentUser.getUsername();
-        lblWelcome.setText("Xin chao, " + displayName + "!\nVai tro hien tai: " + currentUser.getRole());
+        HomeView homeView = new HomeView(primaryStage, currentUser, this::logout);
+        homeScene = new Scene(homeView, WINDOW_WIDTH, WINDOW_HEIGHT);
     }
 
     private void clearLoginForm() {

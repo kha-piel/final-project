@@ -1,52 +1,53 @@
 package org.example.dao;
 
+import org.example.model.Answer;
 import org.example.model.Question;
 import org.example.model.Question.DifficultyLevel;
 
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.Normalizer;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * QuestionDAO — Data Access Object cho bảng questions trong CSDL.
- *
- * Tất cả SQL queries liên quan đến Question đều tập trung tại đây.
- * Controller và Service KHÔNG được viết SQL trực tiếp.
- */
 public class QuestionDAO {
 
     private final Connection connection;
+    private final AnswerDAO answerDAO;
 
     public QuestionDAO(Connection connection) {
         this.connection = connection;
+        this.answerDAO = new AnswerDAO(connection);
     }
 
-    /** Lưu câu hỏi mới vào DB. */
     public void save(Question question) {
-        // TODO: PreparedStatement INSERT INTO questions (...)
+        // TODO
     }
 
-    /** Cập nhật câu hỏi đã có. */
     public void update(Question question) {
-        // TODO: PreparedStatement UPDATE questions SET ...
+        // TODO
     }
 
-    /** Xóa câu hỏi theo ID. */
     public void delete(int questionId) {
-        // TODO: PreparedStatement DELETE FROM questions WHERE id = ?
+        // TODO
     }
 
-    /** Tìm câu hỏi theo ID. */
     public Optional<Question> findById(int questionId) {
-        String sql = "SELECT * FROM questions WHERE question_id = ?";
+        String idColumn = resolveQuestionIdColumn();
+        String sql = "SELECT * FROM questions WHERE " + idColumn + " = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, questionId);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return Optional.of(mapRowToQuestion(rs));
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    Question question = mapRowToQuestion(rs);
+                    question.setAnswers(answerDAO.findByQuestionId(questionId));
+                    question.setListAnswers(question.getAnswers());
+                    return Optional.of(question);
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -54,13 +55,15 @@ public class QuestionDAO {
         return Optional.empty();
     }
 
-    /** Lấy ngẫu nhiên 1 câu hỏi đang có trong DB. */
     public Question getRandomQuestion() {
         String sql = "SELECT * FROM questions ORDER BY RANDOM() LIMIT 1";
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            ResultSet rs = stmt.executeQuery();
+        try (PreparedStatement stmt = connection.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
             if (rs.next()) {
-                return mapRowToQuestion(rs);
+                Question question = mapRowToQuestion(rs);
+                question.setAnswers(answerDAO.findByQuestionId(question.getQuestionId()));
+                question.setListAnswers(question.getAnswers());
+                return question;
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -68,33 +71,168 @@ public class QuestionDAO {
         return null;
     }
 
-    /** Lấy câu hỏi theo môn học và độ khó (dùng cho QuizController.startQuiz). */
     public List<Question> findBySubjectAndDifficulty(String subject, DifficultyLevel difficulty, int limit) {
-        // TODO: SELECT * FROM questions WHERE subject = ? AND difficulty = ? LIMIT ?
         return List.of();
     }
 
-    /** Lấy toàn bộ câu hỏi (dùng cho màn hình quản lý). */
     public List<Question> findAll() {
-        // TODO: SELECT * FROM questions ORDER BY created_at DESC
         return List.of();
     }
 
-    /** Kiểm tra câu hỏi từ file Obsidian đã tồn tại chưa (tránh import trùng). */
     public boolean existsByObsidianPath(String filePath) {
-        // TODO: SELECT COUNT(*) FROM questions WHERE obsidian_source_path = ?
         return false;
     }
 
+    public List<Question> getQuestionsByFilter(int topicId, String difficulty) {
+        List<Question> questions = new ArrayList<>();
+
+        try {
+            boolean hasDifficultyColumn = hasColumn("questions", "difficulty");
+            String orderColumn = resolveQuestionIdColumn();
+            String sql;
+
+            if (hasDifficultyColumn) {
+                sql = "SELECT * FROM questions WHERE topic_id = ? ORDER BY " + orderColumn;
+            } else {
+                sql = "SELECT * FROM questions WHERE topic_id = ? AND level = ? AND is_active = 1 ORDER BY " + orderColumn;
+            }
+
+            try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+                stmt.setInt(1, topicId);
+                if (!hasDifficultyColumn) {
+                    stmt.setInt(2, mapDifficultyToLevel(difficulty));
+                }
+
+                List<Question> fallbackQuestions = new ArrayList<>();
+
+                try (ResultSet rs = stmt.executeQuery()) {
+                    while (rs.next()) {
+                        Question question = mapRowToQuestion(rs);
+                        List<Answer> answers = answerDAO.findByQuestionId(question.getQuestionId());
+                        question.setAnswers(answers);
+                        question.setListAnswers(answers);
+
+                        if (hasDifficultyColumn) {
+                            fallbackQuestions.add(question);
+                            if (difficultyMatches(rs.getString("difficulty"), difficulty)) {
+                                questions.add(question);
+                            }
+                        } else {
+                            questions.add(question);
+                        }
+                    }
+                }
+
+                if (hasDifficultyColumn && questions.isEmpty()) {
+                    questions.addAll(fallbackQuestions);
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Loi khi lay cau hoi theo bo loc: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return questions;
+    }
+
     private Question mapRowToQuestion(ResultSet rs) throws SQLException {
-        Question q = new Question();
-        q.setQuestionId(rs.getInt("question_id"));
-        q.setQuestionText(rs.getString("content"));
-        q.setSubject(readIfPresent(rs, "subject"));
-        q.setChapter(readIfPresent(rs, "chapter"));
-        q.setExplanation(readIfPresent(rs, "explanation"));
-        q.setObsidianSourcePath(readIfPresent(rs, "obsidian_source_path"));
-        return q;
+        Question question = new Question();
+        question.setQuestionId(readInt(rs, "question_id", "id"));
+        question.setQuestionText(rs.getString("content"));
+        question.setSubject(readIfPresent(rs, "subject"));
+        question.setChapter(readIfPresent(rs, "chapter"));
+        question.setExplanation(readIfPresent(rs, "explanation"));
+        question.setObsidianSourcePath(readIfPresent(rs, "obsidian_source_path"));
+        question.setDifficulty(resolveDifficulty(rs));
+        return question;
+    }
+
+    private DifficultyLevel resolveDifficulty(ResultSet rs) throws SQLException {
+        String difficultyText = readIfPresent(rs, "difficulty");
+        if (difficultyText != null && !difficultyText.isBlank()) {
+            return parseDifficulty(difficultyText);
+        }
+
+        try {
+            int level = rs.getInt("level");
+            if (!rs.wasNull()) {
+                return switch (level) {
+                    case 1 -> DifficultyLevel.NHAN_BIET;
+                    case 2 -> DifficultyLevel.THONG_HIEU;
+                    case 3 -> DifficultyLevel.VAN_DUNG;
+                    case 4 -> DifficultyLevel.VAN_DUNG_CAO;
+                    default -> null;
+                };
+            }
+        } catch (SQLException ignored) {
+            return null;
+        }
+
+        return null;
+    }
+
+    private DifficultyLevel parseDifficulty(String difficulty) {
+        String normalized = normalizeText(difficulty);
+        return switch (normalized) {
+            case "nhan biet" -> DifficultyLevel.NHAN_BIET;
+            case "thong hieu" -> DifficultyLevel.THONG_HIEU;
+            case "van dung" -> DifficultyLevel.VAN_DUNG;
+            case "van dung cao" -> DifficultyLevel.VAN_DUNG_CAO;
+            default -> null;
+        };
+    }
+
+    private int mapDifficultyToLevel(String difficulty) {
+        String normalized = normalizeText(difficulty);
+        return switch (normalized) {
+            case "nhan biet" -> 1;
+            case "thong hieu" -> 2;
+            case "van dung" -> 3;
+            case "van dung cao" -> 4;
+            default -> throw new IllegalArgumentException("Do kho khong hop le: " + difficulty);
+        };
+    }
+
+    private boolean difficultyMatches(String dbValue, String selectedValue) {
+        return normalizeText(dbValue).equals(normalizeText(selectedValue));
+    }
+
+    private String normalizeText(String value) {
+        if (value == null) {
+            return "";
+        }
+
+        String normalized = Normalizer.normalize(value, Normalizer.Form.NFD)
+                .replaceAll("\\p{M}+", "")
+                .replace('đ', 'd')
+                .replace('Đ', 'D')
+                .trim()
+                .toLowerCase();
+
+        return normalized.replaceAll("\\s+", " ");
+    }
+
+    private String resolveQuestionIdColumn() {
+        try {
+            return hasColumn("questions", "question_id") ? "question_id" : "id";
+        } catch (SQLException e) {
+            return "id";
+        }
+    }
+
+    private int readInt(ResultSet rs, String preferredColumn, String fallbackColumn) throws SQLException {
+        try {
+            return rs.getInt(preferredColumn);
+        } catch (SQLException ignored) {
+            return rs.getInt(fallbackColumn);
+        }
+    }
+
+    private boolean hasColumn(String tableName, String columnName) throws SQLException {
+        DatabaseMetaData metaData = connection.getMetaData();
+        try (ResultSet rs = metaData.getColumns(null, null, tableName, columnName)) {
+            return rs.next();
+        }
     }
 
     private String readIfPresent(ResultSet rs, String columnName) {
