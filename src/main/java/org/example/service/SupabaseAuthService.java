@@ -9,17 +9,24 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
- * Dong bo account nguoi dung len Supabase Auth.
- *
- * <p>Service nay chi dam bao user da duoc tao trong auth.users.
- * Trigger handle_new_auth_user trong schema Supabase se tu tao user_profiles.</p>
+ * Tich hop Supabase Auth qua REST API.
  */
 public class SupabaseAuthService {
 
     private static final Duration CONNECT_TIMEOUT = Duration.ofSeconds(10);
     private static final Duration REQUEST_TIMEOUT = Duration.ofSeconds(20);
+    private static final Pattern USER_BLOCK_PATTERN =
+            Pattern.compile("\"user\"\\s*:\\s*\\{(.*?)\\}", Pattern.DOTALL);
+    private static final Pattern ID_PATTERN =
+            Pattern.compile("\"id\"\\s*:\\s*\"([^\"]+)\"");
+    private static final Pattern EMAIL_PATTERN =
+            Pattern.compile("\"email\"\\s*:\\s*\"([^\"]+)\"");
+    private static final Pattern ACCESS_TOKEN_PATTERN =
+            Pattern.compile("\"access_token\"\\s*:\\s*\"([^\"]+)\"");
 
     private final HttpClient httpClient;
     private final String supabaseUrl;
@@ -37,16 +44,37 @@ public class SupabaseAuthService {
         return !supabaseUrl.isBlank() && !supabaseAnonKey.isBlank();
     }
 
-    public SyncResult ensureUserSaved(User user, String rawPassword) {
+    public AuthResult signIn(String email, String rawPassword) {
         if (!isConfigured()) {
-            return SyncResult.failure("Chua cau hinh SUPABASE_URL va SUPABASE_ANON_KEY.");
+            return AuthResult.failure("Chua cau hinh SUPABASE_URL va SUPABASE_ANON_KEY.");
         }
 
-        try {
-            String requestBody = buildSignupBody(user, rawPassword);
+        String requestBody = "{"
+                + "\"email\":\"" + escapeJson(email == null ? "" : email.trim().toLowerCase()) + "\","
+                + "\"password\":\"" + escapeJson(rawPassword) + "\""
+                + "}";
 
+        return executeAuthRequest("/auth/v1/token?grant_type=password", requestBody);
+    }
+
+    public AuthResult signUp(User user, String rawPassword) {
+        if (!isConfigured()) {
+            return AuthResult.failure("Chua cau hinh SUPABASE_URL va SUPABASE_ANON_KEY.");
+        }
+
+        String requestBody = buildSignupBody(user, rawPassword);
+        return executeAuthRequest("/auth/v1/signup", requestBody);
+    }
+
+    public SyncResult ensureUserSaved(User user, String rawPassword) {
+        AuthResult authResult = signUp(user, rawPassword);
+        return authResult.isSuccess() ? SyncResult.success() : SyncResult.failure(authResult.getMessage());
+    }
+
+    private AuthResult executeAuthRequest(String path, String requestBody) {
+        try {
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(trimTrailingSlash(supabaseUrl) + "/auth/v1/signup"))
+                    .uri(URI.create(trimTrailingSlash(supabaseUrl) + path))
                     .header("apikey", supabaseAnonKey)
                     .header("Content-Type", "application/json; charset=UTF-8")
                     .header("Accept", "application/json")
@@ -59,12 +87,12 @@ public class SupabaseAuthService {
             String body = response.body() == null ? "" : response.body();
 
             if (statusCode >= 200 && statusCode < 300) {
-                return SyncResult.success();
+                return AuthResult.success(extractUserId(body), extractEmail(body), hasAccessToken(body), body);
             }
 
-            return SyncResult.failure("Supabase tra ve loi " + statusCode + ": " + shorten(body));
+            return AuthResult.failure("Supabase tra ve loi " + statusCode + ": " + shorten(body));
         } catch (Exception ex) {
-            return SyncResult.failure("Khong the dong bo Supabase: " + ex.getMessage());
+            return AuthResult.failure("Khong the goi Supabase Auth: " + ex.getMessage());
         }
     }
 
@@ -77,6 +105,28 @@ public class SupabaseAuthService {
                 + "\"full_name\":\"" + escapeJson(normalizeFullName(user)) + "\""
                 + "}"
                 + "}";
+    }
+
+    private String extractUserId(String body) {
+        Matcher userBlockMatcher = USER_BLOCK_PATTERN.matcher(body);
+        if (userBlockMatcher.find()) {
+            Matcher idMatcher = ID_PATTERN.matcher(userBlockMatcher.group(1));
+            if (idMatcher.find()) {
+                return idMatcher.group(1);
+            }
+        }
+
+        Matcher idMatcher = ID_PATTERN.matcher(body);
+        return idMatcher.find() ? idMatcher.group(1) : "";
+    }
+
+    private String extractEmail(String body) {
+        Matcher emailMatcher = EMAIL_PATTERN.matcher(body);
+        return emailMatcher.find() ? emailMatcher.group(1) : "";
+    }
+
+    private boolean hasAccessToken(String body) {
+        return ACCESS_TOKEN_PATTERN.matcher(body).find();
     }
 
     private String normalizeEmail(User user) {
@@ -147,6 +197,63 @@ public class SupabaseAuthService {
 
         String normalized = value.replace('\n', ' ').replace('\r', ' ').trim();
         return normalized.length() <= 220 ? normalized : normalized.substring(0, 220) + "...";
+    }
+
+    public static final class AuthResult {
+        private final boolean success;
+        private final String message;
+        private final String userId;
+        private final String email;
+        private final boolean sessionAvailable;
+        private final String rawBody;
+
+        private AuthResult(
+                boolean success,
+                String message,
+                String userId,
+                String email,
+                boolean sessionAvailable,
+                String rawBody
+        ) {
+            this.success = success;
+            this.message = message;
+            this.userId = userId;
+            this.email = email;
+            this.sessionAvailable = sessionAvailable;
+            this.rawBody = rawBody;
+        }
+
+        public static AuthResult success(String userId, String email, boolean sessionAvailable, String rawBody) {
+            return new AuthResult(true, "", userId, email, sessionAvailable, rawBody);
+        }
+
+        public static AuthResult failure(String message) {
+            return new AuthResult(false, message, "", "", false, "");
+        }
+
+        public boolean isSuccess() {
+            return success;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public String getUserId() {
+            return userId;
+        }
+
+        public String getEmail() {
+            return email;
+        }
+
+        public boolean isSessionAvailable() {
+            return sessionAvailable;
+        }
+
+        public String getRawBody() {
+            return rawBody;
+        }
     }
 
     public static final class SyncResult {

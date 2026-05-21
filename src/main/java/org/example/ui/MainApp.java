@@ -56,6 +56,8 @@ public class MainApp extends Application {
     private UserDAO userDAO;
     private QuizController quizController;
     private SupabaseAuthService supabaseAuthService;
+    private String databaseInitError;
+    private String lastAuthError;
 
     private User currentUser;
     private WebEngine authEngine;
@@ -78,6 +80,8 @@ public class MainApp extends Application {
     }
 
     private void initializeDependencies() {
+        supabaseAuthService = new SupabaseAuthService();
+
         try {
             connection = DatabaseConnection.getInstance();
             questionDAO = new QuestionDAO(connection);
@@ -85,9 +89,16 @@ public class MainApp extends Application {
             examDAO = new ExamDAO(connection);
             userDAO = new UserDAO(connection);
             quizController = new QuizController(examDAO, questionDAO, answerDAO);
-            supabaseAuthService = new SupabaseAuthService();
+            databaseInitError = null;
         } catch (SQLException ex) {
-            throw new RuntimeException("Khong the khoi tao ket noi SQLite: " + ex.getMessage(), ex);
+            connection = null;
+            questionDAO = null;
+            answerDAO = null;
+            examDAO = null;
+            userDAO = null;
+            quizController = null;
+            databaseInitError = ex.getMessage();
+            System.err.println("Khoi tao DB bi bo qua: " + databaseInitError);
         }
     }
 
@@ -101,6 +112,7 @@ public class MainApp extends Application {
         authEngine.getLoadWorker().stateProperty().addListener((obs, oldState, newState) -> {
             if (newState == Worker.State.SUCCEEDED) {
                 attachJavaBridge();
+                showDatabaseWarningIfNeeded();
             }
         });
 
@@ -169,21 +181,17 @@ public class MainApp extends Application {
             return;
         }
 
-        User authenticatedUser = userDAO.authenticate(safeIdentity, safePassword);
-        if (authenticatedUser == null) {
-            runScript("showLoginStatus(" + quoteJs("Dang nhap that bai. Sai thong tin dang nhap hoac mat khau.") + ", false);");
-            return;
-        }
-
         if (!supabaseAuthService.isConfigured()) {
-            runScript("showLoginStatus(" + quoteJs("Chua cau hinh Supabase env cho ung dung Java.") + ", false);");
+            runScript("showLoginStatus(" + quoteJs("Chua cau hinh Supabase Auth cho ung dung Java.") + ", false);");
             return;
         }
 
-        SupabaseAuthService.SyncResult loginSyncResult =
-                supabaseAuthService.ensureUserSaved(authenticatedUser, safePassword);
-        if (!loginSyncResult.isSuccess()) {
-            runScript("showLoginStatus(" + quoteJs(loginSyncResult.getMessage()) + ", false);");
+        User authenticatedUser = authenticateUser(safeIdentity, safePassword);
+        if (authenticatedUser == null) {
+            String errorMessage = lastAuthError == null || lastAuthError.isBlank()
+                    ? "Dang nhap that bai. Sai thong tin dang nhap hoac mat khau."
+                    : lastAuthError;
+            runScript("showLoginStatus(" + quoteJs(errorMessage) + ", false);");
             return;
         }
 
@@ -216,7 +224,7 @@ public class MainApp extends Application {
             return;
         }
         if (!supabaseAuthService.isConfigured()) {
-            runScript("showRegisterStatus(" + quoteJs("Chua cau hinh Supabase env cho ung dung Java.") + ", false);");
+            runScript("showRegisterStatus(" + quoteJs("Chua cau hinh Supabase Auth cho ung dung Java.") + ", false);");
             return;
         }
 
@@ -227,22 +235,31 @@ public class MainApp extends Application {
         newUser.setFullName(safeFullName);
         newUser.setRole("student");
 
-        boolean registered = userDAO.register(newUser);
-        if (!registered) {
-            runScript("showRegisterStatus(" + quoteJs("Dang ky that bai. Email co the da ton tai.") + ", false);");
+        SupabaseAuthService.AuthResult registerAuthResult = supabaseAuthService.signUp(newUser, safePassword);
+        if (!registerAuthResult.isSuccess()) {
+            runScript("showRegisterStatus(" + quoteJs(registerAuthResult.getMessage()) + ", false);");
             return;
         }
 
-        SupabaseAuthService.SyncResult registerSyncResult =
-                supabaseAuthService.ensureUserSaved(newUser, safePassword);
-        if (!registerSyncResult.isSuccess()) {
-            userDAO.deleteByEmail(safeEmail);
-            runScript("showRegisterStatus(" + quoteJs(registerSyncResult.getMessage()) + ", false);");
+        if (registerAuthResult.getUserId() != null && !registerAuthResult.getUserId().isBlank()) {
+            newUser.setUserId(registerAuthResult.getUserId());
+        }
+        if (registerAuthResult.getEmail() != null && !registerAuthResult.getEmail().isBlank()) {
+            newUser.setEmail(registerAuthResult.getEmail());
+            newUser.setUsername(registerAuthResult.getEmail());
+        }
+
+        if (userDAO != null && !userDAO.register(newUser)) {
+            runScript("showRegisterStatus(" + quoteJs("Tao auth user thanh cong nhung khong dong bo duoc user_profiles.") + ", false);");
             return;
         }
+
+        String registerMessage = registerAuthResult.isSessionAvailable()
+                ? "Dang ky thanh cong."
+                : "Dang ky thanh cong. Neu project dang bat Confirm email, hay mo email de xac thuc truoc khi dang nhap.";
 
         runScript("handleRegisterSuccess("
-                + quoteJs("Dang ky thanh cong.")
+                + quoteJs(registerMessage)
                 + ", "
                 + quoteJs(safeEmail)
                 + ");");
@@ -272,7 +289,11 @@ public class MainApp extends Application {
         String displayName = currentUser.getFullName() != null && !currentUser.getFullName().isBlank()
                 ? currentUser.getFullName()
                 : currentUser.getUsername();
-        lblWelcome.setText("Xin chao, " + displayName + "!\nVai tro hien tai: " + currentUser.getRole());
+        StringBuilder message = new StringBuilder("Xin chao, " + displayName + "!\nVai tro hien tai: " + currentUser.getRole());
+        if (databaseInitError != null && !databaseInitError.isBlank()) {
+            message.append("\nChe do hien tai: chi dang nhap/doi mat khau Supabase, tinh nang de thi can cau hinh DB.");
+        }
+        lblWelcome.setText(message.toString());
     }
 
     private void logout() {
@@ -283,6 +304,17 @@ public class MainApp extends Application {
 
     private void openExamScene(int examId) {
         try {
+            if (!ensureDataAccessAvailable()) {
+                Label errorLabel = new Label("Chua the mo de thi vi ket noi PostgreSQL/Supabase chua san sang.\n"
+                        + "Chi tiet: " + databaseInitError);
+                errorLabel.setWrapText(true);
+                VBox errorRoot = new VBox(16, errorLabel);
+                errorRoot.setAlignment(Pos.CENTER);
+                errorRoot.setPadding(new Insets(24));
+                quizScene.setRoot(errorRoot);
+                primaryStage.setScene(quizScene);
+                return;
+            }
             quizController.startExam(examId);
             ExamView examView = new ExamView(quizController, primaryStage);
             quizScene.setRoot(examView);
@@ -315,5 +347,96 @@ public class MainApp extends Application {
         public void register(String fullName, String email, String password, String confirmPassword) {
             Platform.runLater(() -> handleRegister(fullName, email, password, confirmPassword));
         }
+    }
+
+    private User authenticateUser(String identity, String password) {
+        lastAuthError = "";
+
+        if (userDAO != null) {
+            User dbUser = userDAO.authenticate(identity, password);
+            if (dbUser != null) {
+                return dbUser;
+            }
+        }
+
+        if (!EMAIL_PATTERN.matcher(identity).matches()) {
+            if (userDAO == null) {
+                lastAuthError = "Hien tai app chua ket noi duoc PostgreSQL, nen ban phai dang nhap bang email Supabase thay vi username.";
+            }
+            return null;
+        }
+
+        SupabaseAuthService.AuthResult authResult = supabaseAuthService.signIn(identity, password);
+        if (!authResult.isSuccess()) {
+            lastAuthError = translateAuthError(authResult.getMessage());
+            return null;
+        }
+
+        if (userDAO != null && authResult.getUserId() != null && !authResult.getUserId().isBlank()) {
+            return userDAO.findByUserId(authResult.getUserId()).orElseGet(() -> buildAuthOnlyUser(authResult));
+        }
+
+        return buildAuthOnlyUser(authResult);
+    }
+
+    private String translateAuthError(String authMessage) {
+        if (authMessage == null || authMessage.isBlank()) {
+            return "Dang nhap that bai.";
+        }
+
+        String normalized = authMessage.toLowerCase();
+        if (normalized.contains("email_not_confirmed")) {
+            return "Tai khoan chua xac thuc email. Hay mo hop thu va xac nhan email truoc khi dang nhap.";
+        }
+        if (normalized.contains("invalid login credentials")) {
+            return "Email hoac mat khau khong dung.";
+        }
+        if (normalized.contains("email rate limit exceeded") || normalized.contains("over_email_send_rate_limit")) {
+            return "Supabase dang gioi han tan suat gui email. Hay doi mot luc roi thu lai.";
+        }
+
+        return authMessage;
+    }
+
+    private User buildAuthOnlyUser(SupabaseAuthService.AuthResult authResult) {
+        User user = new User();
+        user.setUserId(authResult.getUserId());
+        user.setEmail(authResult.getEmail());
+        user.setUsername(authResult.getEmail());
+        user.setFullName(authResult.getEmail());
+        user.setRole("student");
+        user.setStatus("active");
+        return user;
+    }
+
+    private boolean ensureDataAccessAvailable() {
+        if (quizController != null) {
+            return true;
+        }
+
+        try {
+            connection = DatabaseConnection.getInstance();
+            questionDAO = new QuestionDAO(connection);
+            answerDAO = new AnswerDAO(connection);
+            examDAO = new ExamDAO(connection);
+            userDAO = new UserDAO(connection);
+            quizController = new QuizController(examDAO, questionDAO, answerDAO);
+            databaseInitError = null;
+            return true;
+        } catch (SQLException ex) {
+            databaseInitError = ex.getMessage();
+            return false;
+        }
+    }
+
+    private void showDatabaseWarningIfNeeded() {
+        if (databaseInitError == null || databaseInitError.isBlank()) {
+            return;
+        }
+
+        runScript("showLoginStatus("
+                + quoteJs("Canh bao: chua cau hinh xong PostgreSQL/Supabase cho du lieu de thi. "
+                + "Dang nhap Supabase van co the hoat dong neu dung email. Chi tiet: " + databaseInitError)
+                + ", false);");
     }
 }
