@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -17,9 +18,14 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.example.controller.ExamController;
+import org.example.dao.BookmarkDAO;
+import org.example.util.DatabaseConnection;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 public class ReviewSummaryView extends BorderPane {
@@ -27,9 +33,12 @@ public class ReviewSummaryView extends BorderPane {
     private final Stage primaryStage;
     private final Scene previousScene;
     private final ExamController examController;
+    private final int currentUserId;
     private final ExamController.ExamResult examResult;
     private final List<ExamController.ReviewQuestionSummary> reviewItems;
     private final Map<Integer, String> aiExplanationsMap;
+    private final BookmarkDAO bookmarkDAO;
+    private final Set<Integer> bookmarkedQuestionIds;
 
     private final VBox contentBox = new VBox(16);
     private final VBox aiInsightHost = new VBox();
@@ -40,15 +49,21 @@ public class ReviewSummaryView extends BorderPane {
     public ReviewSummaryView(Stage primaryStage,
                              Scene previousScene,
                              ExamController examController,
+                             int currentUserId,
                              ExamController.ExamResult examResult,
                              List<ExamController.ReviewQuestionSummary> reviewItems,
                              Map<Integer, String> aiExplanationsMap) {
         this.primaryStage = primaryStage;
         this.previousScene = previousScene;
         this.examController = examController;
+        this.currentUserId = currentUserId;
         this.examResult = examResult;
         this.reviewItems = reviewItems;
         this.aiExplanationsMap = aiExplanationsMap;
+        this.bookmarkDAO = createBookmarkDao();
+        this.bookmarkedQuestionIds = bookmarkDAO != null
+                ? bookmarkDAO.getBookmarkedQuestionIds(currentUserId)
+                : new java.util.HashSet<>();
         buildUi();
     }
 
@@ -147,15 +162,29 @@ public class ReviewSummaryView extends BorderPane {
         correctAnswerLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #0f766e;");
 
         ToggleButton bookmarkButton = new ToggleButton("Danh dau cau hoi");
-        bookmarkButton.setStyle(defaultBookmarkStyle());
+        boolean initiallyBookmarked = bookmarkedQuestionIds.contains(item.getQuestionId());
+        bookmarkButton.setSelected(initiallyBookmarked);
+        bookmarkButton.setText(initiallyBookmarked ? "Da danh dau" : "Danh dau cau hoi");
+        bookmarkButton.setStyle(initiallyBookmarked ? activeBookmarkStyle() : defaultBookmarkStyle());
         bookmarkButton.setOnAction(event -> {
             if (bookmarkButton.isSelected()) {
-                bookmarkButton.setText("Da danh dau");
-                bookmarkButton.setStyle(activeBookmarkStyle());
-                saveBookmark(item.getQuestionId());
+                if (saveBookmark(item.getQuestionId())) {
+                    bookmarkButton.setText("Da danh dau");
+                    bookmarkButton.setStyle(activeBookmarkStyle());
+                    bookmarkedQuestionIds.add(item.getQuestionId());
+                } else {
+                    bookmarkButton.setSelected(false);
+                    showBookmarkError("Khong the danh dau cau hoi nay.");
+                }
             } else {
-                bookmarkButton.setText("Danh dau cau hoi");
-                bookmarkButton.setStyle(defaultBookmarkStyle());
+                if (removeBookmark(item.getQuestionId())) {
+                    bookmarkButton.setText("Danh dau cau hoi");
+                    bookmarkButton.setStyle(defaultBookmarkStyle());
+                    bookmarkedQuestionIds.remove(item.getQuestionId());
+                } else {
+                    bookmarkButton.setSelected(true);
+                    showBookmarkError("Khong the bo danh dau cau hoi nay.");
+                }
             }
         });
 
@@ -357,7 +386,29 @@ public class ReviewSummaryView extends BorderPane {
                 "-fx-border-radius: 12;";
     }
 
-    private void saveBookmark(int questionId) {
-        System.out.println("TODO save bookmark for questionId = " + questionId);
+    private BookmarkDAO createBookmarkDao() {
+        try {
+            Connection connection = DatabaseConnection.getInstance();
+            return new BookmarkDAO(connection);
+        } catch (SQLException e) {
+            return null;
+        }
+    }
+
+    private boolean saveBookmark(int questionId) {
+        return bookmarkDAO != null && bookmarkDAO.saveBookmark(currentUserId, questionId);
+    }
+
+    private boolean removeBookmark(int questionId) {
+        return bookmarkDAO != null && bookmarkDAO.removeBookmark(currentUserId, questionId);
+    }
+
+    private void showBookmarkError(String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.initOwner(primaryStage);
+        alert.setTitle("Loi");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 }

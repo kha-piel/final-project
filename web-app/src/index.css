@@ -1,11 +1,10 @@
+@import "tailwindcss";
+
 :root {
   font-family: "Segoe UI", system-ui, sans-serif;
   line-height: 1.5;
   font-weight: 400;
   color: #112138;
-  background:
-    radial-gradient(circle at top left, rgba(57, 132, 255, 0.18), transparent 28%),
-    linear-gradient(180deg, #f7fbff 0%, #eef5ff 100%);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -24,6 +23,9 @@ body,
 
 body {
   margin: 0;
+  background:
+    radial-gradient(circle at top left, rgba(57, 132, 255, 0.18), transparent 28%),
+    linear-gradient(180deg, #f7fbff 0%, #eef5ff 100%);
 }
 
 a {

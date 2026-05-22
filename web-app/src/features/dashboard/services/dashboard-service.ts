@@ -3,6 +3,7 @@ import type {
   AttemptHistoryItem,
   DraftAnswer,
   DraftQuestion,
+  QuestionType,
   SubjectOption,
   TopicOption,
 } from '../types/dashboard-types'
@@ -34,6 +35,7 @@ type QuestionRow = {
   topic_id: string
   content: string
   level: number
+  question_type: QuestionType
   explanation: string | null
   obsidian_source_path: string | null
   answers: AnswerRow[] | null
@@ -108,17 +110,23 @@ export async function fetchTopicsBySubjectId(subjectId: string): Promise<TopicOp
 export async function fetchQuestionsForCustomExam(
   topicId: string,
   level: number,
+  questionType: 'all' | QuestionType,
 ): Promise<DraftQuestion[]> {
   const supabase = getSupabaseBrowserClient()
-  const { data, error } = await supabase
+  let query = supabase
     .from('questions')
     .select(
-      'question_id, topic_id, content, level, explanation, obsidian_source_path, answers(answer_id, option_label, content, is_correct, explanation, display_order)',
+      'question_id, topic_id, content, level, question_type, explanation, obsidian_source_path, answers(answer_id, option_label, content, is_correct, explanation, display_order)',
     )
     .eq('topic_id', topicId)
     .eq('level', level)
     .eq('is_active', true)
-    .returns<QuestionRow[]>()
+
+  if (questionType !== 'all') {
+    query = query.eq('question_type', questionType)
+  }
+
+  const { data, error } = await query.returns<QuestionRow[]>()
 
   if (error) {
     throw new Error(`Khong the tai cau hoi cho de tu chon: ${error.message}`)
@@ -129,6 +137,7 @@ export async function fetchQuestionsForCustomExam(
     topicId: question.topic_id,
     content: question.content,
     level: question.level,
+    questionType: question.question_type,
     explanation: question.explanation,
     obsidianSourcePath: question.obsidian_source_path,
     answers: normalizeAnswers(question.answers),

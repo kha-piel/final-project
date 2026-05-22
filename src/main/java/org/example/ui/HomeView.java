@@ -13,7 +13,12 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.example.controller.DashboardController;
+import org.example.dao.BookmarkDAO;
 import org.example.model.User;
+import org.example.util.DatabaseConnection;
+
+import java.sql.Connection;
+import java.sql.SQLException;
 
 public class HomeView extends BorderPane {
 
@@ -86,11 +91,11 @@ public class HomeView extends BorderPane {
                 "#2563eb",
                 this::openDashboard
         );
-        Button profileCard = createFeatureCard(
-                "Ho so hoc sinh",
-                "Xem thong tin tai khoan, muc tieu hoc tap va tien do ca nhan.",
+        Button bookmarkCard = createFeatureCard(
+                "Cau da danh dau",
+                "Mo lai nhung cau ban muon xem ky hon sau khi nop bai de on tap co chu dich.",
                 "#7c3aed",
-                () -> showComingSoon()
+                this::openBookmarkedQuestions
         );
         Button historyCard = createFeatureCard(
                 "Lich su lam bai",
@@ -101,16 +106,16 @@ public class HomeView extends BorderPane {
 
         featureGrid.add(examCard, 0, 0);
         featureGrid.add(reviewCard, 1, 0);
-        featureGrid.add(profileCard, 0, 1);
+        featureGrid.add(bookmarkCard, 0, 1);
         featureGrid.add(historyCard, 1, 1);
 
         GridPane.setHgrow(examCard, Priority.ALWAYS);
         GridPane.setHgrow(reviewCard, Priority.ALWAYS);
-        GridPane.setHgrow(profileCard, Priority.ALWAYS);
+        GridPane.setHgrow(bookmarkCard, Priority.ALWAYS);
         GridPane.setHgrow(historyCard, Priority.ALWAYS);
         GridPane.setVgrow(examCard, Priority.ALWAYS);
         GridPane.setVgrow(reviewCard, Priority.ALWAYS);
-        GridPane.setVgrow(profileCard, Priority.ALWAYS);
+        GridPane.setVgrow(bookmarkCard, Priority.ALWAYS);
         GridPane.setVgrow(historyCard, Priority.ALWAYS);
 
         setTop(topBar);
@@ -181,12 +186,34 @@ public class HomeView extends BorderPane {
         stage.setScene(dashboardScene);
     }
 
+    private void openBookmarkedQuestions() {
+        try {
+            Connection connection = DatabaseConnection.getInstance();
+            BookmarkDAO bookmarkDAO = new BookmarkDAO(connection);
+            Scene homeScene = stage.getScene();
+            BookmarkedQuestionsView bookmarkedQuestionsView = new BookmarkedQuestionsView(
+                    stage,
+                    () -> stage.setScene(homeScene),
+                    bookmarkDAO,
+                    currentUser.getId()
+            );
+            Scene bookmarksScene = new Scene(bookmarkedQuestionsView, WINDOW_WIDTH, WINDOW_HEIGHT);
+            stage.setScene(bookmarksScene);
+        } catch (SQLException e) {
+            showAlertMessage("Khong the mo danh sach cau da danh dau: " + e.getMessage(), Alert.AlertType.ERROR);
+        }
+    }
+
     private void showComingSoon() {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        showAlertMessage("Tinh nang dang duoc phat trien!", Alert.AlertType.INFORMATION);
+    }
+
+    private void showAlertMessage(String message, Alert.AlertType alertType) {
+        Alert alert = new Alert(alertType);
         alert.initOwner(stage);
         alert.setTitle("Thong bao");
         alert.setHeaderText(null);
-        alert.setContentText("Tinh nang dang duoc phat trien!");
+        alert.setContentText(message);
         alert.showAndWait();
     }
 }

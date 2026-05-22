@@ -12,6 +12,14 @@ type ExplainResponse = {
   explanation: string
 }
 
+type WeaknessAnalysisItem = {
+  questionId: string
+  questionContent: string
+  topic: string
+  userAnswer: string
+  correctAnswer: string
+}
+
 const AUTO_WRONG_PROMPT = 'Hoc sinh chon sai cau nay. Hay giai thich giup toi!'
 
 export async function requestAutoExplanation(input: {
@@ -41,6 +49,38 @@ export async function sendExamChatMessage(input: {
     correctAnswer: input.correctAnswer,
     obsidianSourcePath: input.obsidianSourcePath ?? '',
   })
+}
+
+export async function requestWeaknessAnalysis(items: WeaknessAnalysisItem[]) {
+  if (!env.aiApiBaseUrl) {
+    throw new Error(
+      'Missing VITE_AI_API_BASE_URL. Copy web-app/.env.example to web-app/.env.local before using AI chat.',
+    )
+  }
+
+  const response = await fetch(`${env.aiApiBaseUrl}/api/analyze-weaknesses`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      wrong_questions: items.map((item) => ({
+        question_id: Number(item.questionId) || 0,
+        question_content: item.questionContent,
+        topic: item.topic,
+        user_answer: item.userAnswer,
+        correct_answer: item.correctAnswer,
+      })),
+    }),
+  })
+
+  if (!response.ok) {
+    const errorText = await response.text()
+    throw new Error(errorText || `AI backend tra ve loi HTTP ${response.status}.`)
+  }
+
+  const data = (await response.json()) as ExplainResponse
+  return data.explanation
 }
 
 async function requestExplanation(input: ExplainRequest) {

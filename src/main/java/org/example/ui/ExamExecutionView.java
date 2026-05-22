@@ -36,6 +36,7 @@ public class ExamExecutionView extends BorderPane {
     private final ExamController examController;
     private final Stage primaryStage;
     private final Scene previousScene;
+    private final int currentUserId;
 
     private final Label progressLabel = new Label();
     private final Label timerLabel = new Label();
@@ -60,10 +61,11 @@ public class ExamExecutionView extends BorderPane {
     private int currentIndex;
     private boolean isGeneratingAI = false;
 
-    public ExamExecutionView(ExamController examController, Stage primaryStage, Scene previousScene) {
+    public ExamExecutionView(ExamController examController, Stage primaryStage, Scene previousScene, int currentUserId) {
         this.examController = examController;
         this.primaryStage = primaryStage;
         this.previousScene = previousScene;
+        this.currentUserId = currentUserId;
         this.currentIndex = 0;
 
         buildUi();
@@ -475,6 +477,7 @@ public class ExamExecutionView extends BorderPane {
                 primaryStage,
                 previousScene,
                 examController,
+                currentUserId,
                 result,
                 examController.buildReviewSummary(),
                 examController.getAiExplanationsMap()

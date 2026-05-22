@@ -6,7 +6,7 @@ import {
   type ExamSubmissionSummary,
 } from '../core/exam-session'
 import type { ExamDraftSession } from '../store/exam-draft-store'
-import type { DraftQuestion } from '../../dashboard/types/dashboard-types'
+import type { DraftQuestion, QuestionType } from '../../dashboard/types/dashboard-types'
 
 type PersistAttemptInput = {
   userId: string
@@ -80,6 +80,7 @@ type InProgressAttemptRow = {
                     topic_id: string
                     content: string
                     level: number
+                    question_type: QuestionType
                     explanation: string | null
                     obsidian_source_path: string | null
                     answers:
@@ -98,6 +99,7 @@ type InProgressAttemptRow = {
                     topic_id: string
                     content: string
                     level: number
+                    question_type: QuestionType
                     explanation: string | null
                     obsidian_source_path: string | null
                     answers:
@@ -127,6 +129,7 @@ type InProgressAttemptRow = {
                     topic_id: string
                     content: string
                     level: number
+                    question_type: QuestionType
                     explanation: string | null
                     obsidian_source_path: string | null
                     answers:
@@ -145,6 +148,7 @@ type InProgressAttemptRow = {
                     topic_id: string
                     content: string
                     level: number
+                    question_type: QuestionType
                     explanation: string | null
                     obsidian_source_path: string | null
                     answers:
@@ -402,7 +406,7 @@ export async function restoreInProgressAttempt(attemptId: string): Promise<Resto
   const { data, error } = await supabase
     .from('student_attempts')
     .select(
-      'attempt_id, exam_id, started_at, metadata, exams(title, duration_minutes, exam_questions(question_order, question:questions(question_id, topic_id, content, level, explanation, obsidian_source_path, answers(answer_id, option_label, content, is_correct, explanation, display_order)))), attempt_answers(question_id, selected_answer_id, metadata)',
+      'attempt_id, exam_id, started_at, metadata, exams(title, duration_minutes, exam_questions(question_order, question:questions(question_id, topic_id, content, level, question_type, explanation, obsidian_source_path, answers(answer_id, option_label, content, is_correct, explanation, display_order)))), attempt_answers(question_id, selected_answer_id, metadata)',
     )
     .eq('attempt_id', attemptId)
     .eq('status', 'in_progress')
@@ -810,6 +814,7 @@ function normalizeQuestion(
         topic_id: string
         content: string
         level: number
+        question_type: QuestionType
         explanation: string | null
         obsidian_source_path: string | null
         answers:
@@ -834,6 +839,7 @@ function normalizeQuestion(
     topicId: row.topic_id,
     content: row.content,
     level: row.level,
+    questionType: row.question_type,
     explanation: row.explanation,
     obsidianSourcePath: row.obsidian_source_path,
     answers: [...(row.answers ?? [])]

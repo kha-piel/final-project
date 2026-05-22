@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
-import { NavLinks } from '../../components/ui/NavLinks'
 import { PageCard } from '../../components/ui/PageCard'
 import { useAuthSessionStore } from '../../features/auth/store/auth-session-store'
 import {
@@ -143,7 +142,6 @@ export function ExamPage() {
   if (!session) {
     return (
       <>
-        <NavLinks />
         <PageCard
           title="Exam Session Not Found"
           description="Session nay hien khong ton tai trong local app state."
@@ -159,7 +157,6 @@ export function ExamPage() {
   if (!runtime || !currentQuestion) {
     return (
       <>
-        <NavLinks />
         <PageCard
           title={session.title}
           description="Dang khoi tao exam runtime session..."
@@ -340,7 +337,6 @@ export function ExamPage() {
 
   return (
     <>
-      <NavLinks />
       <PageCard
         title={session.title}
         description="Buoc 7 da co exam engine co ban: current question, timer, chon dap an, next/prev, check dung sai va khoa cau."

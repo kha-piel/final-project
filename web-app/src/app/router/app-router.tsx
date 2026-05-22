@@ -13,8 +13,21 @@ const RegisterPage = lazy(() =>
 const HomePage = lazy(() =>
   import('../../pages/home/HomePage').then((module) => ({ default: module.HomePage })),
 )
+const PracticeHubPage = lazy(() =>
+  import('../../pages/practice/PracticeHubPage').then((module) => ({
+    default: module.PracticeHubPage,
+  })),
+)
 const DashboardPage = lazy(() =>
   import('../../pages/dashboard/DashboardPage').then((module) => ({ default: module.DashboardPage })),
+)
+const HistoryPage = lazy(() =>
+  import('../../pages/history/HistoryPage').then((module) => ({ default: module.HistoryPage })),
+)
+const StudentProfilePage = lazy(() =>
+  import('../../pages/profile/StudentProfilePage').then((module) => ({
+    default: module.StudentProfilePage,
+  })),
 )
 const ExamPage = lazy(() =>
   import('../../pages/exam/ExamPage').then((module) => ({ default: module.ExamPage })),
@@ -61,10 +74,34 @@ export const appRouter = createBrowserRouter([
         ),
       },
       {
+        path: 'practice',
+        element: (
+          <ProtectedRoute>
+            {withSuspense(<PracticeHubPage />)}
+          </ProtectedRoute>
+        ),
+      },
+      {
         path: 'dashboard',
         element: (
           <ProtectedRoute>
             {withSuspense(<DashboardPage />)}
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'history',
+        element: (
+          <ProtectedRoute>
+            {withSuspense(<HistoryPage />)}
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'profile',
+        element: (
+          <ProtectedRoute>
+            {withSuspense(<StudentProfilePage />)}
           </ProtectedRoute>
         ),
       },

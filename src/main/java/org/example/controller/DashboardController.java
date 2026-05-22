@@ -137,7 +137,12 @@ public class DashboardController {
 
             Stage stage = (Stage) view.getScene().getWindow();
             Scene previousScene = stage.getScene();
-            ExamExecutionView examExecutionView = new ExamExecutionView(examController, stage, previousScene);
+            ExamExecutionView examExecutionView = new ExamExecutionView(
+                    examController,
+                    stage,
+                    previousScene,
+                    currentUserId
+            );
             Scene examScene = new Scene(examExecutionView, 1024, 768);
             stage.setScene(examScene);
         } catch (Exception e) {

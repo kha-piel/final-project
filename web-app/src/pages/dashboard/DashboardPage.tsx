@@ -1,6 +1,5 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { NavLinks } from '../../components/ui/NavLinks'
 import { PageCard } from '../../components/ui/PageCard'
 import {
   fetchAttemptHistory,
@@ -10,7 +9,9 @@ import {
 } from '../../features/dashboard/services/dashboard-service'
 import {
   difficultyOptions,
+  questionTypeOptions,
   type AttemptHistoryItem,
+  type QuestionType,
   type SubjectOption,
   type TopicOption,
 } from '../../features/dashboard/types/dashboard-types'
@@ -48,6 +49,7 @@ export function DashboardPage() {
   const [selectedSubjectId, setSelectedSubjectId] = useState('')
   const [selectedTopicId, setSelectedTopicId] = useState('')
   const [selectedDifficulty, setSelectedDifficulty] = useState('')
+  const [selectedQuestionType, setSelectedQuestionType] = useState<'all' | QuestionType>('all')
   const [isLoadingSubjects, setIsLoadingSubjects] = useState(true)
   const [isLoadingTopics, setIsLoadingTopics] = useState(false)
   const [isLoadingHistory, setIsLoadingHistory] = useState(true)
@@ -248,7 +250,7 @@ export function DashboardPage() {
     setErrorMessage('')
 
     if (!selectedSubject || !selectedTopic || !selectedDifficultyOption) {
-      setErrorMessage('Vui long chon day du mon hoc, chuyen de va do kho.')
+      setErrorMessage('Vui long chon day du mon hoc, chuyen de, muc do va dang cau hoi.')
       return
     }
 
@@ -258,6 +260,7 @@ export function DashboardPage() {
       const questions = await fetchQuestionsForCustomExam(
         selectedTopic.topicId,
         selectedDifficultyOption.level,
+        selectedQuestionType,
       )
 
       if (questions.length === 0) {
@@ -317,202 +320,238 @@ export function DashboardPage() {
   }
 
   return (
-    <>
-      <NavLinks />
-      <PageCard
-        title="Dashboard On Tap"
-        description="Chon cau hinh bai lam, tiep tuc bai dang do va xem lai ket qua da luu tren cloud."
-      >
-        <div style={styles.filters}>
-          <select
-            disabled={isLoadingSubjects}
-            onChange={(event) => setSelectedSubjectId(event.target.value)}
-            style={styles.select}
-            value={selectedSubjectId}
-          >
-            <option value="">Chon mon hoc</option>
-            {subjects.map((subject) => (
-              <option key={subject.subjectId} value={subject.subjectId}>
-                {subject.subjectName}
-              </option>
-            ))}
-          </select>
-
-          <select
-            disabled={!selectedSubjectId || isLoadingTopics}
-            onChange={(event) => setSelectedTopicId(event.target.value)}
-            style={styles.select}
-            value={selectedTopicId}
-          >
-            <option value="">Chon chuyen de</option>
-            {topics.map((topic) => (
-              <option key={topic.topicId} value={topic.topicId}>
-                {topic.topicName}
-              </option>
-            ))}
-          </select>
-
-          <select
-            onChange={(event) => setSelectedDifficulty(event.target.value)}
-            style={styles.select}
-            value={selectedDifficulty}
-          >
-            <option value="">Chon do kho</option>
-            {difficultyOptions.map((difficulty) => (
-              <option key={difficulty.level} value={difficulty.level}>
-                {difficulty.label}
-              </option>
-            ))}
-          </select>
+    <PageCard
+      title="Dashboard On Tap"
+      description="Chon cau hinh bai lam, tiep tuc bai dang do va xem lai ket qua da luu tren cloud."
+    >
+      <section className="mb-6 rounded-[28px] border border-slate-200 bg-white p-5 shadow-[0_18px_44px_rgba(15,23,42,0.05)]">
+        <div className="mb-4 flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400">
+              Bo loc on tap 2025
+            </div>
+            <h2 className="mt-2 text-xl font-bold tracking-tight text-slate-950">
+              Chon mon hoc, chu de, muc do va dang cau hoi
+            </h2>
+          </div>
 
           <button
+            className="rounded-2xl bg-slate-950 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 active:translate-y-px disabled:cursor-not-allowed disabled:bg-slate-300"
             disabled={isCreatingExam || isLoadingSubjects || isLoadingTopics}
             onClick={handleCreateExam}
-            style={styles.primaryButton}
             type="button"
           >
             {isCreatingExam ? 'Dang tao de...' : 'Tao de va bat dau'}
           </button>
         </div>
 
-        <div style={styles.statusGrid}>
-          <StatusBlock
-            label="Mon hoc"
-            value={selectedSubject?.subjectName ?? (isLoadingSubjects ? 'Dang tai...' : '--')}
-          />
-          <StatusBlock
-            label="Chuyen de"
-            value={selectedTopic?.topicName ?? (isLoadingTopics ? 'Dang tai...' : '--')}
-          />
-          <StatusBlock label="Do kho" value={selectedDifficultyOption?.label ?? '--'} />
-          <StatusBlock label="Thoi gian" value={`${CUSTOM_EXAM_DURATION_MINUTES} phut`} />
-        </div>
-
-        {errorMessage ? <p style={styles.error}>{errorMessage}</p> : null}
-
-        <section style={styles.history}>
-          <strong>Bai dang lam do</strong>
-          {resumableSessions.length === 0 ? (
-            <p style={styles.historyText}>Khong co bai dang lam nao can khoi phuc.</p>
-          ) : (
-            <div style={styles.historyList}>
-              {resumableSessions.map((session) => (
-                <article key={session.sessionId} style={styles.historyCard}>
-                  <div style={styles.historyHeader}>
-                    <div>
-                      <div style={styles.historyTitle}>{session.title}</div>
-                      <div style={styles.historyMeta}>
-                        {session.topicName} | {session.difficultyLabel}
-                      </div>
-                    </div>
-                    <div style={styles.scorePill}>Tien do {session.progressText}</div>
-                  </div>
-
-                  <div style={styles.historyFooter}>
-                    <span>Dang o cau {session.currentQuestion}</span>
-                    <div style={styles.historyActionRow}>
-                      <button
-                        onClick={() => handleDiscardLocalSession(session.sessionId)}
-                        style={styles.discardButton}
-                        type="button"
-                      >
-                        Bo session
-                      </button>
-                      <Link to={`/exam/${session.sessionId}`} style={styles.reviewLink}>
-                        Tiep tuc lam bai
-                      </Link>
-                    </div>
-                  </div>
-                </article>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+          <FilterField label="Mon hoc">
+            <select
+              className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-medium text-slate-800 outline-none transition focus:border-blue-400 focus:bg-white"
+              disabled={isLoadingSubjects}
+              onChange={(event) => setSelectedSubjectId(event.target.value)}
+              value={selectedSubjectId}
+            >
+              <option value="">Tat ca mon hoc</option>
+              {subjects.map((subject) => (
+                <option key={subject.subjectId} value={subject.subjectId}>
+                  {subject.subjectName}
+                </option>
               ))}
-            </div>
-          )}
-        </section>
+            </select>
+          </FilterField>
 
-        <section style={styles.history}>
-          <strong>Bai dang lam tren cloud</strong>
-          {cloudRestoreErrorMessage ? <p style={styles.error}>{cloudRestoreErrorMessage}</p> : null}
-          {isLoadingCloudAttempts ? (
-            <p style={styles.historyText}>Dang tai bai dang lam tren cloud...</p>
-          ) : visibleCloudInProgressAttempts.length === 0 ? (
-            <p style={styles.historyText}>Khong co bai dang lam tren cloud.</p>
-          ) : (
-            <div style={styles.historyList}>
-              {visibleCloudInProgressAttempts.map((attempt) => (
-                <article key={attempt.attemptId} style={styles.historyCard}>
-                  <div style={styles.historyHeader}>
-                    <div>
-                      <div style={styles.historyTitle}>{attempt.examTitle}</div>
-                      <div style={styles.historyMeta}>
-                        {attempt.topicName} | {attempt.difficultyLabel}
-                      </div>
-                    </div>
-                    <div style={styles.scorePill}>
-                      {attempt.progressCount}/{attempt.totalQuestions}
+          <FilterField label="Chu de">
+            <select
+              className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-medium text-slate-800 outline-none transition focus:border-blue-400 focus:bg-white disabled:cursor-not-allowed disabled:bg-slate-100"
+              disabled={!selectedSubjectId || isLoadingTopics}
+              onChange={(event) => setSelectedTopicId(event.target.value)}
+              value={selectedTopicId}
+            >
+              <option value="">Chon chuyen de</option>
+              {topics.map((topic) => (
+                <option key={topic.topicId} value={topic.topicId}>
+                  {topic.topicName}
+                </option>
+              ))}
+            </select>
+          </FilterField>
+
+          <FilterField label="Muc do">
+            <select
+              className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-medium text-slate-800 outline-none transition focus:border-blue-400 focus:bg-white"
+              onChange={(event) => setSelectedDifficulty(event.target.value)}
+              value={selectedDifficulty}
+            >
+              <option value="">Chon muc do</option>
+              {difficultyOptions.map((difficulty) => (
+                <option key={difficulty.level} value={difficulty.level}>
+                  {difficulty.label}
+                </option>
+              ))}
+            </select>
+          </FilterField>
+
+          <FilterField label="Dang cau hoi">
+            <select
+              className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-medium text-slate-800 outline-none transition focus:border-blue-400 focus:bg-white"
+              onChange={(event) =>
+                setSelectedQuestionType(event.target.value as 'all' | QuestionType)
+              }
+              value={selectedQuestionType}
+            >
+              {questionTypeOptions.map((questionType) => (
+                <option key={questionType.value} value={questionType.value}>
+                  {questionType.label}
+                </option>
+              ))}
+            </select>
+          </FilterField>
+        </div>
+      </section>
+
+      <div style={styles.statusGrid}>
+        <StatusBlock
+          label="Mon hoc"
+          value={selectedSubject?.subjectName ?? (isLoadingSubjects ? 'Dang tai...' : '--')}
+        />
+        <StatusBlock
+          label="Chuyen de"
+          value={selectedTopic?.topicName ?? (isLoadingTopics ? 'Dang tai...' : '--')}
+        />
+        <StatusBlock label="Do kho" value={selectedDifficultyOption?.label ?? '--'} />
+        <StatusBlock
+          label="Dang cau hoi"
+          value={questionTypeOptions.find((item) => item.value === selectedQuestionType)?.label ?? '--'}
+        />
+        <StatusBlock label="Thoi gian" value={`${CUSTOM_EXAM_DURATION_MINUTES} phut`} />
+      </div>
+
+      {errorMessage ? <p style={styles.error}>{errorMessage}</p> : null}
+
+      <section style={styles.history}>
+        <strong>Bai dang lam do</strong>
+        {resumableSessions.length === 0 ? (
+          <p style={styles.historyText}>Khong co bai dang lam nao can khoi phuc.</p>
+        ) : (
+          <div style={styles.historyList}>
+            {resumableSessions.map((session) => (
+              <article key={session.sessionId} style={styles.historyCard}>
+                <div style={styles.historyHeader}>
+                  <div>
+                    <div style={styles.historyTitle}>{session.title}</div>
+                    <div style={styles.historyMeta}>
+                      {session.topicName} | {session.difficultyLabel}
                     </div>
                   </div>
+                  <div style={styles.scorePill}>Tien do {session.progressText}</div>
+                </div>
 
-                  <div style={styles.historyFooter}>
-                    <span>{formatCompletedAt(attempt.updatedAt)}</span>
+                <div style={styles.historyFooter}>
+                  <span>Dang o cau {session.currentQuestion}</span>
+                  <div style={styles.historyActionRow}>
                     <button
-                      disabled={isRestoringCloudAttemptId === attempt.attemptId}
-                      onClick={() => void handleRestoreCloudAttempt(attempt.attemptId)}
-                      style={styles.restoreButton}
+                      onClick={() => handleDiscardLocalSession(session.sessionId)}
+                      style={styles.discardButton}
                       type="button"
                     >
-                      {isRestoringCloudAttemptId === attempt.attemptId
-                        ? 'Dang khoi phuc...'
-                        : 'Khoi phuc tu cloud'}
+                      Bo session
                     </button>
-                  </div>
-                </article>
-              ))}
-            </div>
-          )}
-        </section>
-
-        <section style={styles.history}>
-          <strong>Lich su lam bai</strong>
-          {historyErrorMessage ? <p style={styles.error}>{historyErrorMessage}</p> : null}
-          {isLoadingHistory ? (
-            <p style={styles.historyText}>Dang tai lich su tu Supabase...</p>
-          ) : attemptHistory.length === 0 ? (
-            <p style={styles.historyText}>Chua co bai lam nao duoc luu tren web.</p>
-          ) : (
-            <div style={styles.historyList}>
-              {attemptHistory.map((attempt) => (
-                <article key={attempt.attemptId} style={styles.historyCard}>
-                  <div style={styles.historyHeader}>
-                    <div>
-                      <div style={styles.historyTitle}>{attempt.examTitle}</div>
-                      <div style={styles.historyMeta}>
-                        {attempt.subjectName} | {attempt.topicName} | {attempt.difficultyLabel}
-                      </div>
-                    </div>
-                    <div style={styles.scorePill}>
-                      {attempt.score === null ? '--' : `${attempt.score}/10`}
-                    </div>
-                  </div>
-
-                  <div style={styles.historyStats}>
-                    <span>Dung: {attempt.correctCount}</span>
-                    <span>Sai: {attempt.wrongCount}</span>
-                    <span>Bo qua: {attempt.skippedCount}</span>
-                  </div>
-
-                  <div style={styles.historyFooter}>
-                    <span>{formatCompletedAt(attempt.completedAt)}</span>
-                    <Link to={`/review/${attempt.attemptId}`} style={styles.reviewLink}>
-                      Xem review
+                    <Link to={`/exam/${session.sessionId}`} style={styles.reviewLink}>
+                      Tiep tuc lam bai
                     </Link>
                   </div>
-                </article>
-              ))}
-            </div>
-          )}
-        </section>
-      </PageCard>
-    </>
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
+      </section>
+
+      <section style={styles.history}>
+        <strong>Bai dang lam tren cloud</strong>
+        {cloudRestoreErrorMessage ? <p style={styles.error}>{cloudRestoreErrorMessage}</p> : null}
+        {isLoadingCloudAttempts ? (
+          <p style={styles.historyText}>Dang tai bai dang lam tren cloud...</p>
+        ) : visibleCloudInProgressAttempts.length === 0 ? (
+          <p style={styles.historyText}>Khong co bai dang lam tren cloud.</p>
+        ) : (
+          <div style={styles.historyList}>
+            {visibleCloudInProgressAttempts.map((attempt) => (
+              <article key={attempt.attemptId} style={styles.historyCard}>
+                <div style={styles.historyHeader}>
+                  <div>
+                    <div style={styles.historyTitle}>{attempt.examTitle}</div>
+                    <div style={styles.historyMeta}>
+                      {attempt.topicName} | {attempt.difficultyLabel}
+                    </div>
+                  </div>
+                  <div style={styles.scorePill}>
+                    {attempt.progressCount}/{attempt.totalQuestions}
+                  </div>
+                </div>
+
+                <div style={styles.historyFooter}>
+                  <span>{formatCompletedAt(attempt.updatedAt)}</span>
+                  <button
+                    disabled={isRestoringCloudAttemptId === attempt.attemptId}
+                    onClick={() => void handleRestoreCloudAttempt(attempt.attemptId)}
+                    style={styles.restoreButton}
+                    type="button"
+                  >
+                    {isRestoringCloudAttemptId === attempt.attemptId
+                      ? 'Dang khoi phuc...'
+                      : 'Khoi phuc tu cloud'}
+                  </button>
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
+      </section>
+
+      <section style={styles.history}>
+        <strong>Lich su lam bai</strong>
+        {historyErrorMessage ? <p style={styles.error}>{historyErrorMessage}</p> : null}
+        {isLoadingHistory ? (
+          <p style={styles.historyText}>Dang tai lich su tu Supabase...</p>
+        ) : attemptHistory.length === 0 ? (
+          <p style={styles.historyText}>Chua co bai lam nao duoc luu tren web.</p>
+        ) : (
+          <div style={styles.historyList}>
+            {attemptHistory.map((attempt) => (
+              <article key={attempt.attemptId} style={styles.historyCard}>
+                <div style={styles.historyHeader}>
+                  <div>
+                    <div style={styles.historyTitle}>{attempt.examTitle}</div>
+                    <div style={styles.historyMeta}>
+                      {attempt.subjectName} | {attempt.topicName} | {attempt.difficultyLabel}
+                    </div>
+                  </div>
+                  <div style={styles.scorePill}>
+                    {attempt.score === null ? '--' : `${attempt.score}/10`}
+                  </div>
+                </div>
+
+                <div style={styles.historyStats}>
+                  <span>Dung: {attempt.correctCount}</span>
+                  <span>Sai: {attempt.wrongCount}</span>
+                  <span>Bo qua: {attempt.skippedCount}</span>
+                </div>
+
+                <div style={styles.historyFooter}>
+                  <span>{formatCompletedAt(attempt.completedAt)}</span>
+                  <Link to={`/review/${attempt.attemptId}`} style={styles.reviewLink}>
+                    Xem review
+                  </Link>
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
+      </section>
+    </PageCard>
   )
 }
 
@@ -522,6 +561,17 @@ function StatusBlock({ label, value }: { label: string; value: string }) {
       <div style={styles.statusLabel}>{label}</div>
       <div style={styles.statusValue}>{value}</div>
     </div>
+  )
+}
+
+function FilterField({ label, children }: { label: string; children: ReactNode }) {
+  return (
+    <label className="grid gap-2">
+      <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">
+        {label}
+      </span>
+      {children}
+    </label>
   )
 }
 

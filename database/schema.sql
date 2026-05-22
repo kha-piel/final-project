@@ -6,6 +6,22 @@
 
 -- Bật hỗ trợ Foreign Key trong SQLite (mặc định bị tắt)
 PRAGMA foreign_keys = ON;
+-- -------------------------------------------------------------
+-- Bảng: question_bookmarks
+-- Mục đích: Lưu các câu hỏi hoc sinh danh dau de xem lai
+-- -------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS question_bookmarks (
+    bookmark_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id     INTEGER NOT NULL,
+    question_id INTEGER NOT NULL,
+    created_at  TEXT    NOT NULL DEFAULT (datetime('now', 'localtime')),
+
+    UNIQUE (user_id, question_id),
+    FOREIGN KEY (user_id)     REFERENCES users(user_id)         ON DELETE CASCADE,
+    FOREIGN KEY (question_id) REFERENCES questions(question_id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_question_bookmarks_user ON question_bookmarks(user_id);
 
 -- ============================================================
 -- NHÓM 1: QUẢN LÝ NGƯỜI DÙNG (USER MANAGEMENT)
