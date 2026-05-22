@@ -13,6 +13,9 @@ export type ExamDraftSession = {
   difficultyLabel: string
   durationMinutes: number
   questions: DraftQuestion[]
+  deliveryMode?: 'cloud' | 'local_mock'
+  sourceExamId?: string
+  blueprintId?: string
   createdAt: number
 }
 

@@ -2,14 +2,21 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { PageCard } from '../../components/ui/PageCard'
 import { useAuthSessionStore } from '../../features/auth/store/auth-session-store'
+import type { DraftQuestion } from '../../features/dashboard/types/dashboard-types'
 import {
-  formatAnswerLabel,
+  formatCorrectResponse,
+  formatQuestionResponse,
   getRemainingSeconds,
   getSelectedAnswerId,
+  getSelectedTrueFalseMap,
+  getShortAnswerValue,
+  hasAnsweredQuestion,
   isQuestionLocked,
 } from '../../features/exam/core/exam-session'
-import { persistCompletedAttempt } from '../../features/exam/services/exam-attempt-service'
-import { syncInProgressAttempt } from '../../features/exam/services/exam-attempt-service'
+import {
+  persistCompletedAttempt,
+  syncInProgressAttempt,
+} from '../../features/exam/services/exam-attempt-service'
 import { requestAutoExplanation, sendExamChatMessage } from '../../features/exam/services/exam-ai-service'
 import { useExamDraftStore } from '../../features/exam/store/exam-draft-store'
 import { useExamRuntimeStore } from '../../features/exam/store/exam-runtime-store'
@@ -22,6 +29,8 @@ export function ExamPage() {
   const runtime = useExamRuntimeStore((state) => state.sessions[sessionId] ?? null)
   const initializeSession = useExamRuntimeStore((state) => state.initializeSession)
   const selectAnswer = useExamRuntimeStore((state) => state.selectAnswer)
+  const selectTrueFalseStatement = useExamRuntimeStore((state) => state.selectTrueFalseStatement)
+  const setShortAnswer = useExamRuntimeStore((state) => state.setShortAnswer)
   const goToNextQuestion = useExamRuntimeStore((state) => state.goToNextQuestion)
   const goToPreviousQuestion = useExamRuntimeStore((state) => state.goToPreviousQuestion)
   const checkCurrentQuestion = useExamRuntimeStore((state) => state.checkCurrentQuestion)
@@ -53,7 +62,7 @@ export function ExamPage() {
 
     const hasProgress =
       runtime.currentIndex > 0 ||
-      Object.keys(runtime.selectedAnswerIdsByQuestionId).length > 0 ||
+      session.questions.some((question) => hasAnsweredQuestion(runtime, question)) ||
       runtime.chatHistory.length > 0
 
     if (hasProgress && !runtime.submittedAt && !hasShownRestoreNoticeRef.current) {
@@ -71,7 +80,7 @@ export function ExamPage() {
       const nextRemaining = getRemainingSeconds(session, runtime)
       setRemainingSeconds(nextRemaining)
       if (nextRemaining <= 0) {
-        setFlashMessage('Da het gio. Buoc 9 se noi flow nop bai va tong ket.')
+        setFlashMessage('Da het gio. Hay nop bai de xem tong ket.')
       }
     }
 
@@ -96,6 +105,8 @@ export function ExamPage() {
     return JSON.stringify({
       currentIndex: runtime.currentIndex,
       selected: runtime.selectedAnswerIdsByQuestionId,
+      trueFalse: runtime.selectedTrueFalseByQuestionId,
+      shortAnswer: runtime.shortAnswerByQuestionId,
       locked: runtime.lockedQuestionIds,
       chatCount: runtime.chatHistory.length,
       submittedAt: runtime.submittedAt,
@@ -103,13 +114,13 @@ export function ExamPage() {
   }, [runtime])
 
   useEffect(() => {
-    if (!authUser?.id || !session || !runtime || runtime.submittedAt) {
+    if (!authUser?.id || !session || !runtime || runtime.submittedAt || session.deliveryMode === 'local_mock') {
       return
     }
 
     const hasProgress =
       runtime.currentIndex > 0 ||
-      Object.keys(runtime.selectedAnswerIdsByQuestionId).length > 0 ||
+      session.questions.some((question) => hasAnsweredQuestion(runtime, question)) ||
       runtime.chatHistory.length > 0
 
     if (!hasProgress) {
@@ -141,43 +152,37 @@ export function ExamPage() {
 
   if (!session) {
     return (
-      <>
-        <PageCard
-          title="Exam Session Not Found"
-          description="Session nay hien khong ton tai trong local app state."
-        >
-          <p style={styles.text}>
-            Hay quay lai <Link to="/dashboard">dashboard</Link> va tao de moi.
-          </p>
-        </PageCard>
-      </>
+      <PageCard title="Exam Session Not Found" description="Session nay hien khong ton tai trong local app state.">
+        <p style={styles.text}>
+          Hay quay lai <Link to="/practice">practice</Link> hoac <Link to="/dashboard">dashboard</Link>.
+        </p>
+      </PageCard>
     )
   }
 
   if (!runtime || !currentQuestion) {
     return (
-      <>
-        <PageCard
-          title={session.title}
-          description="Dang khoi tao exam runtime session..."
-        >
-          <p style={styles.text}>Vui long doi trong giay lat.</p>
-        </PageCard>
-      </>
+      <PageCard title={session.title} description="Dang khoi tao exam runtime session...">
+        <p style={styles.text}>Vui long doi trong giay lat.</p>
+      </PageCard>
     )
   }
 
   const question = currentQuestion
-
   const selectedAnswerId = getSelectedAnswerId(runtime, question.questionId)
+  const selectedTrueFalseMap = getSelectedTrueFalseMap(runtime, question.questionId)
+  const shortAnswerValue = getShortAnswerValue(runtime, question.questionId)
   const questionLocked = isQuestionLocked(runtime, question.questionId)
-  const answeredCount = Object.keys(runtime.selectedAnswerIdsByQuestionId).length
+  const answeredCount = session.questions.filter((item) => hasAnsweredQuestion(runtime, item)).length
   const isSubmitted = Boolean(runtime.submittedAt)
-  const selectedAnswerLabel = formatAnswerLabel(question, selectedAnswerId)
-  const correctAnswerLabel = formatAnswerLabel(
-    question,
-    question.answers.find((answer) => answer.isCorrect)?.answerId ?? null,
-  )
+  const selectedAnswerLabel = formatQuestionResponse(runtime, question)
+  const correctAnswerLabel = formatCorrectResponse(question)
+  const syncStatus =
+    session.deliveryMode === 'local_mock'
+      ? 'Local mock'
+      : runtime.lastSyncedAt
+        ? `OK ${formatSyncTime(runtime.lastSyncedAt)}`
+        : 'Dang cho'
 
   function handleCheckAnswer() {
     const result = checkCurrentQuestion(session.sessionId, question)
@@ -188,10 +193,9 @@ export function ExamPage() {
     setFlashMessage(result.message)
 
     if (result.hasSelection && !result.isCorrect) {
-      const systemMessage = 'Hoc sinh chon sai cau nay. Hay giai thich giup toi!'
       addChatMessage(session.sessionId, {
         role: 'system',
-        content: systemMessage,
+        content: 'Hoc sinh vua sai cau nay. Hay giai thich ngan gon cach lam va lo hong kien thuc.',
         questionId: question.questionId,
       })
       setChatStatus('AI dang phan tich cau hoi...')
@@ -236,26 +240,19 @@ export function ExamPage() {
   }
 
   function handleGoNext() {
-    if (isSubmitted) {
-      return
+    if (!isSubmitted) {
+      goToNextQuestion(session.sessionId, session.questions.length)
     }
-    goToNextQuestion(session.sessionId, session.questions.length)
   }
 
   function handleGoPrevious() {
-    if (isSubmitted) {
-      return
+    if (!isSubmitted) {
+      goToPreviousQuestion(session.sessionId)
     }
-    goToPreviousQuestion(session.sessionId)
   }
 
   async function handleSubmitAttempt() {
     if (isSubmitted) {
-      return
-    }
-
-    if (!authUser?.id) {
-      setFlashMessage('Khong tim thay user dang nhap de luu ket qua bai lam.')
       return
     }
 
@@ -264,6 +261,16 @@ export function ExamPage() {
 
     if (!latestRuntime) {
       setFlashMessage('Khong the doc exam runtime de luu bai lam.')
+      return
+    }
+
+    if (session.deliveryMode === 'local_mock') {
+      navigate(`/review/${session.sessionId}`)
+      return
+    }
+
+    if (!authUser?.id) {
+      setFlashMessage('Khong tim thay user dang nhap de luu ket qua bai lam.')
       return
     }
 
@@ -336,172 +343,269 @@ export function ExamPage() {
   }
 
   return (
-    <>
-      <PageCard
-        title={session.title}
-        description="Buoc 7 da co exam engine co ban: current question, timer, chon dap an, next/prev, check dung sai va khoa cau."
-      >
-        <div style={styles.summaryRow}>
-          <SummaryPill
-            label="Tien do"
-            value={`Cau ${runtime.currentIndex + 1}/${session.questions.length}`}
-          />
-          <SummaryPill label="Da chon" value={`${answeredCount}/${session.questions.length}`} />
-          <SummaryPill label="Do kho" value={session.difficultyLabel} />
-          <SummaryPill label="Con lai" value={formatDuration(remainingSeconds)} />
-          <SummaryPill
-            label="Cloud sync"
-            value={runtime.lastSyncedAt ? `OK ${formatSyncTime(runtime.lastSyncedAt)}` : 'Dang cho'}
-          />
-        </div>
+    <PageCard
+      title={session.title}
+      description="Exam engine da ho tro nhieu lua chon, Dung/Sai va tra loi ngan trong cung mot luong thi."
+    >
+      <div style={styles.summaryRow}>
+        <SummaryPill label="Tien do" value={`Cau ${runtime.currentIndex + 1}/${session.questions.length}`} />
+        <SummaryPill label="Da tra loi" value={`${answeredCount}/${session.questions.length}`} />
+        <SummaryPill label="Do kho" value={session.difficultyLabel} />
+        <SummaryPill label="Con lai" value={formatDuration(remainingSeconds)} />
+        <SummaryPill label="Sync" value={syncStatus} />
+      </div>
 
-        {flashMessage ? <div style={styles.flash}>{flashMessage}</div> : null}
-        {isSubmitted ? (
-          <div style={styles.successFlash}>
-            Bai lam da duoc nop. Ban co the xem tong ket va giai thich AI ben trang review.
+      {flashMessage ? <div style={styles.flash}>{flashMessage}</div> : null}
+      {isSubmitted ? (
+        <div style={styles.successFlash}>Bai lam da duoc nop. Ban co the xem tong ket va review chi tiet.</div>
+      ) : null}
+
+      <div style={styles.grid}>
+        <section style={styles.panel}>
+          <div style={styles.kicker}>Question {runtime.currentIndex + 1}</div>
+          <h3 style={styles.panelTitle}>{question.content}</h3>
+          <p style={styles.text}>
+            Topic: {session.topicName} | Dang bai: {formatQuestionType(question)} | Nguon:{' '}
+            {question.sourceMeta?.schoolName ?? 'Tong hop'}
+          </p>
+
+          <QuestionComposer
+            isSubmitted={isSubmitted}
+            question={question}
+            questionLocked={questionLocked}
+            selectedAnswerId={selectedAnswerId}
+            selectedTrueFalseMap={selectedTrueFalseMap}
+            sessionId={session.sessionId}
+            shortAnswerValue={shortAnswerValue}
+            onSelectAnswer={selectAnswer}
+            onSelectTrueFalse={selectTrueFalseStatement}
+            onSetShortAnswer={setShortAnswer}
+          />
+
+          <div style={styles.buttonRow}>
+            <button
+              disabled={runtime.currentIndex === 0}
+              onClick={handleGoPrevious}
+              style={styles.secondaryButton}
+              type="button"
+            >
+              Cau truoc
+            </button>
+            <button
+              disabled={runtime.currentIndex === session.questions.length - 1}
+              onClick={handleGoNext}
+              style={styles.secondaryButton}
+              type="button"
+            >
+              Cau tiep theo
+            </button>
+            <button
+              disabled={remainingSeconds <= 0 || questionLocked || isSubmitted}
+              onClick={handleCheckAnswer}
+              style={styles.primaryButton}
+              type="button"
+            >
+              Kiem tra dap an
+            </button>
+            <button onClick={() => void handleSubmitAttempt()} style={styles.submitButton} type="button">
+              Nop bai
+            </button>
           </div>
-        ) : null}
+        </section>
 
-        <div style={styles.grid}>
-          <section style={styles.panel}>
-            <div style={styles.kicker}>Question {runtime.currentIndex + 1}</div>
-            <h3 style={styles.panelTitle}>{question.content}</h3>
-            <p style={styles.text}>
-              Topic: {session.topicName} | Answers: {question.answers.length}
+        <section style={styles.panel}>
+          <h3 style={styles.panelTitle}>AI Chat</h3>
+          <p style={styles.text}>Lich su chat duoc giu xuyen suot trong exam session hien tai.</p>
+          <div style={styles.chatHistory}>
+            {runtime.chatHistory.length === 0 ? (
+              <div style={styles.emptyChat}>
+                Chua co tin nhan nao. AI se duoc goi khi ban tra loi sai hoac hoi them.
+              </div>
+            ) : (
+              runtime.chatHistory.map((message) => (
+                <div
+                  key={message.id}
+                  style={{
+                    ...styles.chatBubble,
+                    ...(message.role === 'user'
+                      ? styles.userBubble
+                      : message.role === 'ai'
+                        ? styles.aiBubble
+                        : styles.systemBubble),
+                  }}
+                >
+                  <strong style={styles.chatRole}>
+                    {message.role === 'user' ? 'Hoc sinh' : message.role === 'ai' ? 'AI gia su' : 'He thong'}
+                  </strong>
+                  <div>{message.content}</div>
+                </div>
+              ))
+            )}
+          </div>
+          <div style={styles.chatComposer}>
+            <input
+              disabled={isAiBusy || isSubmitted}
+              onChange={(event) => setChatInput(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter') {
+                  event.preventDefault()
+                  void handleSendChat()
+                }
+              }}
+              placeholder="Hoi AI ve cau dang lam..."
+              style={styles.chatInput}
+              value={chatInput}
+            />
+            <button
+              disabled={isAiBusy || !chatInput.trim() || isSubmitted}
+              onClick={() => void handleSendChat()}
+              style={styles.primaryButton}
+              type="button"
+            >
+              Gui
+            </button>
+          </div>
+          {chatStatus ? <p style={styles.chatStatus}>{chatStatus}</p> : null}
+          <div style={styles.metaBox}>
+            <strong>Trang thai cau hien tai</strong>
+            <p style={styles.metaText}>
+              {questionLocked
+                ? `Da khoa. Dap an cua ban: ${selectedAnswerLabel}`
+                : 'Chua khoa, ban van co the doi dap an truoc khi check.'}
             </p>
+            <p style={styles.metaText}>Dap an dung: {correctAnswerLabel}</p>
+          </div>
+        </section>
+      </div>
+    </PageCard>
+  )
+}
 
-            <div style={styles.answerList}>
-              {question.answers.map((answer) => {
-                const isSelected = selectedAnswerId === answer.answerId
-                return (
-                  <label
-                    key={answer.answerId}
-                    style={{
-                      ...styles.answerCard,
-                      ...(isSelected ? styles.answerCardSelected : {}),
-                      ...(questionLocked ? styles.answerCardLocked : {}),
-                    }}
-                  >
-                    <input
-                      checked={isSelected}
-                      disabled={questionLocked || isSubmitted}
-                      name={`question-${question.questionId}`}
-                      onChange={() => selectAnswer(session.sessionId, question.questionId, answer.answerId)}
-                      style={styles.radio}
-                      type="radio"
-                    />
-                    <div>
-                      <strong>
-                        {answer.optionLabel}. {answer.content}
-                      </strong>
-                    </div>
-                  </label>
-                )
-              })}
-            </div>
-
-            <div style={styles.buttonRow}>
-              <button
-                disabled={runtime.currentIndex === 0}
-                onClick={handleGoPrevious}
-                style={styles.secondaryButton}
-                type="button"
-              >
-                Cau truoc
-              </button>
-              <button
-                disabled={runtime.currentIndex === session.questions.length - 1}
-                onClick={handleGoNext}
-                style={styles.secondaryButton}
-                type="button"
-              >
-                Cau tiep theo
-              </button>
-              <button
-                disabled={remainingSeconds <= 0 || questionLocked || isSubmitted}
-                onClick={handleCheckAnswer}
-                style={styles.primaryButton}
-                type="button"
-              >
-                Kiem tra dap an
-              </button>
-              <button
-                onClick={() => void handleSubmitAttempt()}
-                style={styles.submitButton}
-                type="button"
-              >
-                Nop bai
-              </button>
-            </div>
-          </section>
-
-          <section style={styles.panel}>
-            <h3 style={styles.panelTitle}>AI Chat</h3>
-            <p style={styles.text}>Lich su chat duoc giu xuyen suot trong exam session hien tai.</p>
-            <div style={styles.chatHistory}>
-              {runtime.chatHistory.length === 0 ? (
-                <div style={styles.emptyChat}>Chua co tin nhan nao. AI se duoc goi khi ban tra loi sai hoac hoi them.</div>
-              ) : (
-                runtime.chatHistory.map((message) => (
-                  <div
-                    key={message.id}
-                    style={{
-                      ...styles.chatBubble,
-                      ...(message.role === 'user'
-                        ? styles.userBubble
-                        : message.role === 'ai'
-                          ? styles.aiBubble
-                          : styles.systemBubble),
-                    }}
-                  >
-                    <strong style={styles.chatRole}>
-                      {message.role === 'user'
-                        ? 'Hoc sinh'
-                        : message.role === 'ai'
-                          ? 'AI gia su'
-                          : 'He thong'}
-                    </strong>
-                    <div>{message.content}</div>
-                  </div>
-                ))
-              )}
-            </div>
-            <div style={styles.chatComposer}>
+function QuestionComposer({
+  sessionId,
+  question,
+  questionLocked,
+  isSubmitted,
+  selectedAnswerId,
+  selectedTrueFalseMap,
+  shortAnswerValue,
+  onSelectAnswer,
+  onSelectTrueFalse,
+  onSetShortAnswer,
+}: {
+  sessionId: string
+  question: DraftQuestion
+  questionLocked: boolean
+  isSubmitted: boolean
+  selectedAnswerId: string | null
+  selectedTrueFalseMap: Record<string, boolean>
+  shortAnswerValue: string
+  onSelectAnswer: (sessionId: string, questionId: string, answerId: string) => void
+  onSelectTrueFalse: (
+    sessionId: string,
+    questionId: string,
+    statementId: string,
+    value: boolean,
+  ) => void
+  onSetShortAnswer: (sessionId: string, questionId: string, value: string) => void
+}) {
+  if (question.questionType === 'multiple_choice') {
+    return (
+      <div style={styles.answerList}>
+        {question.answers.map((answer) => {
+          const isSelected = selectedAnswerId === answer.answerId
+          return (
+            <label
+              key={answer.answerId}
+              style={{
+                ...styles.answerCard,
+                ...(isSelected ? styles.answerCardSelected : {}),
+                ...(questionLocked ? styles.answerCardLocked : {}),
+              }}
+            >
               <input
-                disabled={isAiBusy || isSubmitted}
-                onChange={(event) => setChatInput(event.target.value)}
-                onKeyDown={(event) => {
-                  if (event.key === 'Enter') {
-                    event.preventDefault()
-                    void handleSendChat()
-                  }
-                }}
-                placeholder="Hoi AI ve cau dang lam..."
-                style={styles.chatInput}
-                value={chatInput}
+                checked={isSelected}
+                disabled={questionLocked || isSubmitted}
+                name={`question-${question.questionId}`}
+                onChange={() => onSelectAnswer(sessionId, question.questionId, answer.answerId)}
+                style={styles.radio}
+                type="radio"
               />
-              <button
-                disabled={isAiBusy || !chatInput.trim() || isSubmitted}
-                onClick={() => void handleSendChat()}
-                style={styles.primaryButton}
-                type="button"
-              >
-                Gui
-              </button>
+              <div>
+                <strong>
+                  {answer.optionLabel}. {answer.content}
+                </strong>
+              </div>
+            </label>
+          )
+        })}
+      </div>
+    )
+  }
+
+  if (question.questionType === 'true_false') {
+    return (
+      <div style={styles.answerList}>
+        {(question.statements ?? []).map((statement, index) => {
+          const currentValue = selectedTrueFalseMap[statement.statementId]
+          return (
+            <div
+              key={statement.statementId}
+              style={{
+                ...styles.answerCard,
+                ...(questionLocked ? styles.answerCardLocked : {}),
+              }}
+            >
+              <div style={styles.statementContent}>
+                <strong>{String.fromCharCode(97 + index)})</strong> {statement.content}
+              </div>
+              <div style={styles.trueFalseActions}>
+                <button
+                  disabled={questionLocked || isSubmitted}
+                  onClick={() => onSelectTrueFalse(sessionId, question.questionId, statement.statementId, true)}
+                  style={{
+                    ...styles.trueFalseButton,
+                    ...(currentValue === true ? styles.trueFalseButtonSelected : {}),
+                  }}
+                  type="button"
+                >
+                  Dung
+                </button>
+                <button
+                  disabled={questionLocked || isSubmitted}
+                  onClick={() => onSelectTrueFalse(sessionId, question.questionId, statement.statementId, false)}
+                  style={{
+                    ...styles.trueFalseButton,
+                    ...(currentValue === false ? styles.trueFalseButtonSelected : {}),
+                  }}
+                  type="button"
+                >
+                  Sai
+                </button>
+              </div>
             </div>
-            {chatStatus ? <p style={styles.chatStatus}>{chatStatus}</p> : null}
-            <div style={styles.metaBox}>
-              <strong>Trang thai cau hien tai</strong>
-              <p style={styles.metaText}>
-                {questionLocked
-                  ? 'Cau nay da khoa sau khi kiem tra.'
-                  : 'Cau nay chua khoa, user van co the doi dap an truoc khi check.'}
-              </p>
-            </div>
-          </section>
-        </div>
-      </PageCard>
-    </>
+          )
+        })}
+      </div>
+    )
+  }
+
+  return (
+    <div style={styles.answerList}>
+      <div style={styles.shortAnswerCard}>
+        <label style={styles.shortAnswerLabel}>
+          Dap an ngan
+          <input
+            disabled={questionLocked || isSubmitted}
+            onChange={(event) => onSetShortAnswer(sessionId, question.questionId, event.target.value)}
+            placeholder="Nhap dap an cua ban..."
+            style={styles.shortAnswerInput}
+            type="text"
+            value={shortAnswerValue}
+          />
+        </label>
+      </div>
+    </div>
   )
 }
 
@@ -531,6 +635,18 @@ function formatSyncTime(timestamp: number) {
   }
 
   return `${Math.floor(deltaSeconds / 60)}p`
+}
+
+function formatQuestionType(question: DraftQuestion) {
+  if (question.questionType === 'multiple_choice') {
+    return 'Nhieu lua chon'
+  }
+
+  if (question.questionType === 'true_false') {
+    return 'Dung / Sai'
+  }
+
+  return 'Tra loi ngan'
 }
 
 const styles = {
@@ -615,6 +731,46 @@ const styles = {
   radio: {
     marginTop: '2px',
   },
+  statementContent: {
+    flex: 1,
+    color: '#10233c',
+    lineHeight: 1.6,
+  },
+  trueFalseActions: {
+    display: 'flex',
+    gap: '8px',
+  },
+  trueFalseButton: {
+    borderRadius: '999px',
+    border: '1px solid #c7d7e8',
+    padding: '8px 14px',
+    backgroundColor: '#ffffff',
+    color: '#24415e',
+    fontWeight: 700,
+  },
+  trueFalseButtonSelected: {
+    borderColor: '#2563eb',
+    backgroundColor: '#dbeafe',
+    color: '#1d4ed8',
+  },
+  shortAnswerCard: {
+    borderRadius: '16px',
+    padding: '16px',
+    backgroundColor: '#ffffff',
+    border: '1px solid #d7e3ef',
+  },
+  shortAnswerLabel: {
+    display: 'grid',
+    gap: '10px',
+    color: '#24415e',
+    fontWeight: 700,
+  },
+  shortAnswerInput: {
+    borderRadius: '12px',
+    border: '1px solid #c7d7e8',
+    padding: '12px 14px',
+    backgroundColor: '#ffffff',
+  },
   buttonRow: {
     display: 'flex',
     flexWrap: 'wrap' as const,
@@ -643,11 +799,6 @@ const styles = {
     backgroundColor: '#15803d',
     color: '#ffffff',
     fontWeight: 700,
-  },
-  list: {
-    margin: '12px 0 18px',
-    paddingLeft: '18px',
-    color: '#5d7491',
   },
   chatHistory: {
     display: 'grid',

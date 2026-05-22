@@ -16,6 +16,13 @@ type ExamRuntimeState = {
   initializeSession: (session: ExamDraftSession) => void
   restoreRuntimeSession: (runtime: ExamRuntimeSession) => void
   selectAnswer: (sessionId: string, questionId: string, answerId: string) => void
+  selectTrueFalseStatement: (
+    sessionId: string,
+    questionId: string,
+    statementId: string,
+    value: boolean,
+  ) => void
+  setShortAnswer: (sessionId: string, questionId: string, value: string) => void
   setCurrentIndex: (sessionId: string, nextIndex: number) => void
   goToNextQuestion: (sessionId: string, totalQuestions: number) => void
   goToPreviousQuestion: (sessionId: string) => void
@@ -85,6 +92,49 @@ export const useExamRuntimeStore = create<ExamRuntimeState>()(
                 selectedAnswerIdsByQuestionId: {
                   ...runtime.selectedAnswerIdsByQuestionId,
                   [questionId]: answerId,
+                },
+              },
+            },
+          }
+        }),
+      selectTrueFalseStatement: (sessionId, questionId, statementId, value) =>
+        set((state) => {
+          const runtime = state.sessions[sessionId]
+          if (!runtime || runtime.lockedQuestionIds[questionId]) {
+            return state
+          }
+
+          return {
+            sessions: {
+              ...state.sessions,
+              [sessionId]: {
+                ...runtime,
+                selectedTrueFalseByQuestionId: {
+                  ...runtime.selectedTrueFalseByQuestionId,
+                  [questionId]: {
+                    ...(runtime.selectedTrueFalseByQuestionId[questionId] ?? {}),
+                    [statementId]: value,
+                  },
+                },
+              },
+            },
+          }
+        }),
+      setShortAnswer: (sessionId, questionId, value) =>
+        set((state) => {
+          const runtime = state.sessions[sessionId]
+          if (!runtime || runtime.lockedQuestionIds[questionId]) {
+            return state
+          }
+
+          return {
+            sessions: {
+              ...state.sessions,
+              [sessionId]: {
+                ...runtime,
+                shortAnswerByQuestionId: {
+                  ...runtime.shortAnswerByQuestionId,
+                  [questionId]: value,
                 },
               },
             },
@@ -282,7 +332,26 @@ export const useExamRuntimeStore = create<ExamRuntimeState>()(
       partialize: (state) => ({
         sessions: state.sessions,
       }),
-      version: 1,
+      version: 2,
+      migrate: (persistedState) => {
+        const state = persistedState as { sessions?: Record<string, ExamRuntimeSession> } | undefined
+        if (!state?.sessions) {
+          return { sessions: {} }
+        }
+
+        const sessions = Object.fromEntries(
+          Object.entries(state.sessions).map(([sessionId, runtime]) => [
+            sessionId,
+            {
+              ...runtime,
+              selectedTrueFalseByQuestionId: runtime.selectedTrueFalseByQuestionId ?? {},
+              shortAnswerByQuestionId: runtime.shortAnswerByQuestionId ?? {},
+            },
+          ]),
+        )
+
+        return { sessions }
+      },
     },
   ),
 )

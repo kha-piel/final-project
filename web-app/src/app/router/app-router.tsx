@@ -18,6 +18,11 @@ const PracticeHubPage = lazy(() =>
     default: module.PracticeHubPage,
   })),
 )
+const SchoolExamPage = lazy(() =>
+  import('../../pages/practice/SchoolExamPage').then((module) => ({
+    default: module.SchoolExamPage,
+  })),
+)
 const DashboardPage = lazy(() =>
   import('../../pages/dashboard/DashboardPage').then((module) => ({ default: module.DashboardPage })),
 )
@@ -78,6 +83,14 @@ export const appRouter = createBrowserRouter([
         element: (
           <ProtectedRoute>
             {withSuspense(<PracticeHubPage />)}
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'practice/school-exams/:examId',
+        element: (
+          <ProtectedRoute>
+            {withSuspense(<SchoolExamPage />)}
           </ProtectedRoute>
         ),
       },

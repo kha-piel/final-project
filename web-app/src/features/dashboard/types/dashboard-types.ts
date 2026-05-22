@@ -23,6 +23,19 @@ export type QuestionTypeOption = {
   value: 'all' | QuestionType
 }
 
+export type TrueFalseStatement = {
+  statementId: string
+  content: string
+  isCorrect: boolean
+}
+
+export type QuestionSourceMeta = {
+  schoolName?: string
+  examTitle?: string
+  examCode?: string
+  year?: number
+}
+
 export type DraftAnswer = {
   answerId: string
   optionLabel: string
@@ -41,6 +54,9 @@ export type DraftQuestion = {
   explanation?: string | null
   obsidianSourcePath?: string | null
   answers: DraftAnswer[]
+  statements?: TrueFalseStatement[]
+  acceptedResponses?: string[]
+  sourceMeta?: QuestionSourceMeta
 }
 
 export type AttemptHistoryItem = {

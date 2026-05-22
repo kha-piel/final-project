@@ -18,6 +18,7 @@ import {
 import { useAuthSessionStore } from '../../features/auth/store/auth-session-store'
 import { useExamDraftStore } from '../../features/exam/store/exam-draft-store'
 import { useExamRuntimeStore } from '../../features/exam/store/exam-runtime-store'
+import { hasAnsweredQuestion } from '../../features/exam/core/exam-session'
 import {
   fetchInProgressAttempts as fetchCloudInProgressAttempts,
   restoreInProgressAttempt as restoreCloudAttempt,
@@ -88,7 +89,7 @@ export function DashboardPage() {
           title: draftSession.title,
           topicName: draftSession.topicName,
           difficultyLabel: draftSession.difficultyLabel,
-          progressText: `${Object.keys(runtime.selectedAnswerIdsByQuestionId).length}/${draftSession.questions.length}`,
+          progressText: `${draftSession.questions.filter((question) => hasAnsweredQuestion(runtime, question)).length}/${draftSession.questions.length}`,
           currentQuestion: runtime.currentIndex + 1,
           updatedAt:
             runtime.chatHistory[runtime.chatHistory.length - 1]?.createdAt ?? runtime.startedAt,

@@ -456,6 +456,7 @@ export async function restoreInProgressAttempt(attemptId: string): Promise<Resto
     difficultyLabel: data.metadata?.difficulty_label ?? '--',
     durationMinutes: data.metadata?.duration_minutes ?? exam?.duration_minutes ?? 45,
     questions,
+    deliveryMode: 'cloud',
     createdAt: new Date(data.started_at).getTime(),
   }
 
@@ -463,6 +464,8 @@ export async function restoreInProgressAttempt(attemptId: string): Promise<Resto
     sessionId,
     currentIndex: Math.max(0, Number(data.metadata?.current_index ?? 0)),
     selectedAnswerIdsByQuestionId,
+    selectedTrueFalseByQuestionId: {},
+    shortAnswerByQuestionId: {},
     lockedQuestionIds,
     chatHistory: [],
     aiExplanationsByQuestionId,

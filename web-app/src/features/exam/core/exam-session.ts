@@ -22,6 +22,8 @@ export type ExamRuntimeSession = {
   sessionId: string
   currentIndex: number
   selectedAnswerIdsByQuestionId: Record<string, string>
+  selectedTrueFalseByQuestionId: Record<string, Record<string, boolean>>
+  shortAnswerByQuestionId: Record<string, string>
   lockedQuestionIds: Record<string, true>
   chatHistory: ExamChatMessage[]
   aiExplanationsByQuestionId: Record<string, string>
@@ -60,6 +62,8 @@ export function createExamRuntimeSession(session: ExamDraftSession): ExamRuntime
     sessionId: session.sessionId,
     currentIndex: 0,
     selectedAnswerIdsByQuestionId: {},
+    selectedTrueFalseByQuestionId: {},
+    shortAnswerByQuestionId: {},
     lockedQuestionIds: {},
     chatHistory: [],
     aiExplanationsByQuestionId: {},
@@ -88,6 +92,14 @@ export function getSelectedAnswerId(runtime: ExamRuntimeSession, questionId: str
   return runtime.selectedAnswerIdsByQuestionId[questionId] ?? null
 }
 
+export function getSelectedTrueFalseMap(runtime: ExamRuntimeSession, questionId: string) {
+  return runtime.selectedTrueFalseByQuestionId[questionId] ?? {}
+}
+
+export function getShortAnswerValue(runtime: ExamRuntimeSession, questionId: string) {
+  return runtime.shortAnswerByQuestionId[questionId] ?? ''
+}
+
 export function findCorrectAnswerId(question: DraftQuestion) {
   return question.answers.find((answer) => answer.isCorrect)?.answerId ?? null
 }
@@ -109,27 +121,107 @@ export function formatAnswerLabel(question: DraftQuestion, answerId: string | nu
   return `${answer.optionLabel}. ${answer.content}`
 }
 
+export function hasAnsweredQuestion(runtime: ExamRuntimeSession, question: DraftQuestion) {
+  if (question.questionType === 'multiple_choice') {
+    return Boolean(getSelectedAnswerId(runtime, question.questionId))
+  }
+
+  if (question.questionType === 'true_false') {
+    const selectedMap = getSelectedTrueFalseMap(runtime, question.questionId)
+    const statements = question.statements ?? []
+    return statements.length > 0 && statements.every((statement) => statement.statementId in selectedMap)
+  }
+
+  return getShortAnswerValue(runtime, question.questionId).trim().length > 0
+}
+
+export function formatQuestionResponse(runtime: ExamRuntimeSession, question: DraftQuestion) {
+  if (question.questionType === 'multiple_choice') {
+    return formatAnswerLabel(question, getSelectedAnswerId(runtime, question.questionId))
+  }
+
+  if (question.questionType === 'true_false') {
+    const selectedMap = getSelectedTrueFalseMap(runtime, question.questionId)
+    const statements = question.statements ?? []
+    const answeredLines = statements
+      .filter((statement) => statement.statementId in selectedMap)
+      .map((statement, index) => `${String.fromCharCode(97 + index)}) ${selectedMap[statement.statementId] ? 'Dung' : 'Sai'}`)
+
+    return answeredLines.length > 0 ? answeredLines.join(' | ') : 'Chua chon dap an'
+  }
+
+  const value = getShortAnswerValue(runtime, question.questionId).trim()
+  return value || 'Chua nhap dap an'
+}
+
+export function formatCorrectResponse(question: DraftQuestion) {
+  if (question.questionType === 'multiple_choice') {
+    return formatAnswerLabel(question, findCorrectAnswerId(question))
+  }
+
+  if (question.questionType === 'true_false') {
+    return (question.statements ?? [])
+      .map((statement, index) => `${String.fromCharCode(97 + index)}) ${statement.isCorrect ? 'Dung' : 'Sai'}`)
+      .join(' | ')
+  }
+
+  return question.acceptedResponses?.[0] ?? 'Khong ro dap an dung'
+}
+
 export function checkQuestion(
   runtime: ExamRuntimeSession,
   question: DraftQuestion,
 ): CheckedQuestionResult {
-  const selectedAnswerId = getSelectedAnswerId(runtime, question.questionId)
+  let hasSelection = false
+  let isCorrect = false
 
-  if (!selectedAnswerId) {
-    return {
-      questionId: question.questionId,
-      hasSelection: false,
-      isCorrect: false,
-      message: 'Ban can chon mot dap an truoc khi kiem tra.',
+  if (question.questionType === 'multiple_choice') {
+    const selectedAnswerId = getSelectedAnswerId(runtime, question.questionId)
+    if (!selectedAnswerId) {
+      return {
+        questionId: question.questionId,
+        hasSelection: false,
+        isCorrect: false,
+        message: 'Ban can chon mot dap an truoc khi kiem tra.',
+      }
     }
-  }
 
-  const correctAnswerId = findCorrectAnswerId(question)
-  const isCorrect = selectedAnswerId === correctAnswerId
+    hasSelection = true
+    isCorrect = selectedAnswerId === findCorrectAnswerId(question)
+  } else if (question.questionType === 'true_false') {
+    const statements = question.statements ?? []
+    const selectedMap = getSelectedTrueFalseMap(runtime, question.questionId)
+    if (statements.length === 0 || statements.some((statement) => !(statement.statementId in selectedMap))) {
+      return {
+        questionId: question.questionId,
+        hasSelection: false,
+        isCorrect: false,
+        message: 'Ban can tra loi day du tung menh de Dung/Sai truoc khi kiem tra.',
+      }
+    }
+
+    hasSelection = true
+    isCorrect = statements.every((statement) => selectedMap[statement.statementId] === statement.isCorrect)
+  } else {
+    const normalizedInput = normalizeShortAnswer(getShortAnswerValue(runtime, question.questionId))
+    if (!normalizedInput) {
+      return {
+        questionId: question.questionId,
+        hasSelection: false,
+        isCorrect: false,
+        message: 'Ban can nhap dap an ngan truoc khi kiem tra.',
+      }
+    }
+
+    hasSelection = true
+    isCorrect = (question.acceptedResponses ?? []).some(
+      (candidate) => normalizeShortAnswer(candidate) === normalizedInput,
+    )
+  }
 
   return {
     questionId: question.questionId,
-    hasSelection: true,
+    hasSelection,
     isCorrect,
     message: isCorrect
       ? 'Chinh xac! Ban da chon dung dap an.'
@@ -146,15 +238,14 @@ export function buildSubmissionSummary(
   let skippedCount = 0
 
   const reviewItems = session.questions.map((question) => {
-    const selectedAnswerId = getSelectedAnswerId(runtime, question.questionId)
-    const correctAnswerId = findCorrectAnswerId(question)
-    const selectedAnswerText = formatAnswerLabel(question, selectedAnswerId)
-    const correctAnswerText = formatAnswerLabel(question, correctAnswerId)
-    const correct = Boolean(selectedAnswerId && selectedAnswerId === correctAnswerId)
+    const selectedAnswerText = formatQuestionResponse(runtime, question)
+    const correctAnswerText = formatCorrectResponse(question)
+    const result = checkQuestion(runtime, question)
+    const answered = hasAnsweredQuestion(runtime, question)
 
-    if (!selectedAnswerId) {
+    if (!answered) {
       skippedCount += 1
-    } else if (correct) {
+    } else if (result.isCorrect) {
       correctCount += 1
     } else {
       wrongCount += 1
@@ -165,7 +256,7 @@ export function buildSubmissionSummary(
       questionContent: question.content,
       selectedAnswerText,
       correctAnswerText,
-      correct,
+      correct: answered && result.isCorrect,
       explanation: runtime.aiExplanationsByQuestionId[question.questionId],
     }
   })
@@ -189,4 +280,8 @@ export function buildSubmissionSummary(
     timeTakenSeconds,
     reviewItems,
   }
+}
+
+function normalizeShortAnswer(input: string) {
+  return input.trim().replace(/\s+/g, ' ').toLowerCase()
 }
