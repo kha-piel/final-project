@@ -9,6 +9,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
@@ -29,6 +30,8 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class ExamExecutionView extends BorderPane {
+    private static final String ASK_AI_DEFAULT_TEXT = "Hoi AI giai thich";
+    private static final String ASK_AI_LOADING_TEXT = "AI dang suy nghi...";
 
     private final ExamController examController;
     private final Stage primaryStage;
@@ -49,11 +52,13 @@ public class ExamExecutionView extends BorderPane {
     private final VBox chatHistoryBox = new VBox(12);
     private final ScrollPane chatScrollPane = new ScrollPane();
     private final TextField chatInputField = new TextField();
-    private final Button sendButton = new Button("Gui");
+    private final Button sendButton = new Button(ASK_AI_DEFAULT_TEXT);
     private final Label chatStatusLabel = new Label();
+    private final ProgressIndicator aiLoadingIndicator = new ProgressIndicator();
 
     private Timeline timeline;
     private int currentIndex;
+    private boolean isGeneratingAI = false;
 
     public ExamExecutionView(ExamController examController, Stage primaryStage, Scene previousScene) {
         this.examController = examController;
@@ -189,6 +194,9 @@ public class ExamExecutionView extends BorderPane {
                         "-fx-background-radius: 12;"
         );
         sendButton.setOnAction(event -> handleSendChat());
+        aiLoadingIndicator.setPrefSize(14, 14);
+        aiLoadingIndicator.setMaxSize(14, 14);
+        aiLoadingIndicator.setVisible(false);
 
         chatStatusLabel.setWrapText(true);
         chatStatusLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #64748b;");
@@ -268,9 +276,12 @@ public class ExamExecutionView extends BorderPane {
             }
         }
 
-        checkAnswerButton.setDisable(questionLocked);
-        prevButton.setDisable(currentIndex == 0);
-        nextButton.setDisable(currentIndex == questions.size() - 1);
+        checkAnswerButton.setDisable(questionLocked || isGeneratingAI);
+        prevButton.setDisable(isGeneratingAI || currentIndex == 0);
+        nextButton.setDisable(isGeneratingAI || currentIndex == questions.size() - 1);
+        submitButton.setDisable(isGeneratingAI);
+        sendButton.setDisable(isGeneratingAI);
+        chatInputField.setDisable(isGeneratingAI);
 
         if (questionLocked) {
             answerFeedbackLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #475569;");
@@ -312,7 +323,8 @@ public class ExamExecutionView extends BorderPane {
         answerFeedbackLabel.setText("Chua dung. AI dang duoc moi vao giai thich ben khung chat.");
         lockCurrentQuestionUi();
         refreshChatHistory();
-        chatStatusLabel.setText("AI dang phan tich cau hoi...");
+        setAiStatus("AI dang phan tich cau hoi...", false);
+        setGeneratingAi(true);
 
         CompletableFuture<ExamController.ChatMessage> future = examController.requestAutoExplanationForWrongAnswer(currentIndex);
         observeAiResponse(future, "AI da gui giai thich cho cau hoi nay.");
@@ -335,9 +347,8 @@ public class ExamExecutionView extends BorderPane {
         }
 
         chatInputField.clear();
-        chatStatusLabel.setText("Dang gui cau hoi cho AI...");
-        sendButton.setDisable(true);
-        chatInputField.setDisable(true);
+        setAiStatus("Dang gui cau hoi cho AI...", false);
+        setGeneratingAi(true);
 
         CompletableFuture<ExamController.ChatMessage> future = examController.sendChatMessage(currentIndex, message);
         refreshChatHistory();
@@ -346,18 +357,42 @@ public class ExamExecutionView extends BorderPane {
 
     private void observeAiResponse(CompletableFuture<ExamController.ChatMessage> future, String successStatus) {
         future.whenComplete((message, throwable) -> Platform.runLater(() -> {
-            sendButton.setDisable(false);
-            chatInputField.setDisable(false);
+            setGeneratingAi(false);
             refreshChatHistory();
 
             if (throwable != null) {
-                chatStatusLabel.setText("Khong the nhan phan hoi tu AI.");
-                showErrorAlert("Loi AI", throwable.getMessage() != null ? throwable.getMessage() : "Khong ro nguyen nhan.");
+                setAiStatus("Khong the nhan phan hoi tu AI. Vui long thu lai.", true);
                 return;
             }
 
-            chatStatusLabel.setText(successStatus);
+            setAiStatus(successStatus, false);
         }));
+    }
+
+    private void setGeneratingAi(boolean generating) {
+        isGeneratingAI = generating;
+
+        sendButton.setDisable(generating);
+        chatInputField.setDisable(generating);
+        prevButton.setDisable(generating || currentIndex == 0);
+        nextButton.setDisable(generating || currentIndex == examController.getExamQuestions().size() - 1);
+        submitButton.setDisable(generating);
+        checkAnswerButton.setDisable(generating || examController.isQuestionLocked(
+                examController.getExamQuestions().get(currentIndex).getQuestionId()
+        ));
+
+        sendButton.setText(generating ? ASK_AI_LOADING_TEXT : ASK_AI_DEFAULT_TEXT);
+        aiLoadingIndicator.setVisible(generating);
+        sendButton.setGraphic(generating ? aiLoadingIndicator : null);
+    }
+
+    private void setAiStatus(String message, boolean isError) {
+        chatStatusLabel.setText(message);
+        chatStatusLabel.setStyle(
+                "-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: "
+                        + (isError ? "#b91c1c" : "#64748b")
+                        + ";"
+        );
     }
 
     private void refreshChatHistory() {
