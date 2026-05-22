@@ -30,6 +30,7 @@ public class AiServiceClient {
 
     /** Endpoint giải thích đáp án */
     private static final String EXPLAIN_ENDPOINT = "/api/explain";
+    private static final String ANALYZE_WEAKNESSES_ENDPOINT = "/api/analyze-weaknesses";
 
     /** Timeout kết nối (giây) — tránh treo app nếu server không phản hồi */
     private static final int CONNECT_TIMEOUT_SECONDS = 10;
@@ -164,6 +165,38 @@ public class AiServiceClient {
      *
      * @return Chuỗi JSON hợp lệ, sẵn sàng gửi đi
      */
+    public String analyzeWeaknesses(
+            java.util.List<org.example.controller.ExamController.WrongQuestionInsight> wrongQuestions) {
+        try {
+            String jsonBody = buildWeaknessAnalysisJsonBody(wrongQuestions);
+
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(BASE_URL + ANALYZE_WEAKNESSES_ENDPOINT))
+                    .header("Content-Type", "application/json; charset=UTF-8")
+                    .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
+                    .timeout(Duration.ofSeconds(REQUEST_TIMEOUT_SECONDS))
+                    .build();
+
+            HttpResponse<String> response = httpClient.send(
+                    request,
+                    HttpResponse.BodyHandlers.ofString()
+            );
+
+            if (response.statusCode() == 200) {
+                return extractExplanation(response.body());
+            }
+
+            return "Khong the phan tich tong quan diem yeu luc nay. Server AI tra ve HTTP "
+                    + response.statusCode() + ". Chi tiet: " + response.body();
+        } catch (java.net.ConnectException e) {
+            return "Loi ket noi den dich vu AI. Vui long kiem tra server Python.";
+        } catch (java.net.http.HttpTimeoutException e) {
+            return "Het thoi gian cho AI phan tich tong quan. Vui long thu lai sau.";
+        } catch (Exception e) {
+            return "Khong the phan tich tong quan diem yeu luc nay.";
+        }
+    }
+
     private String buildJsonBody(String questionContent,
                                   String studentAnswer,
                                   String correctAnswer,
@@ -176,6 +209,30 @@ public class AiServiceClient {
         sb.append("\"correct_answer\":\"").append(escapeJson(correctAnswer)).append("\",");
         sb.append("\"obsidian_source_path\":\"").append(escapeJson(obsidianSourcePath)).append("\"");
         sb.append("}");
+        return sb.toString();
+    }
+
+    private String buildWeaknessAnalysisJsonBody(
+            java.util.List<org.example.controller.ExamController.WrongQuestionInsight> wrongQuestions) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("{\"wrong_questions\":[");
+
+        for (int i = 0; i < wrongQuestions.size(); i++) {
+            org.example.controller.ExamController.WrongQuestionInsight item = wrongQuestions.get(i);
+            if (i > 0) {
+                sb.append(",");
+            }
+
+            sb.append("{");
+            sb.append("\"question_id\":").append(item.getQuestionId()).append(",");
+            sb.append("\"question_content\":\"").append(escapeJson(item.getQuestionContent())).append("\",");
+            sb.append("\"topic\":\"").append(escapeJson(item.getTopic())).append("\",");
+            sb.append("\"user_answer\":\"").append(escapeJson(item.getUserAnswer())).append("\",");
+            sb.append("\"correct_answer\":\"").append(escapeJson(item.getCorrectAnswer())).append("\"");
+            sb.append("}");
+        }
+
+        sb.append("]}");
         return sb.toString();
     }
 

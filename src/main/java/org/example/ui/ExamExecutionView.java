@@ -474,6 +474,7 @@ public class ExamExecutionView extends BorderPane {
         ReviewSummaryView reviewSummaryView = new ReviewSummaryView(
                 primaryStage,
                 previousScene,
+                examController,
                 result,
                 examController.buildReviewSummary(),
                 examController.getAiExplanationsMap()

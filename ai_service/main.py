@@ -5,6 +5,7 @@
 # Cổng  : http://localhost:8000
 # ==============================================================================
 
+import json
 import os
 import google.generativeai as genai
 from fastapi import FastAPI, HTTPException
@@ -73,6 +74,18 @@ class QuestionRequest(BaseModel):
     correct_answer: str         # Đáp án đúng
     obsidian_source_path: str   # Đường dẫn tương đối đến file .md trong Vault
                                 # Ví dụ: "Toan_Hoc/2_Hinh_Hoc_Khong_Gian/1_vecto_trong_khong_gian.md"
+
+class WrongQuestionItem(BaseModel):
+    question_id: int
+    question_content: str
+    topic: str
+    user_answer: str
+    correct_answer: str
+
+
+class WeaknessAnalysisRequest(BaseModel):
+    wrong_questions: list[WrongQuestionItem]
+
 
 # ------------------------------------------------------------------------------
 # 5. ENDPOINT POST /api/explain
@@ -147,6 +160,44 @@ Hãy trình bày lời giải thích một cách thân thiện, khuyến khích 
 # 6. CHẠY SERVER (chỉ dùng khi chạy trực tiếp bằng `python main.py`)
 #    Khuyến nghị dùng: uvicorn main:app --reload --port 8000
 # ------------------------------------------------------------------------------
+@app.post("/api/analyze-weaknesses")
+async def analyze_weaknesses(request: WeaknessAnalysisRequest):
+    if not request.wrong_questions:
+        return {
+            "status": "success",
+            "explanation": (
+                "Hoc sinh khong co cau sai nao trong bai nay. "
+                "Nen tiep tuc duy tri nhip on tap va nang muc do cau hoi de kiem tra do vung kien thuc."
+            ),
+        }
+
+    wrong_questions_json = json.dumps(
+        [item.model_dump() for item in request.wrong_questions],
+        ensure_ascii=False,
+    )
+
+    prompt = (
+        "Dựa trên các câu học sinh làm sai sau đây: "
+        f"{wrong_questions_json}, "
+        "hãy phân tích ngắn gọn trong 3-4 câu xem học sinh đang hổng kiến thức ở chuyên đề nào nhất "
+        "và đưa ra lời khuyên ôn tập cụ thể."
+    )
+
+    try:
+        response = model.generate_content(prompt)
+        explanation_text = response.text
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Lỗi khi gọi Gemini API: {str(e)}"
+        )
+
+    return {
+        "status": "success",
+        "explanation": explanation_text,
+    }
+
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)

@@ -89,6 +89,8 @@ public class ExamController {
                     question.getQuestionText(),
                     answers,
                     correctAnswerId,
+                    question.getSubject(),
+                    question.getChapter(),
                     question.getObsidianSourcePath() != null ? question.getObsidianSourcePath() : ""
             ));
         }
@@ -129,10 +131,14 @@ public class ExamController {
 
             Optional<Question> questionOpt = questionDAO.findById(qId);
             String content = "";
+            String subject = "";
+            String chapter = "";
             String obsidianPath = "";
             if (questionOpt.isPresent()) {
                 Question question = questionOpt.get();
                 content = question.getQuestionText();
+                subject = question.getSubject() != null ? question.getSubject() : "";
+                chapter = question.getChapter() != null ? question.getChapter() : "";
                 obsidianPath = question.getObsidianSourcePath() != null ? question.getObsidianSourcePath() : "";
             }
 
@@ -141,6 +147,8 @@ public class ExamController {
                     content,
                     new ArrayList<>(answers),
                     correctAnswerId,
+                    subject,
+                    chapter,
                     obsidianPath
             ));
         }
@@ -344,12 +352,65 @@ public class ExamController {
             items.add(new ReviewQuestionSummary(
                     snapshot.getQuestionId(),
                     snapshot.getQuestionContent(),
+                    snapshot.getSubject(),
+                    snapshot.getChapter(),
                     selectedAnswerText,
                     correctAnswerText,
                     correct
             ));
         }
         return List.copyOf(items);
+    }
+
+    public List<WrongQuestionInsight> buildWrongQuestionInsights() {
+        List<WrongQuestionInsight> items = new ArrayList<>();
+
+        for (QuestionSnapshot snapshot : examQuestions) {
+            int selectedAnswerId = studentSelections.getOrDefault(snapshot.getQuestionId(), -1);
+            if (selectedAnswerId == snapshot.getCorrectAnswerId()) {
+                continue;
+            }
+
+            Answer correctAnswer = findAnswerById(snapshot, snapshot.getCorrectAnswerId());
+            Answer selectedAnswer = findAnswerById(snapshot, selectedAnswerId);
+
+            items.add(new WrongQuestionInsight(
+                    snapshot.getQuestionId(),
+                    snapshot.getQuestionContent(),
+                    buildTopicLabel(snapshot.getSubject(), snapshot.getChapter()),
+                    selectedAnswer != null ? formatAnswer(selectedAnswer) : "Chua chon dap an",
+                    correctAnswer != null ? formatAnswer(correctAnswer) : "Khong xac dinh"
+            ));
+        }
+
+        return List.copyOf(items);
+    }
+
+    public CompletableFuture<String> analyzeOverallWeaknesses() {
+        List<WrongQuestionInsight> wrongItems = buildWrongQuestionInsights();
+        if (wrongItems.isEmpty()) {
+            return CompletableFuture.completedFuture(
+                    "Hoc sinh khong co cau sai nao trong bai nay. Nen tiep tuc giu nhip on tap va tang dan muc do cau hoi de kiem tra do vung kien thuc."
+            );
+        }
+
+        return CompletableFuture.supplyAsync(() -> aiServiceClient.analyzeWeaknesses(wrongItems));
+    }
+
+    private String buildTopicLabel(String subject, String chapter) {
+        boolean hasSubject = subject != null && !subject.isBlank();
+        boolean hasChapter = chapter != null && !chapter.isBlank();
+
+        if (hasSubject && hasChapter) {
+            return subject + " - " + chapter;
+        }
+        if (hasChapter) {
+            return chapter;
+        }
+        if (hasSubject) {
+            return subject;
+        }
+        return "Chua xac dinh chuyen de";
     }
 
     public ExamResult submitExam() {
@@ -543,15 +604,20 @@ public class ExamController {
         private final String questionContent;
         private final List<Answer> shuffledAnswers;
         private final int correctAnswerId;
+        private final String subject;
+        private final String chapter;
         private final String obsidianSourcePath;
 
         public QuestionSnapshot(int questionId, String questionContent,
                                 List<Answer> shuffledAnswers, int correctAnswerId,
+                                String subject, String chapter,
                                 String obsidianSourcePath) {
             this.questionId = questionId;
             this.questionContent = questionContent;
             this.shuffledAnswers = shuffledAnswers;
             this.correctAnswerId = correctAnswerId;
+            this.subject = subject;
+            this.chapter = chapter;
             this.obsidianSourcePath = obsidianSourcePath;
         }
 
@@ -571,6 +637,14 @@ public class ExamController {
             return correctAnswerId;
         }
 
+        public String getSubject() {
+            return subject;
+        }
+
+        public String getChapter() {
+            return chapter;
+        }
+
         public String getObsidianSourcePath() {
             return obsidianSourcePath;
         }
@@ -580,17 +654,23 @@ public class ExamController {
 
         private final int questionId;
         private final String questionContent;
+        private final String subject;
+        private final String chapter;
         private final String selectedAnswerText;
         private final String correctAnswerText;
         private final boolean correct;
 
         public ReviewQuestionSummary(int questionId,
                                      String questionContent,
+                                     String subject,
+                                     String chapter,
                                      String selectedAnswerText,
                                      String correctAnswerText,
                                      boolean correct) {
             this.questionId = questionId;
             this.questionContent = questionContent;
+            this.subject = subject;
+            this.chapter = chapter;
             this.selectedAnswerText = selectedAnswerText;
             this.correctAnswerText = correctAnswerText;
             this.correct = correct;
@@ -604,6 +684,14 @@ public class ExamController {
             return questionContent;
         }
 
+        public String getSubject() {
+            return subject;
+        }
+
+        public String getChapter() {
+            return chapter;
+        }
+
         public String getSelectedAnswerText() {
             return selectedAnswerText;
         }
@@ -614,6 +702,63 @@ public class ExamController {
 
         public boolean isCorrect() {
             return correct;
+        }
+
+        public String getTopicLabel() {
+            boolean hasSubject = subject != null && !subject.isBlank();
+            boolean hasChapter = chapter != null && !chapter.isBlank();
+
+            if (hasSubject && hasChapter) {
+                return subject + " - " + chapter;
+            }
+            if (hasChapter) {
+                return chapter;
+            }
+            if (hasSubject) {
+                return subject;
+            }
+            return "Chua xac dinh chuyen de";
+        }
+    }
+
+    public static class WrongQuestionInsight {
+
+        private final int questionId;
+        private final String questionContent;
+        private final String topic;
+        private final String userAnswer;
+        private final String correctAnswer;
+
+        public WrongQuestionInsight(int questionId,
+                                    String questionContent,
+                                    String topic,
+                                    String userAnswer,
+                                    String correctAnswer) {
+            this.questionId = questionId;
+            this.questionContent = questionContent;
+            this.topic = topic;
+            this.userAnswer = userAnswer;
+            this.correctAnswer = correctAnswer;
+        }
+
+        public int getQuestionId() {
+            return questionId;
+        }
+
+        public String getQuestionContent() {
+            return questionContent;
+        }
+
+        public String getTopic() {
+            return topic;
+        }
+
+        public String getUserAnswer() {
+            return userAnswer;
+        }
+
+        public String getCorrectAnswer() {
+            return correctAnswer;
         }
     }
 
