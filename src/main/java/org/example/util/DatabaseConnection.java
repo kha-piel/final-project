@@ -6,12 +6,16 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class DatabaseConnection {
+/**
+ * Singleton quan ly ket noi SQLite local cho module de thi.
+ *
+ * Dang nhap van di qua Supabase Auth REST API, con du lieu quiz hien tai
+ * van dung schema SQLite cu trong data/thptqg_ai.db.
+ */
+public final class DatabaseConnection {
 
-    private static final Path DB_PATH = resolveDatabasePath();
-    private static final String DB_URL = "jdbc:sqlite:" + DB_PATH.toString();
-    private static final String DB_USER = "";
-    private static final String DB_PASS = "";
+    private static final Path SQLITE_DB_PATH = resolveDatabasePath();
+    private static final Path DATA_DIR = SQLITE_DB_PATH.getParent();
 
     private static volatile Connection instance;
 
@@ -22,10 +26,7 @@ public class DatabaseConnection {
         if (instance == null || instance.isClosed()) {
             synchronized (DatabaseConnection.class) {
                 if (instance == null || instance.isClosed()) {
-                    ensureDataDirectoryExists();
-                    instance = DriverManager.getConnection(DB_URL, DB_USER, DB_PASS);
-                    instance.setAutoCommit(true);
-                    System.out.println("DEBUG SQLite DB: " + DB_PATH.toAbsolutePath().normalize());
+                    initializeSqliteConnection();
                 }
             }
         }
@@ -33,7 +34,7 @@ public class DatabaseConnection {
     }
 
     public static String getDatabasePath() {
-        return DB_PATH.toAbsolutePath().normalize().toString();
+        return SQLITE_DB_PATH.toAbsolutePath().normalize().toString();
     }
 
     public static void closeConnection() {
@@ -63,11 +64,36 @@ public class DatabaseConnection {
         return start;
     }
 
-    private static void ensureDataDirectoryExists() throws SQLException {
+    private static void initializeSqliteConnection() throws SQLException {
         try {
-            Files.createDirectories(DB_PATH.getParent());
-        } catch (Exception e) {
-            throw new SQLException("Khong the tao thu muc database: " + DB_PATH.getParent(), e);
+            Files.createDirectories(DATA_DIR);
+        } catch (Exception ex) {
+            throw new SQLException("Khong the tao thu muc data cho SQLite: " + ex.getMessage(), ex);
+        }
+
+        try {
+            Class.forName("org.sqlite.JDBC");
+        } catch (ClassNotFoundException ex) {
+            throw new SQLException("Chua co SQLite JDBC driver trong pom.xml.", ex);
+        }
+
+        boolean shouldBootstrap;
+        try {
+            shouldBootstrap = Files.notExists(SQLITE_DB_PATH) || Files.size(SQLITE_DB_PATH) == 0;
+        } catch (Exception ex) {
+            throw new SQLException("Khong the kiem tra file SQLite: " + ex.getMessage(), ex);
+        }
+
+        String jdbcUrl = "jdbc:sqlite:" + SQLITE_DB_PATH;
+        instance = DriverManager.getConnection(jdbcUrl);
+
+        if (shouldBootstrap) {
+            try {
+                DatabaseInitializer.initialize(instance);
+            } catch (SQLException ex) {
+                closeConnection();
+                throw ex;
+            }
         }
     }
 }

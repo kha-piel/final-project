@@ -53,6 +53,7 @@ __pycache__/
 .env.production.local
 venv/
 .venv/
+.codex-py/
 
 ### IntelliJ IDEA (full) ###
 .idea/

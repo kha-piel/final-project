@@ -21,6 +21,24 @@ Project này được sắp xếp lại để tách rõ source code, dữ liệu
 mvn javafx:run
 ```
 
+### Web app
+
+```bash
+cd web-app
+npm install
+npm run dev
+```
+
+Web app can:
+- `web-app/.env.local` voi `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_AI_API_BASE_URL`
+- Supabase da apply `supabase/schema.sql`
+- Neu muon day content tu SQLite local cua repo len Supabase:
+
+```bash
+python -m pip install pg8000
+python supabase/scripts/migrate_sqlite_to_supabase.py
+```
+
 ### AI service
 
 ```bash

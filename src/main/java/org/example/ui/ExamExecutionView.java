@@ -305,6 +305,7 @@ public class ExamExecutionView extends BorderPane {
             answerFeedbackLabel.setText("Chinh xac! Ban da chon dung dap an.");
             lockCurrentQuestionUi();
             showInfoAlert("Kiem tra dap an", "Chinh xac!", "Ban da tra loi dung cau nay.");
+            moveToNextQuestionIfAvailable();
             return;
         }
 
@@ -317,6 +318,14 @@ public class ExamExecutionView extends BorderPane {
         CompletableFuture<ExamController.ChatMessage> future = examController.requestAutoExplanationForWrongAnswer(currentIndex);
         observeAiResponse(future, "AI da gui giai thich cho cau hoi nay.");
         showInfoAlert("Kiem tra dap an", "Ban da chon sai.", "Thong diep he thong da duoc day sang khung chat de AI giai thich.");
+        moveToNextQuestionIfAvailable();
+    }
+
+    private void moveToNextQuestionIfAvailable() {
+        if (currentIndex < examController.getExamQuestions().size() - 1) {
+            currentIndex++;
+            renderQuestion();
+        }
     }
 
     private void lockCurrentQuestionUi() {
