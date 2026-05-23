@@ -1,0 +1,61 @@
+{
+  "exam_slug": "truong-x-2025",
+  "exam_id": "truong-x-2025",
+  "title": "De Truong X 2025",
+  "school_name": "Truong X",
+  "city": "Ha Noi",
+  "subject_code": "TOAN",
+  "subject_name": "Toan hoc",
+  "subject_folder": "Toan",
+  "year": 2025,
+  "duration_minutes": 50,
+  "pdf_input_path": "data_scraper/input/school_exams/truong-x-2025.pdf",
+  "pdf_public_url": "/school-exams/truong-x-2025.pdf",
+  "source_path": "data_scraper/input/school_exams/truong-x-2025.pdf",
+  "variant_code": "DEFAULT",
+  "variant_id": "truong-x-2025-default",
+  "tags": ["de truong", "toan 12", "pdf"],
+  "manifest_path": "obsidian_vault/assets/Toan/truong-x-2025/manifest.json",
+  "answer_key_path": "obsidian_vault/parsed/Toan/truong-x-2025/answer_key.json",
+  "extract_json_path": "data_scraper/output/school_exams/json/truong-x-2025/school_exam_input.json",
+  "extract_markdown_dir": "data_scraper/output/school_exams/markdown/truong-x-2025",
+  "extract_json_dir": "data_scraper/output/school_exams/json/truong-x-2025",
+  "questions_json_path": "obsidian_vault/parsed/Toan/truong-x-2025/questions.json",
+  "topic_report_path": "obsidian_vault/parsed/Toan/truong-x-2025/topic_suggestion_report.json",
+  "review_status_path": "obsidian_vault/parsed/Toan/truong-x-2025/review_status.json",
+  "exam_seed_sql_path": "web-app/supabase/seed_school_exam_truong_x_2025.sql",
+  "question_seed_sql_path": "web-app/supabase/seed_school_exam_questions_truong-x-2025.sql",
+  "import_bundle_sql_path": "web-app/supabase/import_school_exam_truong-x-2025.sql",
+  "sections": [
+    {
+      "part_code": "multiple_choice",
+      "title": "Phan I. Trac nghiem nhieu lua chon",
+      "instructions": "Cau 1 den 12, moi cau chon 1 trong 4 dap an.",
+      "start_question_number": 1,
+      "end_question_number": 12,
+      "display_order": 1,
+      "options_per_question": 4,
+      "statement_count": 0
+    },
+    {
+      "part_code": "true_false",
+      "title": "Phan II. Dung / Sai",
+      "instructions": "Cau 13 den 16, moi cau co 4 y a, b, c, d va chon D hoac S cho tung y.",
+      "start_question_number": 13,
+      "end_question_number": 16,
+      "display_order": 2,
+      "options_per_question": 0,
+      "statement_count": 4
+    },
+    {
+      "part_code": "short_answer",
+      "title": "Phan III. Tra loi ngan",
+      "instructions": "Cau 17 den 22, nhap dap an vao o trong.",
+      "start_question_number": 17,
+      "end_question_number": 22,
+      "display_order": 3,
+      "options_per_question": 0,
+      "statement_count": 0
+    }
+  ]
+}
