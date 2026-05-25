@@ -1,0 +1,1089 @@
+{
+  "exam_id": "supplemental-gtln-gtnn",
+  "title": "Bộ câu bổ sung GTLN, GTNN của hàm số",
+  "subject_code": "TOAN",
+  "subject_name": "Toán học",
+  "source_pdf": "c:\\Users\\User-PC\\Downloads\\chuyen-de-trac-nghiem-gia-tri-lon-nhat-va-nho-nhat-cua-ham-so.pdf",
+  "questions": [
+    {
+      "question_number": 1,
+      "source_question_number": 1,
+      "section_number": 1,
+      "part": "multiple_choice",
+      "question_type": "multiple_choice",
+      "question_text": "Giá trị nhỏ nhất của hàm số 3 35yx x=−+ trên đoạn [0;2] là",
+      "options": {
+        "A": "0",
+        "B": "3",
+        "C": "5",
+        "D": "7"
+      },
+      "answer_value": "B",
+      "difficulty_level": 1,
+      "topic": "Cực trị, GTLN và GTNN",
+      "obsidian_source_path": "Toan_Hoc/1_Ham_So/3_gia_tri_lon_nhat_nho_nhat.md",
+      "asset_paths": [],
+      "has_image": false,
+      "notes": "Auto-extracted from Ví dụ 1 | TÌM GIÁ TRỊ NHỎ NHẤT – GIÁ TRỊ LỚN NHẤT CỦA HÀM SỐ",
+      "review_status": "auto_extracted_reviewed",
+      "metadata": {
+        "source_pdf": "c:\\Users\\User-PC\\Downloads\\chuyen-de-trac-nghiem-gia-tri-lon-nhat-va-nho-nhat-cua-ham-so.pdf",
+        "section_title": "TÌM GIÁ TRỊ NHỎ NHẤT – GIÁ TRỊ LỚN NHẤT CỦA HÀM SỐ",
+        "page": 3
+      }
+    },
+    {
+      "question_number": 2,
+      "source_question_number": 2,
+      "section_number": 1,
+      "part": "multiple_choice",
+      "question_type": "multiple_choice",
+      "question_text": "Giá trị lớn nhất của hàm số 42() 2 1fx x x= −+ trên đoạn [0;2] là",
+      "options": {
+        "A": "64",
+        "B": "1",
+        "C": "0",
+        "D": "9"
+      },
+      "answer_value": "D",
+      "difficulty_level": 1,
+      "topic": "Cực trị, GTLN và GTNN",
+      "obsidian_source_path": "Toan_Hoc/1_Ham_So/3_gia_tri_lon_nhat_nho_nhat.md",
+      "asset_paths": [],
+      "has_image": false,
+      "notes": "Auto-extracted from Ví dụ 2 | TÌM GIÁ TRỊ NHỎ NHẤT – GIÁ TRỊ LỚN NHẤT CỦA HÀM SỐ",
+      "review_status": "auto_extracted_reviewed",
+      "metadata": {
+        "source_pdf": "c:\\Users\\User-PC\\Downloads\\chuyen-de-trac-nghiem-gia-tri-lon-nhat-va-nho-nhat-cua-ham-so.pdf",
+        "section_title": "TÌM GIÁ TRỊ NHỎ NHẤT – GIÁ TRỊ LỚN NHẤT CỦA HÀM SỐ",
+        "page": 3
+      }
+    },
+    {
+      "question_number": 3,
+      "source_question_number": 3,
+      "section_number": 1,
+      "part": "multiple_choice",
+      "question_type": "multiple_choice",
+      "question_text": "Giá trị nhỏ nhất của hàm số\n2 3() 1\nxfx x\n+= − trên đoạn [2;4] là",
+      "options": {
+        "A": "7",
+        "B": "6",
+        "C": "19\n3",
+        "D": "13.3"
+      },
+      "answer_value": "B",
+      "difficulty_level": 1,
+      "topic": "Cực trị, GTLN và GTNN",
+      "obsidian_source_path": "Toan_Hoc/1_Ham_So/3_gia_tri_lon_nhat_nho_nhat.md",
+      "asset_paths": [],
+      "has_image": false,
+      "notes": "Auto-extracted from Ví dụ 3 | TÌM GIÁ TRỊ NHỎ NHẤT – GIÁ TRỊ LỚN NHẤT CỦA HÀM SỐ",
+      "review_status": "auto_extracted_reviewed",
+      "metadata": {
+        "source_pdf": "c:\\Users\\User-PC\\Downloads\\chuyen-de-trac-nghiem-gia-tri-lon-nhat-va-nho-nhat-cua-ham-so.pdf",
+        "section_title": "TÌM GIÁ TRỊ NHỎ NHẤT – GIÁ TRỊ LỚN NHẤT CỦA HÀM SỐ",
+        "page": 3
+      }
+    },
+    {
+      "question_number": 4,
+      "source_question_number": 4,
+      "section_number": 1,
+      "part": "multiple_choice",
+      "question_type": "multiple_choice",
+      "question_text": "Gọi M, m lần lượt là giá trị lớn nhất, giá trị nhỏ nhất của hàm số 31() 3\nxfx x\n−= − trên đoạ n [0;2].\nGiá trị của 3M + m bằng",
+      "options": {
+        "A": "0",
+        "B": "– 4",
+        "C": "– 2",
+        "D": "1"
+      },
+      "answer_value": "C",
+      "difficulty_level": 2,
+      "topic": "Cực trị, GTLN và GTNN",
+      "obsidian_source_path": "Toan_Hoc/1_Ham_So/3_gia_tri_lon_nhat_nho_nhat.md",
+      "asset_paths": [],
+      "has_image": false,
+      "notes": "Auto-extracted from Ví dụ 4 | TÌM GIÁ TRỊ NHỎ NHẤT – GIÁ TRỊ LỚN NHẤT CỦA HÀM SỐ",
+      "review_status": "auto_extracted_reviewed",
+      "metadata": {
+        "source_pdf": "c:\\Users\\User-PC\\Downloads\\chuyen-de-trac-nghiem-gia-tri-lon-nhat-va-nho-nhat-cua-ham-so.pdf",
+        "section_title": "TÌM GIÁ TRỊ NHỎ NHẤT – GIÁ TRỊ LỚN NHẤT CỦA HÀM SỐ",
+        "page": 4
+      }
+    },
+    {
+      "question_number": 5,
+      "source_question_number": 5,
+      "section_number": 1,
+      "part": "multiple_choice",
+      "question_type": "multiple_choice",
+      "question_text": "Giá trị lớn nhất của hàm số 232= −−y x xx là",
+      "options": {
+        "A": "1",
+        "B": "2",
+        "C": "3",
+        "D": "4"
+      },
+      "answer_value": "B",
+      "difficulty_level": 1,
+      "topic": "Cực trị, GTLN và GTNN",
+      "obsidian_source_path": "Toan_Hoc/1_Ham_So/3_gia_tri_lon_nhat_nho_nhat.md",
+      "asset_paths": [],
+      "has_image": false,
+      "notes": "Auto-extracted from Ví dụ 5 | TÌM GIÁ TRỊ NHỎ NHẤT – GIÁ TRỊ LỚN NHẤT CỦA HÀM SỐ",
+      "review_status": "auto_extracted_reviewed",
+      "metadata": {
+        "source_pdf": "c:\\Users\\User-PC\\Downloads\\chuyen-de-trac-nghiem-gia-tri-lon-nhat-va-nho-nhat-cua-ham-so.pdf",
+        "section_title": "TÌM GIÁ TRỊ NHỎ NHẤT – GIÁ TRỊ LỚN NHẤT CỦA HÀM SỐ",
+        "page": 5
+      }
+    },
+    {
+      "question_number": 6,
+      "source_question_number": 6,
+      "section_number": 1,
+      "part": "multiple_choice",
+      "question_type": "multiple_choice",
+      "question_text": "Gọi M và m lần lượt là giá trị lớn nhất và giá trị nhỏ nhất của hàm số 21.yx x= − Giá trị của\nM – 2m bằng",
+      "options": {
+        "A": "0",
+        "B": "1.2−",
+        "C": "1",
+        "D": "3.2"
+      },
+      "answer_value": "D",
+      "difficulty_level": 2,
+      "topic": "Cực trị, GTLN và GTNN",
+      "obsidian_source_path": "Toan_Hoc/1_Ham_So/3_gia_tri_lon_nhat_nho_nhat.md",
+      "asset_paths": [],
+      "has_image": false,
+      "notes": "Auto-extracted from Ví dụ 6 | TÌM GIÁ TRỊ NHỎ NHẤT – GIÁ TRỊ LỚN NHẤT CỦA HÀM SỐ",
+      "review_status": "auto_extracted_reviewed",
+      "metadata": {
+        "source_pdf": "c:\\Users\\User-PC\\Downloads\\chuyen-de-trac-nghiem-gia-tri-lon-nhat-va-nho-nhat-cua-ham-so.pdf",
+        "section_title": "TÌM GIÁ TRỊ NHỎ NHẤT – GIÁ TRỊ LỚN NHẤT CỦA HÀM SỐ",
+        "page": 5
+      }
+    },
+    {
+      "question_number": 7,
+      "source_question_number": 7,
+      "section_number": 1,
+      "part": "multiple_choice",
+      "question_type": "multiple_choice",
+      "question_text": "Gọi M và m lần lượt là giá trị lớn nhất và giá tr ị nhỏ nhất của hàm số 11yxx= −+ +. Giá trị\ncủa 22Mm− bằng",
+      "options": {
+        "A": "– 2",
+        "B": "2",
+        "C": "0",
+        "D": "– 1"
+      },
+      "answer_value": "A",
+      "difficulty_level": 2,
+      "topic": "Cực trị, GTLN và GTNN",
+      "obsidian_source_path": "Toan_Hoc/1_Ham_So/3_gia_tri_lon_nhat_nho_nhat.md",
+      "asset_paths": [],
+      "has_image": false,
+      "notes": "Auto-extracted from Ví dụ 7 | TÌM GIÁ TRỊ NHỎ NHẤT – GIÁ TRỊ LỚN NHẤT CỦA HÀM SỐ",
+      "review_status": "auto_extracted_reviewed",
+      "metadata": {
+        "source_pdf": "c:\\Users\\User-PC\\Downloads\\chuyen-de-trac-nghiem-gia-tri-lon-nhat-va-nho-nhat-cua-ham-so.pdf",
+        "section_title": "TÌM GIÁ TRỊ NHỎ NHẤT – GIÁ TRỊ LỚN NHẤT CỦA HÀM SỐ",
+        "page": 6
+      }
+    },
+    {
+      "question_number": 8,
+      "source_question_number": 8,
+      "section_number": 1,
+      "part": "multiple_choice",
+      "question_type": "multiple_choice",
+      "question_text": "Giá trị lớn nhất của hàm số 21 3 2 43yx x x x= −+ − − − + − là",
+      "options": {
+        "A": "0",
+        "B": "2.−",
+        "C": "2",
+        "D": "9.4"
+      },
+      "answer_value": "C",
+      "difficulty_level": 1,
+      "topic": "Cực trị, GTLN và GTNN",
+      "obsidian_source_path": "Toan_Hoc/1_Ham_So/3_gia_tri_lon_nhat_nho_nhat.md",
+      "asset_paths": [],
+      "has_image": false,
+      "notes": "Auto-extracted from Ví dụ 8 | TÌM GIÁ TRỊ NHỎ NHẤT – GIÁ TRỊ LỚN NHẤT CỦA HÀM SỐ",
+      "review_status": "auto_extracted_reviewed",
+      "metadata": {
+        "source_pdf": "c:\\Users\\User-PC\\Downloads\\chuyen-de-trac-nghiem-gia-tri-lon-nhat-va-nho-nhat-cua-ham-so.pdf",
+        "section_title": "TÌM GIÁ TRỊ NHỎ NHẤT – GIÁ TRỊ LỚN NHẤT CỦA HÀM SỐ",
+        "page": 6
+      }
+    },
+    {
+      "question_number": 9,
+      "source_question_number": 9,
+      "section_number": 1,
+      "part": "multiple_choice",
+      "question_type": "multiple_choice",
+      "question_text": "Giá trị nhỏ nhất của hàm số 32 912cos cos 3cos22y x xx= − ++ là",
+      "options": {
+        "A": "– 9",
+        "B": "1",
+        "C": "3.2−",
+        "D": "1.2"
+      },
+      "answer_value": "B",
+      "difficulty_level": 2,
+      "topic": "Cực trị, GTLN và GTNN",
+      "obsidian_source_path": "Toan_Hoc/1_Ham_So/3_gia_tri_lon_nhat_nho_nhat.md",
+      "asset_paths": [],
+      "has_image": false,
+      "notes": "Auto-extracted from Ví dụ 9 | TÌM GIÁ TRỊ NHỎ NHẤT – GIÁ TRỊ LỚN NHẤT CỦA HÀM SỐ",
+      "review_status": "auto_extracted_reviewed",
+      "metadata": {
+        "source_pdf": "c:\\Users\\User-PC\\Downloads\\chuyen-de-trac-nghiem-gia-tri-lon-nhat-va-nho-nhat-cua-ham-so.pdf",
+        "section_title": "TÌM GIÁ TRỊ NHỎ NHẤT – GIÁ TRỊ LỚN NHẤT CỦA HÀM SỐ",
+        "page": 6
+      }
+    },
+    {
+      "question_number": 10,
+      "source_question_number": 10,
+      "section_number": 1,
+      "part": "multiple_choice",
+      "question_type": "multiple_choice",
+      "question_text": "Giá trị lớn nhất của hàm số 3sin cos 2 sin 3y x xx= + ++ là",
+      "options": {
+        "A": "0",
+        "B": "5",
+        "C": "4",
+        "D": "112.27"
+      },
+      "answer_value": "D",
+      "difficulty_level": 2,
+      "topic": "Cực trị, GTLN và GTNN",
+      "obsidian_source_path": "Toan_Hoc/1_Ham_So/3_gia_tri_lon_nhat_nho_nhat.md",
+      "asset_paths": [],
+      "has_image": false,
+      "notes": "Auto-extracted from Ví dụ 10 | TÌM GIÁ TRỊ NHỎ NHẤT – GIÁ TRỊ LỚN NHẤT CỦA HÀM SỐ",
+      "review_status": "auto_extracted_reviewed",
+      "metadata": {
+        "source_pdf": "c:\\Users\\User-PC\\Downloads\\chuyen-de-trac-nghiem-gia-tri-lon-nhat-va-nho-nhat-cua-ham-so.pdf",
+        "section_title": "TÌM GIÁ TRỊ NHỎ NHẤT – GIÁ TRỊ LỚN NHẤT CỦA HÀM SỐ",
+        "page": 7
+      }
+    },
+    {
+      "question_number": 11,
+      "source_question_number": 11,
+      "section_number": 1,
+      "part": "multiple_choice",
+      "question_type": "multiple_choice",
+      "question_text": "Tìm giá trị lớn nhất M của hàm số 2() 4 5fx x x= −− + trên đoạn [-6;6]",
+      "options": {
+        "A": "110",
+        "B": "9",
+        "C": "55",
+        "D": "7"
+      },
+      "answer_value": "C",
+      "difficulty_level": 1,
+      "topic": "Cực trị, GTLN và GTNN",
+      "obsidian_source_path": "Toan_Hoc/1_Ham_So/3_gia_tri_lon_nhat_nho_nhat.md",
+      "asset_paths": [],
+      "has_image": false,
+      "notes": "Auto-extracted from Ví dụ 11 | TÌM GIÁ TRỊ NHỎ NHẤT – GIÁ TRỊ LỚN NHẤT CỦA HÀM SỐ",
+      "review_status": "auto_extracted_reviewed",
+      "metadata": {
+        "source_pdf": "c:\\Users\\User-PC\\Downloads\\chuyen-de-trac-nghiem-gia-tri-lon-nhat-va-nho-nhat-cua-ham-so.pdf",
+        "section_title": "TÌM GIÁ TRỊ NHỎ NHẤT – GIÁ TRỊ LỚN NHẤT CỦA HÀM SỐ",
+        "page": 7
+      }
+    },
+    {
+      "question_number": 12,
+      "source_question_number": 12,
+      "section_number": 1,
+      "part": "multiple_choice",
+      "question_type": "multiple_choice",
+      "question_text": "Tìm giá trị lớn nhất M của hàm số 2() 3 2fx x x x= − +− trên đoạn [-4;4]",
+      "options": {
+        "A": "2",
+        "B": "17",
+        "C": "34",
+        "D": "68"
+      },
+      "answer_value": "C",
+      "difficulty_level": 1,
+      "topic": "Cực trị, GTLN và GTNN",
+      "obsidian_source_path": "Toan_Hoc/1_Ham_So/3_gia_tri_lon_nhat_nho_nhat.md",
+      "asset_paths": [],
+      "has_image": false,
+      "notes": "Auto-extracted from Ví dụ 12 | TÌM GIÁ TRỊ NHỎ NHẤT – GIÁ TRỊ LỚN NHẤT CỦA HÀM SỐ",
+      "review_status": "auto_extracted_reviewed",
+      "metadata": {
+        "source_pdf": "c:\\Users\\User-PC\\Downloads\\chuyen-de-trac-nghiem-gia-tri-lon-nhat-va-nho-nhat-cua-ham-so.pdf",
+        "section_title": "TÌM GIÁ TRỊ NHỎ NHẤT – GIÁ TRỊ LỚN NHẤT CỦA HÀM SỐ",
+        "page": 8
+      }
+    },
+    {
+      "question_number": 13,
+      "source_question_number": 13,
+      "section_number": 1,
+      "part": "multiple_choice",
+      "question_type": "multiple_choice",
+      "question_text": "Cho hàm số ()y fx= có đồ thị trên đoạn [-2;4] như hình vẽ. Tìm giá trị lớn nhất M của hàm số\n()y fx= trên đoạn [-2;4]?",
+      "options": {
+        "A": "2",
+        "B": "3",
+        "C": "1",
+        "D": "(0).f"
+      },
+      "answer_value": "B",
+      "difficulty_level": 1,
+      "topic": "Cực trị, GTLN và GTNN",
+      "obsidian_source_path": "Toan_Hoc/1_Ham_So/3_gia_tri_lon_nhat_nho_nhat.md",
+      "asset_paths": [],
+      "has_image": false,
+      "notes": "Auto-extracted from Ví dụ 13 | TÌM GIÁ TRỊ NHỎ NHẤT – GIÁ TRỊ LỚN NHẤT CỦA HÀM SỐ",
+      "review_status": "auto_extracted_reviewed",
+      "metadata": {
+        "source_pdf": "c:\\Users\\User-PC\\Downloads\\chuyen-de-trac-nghiem-gia-tri-lon-nhat-va-nho-nhat-cua-ham-so.pdf",
+        "section_title": "TÌM GIÁ TRỊ NHỎ NHẤT – GIÁ TRỊ LỚN NHẤT CỦA HÀM SỐ",
+        "page": 8
+      }
+    },
+    {
+      "question_number": 14,
+      "source_question_number": 14,
+      "section_number": 1,
+      "part": "multiple_choice",
+      "question_type": "multiple_choice",
+      "question_text": "Cho 2():Pyx = và 12; 2A−. Gọi M là điểm bất kì thuộc (P). Khoảng cách MA bé nhất là",
+      "options": {
+        "A": "5.4",
+        "B": "23.3",
+        "C": "2.2",
+        "D": "5.2"
+      },
+      "answer_value": "D",
+      "difficulty_level": 1,
+      "topic": "Cực trị, GTLN và GTNN",
+      "obsidian_source_path": "Toan_Hoc/1_Ham_So/3_gia_tri_lon_nhat_nho_nhat.md",
+      "asset_paths": [],
+      "has_image": false,
+      "notes": "Auto-extracted from Ví dụ 14 | TÌM GIÁ TRỊ NHỎ NHẤT – GIÁ TRỊ LỚN NHẤT CỦA HÀM SỐ",
+      "review_status": "auto_extracted_reviewed",
+      "metadata": {
+        "source_pdf": "c:\\Users\\User-PC\\Downloads\\chuyen-de-trac-nghiem-gia-tri-lon-nhat-va-nho-nhat-cua-ham-so.pdf",
+        "section_title": "TÌM GIÁ TRỊ NHỎ NHẤT – GIÁ TRỊ LỚN NHẤT CỦA HÀM SỐ",
+        "page": 9
+      }
+    },
+    {
+      "question_number": 15,
+      "source_question_number": 1,
+      "section_number": 2,
+      "part": "multiple_choice",
+      "question_type": "multiple_choice",
+      "question_text": "Tìm giá trị thực của tham số m để hàm số 2() 4fx x x m= −+ − có giá trị lớn nhất trên đoạn [-1;3] bằng 10.",
+      "options": {
+        "A": "3.m =",
+        "B": "6.m = −",
+        "C": "7.m = −",
+        "D": "8.m = −"
+      },
+      "answer_value": "B",
+      "difficulty_level": 4,
+      "topic": "Cực trị, GTLN và GTNN",
+      "obsidian_source_path": "Toan_Hoc/1_Ham_So/3_gia_tri_lon_nhat_nho_nhat.md",
+      "asset_paths": [],
+      "has_image": false,
+      "notes": "Auto-extracted from Ví dụ 1 | BÀI TOÁN CHỨA THAM SỐ",
+      "review_status": "auto_extracted_reviewed",
+      "metadata": {
+        "source_pdf": "c:\\Users\\User-PC\\Downloads\\chuyen-de-trac-nghiem-gia-tri-lon-nhat-va-nho-nhat-cua-ham-so.pdf",
+        "section_title": "BÀI TOÁN CHỨA THAM SỐ",
+        "page": 9
+      }
+    },
+    {
+      "question_number": 16,
+      "source_question_number": 2,
+      "section_number": 2,
+      "part": "multiple_choice",
+      "question_type": "multiple_choice",
+      "question_text": "Tìm giá trị thực của tham số a để hàm số 32() 3fx x x a= −− + có giá trị nhỏ nhất trên đoạn [-1;1]\nbằng 0.",
+      "options": {
+        "A": "2.a =",
+        "B": "6.a =",
+        "C": "0.a =",
+        "D": "4.a ="
+      },
+      "answer_value": "D",
+      "difficulty_level": 4,
+      "topic": "Cực trị, GTLN và GTNN",
+      "obsidian_source_path": "Toan_Hoc/1_Ham_So/3_gia_tri_lon_nhat_nho_nhat.md",
+      "asset_paths": [],
+      "has_image": false,
+      "notes": "Auto-extracted from Ví dụ 2 | BÀI TOÁN CHỨA THAM SỐ",
+      "review_status": "auto_extracted_reviewed",
+      "metadata": {
+        "source_pdf": "c:\\Users\\User-PC\\Downloads\\chuyen-de-trac-nghiem-gia-tri-lon-nhat-va-nho-nhat-cua-ham-so.pdf",
+        "section_title": "BÀI TOÁN CHỨA THAM SỐ",
+        "page": 10
+      }
+    },
+    {
+      "question_number": 17,
+      "source_question_number": 3,
+      "section_number": 2,
+      "part": "multiple_choice",
+      "question_type": "multiple_choice",
+      "question_text": "Cho hàm số 3 22 (1)y x mx m m x= −+ − ++. Gọi S là tập hợp các giá trị thực của tham số m sao cho\ngiá trị nhỏ nhất của hàm số trên đoạn [-1;1] bằng – 6. Tính tổng các phần tử của S.",
+      "options": {
+        "A": "0",
+        "B": "4",
+        "C": "– 4",
+        "D": "2 2"
+      },
+      "answer_value": "A",
+      "difficulty_level": 4,
+      "topic": "Cực trị, GTLN và GTNN",
+      "obsidian_source_path": "Toan_Hoc/1_Ham_So/3_gia_tri_lon_nhat_nho_nhat.md",
+      "asset_paths": [],
+      "has_image": false,
+      "notes": "Auto-extracted from Ví dụ 3 | BÀI TOÁN CHỨA THAM SỐ",
+      "review_status": "auto_extracted_reviewed",
+      "metadata": {
+        "source_pdf": "c:\\Users\\User-PC\\Downloads\\chuyen-de-trac-nghiem-gia-tri-lon-nhat-va-nho-nhat-cua-ham-so.pdf",
+        "section_title": "BÀI TOÁN CHỨA THAM SỐ",
+        "page": 10
+      }
+    },
+    {
+      "question_number": 18,
+      "source_question_number": 4,
+      "section_number": 2,
+      "part": "multiple_choice",
+      "question_type": "multiple_choice",
+      "question_text": "Biết hàm số () ()\n33 3y xm xn x=+ ++ − với m, n là tham số đồng biến trên khoảng (;)−∞ +∞. Giá\ntrị nhỏ nhất của biểu thức 224()P m n mn= + −− bằng",
+      "options": {
+        "A": "4",
+        "B": "1.4",
+        "C": "– 16",
+        "D": "1.16−"
+      },
+      "answer_value": "D",
+      "difficulty_level": 3,
+      "topic": "Cực trị, GTLN và GTNN",
+      "obsidian_source_path": "Toan_Hoc/1_Ham_So/3_gia_tri_lon_nhat_nho_nhat.md",
+      "asset_paths": [],
+      "has_image": false,
+      "notes": "Auto-extracted from Ví dụ 4 | BÀI TOÁN CHỨA THAM SỐ",
+      "review_status": "auto_extracted_reviewed",
+      "metadata": {
+        "source_pdf": "c:\\Users\\User-PC\\Downloads\\chuyen-de-trac-nghiem-gia-tri-lon-nhat-va-nho-nhat-cua-ham-so.pdf",
+        "section_title": "BÀI TOÁN CHỨA THAM SỐ",
+        "page": 10
+      }
+    },
+    {
+      "question_number": 19,
+      "source_question_number": 5,
+      "section_number": 2,
+      "part": "multiple_choice",
+      "question_type": "multiple_choice",
+      "question_text": "Cho hàm số\n2\n() 8\nxmfx x\n−= + với m là tham số thực. Tìm giá trị lớn nhất của m để hàm số có giá trị\nnhỏ nhất trên đoạn [0;3] bằng – 2.",
+      "options": {
+        "A": "4.m = −",
+        "B": "5.m =",
+        "C": "4.m =",
+        "D": "1.m ="
+      },
+      "answer_value": "C",
+      "difficulty_level": 4,
+      "topic": "Cực trị, GTLN và GTNN",
+      "obsidian_source_path": "Toan_Hoc/1_Ham_So/3_gia_tri_lon_nhat_nho_nhat.md",
+      "asset_paths": [],
+      "has_image": false,
+      "notes": "Auto-extracted from Ví dụ 5 | BÀI TOÁN CHỨA THAM SỐ",
+      "review_status": "auto_extracted_reviewed",
+      "metadata": {
+        "source_pdf": "c:\\Users\\User-PC\\Downloads\\chuyen-de-trac-nghiem-gia-tri-lon-nhat-va-nho-nhat-cua-ham-so.pdf",
+        "section_title": "BÀI TOÁN CHỨA THAM SỐ",
+        "page": 11
+      }
+    },
+    {
+      "question_number": 20,
+      "source_question_number": 6,
+      "section_number": 2,
+      "part": "multiple_choice",
+      "question_type": "multiple_choice",
+      "question_text": "Cho hàm số 1\nxmy x\n+= + (với m là tham số thực) thỏa mãn\n[1;2] [1;2]\n16min max 3yy+=. Mệnh đề nào dưới\nđây là đúng?",
+      "options": {
+        "A": "0 2.m<≤",
+        "B": "2 4.m<≤",
+        "C": "0.m ≤",
+        "D": "4.m >"
+      },
+      "answer_value": "D",
+      "difficulty_level": 3,
+      "topic": "Cực trị, GTLN và GTNN",
+      "obsidian_source_path": "Toan_Hoc/1_Ham_So/3_gia_tri_lon_nhat_nho_nhat.md",
+      "asset_paths": [],
+      "has_image": false,
+      "notes": "Auto-extracted from Ví dụ 6 | BÀI TOÁN CHỨA THAM SỐ",
+      "review_status": "auto_extracted_reviewed",
+      "metadata": {
+        "source_pdf": "c:\\Users\\User-PC\\Downloads\\chuyen-de-trac-nghiem-gia-tri-lon-nhat-va-nho-nhat-cua-ham-so.pdf",
+        "section_title": "BÀI TOÁN CHỨA THAM SỐ",
+        "page": 11
+      }
+    },
+    {
+      "question_number": 21,
+      "source_question_number": 7,
+      "section_number": 2,
+      "part": "multiple_choice",
+      "question_type": "multiple_choice",
+      "question_text": "Cho hàm số () 2\nxmfx x\n−= + (với m là tham số thực). Có bao nhiêu giá trị nguyên m thuộc đoạn\n[-10;10] thỏa mãn\n[0;1][0;1]\nmax 2 minyy≥?",
+      "options": {
+        "A": "5",
+        "B": "11",
+        "C": "16",
+        "D": "6"
+      },
+      "answer_value": "B",
+      "difficulty_level": 3,
+      "topic": "Cực trị, GTLN và GTNN",
+      "obsidian_source_path": "Toan_Hoc/1_Ham_So/3_gia_tri_lon_nhat_nho_nhat.md",
+      "asset_paths": [],
+      "has_image": false,
+      "notes": "Auto-extracted from Ví dụ 7 | BÀI TOÁN CHỨA THAM SỐ",
+      "review_status": "auto_extracted_reviewed",
+      "metadata": {
+        "source_pdf": "c:\\Users\\User-PC\\Downloads\\chuyen-de-trac-nghiem-gia-tri-lon-nhat-va-nho-nhat-cua-ham-so.pdf",
+        "section_title": "BÀI TOÁN CHỨA THAM SỐ",
+        "page": 11
+      }
+    },
+    {
+      "question_number": 22,
+      "source_question_number": 8,
+      "section_number": 2,
+      "part": "multiple_choice",
+      "question_type": "multiple_choice",
+      "question_text": "Có bao nhiêu giá trị của tham số m để giá trị lớn nhất của hàm số\n22 2xmy xm\n−−= − trên đoạn [0;4]\nbằng – 1.",
+      "options": {
+        "A": "3",
+        "B": "2",
+        "C": "1",
+        "D": "0"
+      },
+      "answer_value": "C",
+      "difficulty_level": 4,
+      "topic": "Cực trị, GTLN và GTNN",
+      "obsidian_source_path": "Toan_Hoc/1_Ham_So/3_gia_tri_lon_nhat_nho_nhat.md",
+      "asset_paths": [],
+      "has_image": false,
+      "notes": "Auto-extracted from Ví dụ 8 | BÀI TOÁN CHỨA THAM SỐ",
+      "review_status": "auto_extracted_reviewed",
+      "metadata": {
+        "source_pdf": "c:\\Users\\User-PC\\Downloads\\chuyen-de-trac-nghiem-gia-tri-lon-nhat-va-nho-nhat-cua-ham-so.pdf",
+        "section_title": "BÀI TOÁN CHỨA THAM SỐ",
+        "page": 12
+      }
+    },
+    {
+      "question_number": 23,
+      "source_question_number": 9,
+      "section_number": 2,
+      "part": "multiple_choice",
+      "question_type": "multiple_choice",
+      "question_text": "Cho hàm s ố 3,0y ax cx d a= ++ ≠ có\n(;0)\nmin () (2)fx f\n−∞\n= −. Giá tr ị lớn nhất của hàm s ố ()y fx=\ntrên đoạn [1;3] bằng",
+      "options": {
+        "A": "8.ad+",
+        "B": "16.da−",
+        "C": "11.da−",
+        "D": "2.ad+"
+      },
+      "answer_value": "B",
+      "difficulty_level": 3,
+      "topic": "Cực trị, GTLN và GTNN",
+      "obsidian_source_path": "Toan_Hoc/1_Ham_So/3_gia_tri_lon_nhat_nho_nhat.md",
+      "asset_paths": [],
+      "has_image": false,
+      "notes": "Auto-extracted from Ví dụ 9 | BÀI TOÁN CHỨA THAM SỐ",
+      "review_status": "auto_extracted_reviewed",
+      "metadata": {
+        "source_pdf": "c:\\Users\\User-PC\\Downloads\\chuyen-de-trac-nghiem-gia-tri-lon-nhat-va-nho-nhat-cua-ham-so.pdf",
+        "section_title": "BÀI TOÁN CHỨA THAM SỐ",
+        "page": 12
+      }
+    },
+    {
+      "question_number": 24,
+      "source_question_number": 11,
+      "section_number": 2,
+      "part": "multiple_choice",
+      "question_type": "multiple_choice",
+      "question_text": "Hỏi tập hợp nào dưới đây chứa tất cả các giá trị thực của tham số m để giá trị lớn nhất của hàm\nsố 42 2yx xm= −+ trên đoạn [0;2] bằng 5?",
+      "options": {
+        "A": "(; 5) (0; ).−∞ − ∪ +∞",
+        "B": "( 5; 2).−−",
+        "C": "( 4; 1) (5; ).− − ∪ +∞",
+        "D": "( 4; 3).−−"
+      },
+      "answer_value": "B",
+      "difficulty_level": 4,
+      "topic": "Cực trị, GTLN và GTNN",
+      "obsidian_source_path": "Toan_Hoc/1_Ham_So/3_gia_tri_lon_nhat_nho_nhat.md",
+      "asset_paths": [],
+      "has_image": false,
+      "notes": "Auto-extracted from Ví dụ 11 | BÀI TOÁN CHỨA THAM SỐ",
+      "review_status": "auto_extracted_reviewed",
+      "metadata": {
+        "source_pdf": "c:\\Users\\User-PC\\Downloads\\chuyen-de-trac-nghiem-gia-tri-lon-nhat-va-nho-nhat-cua-ham-so.pdf",
+        "section_title": "BÀI TOÁN CHỨA THAM SỐ",
+        "page": 13
+      }
+    },
+    {
+      "question_number": 25,
+      "source_question_number": 13,
+      "section_number": 2,
+      "part": "multiple_choice",
+      "question_type": "multiple_choice",
+      "question_text": "Cho hàm số 32 3yx xm= −+ (với m là tham số thực). Hỏi\n[1;2]\nmax y có giá trị nhỏ nhất là?",
+      "options": {
+        "A": "2",
+        "B": "4",
+        "C": "1",
+        "D": "3"
+      },
+      "answer_value": "A",
+      "difficulty_level": 3,
+      "topic": "Cực trị, GTLN và GTNN",
+      "obsidian_source_path": "Toan_Hoc/1_Ham_So/3_gia_tri_lon_nhat_nho_nhat.md",
+      "asset_paths": [],
+      "has_image": false,
+      "notes": "Auto-extracted from Ví dụ 13 | BÀI TOÁN CHỨA THAM SỐ",
+      "review_status": "auto_extracted_reviewed",
+      "metadata": {
+        "source_pdf": "c:\\Users\\User-PC\\Downloads\\chuyen-de-trac-nghiem-gia-tri-lon-nhat-va-nho-nhat-cua-ham-so.pdf",
+        "section_title": "BÀI TOÁN CHỨA THAM SỐ",
+        "page": 14
+      }
+    },
+    {
+      "question_number": 26,
+      "source_question_number": 14,
+      "section_number": 2,
+      "part": "multiple_choice",
+      "question_type": "multiple_choice",
+      "question_text": "Có bao nhiêu s ố thực m để hàm số 43 23 4 12y x x xm= −− + có giá trị lớn nhất trên [-3;2] bằng\n150?",
+      "options": {
+        "A": "2",
+        "B": "0",
+        "C": "6",
+        "D": "4"
+      },
+      "answer_value": "A",
+      "difficulty_level": 4,
+      "topic": "Cực trị, GTLN và GTNN",
+      "obsidian_source_path": "Toan_Hoc/1_Ham_So/3_gia_tri_lon_nhat_nho_nhat.md",
+      "asset_paths": [],
+      "has_image": false,
+      "notes": "Auto-extracted from Ví dụ 14 | BÀI TOÁN CHỨA THAM SỐ",
+      "review_status": "auto_extracted_reviewed",
+      "metadata": {
+        "source_pdf": "c:\\Users\\User-PC\\Downloads\\chuyen-de-trac-nghiem-gia-tri-lon-nhat-va-nho-nhat-cua-ham-so.pdf",
+        "section_title": "BÀI TOÁN CHỨA THAM SỐ",
+        "page": 15
+      }
+    },
+    {
+      "question_number": 27,
+      "source_question_number": 15,
+      "section_number": 2,
+      "part": "multiple_choice",
+      "question_type": "multiple_choice",
+      "question_text": "Cho hàm số 432() 4 4fx x x x a= −++. Gọi M, m lần lượt là giá tr ị lớn nhất và giá tr ị nhỏ nhất\ncủa hàm số trên đoạn [0;2]. Có bao nhiêu số nguyên [3; 3]a ∈− sao cho 2Mm≤",
+      "options": {
+        "A": "6",
+        "B": "5",
+        "C": "7",
+        "D": "3"
+      },
+      "answer_value": "B",
+      "difficulty_level": 3,
+      "topic": "Cực trị, GTLN và GTNN",
+      "obsidian_source_path": "Toan_Hoc/1_Ham_So/3_gia_tri_lon_nhat_nho_nhat.md",
+      "asset_paths": [],
+      "has_image": false,
+      "notes": "Auto-extracted from Ví dụ 15 | BÀI TOÁN CHỨA THAM SỐ",
+      "review_status": "auto_extracted_reviewed",
+      "metadata": {
+        "source_pdf": "c:\\Users\\User-PC\\Downloads\\chuyen-de-trac-nghiem-gia-tri-lon-nhat-va-nho-nhat-cua-ham-so.pdf",
+        "section_title": "BÀI TOÁN CHỨA THAM SỐ",
+        "page": 15
+      }
+    },
+    {
+      "question_number": 28,
+      "source_question_number": 1,
+      "section_number": 3,
+      "part": "multiple_choice",
+      "question_type": "multiple_choice",
+      "question_text": "Người ta tiêm một loại thuốc vào mạch máu ở cánh tay phải của một bệnh nhân. Sau thời gian là t\ngiờ, nồng đ ộ thuốc h ấp thu trong máu c ủa b ệnh nhân đó đư ợc xác đ ịnh theo công thứ c\n2\n0, 28() (0 24) 4\ntCt tt= <<+. Hỏi sau bao nhiêu gi ờ thì nồng độ thuốc hấp thu trong máu c ủa bệnh nhân đó là\ncao nhất?",
+      "options": {
+        "A": "24 giờ",
+        "B": "4 giờ",
+        "C": "2 giờ",
+        "D": "1 giờ"
+      },
+      "answer_value": "C",
+      "difficulty_level": 4,
+      "topic": "Cực trị, GTLN và GTNN",
+      "obsidian_source_path": "Toan_Hoc/1_Ham_So/3_gia_tri_lon_nhat_nho_nhat.md",
+      "asset_paths": [],
+      "has_image": false,
+      "notes": "Auto-extracted from Ví dụ 1 | BÀI TOÁN THỰC TẾ ỨNG DỤNG MIN – MAX",
+      "review_status": "auto_extracted_reviewed",
+      "metadata": {
+        "source_pdf": "c:\\Users\\User-PC\\Downloads\\chuyen-de-trac-nghiem-gia-tri-lon-nhat-va-nho-nhat-cua-ham-so.pdf",
+        "section_title": "BÀI TOÁN THỰC TẾ ỨNG DỤNG MIN – MAX",
+        "page": 16
+      }
+    },
+    {
+      "question_number": 29,
+      "source_question_number": 2,
+      "section_number": 3,
+      "part": "multiple_choice",
+      "question_type": "multiple_choice",
+      "question_text": "Người ta giới thiệu một loại thuốc kích thích sự sinh sản của một loại vi khuẩn. Sau ít phút, s ố vi\nkhuẩn được xác đ ịnh theo công thứ c 23() 1000 30 (0 30)Nt t t t= + − ≤≤. Hỏi sau bao nhiêu phút thì s ố vi\nkhuẩn lớn nhất?",
+      "options": {
+        "A": "10 phút",
+        "B": "20 phút",
+        "C": "30 phút",
+        "D": "15 phút"
+      },
+      "answer_value": "B",
+      "difficulty_level": 4,
+      "topic": "Cực trị, GTLN và GTNN",
+      "obsidian_source_path": "Toan_Hoc/1_Ham_So/3_gia_tri_lon_nhat_nho_nhat.md",
+      "asset_paths": [],
+      "has_image": false,
+      "notes": "Auto-extracted from Ví dụ 2 | BÀI TOÁN THỰC TẾ ỨNG DỤNG MIN – MAX",
+      "review_status": "auto_extracted_reviewed",
+      "metadata": {
+        "source_pdf": "c:\\Users\\User-PC\\Downloads\\chuyen-de-trac-nghiem-gia-tri-lon-nhat-va-nho-nhat-cua-ham-so.pdf",
+        "section_title": "BÀI TOÁN THỰC TẾ ỨNG DỤNG MIN – MAX",
+        "page": 17
+      }
+    },
+    {
+      "question_number": 30,
+      "source_question_number": 3,
+      "section_number": 3,
+      "part": "multiple_choice",
+      "question_type": "multiple_choice",
+      "question_text": "Ông A mu ốn mua m ột mảnh đất hình ch ữ nhật có diện tích b ằng 100m2 để làm khu vư ờn. Hỏi\nngười đó phải mua mảnh đất có kích thước như thế nào để chi phí xây dựng bờ rào là ít tốn kém nhất?",
+      "options": {
+        "A": "10m x 10m",
+        "B": "4m x 25m",
+        "C": "5m x 20m",
+        "D": "25m x 8m"
+      },
+      "answer_value": "A",
+      "difficulty_level": 4,
+      "topic": "Cực trị, GTLN và GTNN",
+      "obsidian_source_path": "Toan_Hoc/1_Ham_So/3_gia_tri_lon_nhat_nho_nhat.md",
+      "asset_paths": [],
+      "has_image": false,
+      "notes": "Auto-extracted from Ví dụ 3 | BÀI TOÁN THỰC TẾ ỨNG DỤNG MIN – MAX",
+      "review_status": "auto_extracted_reviewed",
+      "metadata": {
+        "source_pdf": "c:\\Users\\User-PC\\Downloads\\chuyen-de-trac-nghiem-gia-tri-lon-nhat-va-nho-nhat-cua-ham-so.pdf",
+        "section_title": "BÀI TOÁN THỰC TẾ ỨNG DỤNG MIN – MAX",
+        "page": 17
+      }
+    },
+    {
+      "question_number": 31,
+      "source_question_number": 4,
+      "section_number": 3,
+      "part": "multiple_choice",
+      "question_type": "multiple_choice",
+      "question_text": "Một công ty muốn thiết kế một loại hộp có dạng hình hộp chữ nhật có đáy là hình vuông sao cho thể tích khối hộp được tạo thành là 8dm 3 và diện tích toàn phần đạt giá tr ị nhỏ nhất. Độ dài cạnh đáy của\nmỗi hộp muốn thiết kế là",
+      "options": {
+        "A": "322. dm",
+        "B": "2.dm",
+        "C": "4.dm",
+        "D": "22. dm"
+      },
+      "answer_value": "B",
+      "difficulty_level": 4,
+      "topic": "Cực trị, GTLN và GTNN",
+      "obsidian_source_path": "Toan_Hoc/1_Ham_So/3_gia_tri_lon_nhat_nho_nhat.md",
+      "asset_paths": [],
+      "has_image": false,
+      "notes": "Auto-extracted from Ví dụ 4 | BÀI TOÁN THỰC TẾ ỨNG DỤNG MIN – MAX",
+      "review_status": "auto_extracted_reviewed",
+      "metadata": {
+        "source_pdf": "c:\\Users\\User-PC\\Downloads\\chuyen-de-trac-nghiem-gia-tri-lon-nhat-va-nho-nhat-cua-ham-so.pdf",
+        "section_title": "BÀI TOÁN THỰC TẾ ỨNG DỤNG MIN – MAX",
+        "page": 17
+      }
+    },
+    {
+      "question_number": 32,
+      "source_question_number": 5,
+      "section_number": 3,
+      "part": "multiple_choice",
+      "question_type": "multiple_choice",
+      "question_text": "Cho một tấm nhôm hình vuông c ạnh 12cm. Người ta c ắt ở bốn góc c ủa tấm nhôm đó b ốn hình\nvuông bằng nhau, mỗi hình vuông có c ạnh x cm, rồi gập tấm nhôm lại như hình vẽ dưới đây để được một\ncái hộp không nắp. Tìm x để hộp nhận được có thể tích lớn nhất.",
+      "options": {
+        "A": "4.x =",
+        "B": "3.x =",
+        "C": "2.x =",
+        "D": "1.x ="
+      },
+      "answer_value": "C",
+      "difficulty_level": 4,
+      "topic": "Cực trị, GTLN và GTNN",
+      "obsidian_source_path": "Toan_Hoc/1_Ham_So/3_gia_tri_lon_nhat_nho_nhat.md",
+      "asset_paths": [],
+      "has_image": false,
+      "notes": "Auto-extracted from Ví dụ 5 | BÀI TOÁN THỰC TẾ ỨNG DỤNG MIN – MAX",
+      "review_status": "auto_extracted_reviewed",
+      "metadata": {
+        "source_pdf": "c:\\Users\\User-PC\\Downloads\\chuyen-de-trac-nghiem-gia-tri-lon-nhat-va-nho-nhat-cua-ham-so.pdf",
+        "section_title": "BÀI TOÁN THỰC TẾ ỨNG DỤNG MIN – MAX",
+        "page": 18
+      }
+    },
+    {
+      "question_number": 33,
+      "source_question_number": 6,
+      "section_number": 3,
+      "part": "multiple_choice",
+      "question_type": "multiple_choice",
+      "question_text": "Khi sản xuất vỏ lon sữa bò hình trụ, các nhà thiết kế luôn đặt mục tiêu sao cho chi phí nguyên liệu\nlàm vỏ hộp là ít nh ất (diện tích toàn phầ n của lon là nh ỏ nhất). Bán kính đáy vỏ lon là bao nhiêu khi ta\nmuốn có thể tích lon là 314 cm3?",
+      "options": {
+        "A": "3 314.R = π",
+        "B": "3 628.R = π",
+        "C": "3942 2.R = π",
+        "D": "3 314.2R = π"
+      },
+      "answer_value": "D",
+      "difficulty_level": 4,
+      "topic": "Cực trị, GTLN và GTNN",
+      "obsidian_source_path": "Toan_Hoc/1_Ham_So/3_gia_tri_lon_nhat_nho_nhat.md",
+      "asset_paths": [],
+      "has_image": false,
+      "notes": "Auto-extracted from Ví dụ 6 | BÀI TOÁN THỰC TẾ ỨNG DỤNG MIN – MAX",
+      "review_status": "auto_extracted_reviewed",
+      "metadata": {
+        "source_pdf": "c:\\Users\\User-PC\\Downloads\\chuyen-de-trac-nghiem-gia-tri-lon-nhat-va-nho-nhat-cua-ham-so.pdf",
+        "section_title": "BÀI TOÁN THỰC TẾ ỨNG DỤNG MIN – MAX",
+        "page": 18
+      }
+    },
+    {
+      "question_number": 34,
+      "source_question_number": 7,
+      "section_number": 3,
+      "part": "multiple_choice",
+      "question_type": "multiple_choice",
+      "question_text": "Một đường dây đi ện được nối từ nhà máy điện trên đ ất liền ở vị trí A đ ến vị trí C m ột hòn đảo.\nKhoảng cách ngắn nhất từ C đến đất liền là 1BC km=, khoảng cách từ A đến B là 4 km. Người ta chọn một\nvị trí điểm S nằm giữa A và B để mắc đường dây điện đi từ A đến S, rồi từ S đến C như hình vẽ dưới đây.\nChi phí mỗi km dây điện trên đất liền là 3000 USD, m ỗi km trên điện đặt ngầm dưới biển mất 5000 USD,\nHỏi điểm S phải cách A bao nhiên km để chi phí mắc đường dây điện ít nhất?",
+      "options": {
+        "A": "5.2 km",
+        "B": "2 km",
+        "C": "13.4 km",
+        "D": "7\n2 km"
+      },
+      "answer_value": "C",
+      "difficulty_level": 4,
+      "topic": "Cực trị, GTLN và GTNN",
+      "obsidian_source_path": "Toan_Hoc/1_Ham_So/3_gia_tri_lon_nhat_nho_nhat.md",
+      "asset_paths": [],
+      "has_image": false,
+      "notes": "Auto-extracted from Ví dụ 7 | BÀI TOÁN THỰC TẾ ỨNG DỤNG MIN – MAX",
+      "review_status": "auto_extracted_reviewed",
+      "metadata": {
+        "source_pdf": "c:\\Users\\User-PC\\Downloads\\chuyen-de-trac-nghiem-gia-tri-lon-nhat-va-nho-nhat-cua-ham-so.pdf",
+        "section_title": "BÀI TOÁN THỰC TẾ ỨNG DỤNG MIN – MAX",
+        "page": 19
+      }
+    },
+    {
+      "question_number": 35,
+      "source_question_number": 8,
+      "section_number": 3,
+      "part": "multiple_choice",
+      "question_type": "multiple_choice",
+      "question_text": "Một sợi dây kim loại dài 60 cm được cắt thành hai đoạn. Đoạn dây thứ nhất uốn thành hình vuông\ncạnh a, đoạn dây thứ hai uốn thành đường tròn bán kính r. Để tổng diện tích của hình vuông và hình tròn\nnhỏ nhất thì tỉ số a\nr bằng",
+      "options": {
+        "A": "1",
+        "B": "2",
+        "C": "3",
+        "D": "4"
+      },
+      "answer_value": "B",
+      "difficulty_level": 4,
+      "topic": "Cực trị, GTLN và GTNN",
+      "obsidian_source_path": "Toan_Hoc/1_Ham_So/3_gia_tri_lon_nhat_nho_nhat.md",
+      "asset_paths": [],
+      "has_image": false,
+      "notes": "Auto-extracted from Ví dụ 8 | BÀI TOÁN THỰC TẾ ỨNG DỤNG MIN – MAX",
+      "review_status": "auto_extracted_reviewed",
+      "metadata": {
+        "source_pdf": "c:\\Users\\User-PC\\Downloads\\chuyen-de-trac-nghiem-gia-tri-lon-nhat-va-nho-nhat-cua-ham-so.pdf",
+        "section_title": "BÀI TOÁN THỰC TẾ ỨNG DỤNG MIN – MAX",
+        "page": 20
+      }
+    },
+    {
+      "question_number": 36,
+      "source_question_number": 10,
+      "section_number": 3,
+      "part": "multiple_choice",
+      "question_type": "multiple_choice",
+      "question_text": "Có hai cây cột dựng đứng trên mặt đất lần lượt là 1, 4AB m CD m= = và đỉnh của hai cột là hai\nđiểm A và C cách nhau 5 m. Người ta chọn một vị trí trên mặt đất (nằm giữa B, D) để giăng dây nối đến hai\nđỉnh cột để trang trí như mô hình bên. Tính độ dài ngắn nhất của đoạn dây?",
+      "options": {
+        "A": "41",
+        "B": "37",
+        "C": "29",
+        "D": "3 5"
+      },
+      "answer_value": "A",
+      "difficulty_level": 4,
+      "topic": "Cực trị, GTLN và GTNN",
+      "obsidian_source_path": "Toan_Hoc/1_Ham_So/3_gia_tri_lon_nhat_nho_nhat.md",
+      "asset_paths": [],
+      "has_image": false,
+      "notes": "Auto-extracted from Ví dụ 10 | BÀI TOÁN THỰC TẾ ỨNG DỤNG MIN – MAX",
+      "review_status": "auto_extracted_reviewed",
+      "metadata": {
+        "source_pdf": "c:\\Users\\User-PC\\Downloads\\chuyen-de-trac-nghiem-gia-tri-lon-nhat-va-nho-nhat-cua-ham-so.pdf",
+        "section_title": "BÀI TOÁN THỰC TẾ ỨNG DỤNG MIN – MAX",
+        "page": 21
+      }
+    },
+    {
+      "question_number": 37,
+      "source_question_number": 11,
+      "section_number": 3,
+      "part": "multiple_choice",
+      "question_type": "multiple_choice",
+      "question_text": "Một mảnh vườn hình chữ nhật có diện tích 961 m2, người ta muốn mở rộng thêm 4 phần đất sao\ncho tạo thành hình tròn ngoạ i tiếp mảnh vườn. Biết tâm hình tròn trùng vớ i tâm c ủa hình chữ nhật (xem\nhình minh họa). Tính diện tích nhỏ nhất minS của 4 phần đất được mở rộng",
+      "options": {
+        "A": "min 961 961.S = π−",
+        "B": "min 1922 961.S = π−",
+        "C": "min 1892 946.S = π−",
+        "D": "min 480,5 961.S = π−"
+      },
+      "answer_value": "D",
+      "difficulty_level": 4,
+      "topic": "Cực trị, GTLN và GTNN",
+      "obsidian_source_path": "Toan_Hoc/1_Ham_So/3_gia_tri_lon_nhat_nho_nhat.md",
+      "asset_paths": [],
+      "has_image": false,
+      "notes": "Auto-extracted from Ví dụ 11 | BÀI TOÁN THỰC TẾ ỨNG DỤNG MIN – MAX",
+      "review_status": "auto_extracted_reviewed",
+      "metadata": {
+        "source_pdf": "c:\\Users\\User-PC\\Downloads\\chuyen-de-trac-nghiem-gia-tri-lon-nhat-va-nho-nhat-cua-ham-so.pdf",
+        "section_title": "BÀI TOÁN THỰC TẾ ỨNG DỤNG MIN – MAX",
+        "page": 22
+      }
+    },
+    {
+      "question_number": 38,
+      "source_question_number": 12,
+      "section_number": 3,
+      "part": "multiple_choice",
+      "question_type": "multiple_choice",
+      "question_text": "Cho một tờ giấy hình chữ nhật với chiều dài 12cm và chiều rộng 8cm. Gấp góc bên ph ải của tờ\ngiấy sao cho sau khi gấp, đỉnh của góc đó chạm đáy dưới như hình vẽ. Để độ dài nếp gấp là nhỏ nhất thì giá\ntrị nhỏ nhất đó bằng bao nhiêu?",
+      "options": {
+        "A": "6",
+        "B": "6 5",
+        "C": "6 2",
+        "D": "6 3"
+      },
+      "answer_value": "D",
+      "difficulty_level": 4,
+      "topic": "Cực trị, GTLN và GTNN",
+      "obsidian_source_path": "Toan_Hoc/1_Ham_So/3_gia_tri_lon_nhat_nho_nhat.md",
+      "asset_paths": [],
+      "has_image": false,
+      "notes": "Auto-extracted from Ví dụ 12 | BÀI TOÁN THỰC TẾ ỨNG DỤNG MIN – MAX",
+      "review_status": "auto_extracted_reviewed",
+      "metadata": {
+        "source_pdf": "c:\\Users\\User-PC\\Downloads\\chuyen-de-trac-nghiem-gia-tri-lon-nhat-va-nho-nhat-cua-ham-so.pdf",
+        "section_title": "BÀI TOÁN THỰC TẾ ỨNG DỤNG MIN – MAX",
+        "page": 22
+      }
+    },
+    {
+      "question_number": 39,
+      "source_question_number": 13,
+      "section_number": 3,
+      "part": "multiple_choice",
+      "question_type": "multiple_choice",
+      "question_text": "Một cửa sổ có hình dạng như hình bên, bao g ồm: một hình chữ nhật ghép với nửa hình tròn có\ntâm nằm trên c ạnh của hình chữ nhật. Biết rằng tổng độ dài đường viền cho phép c ủa cửa sổ là 4m. Hỏi\ndiện tích lớn nhất của cửa sổ là bao nhiêu?",
+      "options": {
+        "A": "4.4S = + π",
+        "B": "8.4S = + π",
+        "C": "4.8S π= +",
+        "D": "8.8S π= +"
+      },
+      "answer_value": "B",
+      "difficulty_level": 4,
+      "topic": "Cực trị, GTLN và GTNN",
+      "obsidian_source_path": "Toan_Hoc/1_Ham_So/3_gia_tri_lon_nhat_nho_nhat.md",
+      "asset_paths": [],
+      "has_image": false,
+      "notes": "Auto-extracted from Ví dụ 13 | BÀI TOÁN THỰC TẾ ỨNG DỤNG MIN – MAX",
+      "review_status": "auto_extracted_reviewed",
+      "metadata": {
+        "source_pdf": "c:\\Users\\User-PC\\Downloads\\chuyen-de-trac-nghiem-gia-tri-lon-nhat-va-nho-nhat-cua-ham-so.pdf",
+        "section_title": "BÀI TOÁN THỰC TẾ ỨNG DỤNG MIN – MAX",
+        "page": 23
+      }
+    },
+    {
+      "question_number": 40,
+      "source_question_number": 14,
+      "section_number": 3,
+      "part": "multiple_choice",
+      "question_type": "multiple_choice",
+      "question_text": "Cho hình vuông ABCD độ dài cạnh bằng 2m như hình vẽ. Lấy hai điểm P, Q (thay đổi) lần lượt\nnằm trên hai c ạnh DC, CB sao cho PQ luôn tiếp xúc vớ i đường tròn tâm A bán kính AB. Tìm giá tr ị nhỏ\nnhất độ dài đoạn thẳng PQ (kết quả làm tròn đến hàng phần trăm)",
+      "options": {
+        "A": "1,08 m",
+        "B": "1,32 m",
+        "C": "1,66 m",
+        "D": "1,54 m"
+      },
+      "answer_value": "C",
+      "difficulty_level": 4,
+      "topic": "Cực trị, GTLN và GTNN",
+      "obsidian_source_path": "Toan_Hoc/1_Ham_So/3_gia_tri_lon_nhat_nho_nhat.md",
+      "asset_paths": [],
+      "has_image": false,
+      "notes": "Auto-extracted from Ví dụ 14 | BÀI TOÁN THỰC TẾ ỨNG DỤNG MIN – MAX",
+      "review_status": "auto_extracted_reviewed",
+      "metadata": {
+        "source_pdf": "c:\\Users\\User-PC\\Downloads\\chuyen-de-trac-nghiem-gia-tri-lon-nhat-va-nho-nhat-cua-ham-so.pdf",
+        "section_title": "BÀI TOÁN THỰC TẾ ỨNG DỤNG MIN – MAX",
+        "page": 24
+      }
+    }
+  ]
+}

@@ -28,6 +28,7 @@ export function KnowledgeReviewPage() {
   const [selectedLessonKey, setSelectedLessonKey] = useState(topic?.lessons[0]?.lessonKey ?? '')
   const [isCreatingExam, setIsCreatingExam] = useState(false)
   const [actionError, setActionError] = useState('')
+  const [actionNotice, setActionNotice] = useState('')
   const [difficultyFilter, setDifficultyFilter] = useState<DifficultyFilter>('auto')
   const [questionTypeFilter, setQuestionTypeFilter] = useState<QuestionTypeFilter>('all')
   const [questionCount, setQuestionCount] = useState(12)
@@ -56,18 +57,30 @@ export function KnowledgeReviewPage() {
 
     setIsCreatingExam(true)
     setActionError('')
+    setActionNotice('')
 
     try {
       const questionBank = await fetchSchoolExamQuestionBank('TOAN')
-      const matchedQuestions = questionBank
+      const topicQuestions = questionBank
         .filter((question) => isQuestionRelatedToTopic(question, topic))
-        .filter((question) => matchesDifficultyFilter(question, difficultyFilter))
         .filter((question) => matchesQuestionTypeFilter(question, questionTypeFilter))
-        .map(mapSchoolExamQuestionToDraftQuestion)
+
+      const { questions: filteredQuestions, fallbackFromLevel, fallbackToLevel } = selectQuestionsForDifficulty({
+        questions: topicQuestions,
+        difficultyFilter,
+      })
+
+      const matchedQuestions = filteredQuestions.map(mapSchoolExamQuestionToDraftQuestion)
 
       if (matchedQuestions.length === 0) {
-        setActionError('Chưa có câu hỏi phù hợp với bộ lọc này trong ngân hàng đề trường.')
+        setActionError('Chưa có câu hỏi phù hợp với bộ lọc này trong nguồn đề trường hiện tại.')
         return
+      }
+
+      if (fallbackFromLevel !== null && fallbackToLevel !== null) {
+        setActionNotice(
+          `Nguồn hiện tại chưa có câu mức ${describeDifficultyLevel(fallbackFromLevel)} cho chuyên đề này. Hệ thống đang dùng tạm mức ${describeDifficultyLevel(fallbackToLevel)} gần nhất.`,
+        )
       }
 
       const orderedQuestions =
@@ -85,7 +98,7 @@ export function KnowledgeReviewPage() {
         topicId: `knowledge-review/${topic.key}`,
         topicName: topic.title,
         difficultyLevel: resolveAverageDifficulty(questions),
-        difficultyLabel: buildDifficultyLabel(difficultyFilter, buildMode),
+        difficultyLabel: buildDifficultyLabel(difficultyFilter, buildMode, fallbackFromLevel, fallbackToLevel),
         durationMinutes: Math.max(15, Math.min(60, questions.length * 3)),
         questions,
         deliveryMode: 'local_mock',
@@ -156,9 +169,7 @@ export function KnowledgeReviewPage() {
             <div className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">
               Ôn tập kiến thức theo điểm yếu
             </div>
-            <h1 className="mt-3 text-3xl font-extrabold tracking-tight text-slate-950 md:text-4xl">
-              {topic.title}
-            </h1>
+            <h1 className="mt-3 text-3xl font-extrabold tracking-tight text-slate-950 md:text-4xl">{topic.title}</h1>
             <p className="mt-3 text-base leading-7 text-slate-600">{topic.summary}</p>
           </div>
 
@@ -182,17 +193,14 @@ export function KnowledgeReviewPage() {
           </div>
         </div>
         {actionError ? <p className="mt-4 text-sm font-semibold text-rose-700">{actionError}</p> : null}
+        {actionNotice ? <p className="mt-4 text-sm font-semibold text-sky-700">{actionNotice}</p> : null}
       </div>
 
       <section className="rounded-[30px] border border-slate-200 bg-white p-6 shadow-[0_18px_52px_rgba(15,23,42,0.05)]">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <div className="text-xs font-bold uppercase tracking-[0.16em] text-slate-500">
-              Tùy chỉnh bài ôn
-            </div>
-            <h2 className="mt-2 text-xl font-extrabold text-slate-950">
-              Chọn mức độ, dạng câu và số câu
-            </h2>
+            <div className="text-xs font-bold uppercase tracking-[0.16em] text-slate-500">Tùy chỉnh bài ôn</div>
+            <h2 className="mt-2 text-xl font-extrabold text-slate-950">Chọn mức độ, dạng câu và số câu</h2>
           </div>
           <div className="rounded-full border border-sky-100 bg-sky-50 px-4 py-2 text-xs font-bold text-sky-700">
             Mặc định: tự động theo điểm yếu
@@ -222,13 +230,19 @@ export function KnowledgeReviewPage() {
             <SegmentButton active={questionTypeFilter === 'all'} onClick={() => setQuestionTypeFilter('all')}>
               Tất cả
             </SegmentButton>
-            <SegmentButton active={questionTypeFilter === 'multiple_choice'} onClick={() => setQuestionTypeFilter('multiple_choice')}>
+            <SegmentButton
+              active={questionTypeFilter === 'multiple_choice'}
+              onClick={() => setQuestionTypeFilter('multiple_choice')}
+            >
               Trắc nghiệm
             </SegmentButton>
             <SegmentButton active={questionTypeFilter === 'true_false'} onClick={() => setQuestionTypeFilter('true_false')}>
               Đúng/Sai
             </SegmentButton>
-            <SegmentButton active={questionTypeFilter === 'short_answer'} onClick={() => setQuestionTypeFilter('short_answer')}>
+            <SegmentButton
+              active={questionTypeFilter === 'short_answer'}
+              onClick={() => setQuestionTypeFilter('short_answer')}
+            >
               TLN
             </SegmentButton>
           </FilterGroup>
@@ -276,9 +290,7 @@ export function KnowledgeReviewPage() {
 
       <div className="grid gap-6 xl:grid-cols-[280px_1fr_320px]">
         <aside className="rounded-[30px] border border-slate-200 bg-white p-5 shadow-[0_18px_46px_rgba(15,23,42,0.05)]">
-          <div className="text-xs font-bold uppercase tracking-[0.16em] text-slate-500">
-            Lộ trình bài học
-          </div>
+          <div className="text-xs font-bold uppercase tracking-[0.16em] text-slate-500">Lộ trình bài học</div>
           <div className="mt-4 grid gap-3">
             {topic.lessons.map((lesson, index) => (
               <button
@@ -304,9 +316,7 @@ export function KnowledgeReviewPage() {
           {selectedLesson ? (
             <>
               <div className="mb-5 rounded-[22px] border border-sky-100 bg-sky-50 px-5 py-4">
-                <div className="text-xs font-bold uppercase tracking-[0.16em] text-sky-700">
-                  Đang học
-                </div>
+                <div className="text-xs font-bold uppercase tracking-[0.16em] text-sky-700">Đang học</div>
                 <h2 className="mt-2 text-2xl font-extrabold text-slate-950">{selectedLesson.title}</h2>
               </div>
               <MarkdownContent content={selectedLesson.content} className="text-base leading-8" />
@@ -315,9 +325,7 @@ export function KnowledgeReviewPage() {
         </article>
 
         <aside className="rounded-[30px] border border-slate-200 bg-slate-50 p-6">
-          <div className="text-xs font-bold uppercase tracking-[0.16em] text-slate-500">
-            Nguồn knowledge-base
-          </div>
+          <div className="text-xs font-bold uppercase tracking-[0.16em] text-slate-500">Nguồn knowledge-base</div>
           <div className="mt-4 grid gap-3">
             {topic.sourcePaths.map((sourcePath) => (
               <div
@@ -332,8 +340,8 @@ export function KnowledgeReviewPage() {
           <div className="mt-5 rounded-2xl border border-emerald-100 bg-emerald-50 px-4 py-4">
             <div className="text-sm font-extrabold text-emerald-800">Ôn tập thật nằm ở đâu?</div>
             <p className="mt-2 text-sm leading-7 text-emerald-900">
-              Đọc bài ở khung giữa, chọn mức độ và dạng câu, sau đó bấm "Tạo bài ôn theo lựa chọn"
-              để làm câu hỏi thật lấy từ ngân hàng đề trường có cùng topic/source path.
+              Đọc bài ở khung giữa, chọn mức độ và dạng câu, sau đó bấm "Tạo bài ôn theo lựa chọn" để làm câu hỏi thật
+              lấy từ nguồn đề trường hoặc bộ câu bổ sung có cùng topic/source path.
             </p>
           </div>
         </aside>
@@ -376,15 +384,9 @@ function SegmentButton({
 }
 
 function isQuestionRelatedToTopic(question: SchoolExamQuestionRecord, topic: KnowledgeReviewTopic) {
-  return inferKnowledgeReviewTopics([
-    question.topic,
-    question.obsidianSourcePath,
-    question.questionText,
-  ]).some((matchedTopic) => matchedTopic.key === topic.key)
-}
-
-function matchesDifficultyFilter(question: SchoolExamQuestionRecord, filter: DifficultyFilter) {
-  return filter === 'auto' || question.difficultyLevel === Number(filter)
+  return inferKnowledgeReviewTopics([question.topic, question.obsidianSourcePath, question.questionText]).some(
+    (matchedTopic) => matchedTopic.key === topic.key,
+  )
 }
 
 function matchesQuestionTypeFilter(question: SchoolExamQuestionRecord, filter: QuestionTypeFilter) {
@@ -421,7 +423,10 @@ function mapSchoolExamQuestionToDraftQuestion(question: SchoolExamQuestionRecord
         : undefined,
     acceptedResponses:
       question.questionType === 'short_answer'
-        ? (question.answerValue ?? '').split('|').map((item) => item.trim()).filter(Boolean)
+        ? (question.answerValue ?? '')
+            .split('|')
+            .map((item) => item.trim())
+            .filter(Boolean)
         : undefined,
     assetUrls: buildAssetUrls(question),
     sourceMeta: {
@@ -442,14 +447,20 @@ function buildAssetUrls(question: SchoolExamQuestionRecord) {
   }
 
   const examSlug = pdfUrl.split('/').pop()?.replace(/\.pdf$/i, '') ?? ''
-  const renderableAssets = question.assets && question.assets.length > 0
-    ? question.assets.filter((asset) => asset.assetType !== 'question_block').map((asset) => asset.assetPath)
-    : question.assetPaths.filter((assetPath) => /_hinh\d+\./i.test(assetPath))
+  const renderableAssets =
+    question.assets && question.assets.length > 0
+      ? question.assets.filter((asset) => asset.assetType !== 'question_block').map((asset) => asset.assetPath)
+      : question.assetPaths.filter((assetPath) => /_hinh\d+\./i.test(assetPath))
 
   return renderableAssets.map((assetPath) => `/school-exam-assets/${examSlug}/${assetPath}`)
 }
 
-function buildDifficultyLabel(filter: DifficultyFilter, buildMode: BuildMode) {
+function buildDifficultyLabel(
+  filter: DifficultyFilter,
+  buildMode: BuildMode,
+  fallbackFromLevel: number | null = null,
+  fallbackToLevel: number | null = null,
+) {
   const filterLabel = {
     auto: 'Tự động theo điểm yếu',
     '1': 'Nhận biết',
@@ -457,7 +468,12 @@ function buildDifficultyLabel(filter: DifficultyFilter, buildMode: BuildMode) {
     '3': 'Vận dụng',
     '4': 'Vận dụng cao',
   }[filter]
-  return buildMode === 'progressive' ? `${filterLabel} | từ dễ đến khó` : filterLabel
+  const fallbackLabel =
+    fallbackFromLevel !== null && fallbackToLevel !== null
+      ? ` | fallback ${describeDifficultyLevel(fallbackFromLevel)} -> ${describeDifficultyLevel(fallbackToLevel)}`
+      : ''
+
+  return buildMode === 'progressive' ? `${filterLabel}${fallbackLabel} | từ dễ đến khó` : `${filterLabel}${fallbackLabel}`
 }
 
 function resolveAverageDifficulty(questions: DraftQuestion[]) {
@@ -473,4 +489,65 @@ function shuffle<T>(items: T[]) {
     ;[nextItems[index], nextItems[swapIndex]] = [nextItems[swapIndex], nextItems[index]]
   }
   return nextItems
+}
+
+function selectQuestionsForDifficulty(input: {
+  questions: SchoolExamQuestionRecord[]
+  difficultyFilter: DifficultyFilter
+}) {
+  if (input.difficultyFilter === 'auto') {
+    return {
+      questions: input.questions,
+      fallbackFromLevel: null,
+      fallbackToLevel: null,
+    }
+  }
+
+  const requestedLevel = Number(input.difficultyFilter) as 1 | 2 | 3 | 4
+  const exactQuestions = input.questions.filter((question) => question.difficultyLevel === requestedLevel)
+  if (exactQuestions.length > 0) {
+    return {
+      questions: exactQuestions,
+      fallbackFromLevel: null,
+      fallbackToLevel: null,
+    }
+  }
+
+  for (const fallbackLevel of buildDifficultyFallbackOrder(requestedLevel)) {
+    const fallbackQuestions = input.questions.filter((question) => question.difficultyLevel === fallbackLevel)
+    if (fallbackQuestions.length > 0) {
+      return {
+        questions: fallbackQuestions,
+        fallbackFromLevel: requestedLevel,
+        fallbackToLevel: fallbackLevel,
+      }
+    }
+  }
+
+  return {
+    questions: [],
+    fallbackFromLevel: null,
+    fallbackToLevel: null,
+  }
+}
+
+function buildDifficultyFallbackOrder(level: 1 | 2 | 3 | 4) {
+  const order: Record<1 | 2 | 3 | 4, Array<1 | 2 | 3 | 4>> = {
+    1: [2, 3, 4],
+    2: [1, 3, 4],
+    3: [2, 4, 1],
+    4: [3, 2, 1],
+  }
+  return order[level]
+}
+
+function describeDifficultyLevel(level: number) {
+  return (
+    {
+      1: 'Nhận biết',
+      2: 'Thông hiểu',
+      3: 'Vận dụng',
+      4: 'Vận dụng cao',
+    }[level] ?? `mức ${level}`
+  )
 }

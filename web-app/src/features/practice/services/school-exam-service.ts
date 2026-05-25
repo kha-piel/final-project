@@ -1,6 +1,21 @@
 import { getSupabaseBrowserClient } from '../../../lib/supabase/client'
 import { hasSupabaseEnv } from '../../../lib/config/env'
 import { mockSchoolExams } from '../data/mock-school-exams'
+import { supplementalDuongTiemCanReviewedQuestions } from '../data/supplemental-duong-tiem-can-reviewed'
+import { supplementalGioiHanDaySoReviewedQuestions } from '../data/supplemental-gioi-han-day-so-reviewed'
+import { supplementalGTLNGTNNReviewedQuestions } from '../data/supplemental-gtln-gtnn-reviewed'
+import { supplementalHinhHocVectoReviewedQuestions } from '../data/supplemental-hinh-hoc-vecto-reviewed'
+import { supplementalKhaoSatDoThiReviewedQuestions } from '../data/supplemental-khao-sat-do-thi-reviewed'
+import { supplementalKnowledgeReviewQuestions } from '../data/supplemental-knowledge-review-questions'
+import { supplementalMatPhangOxyzReviewedQuestions } from '../data/supplemental-mat-phang-oxyz-reviewed'
+import { supplementalMuLogaritReviewedQuestions } from '../data/supplemental-mu-logarit-reviewed'
+import { supplementalNguyenHamReviewedQuestions } from '../data/supplemental-nguyen-ham-reviewed'
+import { supplementalOxyzReviewedQuestions } from '../data/supplemental-oxyz-reviewed'
+import { supplementalQuyHoachTuyenTinhReviewedQuestions } from '../data/supplemental-quy-hoach-tuyen-tinh-reviewed'
+import { supplementalTichPhanDienTichReviewedQuestions } from '../data/supplemental-tich-phan-dien-tich-reviewed'
+import { supplementalToHopXacSuatDemReviewedQuestions } from '../data/supplemental-to-hop-xac-suat-dem-reviewed'
+import { supplementalTuPhanViSoLieuReviewedQuestions } from '../data/supplemental-tu-phan-vi-so-lieu-reviewed'
+import { supplementalXacSuatDocLapReviewedQuestions } from '../data/supplemental-xac-suat-doc-lap-reviewed'
 import type { PracticeExamCatalogItem } from '../types/practice-types'
 import type {
   SchoolExamAnswerKeyEntry,
@@ -305,7 +320,7 @@ export async function fetchSchoolExamQuestions(examId: string): Promise<SchoolEx
 
 export async function fetchSchoolExamQuestionBank(subjectId: string): Promise<SchoolExamQuestionRecord[]> {
   if (!hasSupabaseEnv()) {
-    return []
+    return getSupplementalQuestionBank(subjectId)
   }
 
   const supabase = getSupabaseBrowserClient()
@@ -368,13 +383,13 @@ export async function fetchSchoolExamQuestionBank(subjectId: string): Promise<Sc
 
   if (error) {
     if (shouldFallbackToLocalMock(error.message)) {
-      return []
+      return getSupplementalQuestionBank(subjectId)
     }
 
     throw new Error(`Không thể tải kho câu hỏi đề trường: ${error.message}`)
   }
 
-  return data
+  const remoteQuestions = data
     .filter((item) => item.exam?.is_active)
     .map((item) => ({
       questionId: item.question_id,
@@ -405,6 +420,8 @@ export async function fetchSchoolExamQuestionBank(subjectId: string): Promise<Sc
       pdfUrl: item.exam?.pdf_url ?? '',
       tags: item.exam?.tags ?? [],
     }))
+
+  return [...remoteQuestions, ...getSupplementalQuestionBank(subjectId)]
 }
 
 export function normalizeAnswer(input: string) {
@@ -659,4 +676,28 @@ function mapQuestionAssets(
 
 function mapAssetPaths(assets: SchoolExamQuestionAssetRow[] | null | undefined) {
   return mapQuestionAssets(assets).map((asset) => asset.assetPath)
+}
+
+function getSupplementalQuestionBank(subjectId: string) {
+  if (subjectId !== 'TOAN') {
+    return []
+  }
+
+  return [
+    ...supplementalKnowledgeReviewQuestions,
+    ...supplementalGTLNGTNNReviewedQuestions,
+    ...supplementalKhaoSatDoThiReviewedQuestions,
+    ...supplementalGioiHanDaySoReviewedQuestions,
+    ...supplementalMuLogaritReviewedQuestions,
+    ...supplementalNguyenHamReviewedQuestions,
+    ...supplementalTichPhanDienTichReviewedQuestions,
+    ...supplementalHinhHocVectoReviewedQuestions,
+    ...supplementalMatPhangOxyzReviewedQuestions,
+    ...supplementalOxyzReviewedQuestions,
+    ...supplementalDuongTiemCanReviewedQuestions,
+    ...supplementalQuyHoachTuyenTinhReviewedQuestions,
+    ...supplementalToHopXacSuatDemReviewedQuestions,
+    ...supplementalXacSuatDocLapReviewedQuestions,
+    ...supplementalTuPhanViSoLieuReviewedQuestions,
+  ]
 }
