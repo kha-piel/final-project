@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
+import { MarkdownContent } from '../../components/ui/MarkdownContent'
 import { PageCard } from '../../components/ui/PageCard'
 import { buildSubmissionSummary } from '../../features/exam/core/exam-session'
 import { requestWeaknessAnalysis } from '../../features/exam/services/exam-ai-service'
@@ -9,6 +10,12 @@ import {
 } from '../../features/exam/services/exam-review-service'
 import { useExamDraftStore } from '../../features/exam/store/exam-draft-store'
 import { useExamRuntimeStore } from '../../features/exam/store/exam-runtime-store'
+import { useFlaggedWrongQuestionStore } from '../../features/practice/store/flagged-wrong-question-store'
+import { RecommendedReviewLinks } from '../../features/review/components/RecommendedReviewLinks'
+import {
+  inferKnowledgeReviewTopics,
+  type KnowledgeReviewTopic,
+} from '../../features/review/knowledge-review-topics'
 
 export function ReviewPage() {
   const { sessionId = '' } = useParams()
@@ -64,7 +71,12 @@ export function ReviewPage() {
   if (session && runtime && summary) {
     return (
       <LocalReviewContent
+        sessionDifficultyLabel={session.difficultyLabel}
+        sessionDifficultyLevel={session.difficultyLevel}
+        sessionQuestions={session.questions}
+        sessionSubjectId={session.subjectId}
         sessionSubjectName={session.subjectName}
+        sessionTopicId={session.topicId}
         sessionTitle={session.title}
         sessionTopicName={session.topicName}
         summary={summary}
@@ -100,13 +112,23 @@ export function ReviewPage() {
 }
 
 function LocalReviewContent({
+  sessionDifficultyLabel,
+  sessionDifficultyLevel,
+  sessionQuestions,
+  sessionSubjectId,
   sessionTopicName,
   sessionSubjectName,
+  sessionTopicId,
   sessionTitle,
   summary,
 }: {
+  sessionDifficultyLabel: string
+  sessionDifficultyLevel: number
+  sessionQuestions: ReturnType<typeof useExamDraftStore.getState>['sessions'][string]['questions']
+  sessionSubjectId: string
   sessionTopicName: string
   sessionSubjectName: string
+  sessionTopicId: string
   sessionTitle: string
   summary: ReturnType<typeof buildSubmissionSummary>
 }) {
@@ -117,6 +139,14 @@ function LocalReviewContent({
     >
       <ReviewActionRow />
       <ReviewSummaryBody
+        allowFlagging
+        difficultyLabel={sessionDifficultyLabel}
+        questionBank={sessionQuestions}
+        sessionDifficultyLevel={sessionDifficultyLevel}
+        sessionSubjectId={sessionSubjectId}
+        sessionSubjectName={sessionSubjectName}
+        sessionTopicId={sessionTopicId}
+        sessionTopicName={sessionTopicName}
         summary={summary}
         topicLabel={buildTopicLabel(sessionSubjectName, sessionTopicName)}
       />
@@ -136,6 +166,9 @@ function PersistedReviewContent({ review }: { review: PersistedAttemptReview }) 
       </p>
       <ReviewActionRow />
       <ReviewSummaryBody
+        allowFlagging={false}
+        difficultyLabel={review.difficultyLabel}
+        sessionTopicName={review.topicName}
         summary={review}
         topicLabel={buildTopicLabel(review.subjectName, review.topicName)}
       />
@@ -157,9 +190,25 @@ function ReviewActionRow() {
 }
 
 function ReviewSummaryBody({
+  allowFlagging,
+  difficultyLabel,
+  questionBank,
+  sessionDifficultyLevel,
+  sessionSubjectId,
+  sessionSubjectName,
+  sessionTopicId,
+  sessionTopicName,
   summary,
   topicLabel,
 }: {
+  allowFlagging: boolean
+  difficultyLabel: string
+  questionBank?: ReturnType<typeof useExamDraftStore.getState>['sessions'][string]['questions']
+  sessionDifficultyLevel?: number
+  sessionSubjectId?: string
+  sessionSubjectName?: string
+  sessionTopicId?: string
+  sessionTopicName: string
   summary: {
     score: number
     correctCount: number
@@ -179,8 +228,35 @@ function ReviewSummaryBody({
   topicLabel: string
 }) {
   const [weaknessAnalysis, setWeaknessAnalysis] = useState('')
+  const [recommendedTopics, setRecommendedTopics] = useState<KnowledgeReviewTopic[]>([])
   const [analysisError, setAnalysisError] = useState('')
   const [isAnalyzing, setIsAnalyzing] = useState(false)
+  const flaggedItems = useFlaggedWrongQuestionStore((state) => state.items)
+  const upsertFlaggedQuestion = useFlaggedWrongQuestionStore((state) => state.upsertFlaggedQuestion)
+  const removeFlaggedQuestion = useFlaggedWrongQuestionStore((state) => state.removeFlaggedQuestion)
+
+  const questionMap = useMemo(
+    () =>
+      (questionBank ?? []).reduce<Record<string, NonNullable<typeof questionBank>[number]>>((acc, item) => {
+        acc[item.questionId] = item
+        return acc
+      }, {}),
+    [questionBank],
+  )
+
+  const flaggedCount = useMemo(() => {
+    if (!allowFlagging || !sessionSubjectId || !sessionTopicId) {
+      return 0
+    }
+
+    return summary.reviewItems.filter((item) => {
+      if (item.correct) {
+        return false
+      }
+
+      return Boolean(flaggedItems[`${sessionSubjectId}::${sessionTopicId}::${item.questionId}`])
+    }).length
+  }, [allowFlagging, flaggedItems, sessionSubjectId, sessionTopicId, summary.reviewItems])
 
   async function handleAnalyzeWeaknesses() {
     const wrongItems = summary.reviewItems
@@ -188,13 +264,30 @@ function ReviewSummaryBody({
       .map((item) => ({
         questionId: item.questionId,
         questionContent: item.questionContent,
-        topic: topicLabel,
+        topic: buildWeaknessTopicLabel({
+          fallbackTopicLabel: topicLabel,
+          question: questionMap[item.questionId],
+          sessionTopicName,
+        }),
         userAnswer: item.selectedAnswerText,
         correctAnswer: item.correctAnswerText,
       }))
+    const recommendationInputs = summary.reviewItems
+      .filter((item) => !item.correct)
+      .flatMap((item) => {
+        const question = questionMap[item.questionId]
+        return [
+          item.questionContent,
+          topicLabel,
+          sessionTopicName,
+          question?.topicId ?? '',
+          question?.obsidianSourcePath ?? '',
+        ]
+      })
 
     if (wrongItems.length === 0) {
       setAnalysisError('')
+      setRecommendedTopics([])
       setWeaknessAnalysis(
         'Ban khong co cau sai nao trong bai nay. Hay tiep tuc nang do kho de kiem tra do vung kien thuc.',
       )
@@ -207,6 +300,9 @@ function ReviewSummaryBody({
     try {
       const result = await requestWeaknessAnalysis(wrongItems)
       setWeaknessAnalysis(result)
+      setRecommendedTopics(
+        inferKnowledgeReviewTopics([...recommendationInputs, result]),
+      )
     } catch (error) {
       setAnalysisError(
         error instanceof Error ? error.message : 'Khong the lay phan tich tong quan luc nay.',
@@ -214,6 +310,66 @@ function ReviewSummaryBody({
     } finally {
       setIsAnalyzing(false)
     }
+  }
+
+  function handleToggleFlag(questionId: string) {
+    if (!allowFlagging || !sessionSubjectId || !sessionSubjectName || !sessionTopicId || sessionDifficultyLevel === undefined) {
+      return
+    }
+
+    const flaggedId = `${sessionSubjectId}::${sessionTopicId}::${questionId}`
+    if (flaggedItems[flaggedId]) {
+      removeFlaggedQuestion({
+        subjectId: sessionSubjectId,
+        topicId: sessionTopicId,
+        questionId,
+      })
+      return
+    }
+
+    const question = questionMap[questionId]
+    if (!question) {
+      return
+    }
+
+    upsertFlaggedQuestion({
+      questionId,
+      subjectId: sessionSubjectId,
+      subjectName: sessionSubjectName,
+      topicId: sessionTopicId,
+      topicName: sessionTopicName,
+      difficultyLevel: sessionDifficultyLevel,
+      difficultyLabel,
+      question,
+    })
+  }
+
+  function handleFlagAllWrongQuestions() {
+    if (!allowFlagging || !sessionSubjectId || !sessionSubjectName || !sessionTopicId || sessionDifficultyLevel === undefined) {
+      return
+    }
+
+    summary.reviewItems.forEach((item) => {
+      if (item.correct) {
+        return
+      }
+
+      const question = questionMap[item.questionId]
+      if (!question) {
+        return
+      }
+
+      upsertFlaggedQuestion({
+        questionId: item.questionId,
+        subjectId: sessionSubjectId,
+        subjectName: sessionSubjectName,
+        topicId: sessionTopicId,
+        topicName: sessionTopicName,
+        difficultyLevel: sessionDifficultyLevel,
+        difficultyLabel,
+        question,
+      })
+    })
   }
 
   return (
@@ -260,11 +416,31 @@ function ReviewSummaryBody({
               </div>
             </div>
             <p style={styles.analysisText}>{weaknessAnalysis}</p>
+            <RecommendedReviewLinks topics={recommendedTopics} />
           </div>
         ) : null}
 
         {!isAnalyzing && analysisError ? <p style={styles.error}>{analysisError}</p> : null}
       </div>
+
+      {allowFlagging ? (
+        <div style={styles.flagPanel}>
+          <div>
+            <div style={styles.flagPanelTitle}>Cam co cau sai de on lai</div>
+            <p style={styles.flagPanelText}>
+              Da cam co {flaggedCount}/{summary.wrongCount} cau sai trong bai nay. Cac cau nay se duoc dua vao Dashboard de tao phien on tap lai.
+            </p>
+          </div>
+          <button
+            disabled={summary.wrongCount === 0}
+            onClick={handleFlagAllWrongQuestions}
+            style={styles.flagAllButton}
+            type="button"
+          >
+            Cam co tat ca cau sai
+          </button>
+        </div>
+      ) : null}
 
       <div style={styles.metricRow}>
         <MetricPill label="Diem" value={`${summary.score}/10`} />
@@ -278,27 +454,57 @@ function ReviewSummaryBody({
       <div style={styles.reviewList}>
         {summary.reviewItems.map((item, index) => (
           <article key={item.questionId} style={styles.card}>
-            <div style={styles.cardOrder}>Cau {index + 1}</div>
+            <div style={styles.cardTopRow}>
+              <div style={styles.cardOrder}>Cau {index + 1}</div>
+              {allowFlagging && !item.correct && sessionSubjectId && sessionTopicId ? (
+                <button
+                  onClick={() => handleToggleFlag(item.questionId)}
+                  style={
+                    flaggedItems[`${sessionSubjectId}::${sessionTopicId}::${item.questionId}`]
+                      ? styles.flaggedButton
+                      : styles.flagButton
+                  }
+                  type="button"
+                >
+                  {flaggedItems[`${sessionSubjectId}::${sessionTopicId}::${item.questionId}`]
+                    ? 'Bo cam co'
+                    : 'Cam co cau nay'}
+                </button>
+              ) : null}
+            </div>
             <div style={styles.topicPill}>Chuyen de: {topicLabel}</div>
-            <h3 style={styles.cardQuestion}>{item.questionContent}</h3>
-            <p
+            <div style={styles.cardQuestion}>
+              <MarkdownContent content={item.questionContent} className="text-base leading-8 text-slate-900" />
+            </div>
+            <div
               style={{
                 ...styles.cardAnswer,
                 color: item.correct ? '#15803d' : '#b91c1c',
               }}
             >
-              Ban chon: {item.selectedAnswerText}
-            </p>
-            <p style={{ ...styles.cardAnswer, color: '#0f766e' }}>
-              Dap an dung: {item.correctAnswerText}
-            </p>
+              <strong>Ban chon:</strong>
+              <div style={styles.answerMarkdown}>
+                <MarkdownContent content={item.selectedAnswerText} className="text-sm leading-7" />
+              </div>
+            </div>
+            <div style={{ ...styles.cardAnswer, color: '#0f766e' }}>
+              <strong>Dap an dung:</strong>
+              <div style={styles.answerMarkdown}>
+                <MarkdownContent content={item.correctAnswerText} className="text-sm leading-7" />
+              </div>
+            </div>
             <div style={styles.cardTag}>{item.correct ? 'Dung' : 'Sai / chua dung'}</div>
             <div style={styles.explanationWrap}>
               <div style={styles.explanationLabel}>AI giai thich</div>
               <div style={styles.explanationBox}>
-                {item.explanation?.trim()
-                  ? item.explanation
-                  : 'Chua co giai thich AI cho cau hoi nay.'}
+                <MarkdownContent
+                  content={
+                    item.explanation?.trim()
+                      ? item.explanation
+                      : 'Chua co giai thich AI cho cau hoi nay.'
+                  }
+                  className="text-sm leading-7 text-slate-700"
+                />
               </div>
             </div>
           </article>
@@ -336,6 +542,24 @@ function buildTopicLabel(subjectName?: string | null, topicName?: string | null)
     return subject
   }
   return 'Chua xac dinh chuyen de'
+}
+
+function buildWeaknessTopicLabel(input: {
+  fallbackTopicLabel: string
+  question?: ReturnType<typeof useExamDraftStore.getState>['sessions'][string]['questions'][number]
+  sessionTopicName: string
+}) {
+  const sourcePath = input.question?.obsidianSourcePath?.trim()
+  if (sourcePath) {
+    return `${input.fallbackTopicLabel} | ${sourcePath}`
+  }
+
+  const topicId = input.question?.topicId?.trim()
+  if (topicId && topicId !== 'practice-mock') {
+    return `${input.sessionTopicName} | ${topicId}`
+  }
+
+  return input.fallbackTopicLabel
 }
 
 const styles = {
@@ -442,6 +666,35 @@ const styles = {
     gap: '12px',
     marginBottom: '20px',
   },
+  flagPanel: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: '16px',
+    flexWrap: 'wrap' as const,
+    marginBottom: '20px',
+    borderRadius: '20px',
+    padding: '16px 18px',
+    border: '1px solid #fde68a',
+    backgroundColor: '#fffbeb',
+  },
+  flagPanelTitle: {
+    color: '#92400e',
+    fontWeight: 800,
+    marginBottom: '4px',
+  },
+  flagPanelText: {
+    margin: 0,
+    color: '#a16207',
+  },
+  flagAllButton: {
+    borderRadius: '999px',
+    border: 0,
+    padding: '10px 14px',
+    backgroundColor: '#f59e0b',
+    color: '#ffffff',
+    fontWeight: 800,
+  },
   metric: {
     borderRadius: '999px',
     padding: '10px 14px',
@@ -461,10 +714,32 @@ const styles = {
     border: '1px solid #d7e3ef',
     boxShadow: '0 12px 28px rgba(16, 35, 60, 0.06)',
   },
+  cardTopRow: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: '12px',
+    marginBottom: '10px',
+  },
   cardOrder: {
     color: '#2563eb',
     fontWeight: 700,
-    marginBottom: '10px',
+  },
+  flagButton: {
+    borderRadius: '999px',
+    border: '1px solid #fcd34d',
+    padding: '8px 12px',
+    backgroundColor: '#fffbeb',
+    color: '#b45309',
+    fontWeight: 700,
+  },
+  flaggedButton: {
+    borderRadius: '999px',
+    border: '1px solid #f59e0b',
+    padding: '8px 12px',
+    backgroundColor: '#f59e0b',
+    color: '#ffffff',
+    fontWeight: 700,
   },
   cardQuestion: {
     margin: '0 0 10px',
@@ -483,6 +758,10 @@ const styles = {
   cardAnswer: {
     margin: '8px 0',
     fontWeight: 600,
+  },
+  answerMarkdown: {
+    marginTop: '4px',
+    fontWeight: 400,
   },
   cardTag: {
     display: 'inline-block',
@@ -507,7 +786,6 @@ const styles = {
     padding: '16px',
     backgroundColor: '#f8fbff',
     border: '1px solid #d7e3ef',
-    whiteSpace: 'pre-wrap' as const,
     color: '#36506c',
   },
 }

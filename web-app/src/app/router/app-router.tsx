@@ -40,6 +40,11 @@ const ExamPage = lazy(() =>
 const ReviewPage = lazy(() =>
   import('../../pages/review/ReviewPage').then((module) => ({ default: module.ReviewPage })),
 )
+const KnowledgeReviewPage = lazy(() =>
+  import('../../pages/review/KnowledgeReviewPage').then((module) => ({
+    default: module.KnowledgeReviewPage,
+  })),
+)
 
 function withSuspense(children: ReactNode) {
   return <Suspense fallback={<RouteLoading />}>{children}</Suspense>
@@ -131,6 +136,14 @@ export const appRouter = createBrowserRouter([
         element: (
           <ProtectedRoute>
             {withSuspense(<ReviewPage />)}
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'knowledge-review/:topicKey',
+        element: (
+          <ProtectedRoute>
+            {withSuspense(<KnowledgeReviewPage />)}
           </ProtectedRoute>
         ),
       },

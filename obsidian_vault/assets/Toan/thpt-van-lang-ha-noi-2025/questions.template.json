@@ -1,0 +1,95 @@
+{
+  "exam_slug": "thpt-van-lang-ha-noi-2025",
+  "questions": [
+    {
+      "question_number": 2,
+      "part": "multiple_choice",
+      "question_text": "",
+      "options": {
+        "A": "",
+        "B": "",
+        "C": "",
+        "D": ""
+      },
+      "correct_answer": "",
+      "asset_paths": [
+        "TN_Cau02.png",
+        "TN_Cau02_hinh2.png"
+      ],
+      "topic": "",
+      "obsidian_source_path": ""
+    },
+    {
+      "question_number": 6,
+      "part": "multiple_choice",
+      "question_text": "",
+      "options": {
+        "A": "",
+        "B": "",
+        "C": "",
+        "D": ""
+      },
+      "correct_answer": "",
+      "asset_paths": [
+        "TN_Cau06.png",
+        "TN_Cau06_hinh6.png"
+      ],
+      "topic": "",
+      "obsidian_source_path": ""
+    },
+    {
+      "question_number": 8,
+      "part": "multiple_choice",
+      "question_text": "",
+      "options": {
+        "A": "",
+        "B": "",
+        "C": "",
+        "D": ""
+      },
+      "correct_answer": "",
+      "asset_paths": [
+        "TN_Cau08.png",
+        "TN_Cau08_hinh8.png"
+      ],
+      "topic": "",
+      "obsidian_source_path": ""
+    },
+    {
+      "question_number": 9,
+      "part": "multiple_choice",
+      "question_text": "",
+      "options": {
+        "A": "",
+        "B": "",
+        "C": "",
+        "D": ""
+      },
+      "correct_answer": "",
+      "asset_paths": [
+        "TN_Cau09.png",
+        "TN_Cau09_hinh9.png"
+      ],
+      "topic": "",
+      "obsidian_source_path": ""
+    },
+    {
+      "question_number": 12,
+      "part": "multiple_choice",
+      "question_text": "",
+      "options": {
+        "A": "",
+        "B": "",
+        "C": "",
+        "D": ""
+      },
+      "correct_answer": "",
+      "asset_paths": [
+        "TN_Cau12.png",
+        "TN_Cau12_hinh12.png"
+      ],
+      "topic": "",
+      "obsidian_source_path": ""
+    }
+  ]
+}

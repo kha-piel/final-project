@@ -1,35 +1,22 @@
-# ==============================================================================
-# main.py - Python RAG Microservice (FastAPI + Google Gemini)
-# Vai trò: Trung gian giữa ứng dụng Java (Frontend) và LLM (Gemini),
-#          thực hiện kỹ thuật RAG để giải thích đáp án cho học sinh.
-# Cổng  : http://localhost:8000
-# ==============================================================================
-
 import json
 import os
-import google.generativeai as genai
+from pathlib import Path
+
+from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from google import genai
 from pydantic import BaseModel
-from dotenv import load_dotenv
 
-# ------------------------------------------------------------------------------
-# 0. NẠP BIẾN MÔI TRƯỜNG TỪ FILE .env
-# ------------------------------------------------------------------------------
+
 load_dotenv()
 
-# ------------------------------------------------------------------------------
-# 1. KHỞI TẠO FASTAPI APPLICATION
-# ------------------------------------------------------------------------------
 app = FastAPI(
     title="RAG Explanation Service",
-    description="Microservice tích hợp Gemini để giải thích đáp án bài kiểm tra dựa trên knowledge base Markdown.",
-    version="1.0.0",
+    description="Microservice tich hop Gemini de giai thich dap an dua tren knowledge base Markdown.",
+    version="1.1.0",
 )
 
-# ------------------------------------------------------------------------------
-# 1.1. CẤU HÌNH CORS - Cho phép Java Frontend gọi API chéo domain
-# ------------------------------------------------------------------------------
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -38,42 +25,24 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ------------------------------------------------------------------------------
-# 2. CẤU HÌNH GOOGLE GEMINI
-#    API Key được đọc từ biến môi trường GEMINI_API_KEY (file .env).
-# ------------------------------------------------------------------------------
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 if not GEMINI_API_KEY:
     raise RuntimeError(
-        "GEMINI_API_KEY chưa được cấu hình! "
-        "Hãy tạo file .env với nội dung: GEMINI_API_KEY=your_key_here"
+        "GEMINI_API_KEY chua duoc cau hinh. "
+        "Hay tao file .env voi noi dung: GEMINI_API_KEY=your_key_here"
     )
-genai.configure(api_key=GEMINI_API_KEY)
 
-# Sử dụng model Gemini 2.5 Flash
-model = genai.GenerativeModel("gemini-2.5-flash")
+client = genai.Client(api_key=GEMINI_API_KEY)
+MODEL_NAME = "gemini-2.5-flash"
+BASE_VAULT_PATH = Path(__file__).resolve().parent.parent / "docs" / "knowledge-base"
 
-# ------------------------------------------------------------------------------
-# 3. THƯ MỤC GỐC CỦA KNOWLEDGE BASE
-#    Tài liệu được đặt trong docs/knowledge-base để tách khỏi source code.
-# ------------------------------------------------------------------------------
-BASE_VAULT_PATH = os.path.join(
-    os.path.dirname(os.path.abspath(__file__)),
-    "..",
-    "docs",
-    "knowledge-base",
-)
 
-# ------------------------------------------------------------------------------
-# 4. ĐỊNH NGHĨA DATA MODEL (PYDANTIC)
-#    Ánh xạ JSON body được gửi từ ứng dụng Java.
-# ------------------------------------------------------------------------------
 class QuestionRequest(BaseModel):
-    question_content: str       # Nội dung câu hỏi
-    student_answer: str         # Đáp án học sinh đã chọn (sai)
-    correct_answer: str         # Đáp án đúng
-    obsidian_source_path: str   # Đường dẫn tương đối đến file .md trong Vault
-                                # Ví dụ: "Toan_Hoc/2_Hinh_Hoc_Khong_Gian/1_vecto_trong_khong_gian.md"
+    question_content: str
+    student_answer: str
+    correct_answer: str
+    obsidian_source_path: str
+
 
 class WrongQuestionItem(BaseModel):
     question_id: int
@@ -87,79 +56,197 @@ class WeaknessAnalysisRequest(BaseModel):
     wrong_questions: list[WrongQuestionItem]
 
 
-# ------------------------------------------------------------------------------
-# 5. ENDPOINT POST /api/explain
-#    Nhận thông tin câu hỏi → Đọc tài liệu Vault → Tạo Prompt → Gọi Gemini → Trả kết quả
-# ------------------------------------------------------------------------------
-@app.post("/api/explain")
-async def explain_answer(request: QuestionRequest):
-    """
-    Giải thích nguyên nhân học sinh trả lời sai và hướng dẫn cách giải đúng
-    dựa trên tài liệu kiến thức trong knowledge base Markdown.
-    """
+class ParsedStudentPayload(BaseModel):
+    mode: str
+    selected_answer: str
+    message: str
 
-    # --- Bước 5.1: RETRIEVAL - Đọc file kiến thức từ knowledge base ---
-    file_path = os.path.join(BASE_VAULT_PATH, request.obsidian_source_path)
 
-    try:
-        with open(file_path, "r", encoding="utf-8") as f:
-            knowledge_context = f.read()
-    except FileNotFoundError:
-        # Trả về lỗi 404 nếu không tìm thấy file tài liệu
-        raise HTTPException(
-            status_code=404,
-            detail=f"Không tìm thấy file kiến thức tại đường dẫn: '{request.obsidian_source_path}'. "
-                   f"Vui lòng kiểm tra lại giá trị obsidian_source_path."
+def read_knowledge_context(relative_path: str) -> str:
+    normalized = (relative_path or "").strip().lstrip("/\\")
+    if not normalized:
+        return ""
+
+    file_path = BASE_VAULT_PATH / normalized
+    if not file_path.exists() or not file_path.is_file():
+        return ""
+
+    return file_path.read_text(encoding="utf-8")
+
+
+def parse_student_payload(raw_value: str) -> ParsedStudentPayload:
+    lines = [line.strip() for line in raw_value.splitlines() if line.strip()]
+    payload: dict[str, str] = {}
+
+    for line in lines:
+        if ":" not in line:
+            continue
+        key, value = line.split(":", 1)
+        payload[key.strip().upper()] = value.strip()
+
+    mode = payload.get("MODE", "")
+    selected_answer = payload.get("SELECTED_ANSWER", "")
+    message = payload.get("MESSAGE", "")
+
+    if mode and message:
+        return ParsedStudentPayload(
+            mode=mode.lower(),
+            selected_answer=selected_answer or "Chua chon",
+            message=message,
         )
 
-    # --- Bước 5.2: TẠO PROMPT ---
-    # Kết hợp tài liệu kiến thức + thông tin câu hỏi thành một prompt hoàn chỉnh
-    prompt = f"""
-Bạn là một gia sư thông minh và kiên nhẫn, chuyên giúp học sinh ôn thi THPTQG.
-Nhiệm vụ của bạn là phân tích lỗi sai của học sinh và giải thích lại bài bằng tiếng Việt.
+    selected_answer = "Chua chon"
+    message = raw_value.strip()
+    mode = "follow_up"
 
---- TÀI LIỆU KIẾN THỨC (Knowledge Context) ---
-{knowledge_context}
---- KẾT THÚC TÀI LIỆU ---
+    for line in lines:
+        normalized = line.lower()
+        if normalized.startswith("lua chon hien tai cua hoc sinh:"):
+            selected_answer = line.split(":", 1)[1].strip()
+        elif normalized.startswith("yeu cau he thong:"):
+            mode = "auto_explain"
+            message = line.split(":", 1)[1].strip()
+        elif normalized.startswith("cau hoi them cua hoc sinh:"):
+            mode = "follow_up"
+            message = line.split(":", 1)[1].strip()
 
---- THÔNG TIN BÀI TẬP ---
-Câu hỏi     : {request.question_content}
-Đáp án đúng : {request.correct_answer}
-Đáp án học sinh chọn (SAI): {request.student_answer}
+    return ParsedStudentPayload(
+        mode=mode,
+        selected_answer=selected_answer or "Chua chon",
+        message=message or raw_value.strip(),
+    )
 
---- YÊU CẦU ---
-Dựa chặt chẽ vào Tài liệu Kiến thức ở trên (KHÔNG dùng kiến thức ngoài tài liệu),
-hãy thực hiện đầy đủ 3 phần sau:
 
-1. **Phân tích lỗi sai**: Giải thích tại sao đáp án học sinh chọn là sai.
-2. **Kiến thức cần nhớ**: Trích dẫn và nhấn mạnh khái niệm / công thức liên quan từ tài liệu.
-3. **Hướng dẫn giải đúng**: Trình bày từng bước để đi đến đáp án đúng một cách rõ ràng, dễ hiểu.
+def build_knowledge_section(knowledge_context: str) -> str:
+    if knowledge_context:
+        return (
+            f"--- TAI LIEU KIEN THUC (Knowledge Context) ---\n{knowledge_context}\n--- KET THUC TAI LIEU ---"
+        )
 
-Hãy trình bày lời giải thích một cách thân thiện, khuyến khích học sinh.
+    return (
+        "--- TAI LIEU KIEN THUC (Knowledge Context) ---\n"
+        "Chua co file kien thuc chi dinh. Hay dua vao noi dung cau hoi, dap an dung va dap an sai "
+        "de giai thich can ban, khong duoc boi dung them du lieu khong can thiet.\n"
+        "--- KET THUC TAI LIEU ---"
+    )
+
+
+def build_auto_explain_prompt(
+    question_content: str,
+    correct_answer: str,
+    selected_answer: str,
+    knowledge_section: str,
+) -> str:
+    return f"""
+Ban la mot gia su thong minh va kien nhan, chuyen giup hoc sinh on thi THPTQG.
+Nhiem vu cua ban la phan tich loi sai cua hoc sinh va giai thich lai bai bang tieng Viet.
+
+{knowledge_section}
+
+--- THONG TIN BAI TAP ---
+Cau hoi: {question_content}
+Dap an dung: {correct_answer}
+Dap an hoc sinh chon: {selected_answer}
+
+--- YEU CAU BAT BUOC ---
+1. Giai thich ro hoc sinh sai o dau.
+2. Neu kien thuc cot loi can nho.
+3. Huong dan cach lam dung de di den dap an dung.
+4. Viet bang tieng Viet, ro rang, than thien.
+5. Khong mo rong sang noi dung ngoai bai toan nay.
 """
 
-    # --- Bước 5.3: GỌI GOOGLE GEMINI API ---
+
+def build_follow_up_prompt(
+    question_content: str,
+    correct_answer: str,
+    selected_answer: str,
+    student_message: str,
+    knowledge_section: str,
+) -> str:
+    return f"""
+Ban dang o trong mot cuoc hoi thoai tiep theo ve DUNG 1 cau hoi cu the.
+Ban phai tra loi CHI cho cau hoi follow-up cua hoc sinh, khong duoc lap lai toan bo loi giai tu dau
+neu hoc sinh khong yeu cau "giai lai tu dau", "giai chi tiet lai", hoac y tuong tuong duong.
+
+{knowledge_section}
+
+--- NGU CANH CAU HOI ---
+Cau hoi: {question_content}
+Dap an hoc sinh da chon: {selected_answer}
+Dap an dung: {correct_answer}
+Cau hoi follow-up cua hoc sinh: {student_message}
+
+--- LUAT BAT BUOC ---
+1. Neu cau hoi follow-up KHONG lien quan truc tiep den cau nay, dap an, cach giai, meo lam nhanh,
+   kien thuc nen nho, hoac loi sai cua hoc sinh, chi tra loi dung 1 cau:
+   "Mình chỉ hỗ trợ nội dung liên quan trực tiếp đến câu này thôi. Em hãy hỏi về cách giải, đáp án hoặc mẹo làm câu này nhé."
+2. Neu hoc sinh hoi ngan nhu "co meo gi khong a", "em can nho gi", "buoc nay la sao", thi tra loi ngan gon,
+   dung trong 3-6 cau, di thang vao y do. KHONG duoc chao hoi lai dai dong hay giai lai tu dau.
+3. Chi khi hoc sinh yeu cau ro rang giai lai toan bo bai thi moi trinh bay day du.
+4. Neu can dua meo, hay dua meo rat cu the cho chinh cau nay.
+5. Giu van phong tro giang, ro rang, tu nhien, khong lap lai nguyen van cac phan da noi truoc do.
+"""
+
+
+def generate_text(prompt: str) -> str:
     try:
-        response = model.generate_content(prompt)
-        explanation_text = response.text
-    except Exception as e:
-        # Trả về lỗi 500 nếu có vấn đề khi gọi Gemini API
+        response = client.models.generate_content(
+            model=MODEL_NAME,
+            contents=prompt,
+        )
+    except Exception as exc:  # noqa: BLE001
         raise HTTPException(
             status_code=500,
-            detail=f"Lỗi khi gọi Gemini API: {str(e)}"
+            detail=f"Loi khi goi Gemini API: {str(exc)}",
+        ) from exc
+
+    text = getattr(response, "text", None)
+    if not text:
+        raise HTTPException(
+            status_code=500,
+            detail="Gemini API khong tra ve noi dung text hop le.",
+        )
+    return text
+
+
+@app.get("/health")
+async def healthcheck():
+    return {
+        "status": "ok",
+        "model": MODEL_NAME,
+    }
+
+
+@app.post("/api/explain")
+async def explain_answer(request: QuestionRequest):
+    knowledge_context = read_knowledge_context(request.obsidian_source_path)
+    knowledge_section = build_knowledge_section(knowledge_context)
+    student_payload = parse_student_payload(request.student_answer)
+
+    if student_payload.mode == "auto_explain":
+        prompt = build_auto_explain_prompt(
+            question_content=request.question_content,
+            correct_answer=request.correct_answer,
+            selected_answer=student_payload.selected_answer,
+            knowledge_section=knowledge_section,
+        )
+    else:
+        prompt = build_follow_up_prompt(
+            question_content=request.question_content,
+            correct_answer=request.correct_answer,
+            selected_answer=student_payload.selected_answer,
+            student_message=student_payload.message,
+            knowledge_section=knowledge_section,
         )
 
-    # --- Bước 5.4: TRẢ VỀ KẾT QUẢ CHO CLIENT (Java) ---
+    explanation_text = generate_text(prompt)
     return {
         "status": "success",
         "explanation": explanation_text,
     }
 
 
-# ------------------------------------------------------------------------------
-# 6. CHẠY SERVER (chỉ dùng khi chạy trực tiếp bằng `python main.py`)
-#    Khuyến nghị dùng: uvicorn main:app --reload --port 8000
-# ------------------------------------------------------------------------------
 @app.post("/api/analyze-weaknesses")
 async def analyze_weaknesses(request: WeaknessAnalysisRequest):
     if not request.wrong_questions:
@@ -177,21 +264,13 @@ async def analyze_weaknesses(request: WeaknessAnalysisRequest):
     )
 
     prompt = (
-        "Dựa trên các câu học sinh làm sai sau đây: "
+        "Dua tren cac cau hoc sinh lam sai sau day: "
         f"{wrong_questions_json}, "
-        "hãy phân tích ngắn gọn trong 3-4 câu xem học sinh đang hổng kiến thức ở chuyên đề nào nhất "
-        "và đưa ra lời khuyên ôn tập cụ thể."
+        "hay phan tich ngan gon trong 3-4 cau xem hoc sinh dang hong kien thuc o chuyen de nao nhat "
+        "va dua ra loi khuyen on tap cu the."
     )
 
-    try:
-        response = model.generate_content(prompt)
-        explanation_text = response.text
-    except Exception as e:
-        raise HTTPException(
-            status_code=500,
-            detail=f"Lỗi khi gọi Gemini API: {str(e)}"
-        )
-
+    explanation_text = generate_text(prompt)
     return {
         "status": "success",
         "explanation": explanation_text,
@@ -200,4 +279,5 @@ async def analyze_weaknesses(request: WeaknessAnalysisRequest):
 
 if __name__ == "__main__":
     import uvicorn
+
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)

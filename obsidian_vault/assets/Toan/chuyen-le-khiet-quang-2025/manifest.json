@@ -1,0 +1,48 @@
+{
+  "exam_slug": "chuyen-le-khiet-quang-2025",
+  "subject_folder": "Toan",
+  "assets": [
+    {
+      "part_code": "multiple_choice",
+      "source_question_number": 3,
+      "question_block": "TN_Cau03.png",
+      "figures": ["TN_Cau03_hinh1.png"]
+    },
+    {
+      "part_code": "multiple_choice",
+      "source_question_number": 5,
+      "question_block": "TN_Cau05.png",
+      "figures": ["TN_Cau05_hinh1.png"]
+    },
+    {
+      "part_code": "multiple_choice",
+      "source_question_number": 6,
+      "question_block": "TN_Cau06.png",
+      "figures": ["TN_Cau06_hinh1.png"]
+    },
+    {
+      "part_code": "multiple_choice",
+      "source_question_number": 10,
+      "question_block": "TN_Cau10.png",
+      "figures": ["TN_Cau10_hinh1.png"]
+    },
+    {
+      "part_code": "true_false",
+      "source_question_number": 3,
+      "question_block": "DS_Cau03.png",
+      "figures": ["DS_Cau03_hinh1.png"]
+    },
+    {
+      "part_code": "short_answer",
+      "source_question_number": 2,
+      "question_block": "TLN_Cau02.png",
+      "figures": ["TLN_Cau02_hinh1.png"]
+    },
+    {
+      "part_code": "short_answer",
+      "source_question_number": 4,
+      "question_block": "TLN_Cau04.png",
+      "figures": ["TLN_Cau04_hinh1.png"]
+    }
+  ]
+}

@@ -66,6 +66,45 @@ def build_asset_id(question_id: str, asset_type: str, order: int) -> str:
     return f"{question_id}-asset-{asset_type}-{order}"
 
 
+def infer_difficulty_level(item: dict[str, Any]) -> int:
+    explicit_level = item.get("difficulty_level")
+    if isinstance(explicit_level, int) and 1 <= explicit_level <= 4:
+        return explicit_level
+
+    metadata = item.get("metadata", {})
+    if isinstance(metadata, dict):
+        metadata_level = metadata.get("difficulty_level")
+        if isinstance(metadata_level, int) and 1 <= metadata_level <= 4:
+            return metadata_level
+
+    part = str(item.get("part", item.get("question_type", "multiple_choice")))
+    source_question_number = int(item.get("source_question_number") or item.get("question_number") or 1)
+
+    if part == "multiple_choice":
+        if source_question_number <= 4:
+            return 1
+        if source_question_number <= 8:
+            return 2
+        if source_question_number <= 11:
+            return 3
+        return 4
+
+    if part == "true_false":
+        if source_question_number <= 2:
+            return 2
+        if source_question_number == 3:
+            return 3
+        return 4
+
+    if source_question_number <= 2:
+        return 1
+    if source_question_number <= 4:
+        return 2
+    if source_question_number == 5:
+        return 3
+    return 4
+
+
 def build_seed_sql(exam_id: str, payload: dict[str, Any]) -> str:
     questions = payload.get("questions", [])
 
@@ -90,15 +129,17 @@ def build_seed_sql(exam_id: str, payload: dict[str, Any]) -> str:
         part = str(item.get("part", "multiple_choice"))
         section_id = infer_section_id(exam_id, part)
         statement_json = item.get("statements", [])
+        difficulty_level = infer_difficulty_level(item)
         metadata = {
           "source_question_number": item.get("source_question_number"),
           "section_number": item.get("section_number"),
+          "difficulty_level": difficulty_level,
           "notes": item.get("notes", ""),
           "review_status": item.get("review_status", "pending_review"),
         }
 
         lines.append("insert into public.school_exam_questions (")
-        lines.append("  question_id, exam_id, section_id, question_number, question_type,")
+        lines.append("  question_id, exam_id, section_id, question_number, difficulty_level, question_type,")
         lines.append("  question_text, statement_json, explanation, topic, obsidian_source_path,")
         lines.append("  has_image, metadata")
         lines.append(") values (")
@@ -106,6 +147,7 @@ def build_seed_sql(exam_id: str, payload: dict[str, Any]) -> str:
         lines.append(f"  {sql_quote(exam_id)},")
         lines.append(f"  {sql_quote(section_id)},")
         lines.append(f"  {question_number},")
+        lines.append(f"  {difficulty_level},")
         lines.append(f"  {sql_quote(str(item.get('question_type', part)))},")
         lines.append(f"  {sql_quote(str(item.get('question_text', '')))},")
         lines.append(f"  {sql_json(statement_json)},")

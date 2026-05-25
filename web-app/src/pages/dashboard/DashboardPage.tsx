@@ -19,6 +19,7 @@ import { useAuthSessionStore } from '../../features/auth/store/auth-session-stor
 import { useExamDraftStore } from '../../features/exam/store/exam-draft-store'
 import { useExamRuntimeStore } from '../../features/exam/store/exam-runtime-store'
 import { hasAnsweredQuestion } from '../../features/exam/core/exam-session'
+import { useFlaggedWrongQuestionStore } from '../../features/practice/store/flagged-wrong-question-store'
 import {
   fetchInProgressAttempts as fetchCloudInProgressAttempts,
   restoreInProgressAttempt as restoreCloudAttempt,
@@ -40,6 +41,8 @@ export function DashboardPage() {
   const runtimeSessions = useExamRuntimeStore((state) => state.sessions)
   const restoreRuntimeSession = useExamRuntimeStore((state) => state.restoreRuntimeSession)
   const clearRuntimeSession = useExamRuntimeStore((state) => state.clearRuntimeSession)
+  const flaggedQuestionMap = useFlaggedWrongQuestionStore((state) => state.items)
+  const clearAllFlaggedQuestions = useFlaggedWrongQuestionStore((state) => state.clearAllFlaggedQuestions)
 
   const [subjects, setSubjects] = useState<SubjectOption[]>([])
   const [topics, setTopics] = useState<TopicOption[]>([])
@@ -75,6 +78,19 @@ export function DashboardPage() {
     () => difficultyOptions.find((item) => item.level.toString() === selectedDifficulty) ?? null,
     [selectedDifficulty],
   )
+
+  const flaggedQuestionItems = useMemo(
+    () => Object.values(flaggedQuestionMap),
+    [flaggedQuestionMap],
+  )
+
+  const visibleFlaggedQuestions = useMemo(() => {
+    const filtered = selectedSubjectId
+      ? flaggedQuestionItems.filter((item) => item.subjectId === selectedSubjectId)
+      : flaggedQuestionItems
+
+    return [...filtered].sort((left, right) => right.flaggedAt - left.flaggedAt)
+  }, [flaggedQuestionItems, selectedSubjectId])
 
   const resumableSessions = useMemo(() => {
     return Object.values(draftSessions)
@@ -259,6 +275,7 @@ export function DashboardPage() {
 
     try {
       const questions = await fetchQuestionsForCustomExam(
+        selectedSubject.subjectId,
         selectedTopic.topicId,
         selectedDifficultyOption.level,
         selectedQuestionType,
@@ -281,6 +298,7 @@ export function DashboardPage() {
         difficultyLabel: selectedDifficultyOption.label,
         durationMinutes: CUSTOM_EXAM_DURATION_MINUTES,
         questions,
+        deliveryMode: 'local_mock',
         createdAt: Date.now(),
       })
 
@@ -318,6 +336,43 @@ export function DashboardPage() {
   function handleDiscardLocalSession(sessionId: string) {
     clearRuntimeSession(sessionId)
     clearDraftSession(sessionId)
+  }
+
+  function handleCreateFlaggedReviewExam() {
+    setErrorMessage('')
+
+    if (visibleFlaggedQuestions.length === 0) {
+      setErrorMessage('Chua co cau sai nao duoc cam co de tao phien on tap.')
+      return
+    }
+
+    const questions = visibleFlaggedQuestions.map((item) => item.question)
+    const firstItem = visibleFlaggedQuestions[0]
+    const sameTopic = visibleFlaggedQuestions.every((item) => item.topicId === firstItem.topicId)
+    const averageDifficulty =
+      Math.round(
+        visibleFlaggedQuestions.reduce((sum, item) => sum + item.difficultyLevel, 0) /
+          visibleFlaggedQuestions.length,
+      ) || 1
+    const sessionId = crypto.randomUUID()
+    const durationMinutes = Math.max(15, Math.min(60, visibleFlaggedQuestions.length * 2))
+
+    createSession({
+      sessionId,
+      title: `On lai cau sai da cam co - ${firstItem.subjectName}`,
+      subjectId: firstItem.subjectId,
+      subjectName: firstItem.subjectName,
+      topicId: sameTopic ? firstItem.topicId : 'flagged-wrong-questions',
+      topicName: sameTopic ? firstItem.topicName : 'Cau sai da cam co',
+      difficultyLevel: averageDifficulty,
+      difficultyLabel: 'Tong hop cau sai da cam co',
+      durationMinutes,
+      questions,
+      deliveryMode: 'local_mock',
+      createdAt: Date.now(),
+    })
+
+    navigate(`/exam/${sessionId}`)
   }
 
   return (
@@ -430,6 +485,51 @@ export function DashboardPage() {
       </div>
 
       {errorMessage ? <p style={styles.error}>{errorMessage}</p> : null}
+
+      <section style={styles.history}>
+        <strong>Cau sai da cam co</strong>
+        <p style={styles.historyText}>
+          {selectedSubjectId
+            ? `Dang hien ${visibleFlaggedQuestions.length} cau theo mon da chon.`
+            : `Dang luu ${visibleFlaggedQuestions.length} cau sai da cam co tren trinh duyet.`}
+        </p>
+        <div style={styles.historyActionRow}>
+          <button
+            disabled={visibleFlaggedQuestions.length === 0}
+            onClick={handleCreateFlaggedReviewExam}
+            style={styles.restoreButton}
+            type="button"
+          >
+            On lai cac cau da cam co
+          </button>
+          <button
+            disabled={flaggedQuestionItems.length === 0}
+            onClick={clearAllFlaggedQuestions}
+            style={styles.discardButton}
+            type="button"
+          >
+            Xoa danh sach cam co
+          </button>
+        </div>
+        {visibleFlaggedQuestions.length > 0 ? (
+          <div style={styles.historyList}>
+            {visibleFlaggedQuestions.slice(0, 6).map((item) => (
+              <article key={item.flaggedId} style={styles.historyCard}>
+                <div style={styles.historyHeader}>
+                  <div>
+                    <div style={styles.historyTitle}>{item.topicName}</div>
+                    <div style={styles.historyMeta}>
+                      {item.subjectName} | {item.difficultyLabel}
+                    </div>
+                  </div>
+                  <div style={styles.scorePill}>{formatCompletedAt(new Date(item.flaggedAt).toISOString())}</div>
+                </div>
+                <div style={styles.historyText}>{item.question.content.slice(0, 160)}...</div>
+              </article>
+            ))}
+          </div>
+        ) : null}
+      </section>
 
       <section style={styles.history}>
         <strong>Bai dang lam do</strong>

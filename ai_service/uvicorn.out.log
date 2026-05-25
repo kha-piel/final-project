@@ -1,0 +1,2 @@
+INFO:     127.0.0.1:50531 - "POST /api/analyze-weaknesses HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50532 - "POST /api/explain HTTP/1.1" 200 OK

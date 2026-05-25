@@ -30,10 +30,13 @@ export type TrueFalseStatement = {
 }
 
 export type QuestionSourceMeta = {
+  examId?: string
   schoolName?: string
   examTitle?: string
   examCode?: string
   year?: number
+  sourceQuestionNumber?: number
+  sourceSectionNumber?: number
 }
 
 export type DraftAnswer = {
@@ -56,6 +59,7 @@ export type DraftQuestion = {
   answers: DraftAnswer[]
   statements?: TrueFalseStatement[]
   acceptedResponses?: string[]
+  assetUrls?: string[]
   sourceMeta?: QuestionSourceMeta
 }
 

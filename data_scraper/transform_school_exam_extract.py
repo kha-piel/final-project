@@ -47,15 +47,38 @@ def normalize_option_map(options: list[dict[str, Any]]) -> dict[str, str]:
     }
 
 
-def build_asset_map(manifest: dict[str, Any]) -> dict[int, dict[str, Any]]:
-    asset_map: dict[int, dict[str, Any]] = {}
+def normalize_part_code(value: Any) -> str:
+    normalized = str(value or "").strip().lower()
+    aliases = {
+        "multiple_choice": "multiple_choice",
+        "true_false": "true_false",
+        "short_answer": "short_answer",
+    }
+    return aliases.get(normalized, normalized)
+
+
+def build_asset_maps(
+    manifest: dict[str, Any],
+) -> tuple[dict[int, dict[str, Any]], dict[tuple[str, int], dict[str, Any]]]:
+    canonical_map: dict[int, dict[str, Any]] = {}
+    source_map: dict[tuple[str, int], dict[str, Any]] = {}
+
     for item in manifest.get("assets", []):
-        question_number = int(item["question_number"])
-        asset_map[question_number] = {
+        payload = {
             "question_block": item.get("question_block"),
             "figures": item.get("figures", []),
         }
-    return asset_map
+
+        if item.get("question_number") is not None:
+            question_number = int(item["question_number"])
+            canonical_map[question_number] = payload
+
+        source_question_number = item.get("source_question_number")
+        part_code = normalize_part_code(item.get("part_code", item.get("question_type")))
+        if source_question_number is not None and part_code:
+            source_map[(part_code, int(source_question_number))] = payload
+
+    return canonical_map, source_map
 
 
 def build_answer_key_map(answer_key: dict[str, Any]) -> dict[int, str]:
@@ -66,7 +89,7 @@ def build_answer_key_map(answer_key: dict[str, Any]) -> dict[int, str]:
 
 
 def transform(extract_payload: dict[str, Any], manifest: dict[str, Any], answer_key: dict[str, Any]) -> dict[str, Any]:
-    asset_map = build_asset_map(manifest)
+    canonical_asset_map, source_asset_map = build_asset_maps(manifest)
     answer_key_map = build_answer_key_map(answer_key)
 
     questions: list[dict[str, Any]] = []
@@ -80,7 +103,10 @@ def transform(extract_payload: dict[str, Any], manifest: dict[str, Any], answer_
         for question in section_questions:
             local_question_number = int(question.get("question_number", 0))
             canonical_question_number = global_question_offset + local_question_number
-            assets = asset_map.get(canonical_question_number, {})
+            assets = canonical_asset_map.get(canonical_question_number) or source_asset_map.get(
+                (section_type, local_question_number),
+                {},
+            )
             option_map = normalize_option_map(question.get("options", []))
 
             questions.append(

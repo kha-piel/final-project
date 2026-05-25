@@ -1,13 +1,14 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useExamDraftStore } from '../../features/exam/store/exam-draft-store'
-import { mockExamCatalog } from '../../features/practice/data/mock-exam-catalog'
 import {
   createPracticeExamSession,
   getPracticeBlueprints,
   getPracticeQuestionBankOverview,
   searchPracticeExamCatalog,
 } from '../../features/practice/services/practice-service'
+import { fetchSchoolExamCatalog } from '../../features/practice/services/school-exam-service'
+import type { PracticeExamCatalogItem } from '../../features/practice/types/practice-types'
 
 const SUBJECT_ID = 'TOAN'
 const SUBJECT_NAME = 'Toan hoc'
@@ -21,35 +22,107 @@ export function PracticeHubPage() {
   const [selectedSchoolName, setSelectedSchoolName] = useState('')
   const [selectedBlueprintId, setSelectedBlueprintId] = useState(getPracticeBlueprints()[0]?.blueprintId ?? '')
   const [errorMessage, setErrorMessage] = useState('')
+  const [catalogItemsRaw, setCatalogItemsRaw] = useState<PracticeExamCatalogItem[]>([])
+  const [catalogErrorMessage, setCatalogErrorMessage] = useState('')
+  const [isLoadingCatalog, setIsLoadingCatalog] = useState(true)
+  const [bankOverview, setBankOverview] = useState({
+    totalQuestions: 0,
+    typeCounts: {} as Record<string, number>,
+    levelCounts: {} as Record<number, number>,
+    schools: 0,
+  })
+  const [isLoadingQuestionBank, setIsLoadingQuestionBank] = useState(true)
+
+  useEffect(() => {
+    let isMounted = true
+    setIsLoadingCatalog(true)
+    setCatalogErrorMessage('')
+
+    void fetchSchoolExamCatalog()
+      .then((items) => {
+        if (isMounted) {
+          setCatalogItemsRaw(items)
+        }
+      })
+      .catch((error: unknown) => {
+        if (isMounted) {
+          setCatalogErrorMessage(
+            error instanceof Error ? error.message : 'Khong the tai danh sach de truong.',
+          )
+        }
+      })
+      .finally(() => {
+        if (isMounted) {
+          setIsLoadingCatalog(false)
+        }
+      })
+
+    return () => {
+      isMounted = false
+    }
+  }, [])
 
   const catalogItems = useMemo(
     () =>
-      searchPracticeExamCatalog({
+      searchPracticeExamCatalog(catalogItemsRaw, {
         keyword,
         subjectId: SUBJECT_ID,
         year: yearFilter,
       }),
-    [keyword, yearFilter],
+    [catalogItemsRaw, keyword, yearFilter],
   )
 
-  const bankOverview = useMemo(() => getPracticeQuestionBankOverview(), [])
   const blueprints = useMemo(() => getPracticeBlueprints(), [])
   const years = useMemo(
-    () => Array.from(new Set(mockExamCatalog.map((item) => item.year))).sort((left, right) => right - left),
-    [],
+    () => Array.from(new Set(catalogItemsRaw.map((item) => item.year))).sort((left, right) => right - left),
+    [catalogItemsRaw],
   )
   const schoolOptions = useMemo(
-    () => Array.from(new Set(mockExamCatalog.map((item) => item.schoolName))).sort((left, right) => left.localeCompare(right)),
-    [],
+    () =>
+      Array.from(new Set(catalogItemsRaw.map((item) => item.schoolName))).sort((left, right) =>
+        left.localeCompare(right),
+      ),
+    [catalogItemsRaw],
   )
 
   const selectedBlueprint = blueprints.find((blueprint) => blueprint.blueprintId === selectedBlueprintId) ?? null
 
-  function handleGenerateExam() {
+  useEffect(() => {
+    let isMounted = true
+    setIsLoadingQuestionBank(true)
+
+    void getPracticeQuestionBankOverview(SUBJECT_ID)
+      .then((overview) => {
+        if (isMounted) {
+          setBankOverview(overview)
+        }
+      })
+      .catch(() => {
+        if (isMounted) {
+          setBankOverview({
+            totalQuestions: 0,
+            typeCounts: {},
+            levelCounts: {},
+            schools: 0,
+          })
+        }
+      })
+      .finally(() => {
+        if (isMounted) {
+          setIsLoadingQuestionBank(false)
+        }
+      })
+
+    return () => {
+      isMounted = false
+    }
+  }, [])
+
+  async function handleGenerateExam() {
     setErrorMessage('')
 
     try {
-      const session = createPracticeExamSession({
+      const session = await createPracticeExamSession({
         blueprintId: selectedBlueprintId,
         subjectId: SUBJECT_ID,
         subjectName: SUBJECT_NAME,
@@ -72,18 +145,18 @@ export function PracticeHubPage() {
         <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
           <div>
             <h1 className="max-w-3xl text-4xl font-extrabold tracking-tight text-slate-950 md:text-5xl">
-              Tìm đề theo trường và tạo đề thi thử ngẫu nhiên theo đúng khung dạng bài.
+              Tim de theo truong va tao de thi thu ngau nhien theo dung khung dang bai.
             </h1>
             <p className="mt-4 max-w-2xl text-base leading-7 text-slate-700">
-              Hub này đang chạy bằng kho dữ liệu giả lập có cấu trúc sẵn để sau này bạn chỉ việc bơm
-              dữ liệu cào thật vào cùng định dạng. Luồng thi dùng local mock, không phụ thuộc Supabase.
+              De truong duoc doc tu Supabase kem PDF, ma de va answer key. Phan tao de tong hop van
+              dung blueprint local de sinh session luyen tap nhanh.
             </p>
           </div>
 
           <div className="grid gap-3 rounded-[28px] border border-white/70 bg-white/70 p-5 backdrop-blur">
-            <StatCard label="De nguon mock" value={`${mockExamCatalog.length}`} />
-            <StatCard label="Tong cau hoi mock" value={`${bankOverview.totalQuestions}`} />
-            <StatCard label="So truong nguon" value={`${bankOverview.schools}`} />
+            <StatCard label="De truong" value={isLoadingCatalog ? '...' : `${catalogItemsRaw.length}`} />
+            <StatCard label="Tong cau hoi that" value={isLoadingQuestionBank ? '...' : `${bankOverview.totalQuestions}`} />
+            <StatCard label="So truong nguon" value={isLoadingQuestionBank ? '...' : `${bankOverview.schools}`} />
           </div>
         </div>
       </div>
@@ -93,9 +166,9 @@ export function PracticeHubPage() {
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
               <div className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
-                Thu vien de nguon
+                Thu vien de truong
               </div>
-              <h2 className="mt-2 text-2xl font-bold text-slate-950">Tìm kiếm đề theo trường</h2>
+              <h2 className="mt-2 text-2xl font-bold text-slate-950">Tim kiem de theo truong</h2>
             </div>
             <div className="rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-medium text-slate-600">
               {catalogItems.length} de tim thay
@@ -126,49 +199,65 @@ export function PracticeHubPage() {
           </div>
 
           <div className="mt-5 grid gap-4">
-            {catalogItems.map((item) => (
-              <article
-                key={item.examId}
-                className="rounded-[24px] border border-slate-200 bg-slate-50 p-5 transition hover:border-sky-300 hover:bg-white"
-              >
-                <div className="flex flex-wrap items-start justify-between gap-3">
-                  <div>
-                    <h3 className="text-lg font-bold text-slate-900">{item.examTitle}</h3>
-                    <p className="mt-1 text-sm text-slate-600">
-                      {item.schoolName} | {item.city} | {item.year}
-                    </p>
+            {catalogErrorMessage ? (
+              <div className="rounded-[24px] border border-rose-200 bg-rose-50 px-5 py-4 text-sm font-medium text-rose-700">
+                {catalogErrorMessage}
+              </div>
+            ) : null}
+
+            {isLoadingCatalog ? (
+              <div className="rounded-[24px] border border-slate-200 bg-slate-50 px-5 py-4 text-sm text-slate-600">
+                Dang tai danh sach de truong...
+              </div>
+            ) : catalogItems.length === 0 ? (
+              <div className="rounded-[24px] border border-slate-200 bg-slate-50 px-5 py-4 text-sm text-slate-600">
+                Chua co de truong nao trong Supabase.
+              </div>
+            ) : (
+              catalogItems.map((item) => (
+                <article
+                  key={item.examId}
+                  className="rounded-[24px] border border-slate-200 bg-slate-50 p-5 transition hover:border-sky-300 hover:bg-white"
+                >
+                  <div className="flex flex-wrap items-start justify-between gap-3">
+                    <div>
+                      <h3 className="text-lg font-bold text-slate-900">{item.examTitle}</h3>
+                      <p className="mt-1 text-sm text-slate-600">
+                        {item.schoolName} | {item.city} | {item.year}
+                      </p>
+                    </div>
+                    <button
+                      className="rounded-2xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-sky-300 hover:text-sky-700"
+                      onClick={() => setSelectedSchoolName(item.schoolName)}
+                      type="button"
+                    >
+                      Uu tien truong nay
+                    </button>
+                    {item.schoolExamPageId ? (
+                      <Link
+                        className="rounded-2xl bg-slate-950 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800"
+                        to={`/practice/school-exams/${item.schoolExamPageId}`}
+                      >
+                        Lam de truong
+                      </Link>
+                    ) : null}
                   </div>
-                  <button
-                    className="rounded-2xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-sky-300 hover:text-sky-700"
-                    onClick={() => setSelectedSchoolName(item.schoolName)}
-                    type="button"
-                  >
-                    Uu tien truong nay
-                  </button>
-                  {item.schoolExamPageId ? (
-                    <Link
-                      className="rounded-2xl bg-slate-950 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800"
-                      to={`/practice/school-exams/${item.schoolExamPageId}`}
-                    >
-                      Lam de truong
-                    </Link>
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    {item.tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="rounded-full bg-white px-3 py-1 text-xs font-medium text-slate-600"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                  {item.sourcePath ? (
+                    <p className="mt-4 text-xs text-slate-500">Nguon data: {item.sourcePath}</p>
                   ) : null}
-                </div>
-                <div className="mt-4 flex flex-wrap gap-2">
-                  {item.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="rounded-full bg-white px-3 py-1 text-xs font-medium text-slate-600"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-                {item.sourcePath ? (
-                  <p className="mt-4 text-xs text-slate-500">Nguon data: {item.sourcePath}</p>
-                ) : null}
-              </article>
-            ))}
+                </article>
+              ))
+            )}
           </div>
         </section>
 
@@ -179,8 +268,8 @@ export function PracticeHubPage() {
             </div>
             <h2 className="mt-3 text-2xl font-bold">Sinh de ngau nhien theo blueprint</h2>
             <p className="mt-3 text-sm leading-7 text-slate-300">
-              De se duoc boc ngau nhien tu kho cau hoi tong hop, uu tien cau cua truong ban chon,
-              sau do fallback sang nhieu truong neu kho khong du.
+              De se duoc boc ngau nhien tu kho cau hoi de truong tren Supabase, uu tien cau cua truong
+              ban chon, sau do fallback sang nhieu truong neu kho khong du.
             </p>
 
             <div className="mt-5 grid gap-4">
@@ -263,9 +352,8 @@ export function PracticeHubPage() {
               <InfoTile label="Muc VDC" value={`${bankOverview.levelCounts[4] ?? 0}`} />
             </div>
             <p className="mt-4 text-sm leading-7 text-slate-600">
-              Cac file mock da duoc tach rieng trong `features/practice/data`. Sau nay ban chi can
-              thay noi dung mock bang du lieu cào that theo cung shape, service sinh de se dung lai
-              duoc ngay.
+              Blueprint tong hop da dung kho cau hoi de truong that, co chong trung cau va gioi han
+              so cau toi da tren moi de nguon truoc khi fallback.
             </p>
           </div>
         </section>

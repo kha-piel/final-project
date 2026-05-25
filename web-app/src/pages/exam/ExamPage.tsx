@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
+import { MarkdownContent } from '../../components/ui/MarkdownContent'
 import { PageCard } from '../../components/ui/PageCard'
 import { useAuthSessionStore } from '../../features/auth/store/auth-session-store'
 import type { DraftQuestion } from '../../features/dashboard/types/dashboard-types'
@@ -363,11 +364,27 @@ export function ExamPage() {
       <div style={styles.grid}>
         <section style={styles.panel}>
           <div style={styles.kicker}>Question {runtime.currentIndex + 1}</div>
-          <h3 style={styles.panelTitle}>{question.content}</h3>
+          <div style={styles.panelTitleBlock}>
+            <MarkdownContent content={question.content} className="text-base leading-8 text-slate-900" />
+          </div>
           <p style={styles.text}>
             Topic: {session.topicName} | Dang bai: {formatQuestionType(question)} | Nguon:{' '}
             {question.sourceMeta?.schoolName ?? 'Tong hop'}
           </p>
+
+          {question.assetUrls && question.assetUrls.length > 0 ? (
+            <div style={styles.assetGrid}>
+              {question.assetUrls.map((assetUrl, index) => (
+                <div key={`${question.questionId}-${assetUrl}`} style={styles.assetCard}>
+                  <img
+                    alt={`Question asset ${index + 1}`}
+                    src={assetUrl}
+                    style={styles.assetImage}
+                  />
+                </div>
+              ))}
+            </div>
+          ) : null}
 
           <QuestionComposer
             isSubmitted={isSubmitted}
@@ -532,9 +549,12 @@ function QuestionComposer({
                 type="radio"
               />
               <div>
-                <strong>
-                  {answer.optionLabel}. {answer.content}
-                </strong>
+                <div style={styles.answerContent}>
+                  <strong>{answer.optionLabel}.</strong>
+                  <div style={styles.answerMarkdown}>
+                    <MarkdownContent content={answer.content} className="text-sm leading-7 text-slate-900" />
+                  </div>
+                </div>
               </div>
             </label>
           )
@@ -557,7 +577,10 @@ function QuestionComposer({
               }}
             >
               <div style={styles.statementContent}>
-                <strong>{String.fromCharCode(97 + index)})</strong> {statement.content}
+                <strong>{String.fromCharCode(97 + index)})</strong>
+                <div style={styles.answerMarkdown}>
+                  <MarkdownContent content={statement.content} className="text-sm leading-7 text-slate-900" />
+                </div>
               </div>
               <div style={styles.trueFalseActions}>
                 <button
@@ -702,9 +725,29 @@ const styles = {
     margin: '0 0 8px',
     color: '#10233c',
   },
+  panelTitleBlock: {
+    marginBottom: '8px',
+  },
   text: {
     margin: 0,
     color: '#5d7491',
+  },
+  assetGrid: {
+    display: 'grid',
+    gap: '12px',
+    marginTop: '18px',
+  },
+  assetCard: {
+    borderRadius: '18px',
+    overflow: 'hidden' as const,
+    border: '1px solid #d7e3ef',
+    backgroundColor: '#ffffff',
+  },
+  assetImage: {
+    display: 'block',
+    width: '100%',
+    height: 'auto',
+    objectFit: 'contain' as const,
   },
   answerList: {
     display: 'grid',
@@ -721,6 +764,16 @@ const styles = {
     backgroundColor: '#ffffff',
     border: '1px solid #d7e3ef',
   },
+  answerContent: {
+    display: 'grid',
+    gridTemplateColumns: 'auto 1fr',
+    gap: '8px',
+    alignItems: 'start',
+    color: '#10233c',
+  },
+  answerMarkdown: {
+    minWidth: 0,
+  },
   answerCardSelected: {
     borderColor: '#2563eb',
     backgroundColor: '#eff6ff',
@@ -733,6 +786,10 @@ const styles = {
   },
   statementContent: {
     flex: 1,
+    display: 'grid',
+    gridTemplateColumns: 'auto 1fr',
+    gap: '8px',
+    alignItems: 'start',
     color: '#10233c',
     lineHeight: 1.6,
   },

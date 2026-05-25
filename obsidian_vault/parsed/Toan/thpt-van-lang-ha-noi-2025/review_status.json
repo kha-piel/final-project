@@ -1,0 +1,16 @@
+{
+  "exam_slug": "thpt-van-lang-ha-noi-2025",
+  "source_pdf": "data_scraper/input/school_exams/thpt-van-lang-ha-noi-2025.pdf",
+  "extract_outputs": {
+    "json_dir": "data_scraper/output/school_exams/json/thpt-van-lang-ha-noi-2025",
+    "markdown_dir": "data_scraper/output/school_exams/markdown/thpt-van-lang-ha-noi-2025"
+  },
+  "canonical_questions_json": "obsidian_vault/parsed/Toan/thpt-van-lang-ha-noi-2025/questions.json",
+  "status": "reviewed_extract_generated",
+  "notes": [
+    "Sau khi chay extractor, doi status thanh extracted.",
+    "Sau khi chay transform, doi status thanh reviewed_extract_generated.",
+    "Sau khi sua tay xong questions.json, doi status thanh reviewed.",
+    "Sau khi import vao DB, doi status thanh imported."
+  ]
+}

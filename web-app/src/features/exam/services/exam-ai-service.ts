@@ -58,20 +58,14 @@ export async function requestWeaknessAnalysis(items: WeaknessAnalysisItem[]) {
     )
   }
 
-  const response = await fetch(`${env.aiApiBaseUrl}/api/analyze-weaknesses`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      wrong_questions: items.map((item) => ({
-        question_id: Number(item.questionId) || 0,
-        question_content: item.questionContent,
-        topic: item.topic,
-        user_answer: item.userAnswer,
-        correct_answer: item.correctAnswer,
-      })),
-    }),
+  const response = await callAiEndpoint('/api/analyze-weaknesses', {
+    wrong_questions: items.map((item) => ({
+      question_id: Number(item.questionId) || 0,
+      question_content: item.questionContent,
+      topic: item.topic,
+      user_answer: item.userAnswer,
+      correct_answer: item.correctAnswer,
+    })),
   })
 
   if (!response.ok) {
@@ -90,17 +84,11 @@ async function requestExplanation(input: ExplainRequest) {
     )
   }
 
-  const response = await fetch(`${env.aiApiBaseUrl}/api/explain`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      question_content: input.questionContent,
-      student_answer: input.studentAnswer,
-      correct_answer: input.correctAnswer,
-      obsidian_source_path: input.obsidianSourcePath,
-    }),
+  const response = await callAiEndpoint('/api/explain', {
+    question_content: input.questionContent,
+    student_answer: input.studentAnswer,
+    correct_answer: input.correctAnswer,
+    obsidian_source_path: input.obsidianSourcePath,
   })
 
   if (!response.ok) {
@@ -114,9 +102,24 @@ async function requestExplanation(input: ExplainRequest) {
 
 function buildStudentAnswerPayload(prompt: string, selectedAnswer: string, systemPrompt: boolean) {
   const lines: string[] = []
-  if (selectedAnswer) {
-    lines.push(`Lua chon hien tai cua hoc sinh: ${selectedAnswer}`)
-  }
-  lines.push(`${systemPrompt ? 'Yeu cau he thong' : 'Cau hoi them cua hoc sinh'}: ${prompt}`)
+  lines.push(`MODE: ${systemPrompt ? 'auto_explain' : 'follow_up'}`)
+  lines.push(`SELECTED_ANSWER: ${selectedAnswer || 'Chua chon'}`)
+  lines.push(`MESSAGE: ${prompt}`)
   return lines.join('\n')
+}
+
+async function callAiEndpoint(path: string, payload: unknown) {
+  try {
+    return await fetch(`${env.aiApiBaseUrl}${path}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    })
+  } catch {
+    throw new Error(
+      `Khong ket noi duoc toi AI backend (${env.aiApiBaseUrl}). Kiem tra ai_service co dang chay khong.`,
+    )
+  }
 }
