@@ -13,7 +13,7 @@ function mc(
     questionId,
     topicId: 'TOAN-TONG-HOP',
     subjectId: 'TOAN',
-    subjectName: 'Toan hoc',
+    subjectName: 'Toán học',
     content,
     level,
     questionType: 'multiple_choice',
@@ -49,7 +49,7 @@ function tf(
     questionId,
     topicId: 'TOAN-TONG-HOP',
     subjectId: 'TOAN',
-    subjectName: 'Toan hoc',
+    subjectName: 'Toán học',
     content,
     level,
     questionType: 'true_false',
@@ -84,7 +84,7 @@ function sa(
     questionId,
     topicId: 'TOAN-TONG-HOP',
     subjectId: 'TOAN',
-    subjectName: 'Toan hoc',
+    subjectName: 'Toán học',
     content,
     level,
     questionType: 'short_answer',
@@ -103,126 +103,126 @@ function sa(
 }
 
 export const mockQuestionBank: PracticeQuestion[] = [
-  mc('mc-01', 'Nghiem cua phuong trinh 2x - 6 = 0 la', 1, 'cau-giay-2025-lan-1', 'THPT Cau Giay', 2025, [
+  mc('mc-01', 'Nghiệm của phương trình 2x - 6 = 0 là', 1, 'cau-giay-2025-lan-1', 'THPT Cầu Giấy', 2025, [
     { label: 'A', text: 'x = -3' },
     { label: 'B', text: 'x = 3', correct: true },
     { label: 'C', text: 'x = 6' },
     { label: 'D', text: 'x = -6' },
   ]),
-  mc('mc-02', 'Dao ham cua ham so y = x^3 la', 1, 'cau-giay-2025-lan-1', 'THPT Cau Giay', 2025, [
+  mc('mc-02', 'Đạo hàm của hàm số y = x^3 là', 1, 'cau-giay-2025-lan-1', 'THPT Cầu Giấy', 2025, [
     { label: 'A', text: '3x^2', correct: true },
     { label: 'B', text: 'x^2' },
     { label: 'C', text: '3x' },
     { label: 'D', text: 'x^3' },
   ]),
-  mc('mc-03', 'Gia tri cua log2(8) bang', 1, 'yen-hoa-2024', 'THPT Yen Hoa', 2024, [
+  mc('mc-03', 'Giá trị của log2(8) bằng', 1, 'yen-hoa-2024', 'THPT Yên Hòa', 2024, [
     { label: 'A', text: '2' },
     { label: 'B', text: '3', correct: true },
     { label: 'C', text: '4' },
     { label: 'D', text: '8' },
   ]),
-  mc('mc-04', 'Tap nghiem cua bat phuong trinh x^2 < 9 la', 1, 'chuyen-su-pham-2025', 'THPT Chuyen Su Pham', 2025, [
+  mc('mc-04', 'Tập nghiệm của bất phương trình x^2 < 9 là', 1, 'chuyen-su-pham-2025', 'THPT Chuyên Sư Phạm', 2025, [
     { label: 'A', text: '(-3; 3)', correct: true },
     { label: 'B', text: '(-inf; 3)' },
     { label: 'C', text: '(3; +inf)' },
     { label: 'D', text: '[-3; 3]' },
   ]),
-  mc('mc-05', 'Nguyen ham cua f(x) = 2x la', 2, 'cau-giay-2025-lan-1', 'THPT Cau Giay', 2025, [
+  mc('mc-05', 'Nguyên hàm của f(x) = 2x là', 2, 'cau-giay-2025-lan-1', 'THPT Cầu Giấy', 2025, [
     { label: 'A', text: 'x^2 + C', correct: true },
     { label: 'B', text: '2x^2 + C' },
     { label: 'C', text: 'x + C' },
     { label: 'D', text: '2 + C' },
   ]),
-  mc('mc-06', 'Ham so nao dong bien tren R?', 2, 'chuyen-su-pham-2025', 'THPT Chuyen Su Pham', 2025, [
+  mc('mc-06', 'Hàm số nào đồng biến trên R?', 2, 'chuyen-su-pham-2025', 'THPT Chuyên Sư Phạm', 2025, [
     { label: 'A', text: 'y = -x' },
     { label: 'B', text: 'y = x^3', correct: true },
     { label: 'C', text: 'y = -x^3' },
     { label: 'D', text: 'y = -2x + 1' },
   ]),
-  mc('mc-07', 'The tich khoi tru co dien tich day 5 va chieu cao 3 bang', 2, 'yen-hoa-2024', 'THPT Yen Hoa', 2024, [
+  mc('mc-07', 'Thể tích khối trụ có diện tích đáy 5 và chiều cao 3 bằng', 2, 'yen-hoa-2024', 'THPT Yên Hòa', 2024, [
     { label: 'A', text: '8' },
     { label: 'B', text: '15', correct: true },
     { label: 'C', text: '10' },
     { label: 'D', text: '30' },
   ]),
-  mc('mc-08', 'So nghiem cua phuong trinh sin x = 0 tren doan [0; 2pi] la', 2, 'cau-giay-2025-lan-1', 'THPT Cau Giay', 2025, [
+  mc('mc-08', 'Số nghiệm của phương trình sin x = 0 trên đoạn [0; 2pi] là', 2, 'cau-giay-2025-lan-1', 'THPT Cầu Giấy', 2025, [
     { label: 'A', text: '1' },
     { label: 'B', text: '2' },
     { label: 'C', text: '3', correct: true },
     { label: 'D', text: '4' },
   ]),
-  mc('mc-09', 'Cho cap so cong co u1 = 2, d = 3. Gia tri u5 bang', 3, 'chuyen-su-pham-2025', 'THPT Chuyen Su Pham', 2025, [
+  mc('mc-09', 'Cho cấp số cộng có u1 = 2, d = 3. Giá trị u5 bằng', 3, 'chuyen-su-pham-2025', 'THPT Chuyên Sư Phạm', 2025, [
     { label: 'A', text: '11' },
     { label: 'B', text: '14', correct: true },
     { label: 'C', text: '15' },
     { label: 'D', text: '17' },
   ]),
-  mc('mc-10', 'Cho z = 1 - 2i. Modun cua z bang', 3, 'yen-hoa-2024', 'THPT Yen Hoa', 2024, [
+  mc('mc-10', 'Cho z = 1 - 2i. Môđun của z bằng', 3, 'yen-hoa-2024', 'THPT Yên Hòa', 2024, [
     { label: 'A', text: 'sqrt(2)' },
     { label: 'B', text: 'sqrt(3)' },
     { label: 'C', text: 'sqrt(5)', correct: true },
     { label: 'D', text: '5' },
   ]),
-  mc('mc-11', 'Xac suat gieo mot con xuc xac duoc mat chan bang', 3, 'cau-giay-2025-lan-1', 'THPT Cau Giay', 2025, [
+  mc('mc-11', 'Xác suất gieo một con xúc xắc được mặt chẵn bằng', 3, 'cau-giay-2025-lan-1', 'THPT Cầu Giấy', 2025, [
     { label: 'A', text: '1/6' },
     { label: 'B', text: '1/3' },
     { label: 'C', text: '1/2', correct: true },
     { label: 'D', text: '2/3' },
   ]),
-  mc('mc-12', 'Gia tri lon nhat cua ham so y = -x^2 + 4x - 1 bang', 4, 'chuyen-su-pham-2025', 'THPT Chuyen Su Pham', 2025, [
+  mc('mc-12', 'Giá trị lớn nhất của hàm số y = -x^2 + 4x - 1 bằng', 4, 'chuyen-su-pham-2025', 'THPT Chuyên Sư Phạm', 2025, [
     { label: 'A', text: '2' },
     { label: 'B', text: '3', correct: true },
     { label: 'C', text: '4' },
     { label: 'D', text: '5' },
   ]),
-  mc('mc-13', 'Cho tich phan tu 0 den 1 cua 2x dx. Ket qua bang', 3, 'yen-hoa-2024', 'THPT Yen Hoa', 2024, [
+  mc('mc-13', 'Cho tích phân từ 0 đến 1 của 2x dx. Kết quả bằng', 3, 'yen-hoa-2024', 'THPT Yên Hòa', 2024, [
     { label: 'A', text: '1', correct: true },
     { label: 'B', text: '2' },
     { label: 'C', text: '1/2' },
     { label: 'D', text: '0' },
   ]),
-  mc('mc-14', 'Trong khong gian Oxyz, vectơ phap tuyen cua mat phang x + 2y - z = 0 la', 2, 'cau-giay-2025-lan-1', 'THPT Cau Giay', 2025, [
+  mc('mc-14', 'Trong không gian Oxyz, vectơ pháp tuyến của mặt phẳng x + 2y - z = 0 là', 2, 'cau-giay-2025-lan-1', 'THPT Cầu Giấy', 2025, [
     { label: 'A', text: '(1;2;-1)', correct: true },
     { label: 'B', text: '(1;2;1)' },
     { label: 'C', text: '(-1;2;-1)' },
     { label: 'D', text: '(0;2;-1)' },
   ]),
-  tf('tf-01', 'Xet ham so y = x^2 - 2x + 1.', 2, 'cau-giay-2025-lan-1', 'THPT Cau Giay', 2025, [
-    { content: 'Ham so co dinh tai x = 1.', isCorrect: false },
-    { content: 'Gia tri nho nhat cua ham so bang 0.', isCorrect: true },
-    { content: 'Do thi co truc doi xung x = 1.', isCorrect: true },
-    { content: 'Ham so nghich bien tren khoang (1; +inf).', isCorrect: false },
+  tf('tf-01', 'Xét hàm số y = x^2 - 2x + 1.', 2, 'cau-giay-2025-lan-1', 'THPT Cầu Giấy', 2025, [
+    { content: 'Hàm số có đỉnh tại x = 1.', isCorrect: false },
+    { content: 'Giá trị nhỏ nhất của hàm số bằng 0.', isCorrect: true },
+    { content: 'Đồ thị có trục đối xứng x = 1.', isCorrect: true },
+    { content: 'Hàm số nghịch biến trên khoảng (1; +inf).', isCorrect: false },
   ]),
-  tf('tf-02', 'Cho cap so nhan (un) voi u1 = 3, q = 2.', 2, 'yen-hoa-2024', 'THPT Yen Hoa', 2024, [
+  tf('tf-02', 'Cho cấp số nhân (un) với u1 = 3, q = 2.', 2, 'yen-hoa-2024', 'THPT Yên Hòa', 2024, [
     { content: 'u2 = 6.', isCorrect: true },
     { content: 'u4 = 24.', isCorrect: true },
-    { content: 'Cong boi cua day la 3.', isCorrect: false },
-    { content: 'Tong 3 so hang dau bang 21.', isCorrect: true },
+    { content: 'Công bội của dãy là 3.', isCorrect: false },
+    { content: 'Tổng 3 số hạng đầu bằng 21.', isCorrect: true },
   ]),
-  tf('tf-03', 'Xet hinh chop S.ABCD co day la hinh vuong.', 3, 'chuyen-su-pham-2025', 'THPT Chuyen Su Pham', 2025, [
+  tf('tf-03', 'Xét hình chóp S.ABCD có đáy là hình vuông.', 3, 'chuyen-su-pham-2025', 'THPT Chuyên Sư Phạm', 2025, [
     { content: 'AB song song CD.', isCorrect: true },
-    { content: 'Hai duong cheo AC va BD vuong goc nhau.', isCorrect: true },
+    { content: 'Hai đường chéo AC và BD vuông góc nhau.', isCorrect: true },
     { content: 'AC = BD.', isCorrect: true },
-    { content: 'AB vuong goc BC la sai.', isCorrect: false },
+    { content: 'AB vuông góc BC là sai.', isCorrect: false },
   ]),
-  tf('tf-04', 'Xet ham so y = (x - 1)/(x + 1).', 4, 'chuyen-su-pham-2025', 'THPT Chuyen Su Pham', 2025, [
-    { content: 'Tap xac dinh la R \\ {-1}.', isCorrect: true },
-    { content: 'Do thi co tiem can ngang y = 1.', isCorrect: true },
-    { content: 'Ham so dong bien tren tung khoang xac dinh.', isCorrect: true },
-    { content: 'Do thi di qua diem (0;1).', isCorrect: false },
+  tf('tf-04', 'Xét hàm số y = (x - 1)/(x + 1).', 4, 'chuyen-su-pham-2025', 'THPT Chuyên Sư Phạm', 2025, [
+    { content: 'Tập xác định là R \\ {-1}.', isCorrect: true },
+    { content: 'Đồ thị có tiệm cận ngang y = 1.', isCorrect: true },
+    { content: 'Hàm số đồng biến trên từng khoảng xác định.', isCorrect: true },
+    { content: 'Đồ thị đi qua điểm (0;1).', isCorrect: false },
   ]),
-  tf('tf-05', 'Xet bieu thuc P = log3(9x).', 3, 'yen-hoa-2024', 'THPT Yen Hoa', 2024, [
-    { content: 'Dieu kien xac dinh la x > 0.', isCorrect: true },
+  tf('tf-05', 'Xét biểu thức P = log3(9x).', 3, 'yen-hoa-2024', 'THPT Yên Hòa', 2024, [
+    { content: 'Điều kiện xác định là x > 0.', isCorrect: true },
     { content: 'P = 2 + log3(x).', isCorrect: true },
     { content: 'P = log3(9) . log3(x).', isCorrect: false },
-    { content: 'Neu x = 1/9 thi P = 0.', isCorrect: true },
+    { content: 'Nếu x = 1/9 thì P = 0.', isCorrect: true },
   ]),
-  sa('sa-01', 'Tinh dao ham cua ham so y = 5x^2 tai x = 1.', 1, 'cau-giay-2025-lan-1', 'THPT Cau Giay', 2025, ['10']),
-  sa('sa-02', 'Tinh tong cac nghiem cua phuong trinh x^2 - 5x + 6 = 0.', 1, 'yen-hoa-2024', 'THPT Yen Hoa', 2024, ['5']),
-  sa('sa-03', 'Cho hinh hop chu nhat co kich thuoc 2, 3, 4. Tinh the tich.', 2, 'cau-giay-2025-lan-1', 'THPT Cau Giay', 2025, ['24']),
-  sa('sa-04', 'Tinh gia tri cua bieu thuc C(5,2).', 2, 'chuyen-su-pham-2025', 'THPT Chuyen Su Pham', 2025, ['10']),
-  sa('sa-05', 'Giai phuong trinh 2^x = 16. Nhap gia tri x.', 2, 'yen-hoa-2024', 'THPT Yen Hoa', 2024, ['4']),
-  sa('sa-06', 'Cho cap so cong co u1 = 7, d = -2. Tinh u6.', 3, 'chuyen-su-pham-2025', 'THPT Chuyen Su Pham', 2025, ['-3']),
-  sa('sa-07', 'Tinh khoang cach tu diem M(1,2) den truc hoanh Ox.', 3, 'cau-giay-2025-lan-1', 'THPT Cau Giay', 2025, ['2']),
-  sa('sa-08', 'Gia tri cuc tieu cua ham so y = x^2 - 4x + 7 bang bao nhieu?', 4, 'chuyen-su-pham-2025', 'THPT Chuyen Su Pham', 2025, ['3']),
+  sa('sa-01', 'Tính đạo hàm của hàm số y = 5x^2 tại x = 1.', 1, 'cau-giay-2025-lan-1', 'THPT Cầu Giấy', 2025, ['10']),
+  sa('sa-02', 'Tính tổng các nghiệm của phương trình x^2 - 5x + 6 = 0.', 1, 'yen-hoa-2024', 'THPT Yên Hòa', 2024, ['5']),
+  sa('sa-03', 'Cho hình hộp chữ nhật có kích thước 2, 3, 4. Tính thể tích.', 2, 'cau-giay-2025-lan-1', 'THPT Cầu Giấy', 2025, ['24']),
+  sa('sa-04', 'Tính giá trị của biểu thức C(5,2).', 2, 'chuyen-su-pham-2025', 'THPT Chuyên Sư Phạm', 2025, ['10']),
+  sa('sa-05', 'Giải phương trình 2^x = 16. Nhập giá trị x.', 2, 'yen-hoa-2024', 'THPT Yên Hòa', 2024, ['4']),
+  sa('sa-06', 'Cho cấp số cộng có u1 = 7, d = -2. Tính u6.', 3, 'chuyen-su-pham-2025', 'THPT Chuyên Sư Phạm', 2025, ['-3']),
+  sa('sa-07', 'Tính khoảng cách từ điểm M(1,2) đến trục hoành Ox.', 3, 'cau-giay-2025-lan-1', 'THPT Cầu Giấy', 2025, ['2']),
+  sa('sa-08', 'Giá trị cực tiểu của hàm số y = x^2 - 4x + 7 bằng bao nhiêu?', 4, 'chuyen-su-pham-2025', 'THPT Chuyên Sư Phạm', 2025, ['3']),
 ]

@@ -151,7 +151,7 @@ export async function fetchAttemptHistory(userId: string): Promise<AttemptHistor
     .returns<AttemptHistoryRow[]>()
 
   if (error) {
-    throw new Error(`Khong the tai lich su lam bai: ${error.message}`)
+    throw new Error(`Không thể tải lịch sử làm bài: ${error.message}`)
   }
 
   return data.map((attempt) => ({
@@ -179,7 +179,7 @@ async function fetchLegacySubjects(): Promise<SubjectOption[]> {
     .returns<SubjectRow[]>()
 
   if (error) {
-    throw new Error(`Khong the tai danh sach mon hoc: ${error.message}`)
+    throw new Error(`Không thể tải danh sách môn học: ${error.message}`)
   }
 
   return data.map((subject) => ({
@@ -201,7 +201,7 @@ async function fetchLegacyTopicsBySubjectId(subjectId: string): Promise<TopicOpt
     .returns<TopicRow[]>()
 
   if (error) {
-    throw new Error(`Khong the tai danh sach chuyen de: ${error.message}`)
+    throw new Error(`Không thể tải danh sách chuyên đề: ${error.message}`)
   }
 
   return data.map((topic) => ({
@@ -234,7 +234,7 @@ async function fetchLegacyQuestionsForCustomExam(
   const { data, error } = await query.returns<QuestionRow[]>()
 
   if (error) {
-    throw new Error(`Khong the tai cau hoi cho de tu chon: ${error.message}`)
+    throw new Error(`Không thể tải câu hỏi cho đề tự chọn: ${error.message}`)
   }
 
   return data.map((question) => ({

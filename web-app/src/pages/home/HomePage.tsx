@@ -14,14 +14,14 @@ export function HomePage() {
       await logout()
       navigate('/login', { replace: true })
     } catch (error) {
-      setDisplayError(error instanceof Error ? error.message : 'Dang xuat that bai.')
+      setDisplayError(error instanceof Error ? error.message : 'Đăng xuất thất bại.')
     }
   }
 
   return (
     <PageCard
-      title={`Xin chao ${user?.fullName || user?.email || 'hoc sinh'}`}
-      description="Chon nhanh de tiep tuc on tap, xem lich su bai lam va quan ly tai khoan hoc sinh."
+      title={`Xin chào ${user?.fullName || user?.email || 'học sinh'}`}
+      description="Chọn nhanh để tiếp tục ôn tập, xem lịch sử bài làm và quản lý tài khoản học sinh."
     >
       <div style={styles.metaRow}>
         <MetaPill label="Email" value={user?.email ?? '--'} />
@@ -32,21 +32,21 @@ export function HomePage() {
 
       <div style={styles.grid}>
         <FeatureTile
-          title="On tap kien thuc"
-          description="Vao dashboard de chon mon hoc, chuyen de, do kho va bat dau bai moi."
-          action={<Link style={styles.linkButton} to="/dashboard">Mo dashboard</Link>}
+          title="Ôn tập kiến thức"
+          description="Vào dashboard để chọn môn học, chuyên đề, độ khó và bắt đầu bài mới."
+          action={<Link style={styles.linkButton} to="/dashboard">Mở dashboard</Link>}
         />
         <FeatureTile
-          title="Tien do hoc tap"
-          description="Bai dang lam do, bai dang lam tren cloud va lich su review duoc tap trung tai dashboard."
-          action={<Link style={styles.linkButton} to="/history">Xem lich su</Link>}
+          title="Tiến độ học tập"
+          description="Bài đang làm dở, bài đang làm trên cloud và lịch sử review được tập trung tại dashboard."
+          action={<Link style={styles.linkButton} to="/history">Xem lịch sử</Link>}
         />
         <FeatureTile
-          title="Dang xuat"
-          description="Xoa session Supabase tren web va quay ve login."
+          title="Đăng xuất"
+          description="Xóa session Supabase trên web và quay về login."
           action={
             <button onClick={handleLogout} style={styles.logoutButton} type="button">
-              Dang xuat
+              Đăng xuất
             </button>
           }
         />

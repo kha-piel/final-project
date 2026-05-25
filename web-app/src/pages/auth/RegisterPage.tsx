@@ -25,17 +25,17 @@ export function RegisterPage() {
     }
 
     if (!email.includes('@')) {
-      setErrorMessage('Email khong dung dinh dang.')
+      setErrorMessage('Email không đúng định dạng.')
       return
     }
 
     if (password.length < 8) {
-      setErrorMessage('Mat khau can toi thieu 8 ky tu.')
+      setErrorMessage('Mật khẩu cần tối thiểu 8 ký tự.')
       return
     }
 
     if (password !== confirmPassword) {
-      setErrorMessage('Xac nhan mat khau khong khop.')
+      setErrorMessage('Xac nhan mật khẩu không khop.')
       return
     }
 
@@ -50,13 +50,13 @@ export function RegisterPage() {
 
       setSuccessMessage(
         result.needsEmailConfirmation
-          ? 'Dang ky thanh cong. Hay mo email de xac thuc truoc khi dang nhap.'
-          : 'Dang ky thanh cong. Ban co the dang nhap ngay.',
+          ? 'Đăng ký thành công. Hãy mở email để xác thực trước khi đăng nhập.'
+          : 'Đăng ký thành công. Bạn có thể đăng nhập ngay.',
       )
       setPassword('')
       setConfirmPassword('')
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : 'Dang ky that bai.')
+      setErrorMessage(error instanceof Error ? error.message : 'Đăng ký thất bại.')
     } finally {
       setIsSubmitting(false)
     }
@@ -65,8 +65,8 @@ export function RegisterPage() {
   return (
     <AuthShell
       mode="register"
-      title="Tao tai khoan moi"
-      description="Dang ky de bat dau hoc tren ban web, dong bo tien do, lich su lam bai va khung giai thich AI."
+      title="Tạo tài khoản mới"
+      description="Đăng ký để bắt đầu học trên bản web, đồng bộ tiến độ, lịch sử làm bài và khung giải thích AI."
       form={
         <form className="legacy-auth-form" onSubmit={handleSubmit}>
           <label className="legacy-auth-form-row">
@@ -94,25 +94,25 @@ export function RegisterPage() {
             <input
               autoComplete="new-password"
               className="legacy-auth-input"
-              placeholder="Nhap mat khau"
+              placeholder="Nhap mật khẩu"
               type="password"
               value={password}
               onChange={(event) => setPassword(event.target.value)}
             />
           </label>
           <label className="legacy-auth-form-row">
-            <span className="legacy-auth-label">Xac nhan mat khau</span>
+            <span className="legacy-auth-label">Xac nhan mật khẩu</span>
             <input
               autoComplete="new-password"
               className="legacy-auth-input"
-              placeholder="Nhap lai mat khau"
+              placeholder="Nhap lai mật khẩu"
               type="password"
               value={confirmPassword}
               onChange={(event) => setConfirmPassword(event.target.value)}
             />
           </label>
           <button className="legacy-auth-submit" disabled={isSubmitting} type="submit">
-            {isSubmitting ? 'Dang tao tai khoan...' : 'Dang ky'}
+            {isSubmitting ? 'Đang tạo tài khoản...' : 'Đăng ký'}
           </button>
         </form>
       }
@@ -127,9 +127,9 @@ export function RegisterPage() {
           ) : null}
           {!errorMessage && !successMessage && !globalErrorMessage ? (
             <p className="legacy-auth-status-text">
-              Da co tai khoan?{' '}
+              Đã co tài khoản?{' '}
               <Link className="legacy-auth-inline-link" to="/login">
-                Ve dang nhap
+                Về đăng nhập
               </Link>
               .
             </p>

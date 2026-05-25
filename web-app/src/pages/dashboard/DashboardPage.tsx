@@ -139,7 +139,7 @@ export function DashboardPage() {
       setIsLoadingHistory(false)
       setIsLoadingCloudAttempts(false)
       setErrorMessage(
-        'Chua co env Supabase cho web-app. Copy web-app/.env.example thanh web-app/.env.local va dien gia tri that.',
+        'Chưa có env Supabase cho web-app. Copy web-app/.env.example thành web-app/.env.local và điền giá trị thật.',
       )
       return
     }
@@ -156,7 +156,7 @@ export function DashboardPage() {
       })
       .catch((error: unknown) => {
         if (isMounted) {
-          setErrorMessage(error instanceof Error ? error.message : 'Khong the tai mon hoc.')
+          setErrorMessage(error instanceof Error ? error.message : 'Không thể tải môn học.')
         }
       })
       .finally(() => {
@@ -194,7 +194,7 @@ export function DashboardPage() {
       .catch((error: unknown) => {
         if (isMounted) {
           setHistoryErrorMessage(
-            error instanceof Error ? error.message : 'Khong the tai lich su lam bai.',
+            error instanceof Error ? error.message : 'Không thể tải lịch sử làm bài.',
           )
         }
       })
@@ -213,7 +213,7 @@ export function DashboardPage() {
       .catch((error: unknown) => {
         if (isMounted) {
           setCloudRestoreErrorMessage(
-            error instanceof Error ? error.message : 'Khong the tai bai dang lam tren cloud.',
+            error instanceof Error ? error.message : 'Không thể tải bài đang làm trên cloud.',
           )
         }
       })
@@ -249,7 +249,7 @@ export function DashboardPage() {
       })
       .catch((error: unknown) => {
         if (isMounted) {
-          setErrorMessage(error instanceof Error ? error.message : 'Khong the tai chuyen de.')
+          setErrorMessage(error instanceof Error ? error.message : 'Không thể tải chuyên đề.')
         }
       })
       .finally(() => {
@@ -267,7 +267,7 @@ export function DashboardPage() {
     setErrorMessage('')
 
     if (!selectedSubject || !selectedTopic || !selectedDifficultyOption) {
-      setErrorMessage('Vui long chon day du mon hoc, chuyen de, muc do va dang cau hoi.')
+      setErrorMessage('Vui lòng chọn đầy đủ môn học, chuyên đề, mức độ và dạng câu hỏi.')
       return
     }
 
@@ -282,14 +282,14 @@ export function DashboardPage() {
       )
 
       if (questions.length === 0) {
-        setErrorMessage('Chuyen de nay hien chua co cau hoi nao cho muc do da chon.')
+        setErrorMessage('Chuyên đề này hiện chưa có câu hỏi nào cho mức độ đã chọn.')
         return
       }
 
       const sessionId = crypto.randomUUID()
       createSession({
         sessionId,
-        title: `De tu chon - ${selectedSubject.subjectName} - ${selectedTopic.topicName} - ${selectedDifficultyOption.label}`,
+        title: `Đề tự chọn - ${selectedSubject.subjectName} - ${selectedTopic.topicName} - ${selectedDifficultyOption.label}`,
         subjectId: selectedSubject.subjectId,
         subjectName: selectedSubject.subjectName,
         topicId: selectedTopic.topicId,
@@ -304,7 +304,7 @@ export function DashboardPage() {
 
       navigate(`/exam/${sessionId}`)
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : 'Khong the tao de tu chon.')
+      setErrorMessage(error instanceof Error ? error.message : 'Không thể tạo đề tự chọn.')
     } finally {
       setIsCreatingExam(false)
     }
@@ -317,7 +317,7 @@ export function DashboardPage() {
     try {
       const restored = await restoreCloudAttempt(attemptId)
       if (!restored) {
-        setCloudRestoreErrorMessage('Khong tim thay bai dang lam tren cloud de khoi phuc.')
+        setCloudRestoreErrorMessage('Không tìm thấy bài đang làm trên cloud để khôi phục.')
         return
       }
 
@@ -326,7 +326,7 @@ export function DashboardPage() {
       navigate(`/exam/${restored.session.sessionId}`)
     } catch (error) {
       setCloudRestoreErrorMessage(
-        error instanceof Error ? error.message : 'Khong the khoi phuc bai dang lam tren cloud.',
+        error instanceof Error ? error.message : 'Không thể khôi phục bài đang làm trên cloud.',
       )
     } finally {
       setIsRestoringCloudAttemptId('')
@@ -342,7 +342,7 @@ export function DashboardPage() {
     setErrorMessage('')
 
     if (visibleFlaggedQuestions.length === 0) {
-      setErrorMessage('Chua co cau sai nao duoc cam co de tao phien on tap.')
+      setErrorMessage('Chưa có câu sai nào được cắm cờ để tạo phiên ôn tập.')
       return
     }
 
@@ -359,13 +359,13 @@ export function DashboardPage() {
 
     createSession({
       sessionId,
-      title: `On lai cau sai da cam co - ${firstItem.subjectName}`,
+      title: `Ôn lại câu sai đã cắm cờ - ${firstItem.subjectName}`,
       subjectId: firstItem.subjectId,
       subjectName: firstItem.subjectName,
       topicId: sameTopic ? firstItem.topicId : 'flagged-wrong-questions',
-      topicName: sameTopic ? firstItem.topicName : 'Cau sai da cam co',
+      topicName: sameTopic ? firstItem.topicName : 'Câu sai đã cắm cờ',
       difficultyLevel: averageDifficulty,
-      difficultyLabel: 'Tong hop cau sai da cam co',
+      difficultyLabel: 'Tổng hợp câu sai đã cắm cờ',
       durationMinutes,
       questions,
       deliveryMode: 'local_mock',
@@ -377,17 +377,17 @@ export function DashboardPage() {
 
   return (
     <PageCard
-      title="Dashboard On Tap"
-      description="Chon cau hinh bai lam, tiep tuc bai dang do va xem lai ket qua da luu tren cloud."
+      title="Dashboard Ôn tập"
+      description="Chọn cấu hình bài làm, tiếp tục bài đang dở và xem lại kết quả đã lưu trên cloud."
     >
       <section className="mb-6 rounded-[28px] border border-slate-200 bg-white p-5 shadow-[0_18px_44px_rgba(15,23,42,0.05)]">
         <div className="mb-4 flex flex-wrap items-end justify-between gap-4">
           <div>
             <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400">
-              Bo loc on tap 2025
+              Bộ lọc ôn tập 2025
             </div>
             <h2 className="mt-2 text-xl font-bold tracking-tight text-slate-950">
-              Chon mon hoc, chu de, muc do va dang cau hoi
+              Chọn môn học, chủ đề, mức độ và dạng câu hỏi
             </h2>
           </div>
 
@@ -397,19 +397,19 @@ export function DashboardPage() {
             onClick={handleCreateExam}
             type="button"
           >
-            {isCreatingExam ? 'Dang tao de...' : 'Tao de va bat dau'}
+            {isCreatingExam ? 'Đang tạo đề...' : 'Tạo đề và bắt đầu'}
           </button>
         </div>
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
-          <FilterField label="Mon hoc">
+          <FilterField label="Môn học">
             <select
               className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-medium text-slate-800 outline-none transition focus:border-blue-400 focus:bg-white"
               disabled={isLoadingSubjects}
               onChange={(event) => setSelectedSubjectId(event.target.value)}
               value={selectedSubjectId}
             >
-              <option value="">Tat ca mon hoc</option>
+              <option value="">Tất cả môn học</option>
               {subjects.map((subject) => (
                 <option key={subject.subjectId} value={subject.subjectId}>
                   {subject.subjectName}
@@ -418,14 +418,14 @@ export function DashboardPage() {
             </select>
           </FilterField>
 
-          <FilterField label="Chu de">
+          <FilterField label="Chủ đề">
             <select
               className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-medium text-slate-800 outline-none transition focus:border-blue-400 focus:bg-white disabled:cursor-not-allowed disabled:bg-slate-100"
               disabled={!selectedSubjectId || isLoadingTopics}
               onChange={(event) => setSelectedTopicId(event.target.value)}
               value={selectedTopicId}
             >
-              <option value="">Chon chuyen de</option>
+              <option value="">Chọn chuyên đề</option>
               {topics.map((topic) => (
                 <option key={topic.topicId} value={topic.topicId}>
                   {topic.topicName}
@@ -434,13 +434,13 @@ export function DashboardPage() {
             </select>
           </FilterField>
 
-          <FilterField label="Muc do">
+          <FilterField label="Mức độ">
             <select
               className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-medium text-slate-800 outline-none transition focus:border-blue-400 focus:bg-white"
               onChange={(event) => setSelectedDifficulty(event.target.value)}
               value={selectedDifficulty}
             >
-              <option value="">Chon muc do</option>
+              <option value="">Chọn mức độ</option>
               {difficultyOptions.map((difficulty) => (
                 <option key={difficulty.level} value={difficulty.level}>
                   {difficulty.label}
@@ -449,7 +449,7 @@ export function DashboardPage() {
             </select>
           </FilterField>
 
-          <FilterField label="Dang cau hoi">
+          <FilterField label="Dạng câu hỏi">
             <select
               className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-medium text-slate-800 outline-none transition focus:border-blue-400 focus:bg-white"
               onChange={(event) =>
@@ -469,29 +469,29 @@ export function DashboardPage() {
 
       <div style={styles.statusGrid}>
         <StatusBlock
-          label="Mon hoc"
-          value={selectedSubject?.subjectName ?? (isLoadingSubjects ? 'Dang tai...' : '--')}
+          label="Môn học"
+          value={selectedSubject?.subjectName ?? (isLoadingSubjects ? 'Đang tải...' : '--')}
         />
         <StatusBlock
-          label="Chuyen de"
-          value={selectedTopic?.topicName ?? (isLoadingTopics ? 'Dang tai...' : '--')}
+          label="Chuyên đề"
+          value={selectedTopic?.topicName ?? (isLoadingTopics ? 'Đang tải...' : '--')}
         />
-        <StatusBlock label="Do kho" value={selectedDifficultyOption?.label ?? '--'} />
+        <StatusBlock label="Độ khó" value={selectedDifficultyOption?.label ?? '--'} />
         <StatusBlock
-          label="Dang cau hoi"
+          label="Dạng câu hỏi"
           value={questionTypeOptions.find((item) => item.value === selectedQuestionType)?.label ?? '--'}
         />
-        <StatusBlock label="Thoi gian" value={`${CUSTOM_EXAM_DURATION_MINUTES} phut`} />
+        <StatusBlock label="Thời gian" value={`${CUSTOM_EXAM_DURATION_MINUTES} phút`} />
       </div>
 
       {errorMessage ? <p style={styles.error}>{errorMessage}</p> : null}
 
       <section style={styles.history}>
-        <strong>Cau sai da cam co</strong>
+        <strong>Câu sai đã cắm cờ</strong>
         <p style={styles.historyText}>
           {selectedSubjectId
-            ? `Dang hien ${visibleFlaggedQuestions.length} cau theo mon da chon.`
-            : `Dang luu ${visibleFlaggedQuestions.length} cau sai da cam co tren trinh duyet.`}
+            ? `Đang hiện ${visibleFlaggedQuestions.length} câu theo môn đã chọn.`
+            : `Đang lưu ${visibleFlaggedQuestions.length} câu sai đã cắm cờ trên trình duyệt.`}
         </p>
         <div style={styles.historyActionRow}>
           <button
@@ -500,7 +500,7 @@ export function DashboardPage() {
             style={styles.restoreButton}
             type="button"
           >
-            On lai cac cau da cam co
+            Ôn lại các câu đã cắm cờ
           </button>
           <button
             disabled={flaggedQuestionItems.length === 0}
@@ -508,7 +508,7 @@ export function DashboardPage() {
             style={styles.discardButton}
             type="button"
           >
-            Xoa danh sach cam co
+            Xóa danh sách cắm cờ
           </button>
         </div>
         {visibleFlaggedQuestions.length > 0 ? (
@@ -532,9 +532,9 @@ export function DashboardPage() {
       </section>
 
       <section style={styles.history}>
-        <strong>Bai dang lam do</strong>
+        <strong>Bài đang làm dở</strong>
         {resumableSessions.length === 0 ? (
-          <p style={styles.historyText}>Khong co bai dang lam nao can khoi phuc.</p>
+          <p style={styles.historyText}>Không có bài đang làm nào cần khôi phục.</p>
         ) : (
           <div style={styles.historyList}>
             {resumableSessions.map((session) => (
@@ -546,21 +546,21 @@ export function DashboardPage() {
                       {session.topicName} | {session.difficultyLabel}
                     </div>
                   </div>
-                  <div style={styles.scorePill}>Tien do {session.progressText}</div>
+                  <div style={styles.scorePill}>Tiến độ {session.progressText}</div>
                 </div>
 
                 <div style={styles.historyFooter}>
-                  <span>Dang o cau {session.currentQuestion}</span>
+                  <span>Đang ở câu {session.currentQuestion}</span>
                   <div style={styles.historyActionRow}>
                     <button
                       onClick={() => handleDiscardLocalSession(session.sessionId)}
                       style={styles.discardButton}
                       type="button"
                     >
-                      Bo session
+                      Bỏ session
                     </button>
                     <Link to={`/exam/${session.sessionId}`} style={styles.reviewLink}>
-                      Tiep tuc lam bai
+                      Tiếp tục làm bài
                     </Link>
                   </div>
                 </div>
@@ -571,12 +571,12 @@ export function DashboardPage() {
       </section>
 
       <section style={styles.history}>
-        <strong>Bai dang lam tren cloud</strong>
+        <strong>Bài đang làm trên cloud</strong>
         {cloudRestoreErrorMessage ? <p style={styles.error}>{cloudRestoreErrorMessage}</p> : null}
         {isLoadingCloudAttempts ? (
-          <p style={styles.historyText}>Dang tai bai dang lam tren cloud...</p>
+          <p style={styles.historyText}>Đang tải bài đang làm trên cloud...</p>
         ) : visibleCloudInProgressAttempts.length === 0 ? (
-          <p style={styles.historyText}>Khong co bai dang lam tren cloud.</p>
+          <p style={styles.historyText}>Không có bài đang làm trên cloud.</p>
         ) : (
           <div style={styles.historyList}>
             {visibleCloudInProgressAttempts.map((attempt) => (
@@ -602,8 +602,8 @@ export function DashboardPage() {
                     type="button"
                   >
                     {isRestoringCloudAttemptId === attempt.attemptId
-                      ? 'Dang khoi phuc...'
-                      : 'Khoi phuc tu cloud'}
+                      ? 'Đang khôi phục...'
+                      : 'Khôi phục từ cloud'}
                   </button>
                 </div>
               </article>
@@ -613,12 +613,12 @@ export function DashboardPage() {
       </section>
 
       <section style={styles.history}>
-        <strong>Lich su lam bai</strong>
+        <strong>Lịch sử làm bài</strong>
         {historyErrorMessage ? <p style={styles.error}>{historyErrorMessage}</p> : null}
         {isLoadingHistory ? (
-          <p style={styles.historyText}>Dang tai lich su tu Supabase...</p>
+          <p style={styles.historyText}>Đang tải lịch sử từ Supabase...</p>
         ) : attemptHistory.length === 0 ? (
-          <p style={styles.historyText}>Chua co bai lam nao duoc luu tren web.</p>
+          <p style={styles.historyText}>Chưa có bài làm nào được lưu trên web.</p>
         ) : (
           <div style={styles.historyList}>
             {attemptHistory.map((attempt) => (
@@ -636,9 +636,9 @@ export function DashboardPage() {
                 </div>
 
                 <div style={styles.historyStats}>
-                  <span>Dung: {attempt.correctCount}</span>
+                  <span>Đúng: {attempt.correctCount}</span>
                   <span>Sai: {attempt.wrongCount}</span>
-                  <span>Bo qua: {attempt.skippedCount}</span>
+                  <span>Bỏ qua: {attempt.skippedCount}</span>
                 </div>
 
                 <div style={styles.historyFooter}>
@@ -678,7 +678,7 @@ function FilterField({ label, children }: { label: string; children: ReactNode }
 
 function formatCompletedAt(value: string | null) {
   if (!value) {
-    return 'Chua hoan tat'
+    return 'Chưa hoàn tất'
   }
 
   const date = new Date(value)

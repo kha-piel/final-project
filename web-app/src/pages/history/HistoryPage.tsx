@@ -5,13 +5,13 @@ export function HistoryPage() {
     <section className="space-y-6">
       <div className="rounded-[28px] border border-slate-200 bg-white p-8 shadow-[0_18px_50px_rgba(15,23,42,0.06)]">
         <div className="mb-4 inline-flex rounded-full border border-amber-200 bg-amber-50 px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-amber-700">
-          Lich su lam bai
+          Lịch sử làm bài
         </div>
         <h1 className="text-4xl font-extrabold tracking-tight text-slate-950 md:text-5xl">
-          Khu tong hop lich su dang duoc tach rieng cho web-app.
+          Khu tổng hợp lịch sử đang được tách riêng cho web-app.
         </h1>
         <p className="mt-4 max-w-2xl text-base leading-7 text-slate-600">
-          Hien tai du lieu lich su chi tiet van nam trong dashboard. Trang nay la mock shell de
+          Hiện tại dữ liệu lịch sử chi tiết vẫn nằm trong dashboard. Trang này là mock shell để
           hoan thien dieu huong sidebar ngay bay gio, sau do se noi thang vao data Supabase.
         </p>
 
@@ -20,21 +20,21 @@ export function HistoryPage() {
             className="rounded-2xl bg-slate-950 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 active:translate-y-px"
             to="/dashboard"
           >
-            Mo lich su trong dashboard
+            Mo lịch sử trong dashboard
           </Link>
           <Link
             className="rounded-2xl border border-slate-200 bg-slate-50 px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 active:translate-y-px"
             to="/practice"
           >
-            Ve khu de thi thu
+            Về khu đề thi thử
           </Link>
         </div>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
         {[
-          ['Diem trung binh', '7.4/10', 'Se duoc dong bo tu attempt history trong Supabase.'],
-          ['Lan nop bai gan day', '05 muc gan nhat', 'Trang nay se tro thanh bo loc lich su theo mon, topic va ket qua.'],
+          ['Điểm trung bình', '7.4/10', 'Sẽ được đồng bộ từ attempt history trong Supabase.'],
+          ['Lần nộp bài gần đây', '05 mục gần nhất', 'Trang này sẽ trở thành bộ lọc lịch sử theo môn, topic và kết quả.'],
         ].map(([label, value, description]) => (
           <div
             key={label}

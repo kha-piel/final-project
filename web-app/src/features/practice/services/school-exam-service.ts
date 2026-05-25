@@ -137,7 +137,7 @@ export async function fetchSchoolExamCatalog(): Promise<PracticeExamCatalogItem[
       return buildFallbackCatalog()
     }
 
-    throw new Error(`Khong the tai danh sach de truong tu Supabase: ${error.message}`)
+    throw new Error(`Không thể tải danh sách đề trường từ Supabase: ${error.message}`)
   }
 
   if (!data.length) {
@@ -179,7 +179,7 @@ export async function fetchSchoolExamById(examId: string): Promise<SchoolExamPap
       return buildFallbackExam(examId)
     }
 
-    throw new Error(`Khong the tai chi tiet de truong: ${error.message}`)
+    throw new Error(`Không thể tải chi tiết đề trường: ${error.message}`)
   }
 
   if (!data) {
@@ -240,7 +240,7 @@ export async function fetchSchoolExamAnswerKey(variantId: string): Promise<Schoo
       return buildFallbackAnswerKeyEntries(variantId)
     }
 
-    throw new Error(`Khong the tai answer key theo ma de: ${error.message}`)
+    throw new Error(`Không thể tải answer key theo mã đề: ${error.message}`)
   }
 
   if (!data.length) {
@@ -273,7 +273,7 @@ export async function fetchSchoolExamQuestions(examId: string): Promise<SchoolEx
       return buildFallbackQuestionRecords(examId)
     }
 
-    throw new Error(`Khong the tai danh sach cau hoi de truong: ${error.message}`)
+    throw new Error(`Không thể tải danh sách câu hỏi đề trường: ${error.message}`)
   }
 
   if (!data.length) {
@@ -322,7 +322,7 @@ export async function fetchSchoolExamQuestionBank(subjectId: string): Promise<Sc
     >()
 
   if (variantError) {
-    throw new Error(`Khong the tai default variant cho kho cau hoi: ${variantError.message}`)
+    throw new Error(`Không thể tải default variant cho kho câu hỏi: ${variantError.message}`)
   }
 
   const answerKeyByExamAndQuestion = new Map<string, string>()
@@ -340,7 +340,7 @@ export async function fetchSchoolExamQuestionBank(subjectId: string): Promise<Sc
       >()
 
     if (answerKeyError) {
-      throw new Error(`Khong the tai answer key cho kho cau hoi: ${answerKeyError.message}`)
+      throw new Error(`Không thể tải answer key cho kho câu hỏi: ${answerKeyError.message}`)
     }
 
     const examIdByVariant = new Map(variants.map((variant) => [variant.variant_id, variant.exam_id]))
@@ -371,7 +371,7 @@ export async function fetchSchoolExamQuestionBank(subjectId: string): Promise<Sc
       return []
     }
 
-    throw new Error(`Khong the tai kho cau hoi de truong: ${error.message}`)
+    throw new Error(`Không thể tải kho câu hỏi đề trường: ${error.message}`)
   }
 
   return data
@@ -524,8 +524,8 @@ function buildFallbackSections(exam: SchoolExamPaper) {
     {
       sectionId: `${exam.examId}-section-1`,
       partCode: 'multiple_choice' as const,
-      title: 'Phan I. Trac nghiem nhieu lua chon',
-      instructions: 'Moi cau chon 1 trong 4 dap an.',
+      title: 'Phần I. Trắc nghiệm nhiều lựa chọn',
+      instructions: 'Mỗi câu chọn 1 trong 4 đáp án.',
       startQuestionNumber: exam.multipleChoiceQuestions[0]?.questionNumber ?? 1,
       endQuestionNumber:
         exam.multipleChoiceQuestions[exam.multipleChoiceQuestions.length - 1]?.questionNumber ?? 0,
@@ -536,8 +536,8 @@ function buildFallbackSections(exam: SchoolExamPaper) {
     {
       sectionId: `${exam.examId}-section-2`,
       partCode: 'true_false' as const,
-      title: 'Phan II. Dung / Sai',
-      instructions: 'Moi cau gom cac y a, b, c, d.',
+      title: 'Phần II. Đúng / Sai',
+      instructions: 'Mỗi câu gồm các ý a, b, c, d.',
       startQuestionNumber: exam.trueFalseQuestions[0]?.questionNumber ?? 0,
       endQuestionNumber:
         exam.trueFalseQuestions[exam.trueFalseQuestions.length - 1]?.questionNumber ?? 0,
@@ -548,8 +548,8 @@ function buildFallbackSections(exam: SchoolExamPaper) {
     {
       sectionId: `${exam.examId}-section-3`,
       partCode: 'short_answer' as const,
-      title: 'Phan III. Tra loi ngan',
-      instructions: 'Nhap dap an vao o trong.',
+      title: 'Phần III. Trả lời ngắn',
+      instructions: 'Nhap đáp án vao o trong.',
       startQuestionNumber: exam.shortAnswerQuestions[0]?.questionNumber ?? 0,
       endQuestionNumber:
         exam.shortAnswerQuestions[exam.shortAnswerQuestions.length - 1]?.questionNumber ?? 0,

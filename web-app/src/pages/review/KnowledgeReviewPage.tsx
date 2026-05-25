@@ -332,7 +332,7 @@ export function KnowledgeReviewPage() {
           <div className="mt-5 rounded-2xl border border-emerald-100 bg-emerald-50 px-4 py-4">
             <div className="text-sm font-extrabold text-emerald-800">Ôn tập thật nằm ở đâu?</div>
             <p className="mt-2 text-sm leading-7 text-emerald-900">
-              Đọc bài ở khung giữa, chọn mức độ và dạng câu, sau đó bấm “Tạo bài ôn theo lựa chọn”
+              Đọc bài ở khung giữa, chọn mức độ và dạng câu, sau đó bấm "Tạo bài ôn theo lựa chọn"
               để làm câu hỏi thật lấy từ ngân hàng đề trường có cùng topic/source path.
             </p>
           </div>

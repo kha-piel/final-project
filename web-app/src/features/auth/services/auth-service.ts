@@ -48,11 +48,11 @@ export async function loginWithIdentity(identity: string, password: string) {
     })
 
     if (error) {
-      throw new Error(`Khong the xu ly tai khoan dang nhap: ${error.message}`)
+      throw new Error(`Không thể xu ly tài khoản đăng nhập: ${error.message}`)
     }
 
     if (!data || typeof data !== 'string') {
-      throw new Error('Khong tim thay username phu hop.')
+      throw new Error('Không tìm thấy username phu hop.')
     }
 
     resolvedEmail = data
@@ -264,26 +264,26 @@ function translateAuthError(message: string) {
   const normalized = message.toLowerCase()
 
   if (normalized.includes('email_not_confirmed')) {
-    return 'Tai khoan chua xac thuc email. Hay mo hop thu va xac nhan email truoc khi dang nhap.'
+    return 'Tài khoản chưa xác thực email. Hãy mở hộp thư và xác nhận email trước khi đăng nhập.'
   }
 
   if (normalized.includes('invalid login credentials')) {
-    return 'Email hoac mat khau khong dung.'
+    return 'Email hoặc mật khẩu không đúng.'
   }
 
   if (normalized.includes('invalid api key')) {
-    return 'Cau hinh Supabase cua web app dang sai: anon key khong hop le.'
+    return 'Cấu hình Supabase của web app đang sai: anon key không hợp lệ.'
   }
 
   if (normalized.includes('forbidden') && normalized.includes('apikey')) {
-    return 'Cau hinh Supabase cua web app dang sai hoac key da bi thu hoi.'
+    return 'Cấu hình Supabase của web app đang sai hoặc key đã bị thu hồi.'
   }
 
   if (
     normalized.includes('email rate limit exceeded') ||
     normalized.includes('over_email_send_rate_limit')
   ) {
-    return 'Supabase dang gioi han tan suat gui email. Hay doi mot luc roi thu lai.'
+    return 'Supabase đang giới hạn tần suất gửi email. Hãy đợi một lúc rồi thử lại.'
   }
 
   return message

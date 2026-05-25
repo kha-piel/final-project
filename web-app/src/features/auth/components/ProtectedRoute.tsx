@@ -10,7 +10,7 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
   const status = useAuthSessionStore((state) => state.status)
 
   if (status === 'booting') {
-    return <RouteLoadingCard message="Dang khoi phuc auth session..." />
+    return <RouteLoadingCard message="Đang khởi phuc auth session..." />
   }
 
   if (status !== 'authenticated') {

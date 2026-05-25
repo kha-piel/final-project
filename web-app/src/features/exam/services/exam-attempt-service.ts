@@ -241,7 +241,7 @@ export async function persistCompletedAttempt({
     .single<CreatedAttemptRow>()
 
   if (attemptError || !createdAttempt) {
-    throw new Error(`Khong the luu ket qua bai lam: ${attemptError?.message ?? 'Unknown error'}`)
+    throw new Error(`Không thể lưu kết quả bài làm: ${attemptError?.message ?? 'Unknown error'}`)
   }
 
   const attemptAnswerRows = session.questions.map((question) => {
@@ -267,7 +267,7 @@ export async function persistCompletedAttempt({
     .insert(attemptAnswerRows)
 
   if (attemptAnswersError) {
-    throw new Error(`Khong the luu chi tiet dap an tung cau: ${attemptAnswersError.message}`)
+    throw new Error(`Không thể lưu chi tiết đáp án từng câu: ${attemptAnswersError.message}`)
   }
 
   return createdAttempt.attempt_id
@@ -315,7 +315,7 @@ export async function syncInProgressAttempt({
     .eq('attempt_id', cloudSync.attemptId)
 
   if (attemptUpdateError) {
-    throw new Error(`Khong the dong bo tien do bai lam: ${attemptUpdateError.message}`)
+    throw new Error(`Không thể đồng bộ tiến độ bài làm: ${attemptUpdateError.message}`)
   }
 
   const attemptAnswerRows = session.questions.map((question) => {
@@ -341,7 +341,7 @@ export async function syncInProgressAttempt({
     .upsert(attemptAnswerRows, { onConflict: 'attempt_id,question_id' })
 
   if (answerSyncError) {
-    throw new Error(`Khong the dong bo dap an dang lam: ${answerSyncError.message}`)
+    throw new Error(`Không thể đồng bộ đáp án đang làm: ${answerSyncError.message}`)
   }
 
   return cloudSync
@@ -382,7 +382,7 @@ export async function fetchInProgressAttempts(userId: string): Promise<InProgres
     >()
 
   if (error) {
-    throw new Error(`Khong the tai bai dang lam tren cloud: ${error.message}`)
+    throw new Error(`Không thể tải bài đang làm trên cloud: ${error.message}`)
   }
 
   return data.map((attempt) => {
@@ -413,7 +413,7 @@ export async function restoreInProgressAttempt(attemptId: string): Promise<Resto
     .maybeSingle<InProgressAttemptRow>()
 
   if (error) {
-    throw new Error(`Khong the khoi phuc bai dang lam tren cloud: ${error.message}`)
+    throw new Error(`Không thể khôi phục bài đang làm trên cloud: ${error.message}`)
   }
 
   if (!data) {
@@ -577,7 +577,7 @@ async function ensureCloudAttempt(input: {
       .single<CreatedExamRow>()
 
     if (examError || !createdExam) {
-      throw new Error(`Khong the tao exam record tren Supabase: ${examError?.message ?? 'Unknown error'}`)
+      throw new Error(`Không thể tạo exam record trên Supabase: ${examError?.message ?? 'Unknown error'}`)
     }
 
     examId = createdExam.exam_id
@@ -591,7 +591,7 @@ async function ensureCloudAttempt(input: {
 
     const { error: examQuestionsError } = await supabase.from('exam_questions').insert(examQuestionRows)
     if (examQuestionsError) {
-      throw new Error(`Khong the luu exam questions: ${examQuestionsError.message}`)
+      throw new Error(`Không thể lưu exam questions: ${examQuestionsError.message}`)
     }
   }
 
@@ -630,7 +630,7 @@ async function ensureCloudAttempt(input: {
       .single<CreatedAttemptRow>()
 
     if (attemptError || !createdAttempt) {
-      throw new Error(`Khong the tao attempt dang lam tren Supabase: ${attemptError?.message ?? 'Unknown error'}`)
+      throw new Error(`Không thể tạo attempt đang làm trên Supabase: ${attemptError?.message ?? 'Unknown error'}`)
     }
 
     attemptId = createdAttempt.attempt_id
@@ -676,7 +676,7 @@ async function ensureCloudChatSessionAndMessages(input: {
       .maybeSingle<ChatSessionRow>()
 
     if (existingChatSessionError) {
-      throw new Error(`Khong the doc cloud chat session: ${existingChatSessionError.message}`)
+      throw new Error(`Không thể doc cloud chat session: ${existingChatSessionError.message}`)
     }
 
     chatSessionId = existingChatSession?.session_id ?? null
@@ -687,7 +687,7 @@ async function ensureCloudChatSessionAndMessages(input: {
       .from('chat_sessions')
       .insert({
         user_id: input.userId,
-        title: 'AI gia su trong bai lam',
+        title: 'AI gia sư trong bài làm',
         context_summary: 'Chat history for in-progress exam attempt',
         related_exam_id: input.examId,
         related_attempt_id: input.attemptId,
@@ -700,7 +700,7 @@ async function ensureCloudChatSessionAndMessages(input: {
 
     if (createdChatSessionError || !createdChatSession) {
       throw new Error(
-        `Khong the tao cloud chat session: ${createdChatSessionError?.message ?? 'Unknown error'}`,
+        `Không thể tạo cloud chat session: ${createdChatSessionError?.message ?? 'Unknown error'}`,
       )
     }
 
@@ -722,7 +722,7 @@ async function ensureCloudChatSessionAndMessages(input: {
 
     const { error: insertChatMessagesError } = await supabase.from('chat_messages').insert(rows)
     if (insertChatMessagesError) {
-      throw new Error(`Khong the dong bo cloud chat messages: ${insertChatMessagesError.message}`)
+      throw new Error(`Không thể đồng bộ cloud chat messages: ${insertChatMessagesError.message}`)
     }
   }
 
@@ -735,7 +735,7 @@ async function ensureCloudChatSessionAndMessages(input: {
     .eq('session_id', chatSessionId)
 
   if (updateChatSessionError) {
-    throw new Error(`Khong the cap nhat cloud chat session: ${updateChatSessionError.message}`)
+    throw new Error(`Không thể cap nhat cloud chat session: ${updateChatSessionError.message}`)
   }
 
   return {
@@ -753,7 +753,7 @@ async function fetchAttemptChatMessages(attemptId: string) {
     .maybeSingle<ChatSessionRow>()
 
   if (chatSessionError) {
-    throw new Error(`Khong the tai chat session cua attempt: ${chatSessionError.message}`)
+    throw new Error(`Không thể tải chat session của attempt: ${chatSessionError.message}`)
   }
 
   if (!chatSession) {
@@ -783,7 +783,7 @@ async function fetchAttemptChatMessages(attemptId: string) {
     >()
 
   if (chatMessagesError) {
-    throw new Error(`Khong the tai chat messages cua attempt: ${chatMessagesError.message}`)
+    throw new Error(`Không thể tải chat messages của attempt: ${chatMessagesError.message}`)
   }
 
   const chatHistory = chatMessages.map((message) => {

@@ -17,7 +17,7 @@ export function LoginPage() {
     setErrorMessage('')
 
     if (!identity.trim() || !password.trim()) {
-      setErrorMessage('Vui long nhap day du email/username va mat khau.')
+      setErrorMessage('Vui long nhap day du email/username va mật khẩu.')
       return
     }
 
@@ -27,7 +27,7 @@ export function LoginPage() {
       await loginWithIdentity(identity, password)
       navigate('/home', { replace: true })
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : 'Dang nhap that bai.')
+      setErrorMessage(error instanceof Error ? error.message : 'Đăng nhập thất bại.')
     } finally {
       setIsSubmitting(false)
     }
@@ -36,8 +36,8 @@ export function LoginPage() {
   return (
     <AuthShell
       mode="login"
-      title="Dang nhap vao he thong"
-      description="Dung email hoac username de vao lai luong on tap, lam de va tiep tuc tien do da dong bo."
+      title="Đăng nhập vao hệ thống"
+      description="Dùng email hoặc username để vào lại luồng ôn tập, làm đề và tiếp tục tiến độ đã đồng bộ."
       form={
         <form className="legacy-auth-form" onSubmit={handleSubmit}>
           <label className="legacy-auth-form-row">
@@ -55,14 +55,14 @@ export function LoginPage() {
             <input
               autoComplete="current-password"
               className="legacy-auth-input"
-              placeholder="Nhap mat khau"
+              placeholder="Nhap mật khẩu"
               type="password"
               value={password}
               onChange={(event) => setPassword(event.target.value)}
             />
           </label>
           <button className="legacy-auth-submit" disabled={isSubmitting} type="submit">
-            {isSubmitting ? 'Dang dang nhap...' : 'Dang nhap'}
+            {isSubmitting ? 'Đang đăng nhập...' : 'Đăng nhập'}
           </button>
         </form>
       }
@@ -74,9 +74,9 @@ export function LoginPage() {
           ) : null}
           {!errorMessage && !globalErrorMessage ? (
             <p className="legacy-auth-status-text">
-              Chua co tai khoan?{' '}
+              Chưa có tài khoản?{' '}
               <Link className="legacy-auth-inline-link" to="/register">
-                Dang ky ngay
+                Đăng ký ngay
               </Link>
               .
             </p>

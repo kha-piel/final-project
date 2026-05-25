@@ -85,7 +85,7 @@ export async function fetchPersistedAttemptReview(attemptId: string) {
     .maybeSingle<AttemptReviewRow>()
 
   if (error) {
-    throw new Error(`Khong the tai du lieu review da luu: ${error.message}`)
+    throw new Error(`Không thể tải dữ liệu review đã lưu: ${error.message}`)
   }
 
   if (!data) {
@@ -124,10 +124,10 @@ function mapPersistedReviewItem(row: PersistedAttemptAnswerRow): ReviewQuestionS
     questionContent: question?.content ?? row.metadata?.question_content ?? 'Question not found',
     selectedAnswerText: selectedAnswer
       ? `${selectedAnswer.option_label}. ${selectedAnswer.content}`
-      : 'Chua chon dap an',
+      : 'Chưa chọn đáp án',
     correctAnswerText: correctAnswer
       ? `${correctAnswer.option_label}. ${correctAnswer.content}`
-      : 'Khong ro dap an dung',
+      : 'Không rõ đáp án đúng',
     correct: Boolean(row.is_correct),
     explanation: row.metadata?.ai_explanation ?? undefined,
   }

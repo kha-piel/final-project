@@ -115,7 +115,7 @@ export function findAnswerById(question: DraftQuestion, answerId: string | null)
 export function formatAnswerLabel(question: DraftQuestion, answerId: string | null) {
   const answer = findAnswerById(question, answerId)
   if (!answer) {
-    return 'Chua chon dap an'
+    return 'Chưa chọn đáp án'
   }
 
   return `${answer.optionLabel}. ${answer.content}`
@@ -145,13 +145,13 @@ export function formatQuestionResponse(runtime: ExamRuntimeSession, question: Dr
     const statements = question.statements ?? []
     const answeredLines = statements
       .filter((statement) => statement.statementId in selectedMap)
-      .map((statement, index) => `${String.fromCharCode(97 + index)}) ${selectedMap[statement.statementId] ? 'Dung' : 'Sai'}`)
+      .map((statement, index) => `${String.fromCharCode(97 + index)}) ${selectedMap[statement.statementId] ? 'Đúng' : 'Sai'}`)
 
-    return answeredLines.length > 0 ? answeredLines.join(' | ') : 'Chua chon dap an'
+    return answeredLines.length > 0 ? answeredLines.join(' | ') : 'Chưa chọn đáp án'
   }
 
   const value = getShortAnswerValue(runtime, question.questionId).trim()
-  return value || 'Chua nhap dap an'
+  return value || 'Chưa nhập đáp án'
 }
 
 export function formatCorrectResponse(question: DraftQuestion) {
@@ -161,11 +161,11 @@ export function formatCorrectResponse(question: DraftQuestion) {
 
   if (question.questionType === 'true_false') {
     return (question.statements ?? [])
-      .map((statement, index) => `${String.fromCharCode(97 + index)}) ${statement.isCorrect ? 'Dung' : 'Sai'}`)
+      .map((statement, index) => `${String.fromCharCode(97 + index)}) ${statement.isCorrect ? 'Đúng' : 'Sai'}`)
       .join(' | ')
   }
 
-  return question.acceptedResponses?.[0] ?? 'Khong ro dap an dung'
+  return question.acceptedResponses?.[0] ?? 'Không rõ đáp án đúng'
 }
 
 export function checkQuestion(
@@ -182,7 +182,7 @@ export function checkQuestion(
         questionId: question.questionId,
         hasSelection: false,
         isCorrect: false,
-        message: 'Ban can chon mot dap an truoc khi kiem tra.',
+        message: 'Bạn cần chọn một đáp án trước khi kiểm tra.',
       }
     }
 
@@ -196,7 +196,7 @@ export function checkQuestion(
         questionId: question.questionId,
         hasSelection: false,
         isCorrect: false,
-        message: 'Ban can tra loi day du tung menh de Dung/Sai truoc khi kiem tra.',
+        message: 'Bạn cần trả lời đầy đủ từng mệnh đề Đúng/Sai trước khi kiểm tra.',
       }
     }
 
@@ -209,7 +209,7 @@ export function checkQuestion(
         questionId: question.questionId,
         hasSelection: false,
         isCorrect: false,
-        message: 'Ban can nhap dap an ngan truoc khi kiem tra.',
+        message: 'Bạn cần nhập đáp án ngắn trước khi kiểm tra.',
       }
     }
 
@@ -224,8 +224,8 @@ export function checkQuestion(
     hasSelection,
     isCorrect,
     message: isCorrect
-      ? 'Chinh xac! Ban da chon dung dap an.'
-      : 'Chua dung. Cau hoi da duoc khoa sau khi kiem tra.',
+      ? 'Chính xác! Bạn đã chọn đúng đáp án.'
+      : 'Chưa đúng. Câu hỏi đã được khóa sau khi kiểm tra.',
   }
 }
 

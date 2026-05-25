@@ -78,15 +78,15 @@ export type AttemptHistoryItem = {
 }
 
 export const difficultyOptions: DifficultyOption[] = [
-  { label: 'Nhan biet', level: 1 },
-  { label: 'Thong hieu', level: 2 },
-  { label: 'Van dung', level: 3 },
-  { label: 'Van dung cao', level: 4 },
+  { label: 'Nhận biết', level: 1 },
+  { label: 'Thông hiểu', level: 2 },
+  { label: 'Vận dụng', level: 3 },
+  { label: 'Vận dụng cao', level: 4 },
 ]
 
 export const questionTypeOptions: QuestionTypeOption[] = [
-  { label: 'Tat ca dang bai', value: 'all' },
-  { label: 'Trac nghiem nhieu lua chon', value: 'multiple_choice' },
-  { label: 'Trac nghiem Dung/Sai', value: 'true_false' },
-  { label: 'Tra loi ngan', value: 'short_answer' },
+  { label: 'Tất cả dạng bài', value: 'all' },
+  { label: 'Trắc nghiệm nhiều lựa chọn', value: 'multiple_choice' },
+  { label: 'Trắc nghiệm Đúng/Sai', value: 'true_false' },
+  { label: 'Trả lời ngắn', value: 'short_answer' },
 ]

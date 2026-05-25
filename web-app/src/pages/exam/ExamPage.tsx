@@ -68,7 +68,7 @@ export function ExamPage() {
 
     if (hasProgress && !runtime.submittedAt && !hasShownRestoreNoticeRef.current) {
       hasShownRestoreNoticeRef.current = true
-      setFlashMessage('Da khoi phuc bai dang lam tu local session tren trinh duyet.')
+      setFlashMessage('Đã khôi phục bài đang làm từ local session trên trình duyệt.')
     }
   }, [runtime, session])
 
@@ -81,7 +81,7 @@ export function ExamPage() {
       const nextRemaining = getRemainingSeconds(session, runtime)
       setRemainingSeconds(nextRemaining)
       if (nextRemaining <= 0) {
-        setFlashMessage('Da het gio. Hay nop bai de xem tong ket.')
+        setFlashMessage('Đã hết giờ. Hãy nộp bài để xem tổng kết.')
       }
     }
 
@@ -153,9 +153,9 @@ export function ExamPage() {
 
   if (!session) {
     return (
-      <PageCard title="Exam Session Not Found" description="Session nay hien khong ton tai trong local app state.">
+      <PageCard title="Exam Session Not Found" description="Session này hiện không tồn tại trong local app state.">
         <p style={styles.text}>
-          Hay quay lai <Link to="/practice">practice</Link> hoac <Link to="/dashboard">dashboard</Link>.
+          Hãy quay lại <Link to="/practice">practice</Link> hoặc <Link to="/dashboard">dashboard</Link>.
         </p>
       </PageCard>
     )
@@ -163,7 +163,7 @@ export function ExamPage() {
 
   if (!runtime || !currentQuestion) {
     return (
-      <PageCard title={session.title} description="Dang khoi tao exam runtime session...">
+      <PageCard title={session.title} description="Đang khởi tạo exam runtime session...">
         <p style={styles.text}>Vui long doi trong giay lat.</p>
       </PageCard>
     )
@@ -183,7 +183,7 @@ export function ExamPage() {
       ? 'Local mock'
       : runtime.lastSyncedAt
         ? `OK ${formatSyncTime(runtime.lastSyncedAt)}`
-        : 'Dang cho'
+        : 'Đang chờ'
 
   function handleCheckAnswer() {
     const result = checkCurrentQuestion(session.sessionId, question)
@@ -196,10 +196,10 @@ export function ExamPage() {
     if (result.hasSelection && !result.isCorrect) {
       addChatMessage(session.sessionId, {
         role: 'system',
-        content: 'Hoc sinh vua sai cau nay. Hay giai thich ngan gon cach lam va lo hong kien thuc.',
+        content: 'Học sinh vừa sai câu này. Hãy giải thích ngắn gọn cách làm và lỗ hổng kiến thức.',
         questionId: question.questionId,
       })
-      setChatStatus('AI dang phan tich cau hoi...')
+      setChatStatus('AI đang phân tích câu hỏi...')
       void runAutoExplanation()
     }
 
@@ -225,16 +225,16 @@ export function ExamPage() {
         questionId: question.questionId,
       })
       cacheAiExplanation(session.sessionId, question.questionId, explanation)
-      setChatStatus('AI da gui giai thich cho cau hoi nay.')
+      setChatStatus('AI đã gửi giải thích cho câu hỏi này.')
     } catch (error) {
       const message =
-        error instanceof Error ? error.message : 'Khong the nhan phan hoi tu AI backend.'
+        error instanceof Error ? error.message : 'Không thể nhận phản hồi tu AI backend.'
       addChatMessage(session.sessionId, {
         role: 'ai',
         content: message,
         questionId: question.questionId,
       })
-      setChatStatus('Loi ket noi AI.')
+      setChatStatus('Lỗi kết nối AI.')
     } finally {
       setIsAiBusy(false)
     }
@@ -261,7 +261,7 @@ export function ExamPage() {
     const latestRuntime = useExamRuntimeStore.getState().sessions[session.sessionId]
 
     if (!latestRuntime) {
-      setFlashMessage('Khong the doc exam runtime de luu bai lam.')
+      setFlashMessage('Không thể đọc exam runtime để lưu bài làm.')
       return
     }
 
@@ -271,11 +271,11 @@ export function ExamPage() {
     }
 
     if (!authUser?.id) {
-      setFlashMessage('Khong tim thay user dang nhap de luu ket qua bai lam.')
+      setFlashMessage('Không tìm thấy user đăng nhập để lưu kết quả bài làm.')
       return
     }
 
-    setFlashMessage('Dang luu ket qua bai lam len Supabase...')
+    setFlashMessage('Đang lưu kết quả bài làm lên Supabase...')
 
     try {
       const attemptId = await persistCompletedAttempt({
@@ -289,7 +289,7 @@ export function ExamPage() {
       navigate(`/review/${attemptId}`)
     } catch (error) {
       setFlashMessage(
-        error instanceof Error ? error.message : 'Khong the luu ket qua bai lam len Supabase.',
+        error instanceof Error ? error.message : 'Không thể lưu kết quả bài làm lên Supabase.',
       )
     }
   }
@@ -310,7 +310,7 @@ export function ExamPage() {
       questionId: question.questionId,
     })
     setChatInput('')
-    setChatStatus('Dang gui cau hoi cho AI...')
+    setChatStatus('Đang gửi câu hỏi cho AI...')
     setIsAiBusy(true)
 
     try {
@@ -328,16 +328,16 @@ export function ExamPage() {
         questionId: question.questionId,
       })
       cacheAiExplanation(session.sessionId, question.questionId, explanation)
-      setChatStatus('AI da tra loi.')
+      setChatStatus('AI đã trả lời.')
     } catch (error) {
       const message =
-        error instanceof Error ? error.message : 'Khong the nhan phan hoi tu AI backend.'
+        error instanceof Error ? error.message : 'Không thể nhận phản hồi tu AI backend.'
       addChatMessage(session.sessionId, {
         role: 'ai',
         content: message,
         questionId: question.questionId,
       })
-      setChatStatus('Loi ket noi AI.')
+      setChatStatus('Lỗi kết nối AI.')
     } finally {
       setIsAiBusy(false)
     }
@@ -346,19 +346,19 @@ export function ExamPage() {
   return (
     <PageCard
       title={session.title}
-      description="Exam engine da ho tro nhieu lua chon, Dung/Sai va tra loi ngan trong cung mot luong thi."
+      description="Exam engine đã hỗ trợ nhiều lựa chọn, Đúng/Sai và trả lời ngắn trong cùng một luồng thi."
     >
       <div style={styles.summaryRow}>
-        <SummaryPill label="Tien do" value={`Cau ${runtime.currentIndex + 1}/${session.questions.length}`} />
-        <SummaryPill label="Da tra loi" value={`${answeredCount}/${session.questions.length}`} />
+        <SummaryPill label="Tiến độ" value={`Câu ${runtime.currentIndex + 1}/${session.questions.length}`} />
+        <SummaryPill label="Đã trả lời" value={`${answeredCount}/${session.questions.length}`} />
         <SummaryPill label="Do kho" value={session.difficultyLabel} />
-        <SummaryPill label="Con lai" value={formatDuration(remainingSeconds)} />
+        <SummaryPill label="Côn lại" value={formatDuration(remainingSeconds)} />
         <SummaryPill label="Sync" value={syncStatus} />
       </div>
 
       {flashMessage ? <div style={styles.flash}>{flashMessage}</div> : null}
       {isSubmitted ? (
-        <div style={styles.successFlash}>Bai lam da duoc nop. Ban co the xem tong ket va review chi tiet.</div>
+        <div style={styles.successFlash}>Bài làm đã được nộp. Bạn có thể xem tổng kết và review chi tiết.</div>
       ) : null}
 
       <div style={styles.grid}>
@@ -368,8 +368,8 @@ export function ExamPage() {
             <MarkdownContent content={question.content} className="text-base leading-8 text-slate-900" />
           </div>
           <p style={styles.text}>
-            Topic: {session.topicName} | Dang bai: {formatQuestionType(question)} | Nguon:{' '}
-            {question.sourceMeta?.schoolName ?? 'Tong hop'}
+            Topic: {session.topicName} | Dạng bài: {formatQuestionType(question)} | Nguồn:{' '}
+            {question.sourceMeta?.schoolName ?? 'Tổng hợp'}
           </p>
 
           {question.assetUrls && question.assetUrls.length > 0 ? (
@@ -406,7 +406,7 @@ export function ExamPage() {
               style={styles.secondaryButton}
               type="button"
             >
-              Cau truoc
+              Câu truoc
             </button>
             <button
               disabled={runtime.currentIndex === session.questions.length - 1}
@@ -414,7 +414,7 @@ export function ExamPage() {
               style={styles.secondaryButton}
               type="button"
             >
-              Cau tiep theo
+              Câu tiep theo
             </button>
             <button
               disabled={remainingSeconds <= 0 || questionLocked || isSubmitted}
@@ -422,21 +422,21 @@ export function ExamPage() {
               style={styles.primaryButton}
               type="button"
             >
-              Kiem tra dap an
+              Kiem tra đáp án
             </button>
             <button onClick={() => void handleSubmitAttempt()} style={styles.submitButton} type="button">
-              Nop bai
+              Nộp bài
             </button>
           </div>
         </section>
 
         <section style={styles.panel}>
           <h3 style={styles.panelTitle}>AI Chat</h3>
-          <p style={styles.text}>Lich su chat duoc giu xuyen suot trong exam session hien tai.</p>
+          <p style={styles.text}>Lịch sử chat được giữ xuyên suốt trong exam session hiện tại.</p>
           <div style={styles.chatHistory}>
             {runtime.chatHistory.length === 0 ? (
               <div style={styles.emptyChat}>
-                Chua co tin nhan nao. AI se duoc goi khi ban tra loi sai hoac hoi them.
+                Chưa có tin nhắn nào. AI sẽ được gọi khi bạn trả lời sai hoặc hỏi thêm.
               </div>
             ) : (
               runtime.chatHistory.map((message) => (
@@ -452,7 +452,7 @@ export function ExamPage() {
                   }}
                 >
                   <strong style={styles.chatRole}>
-                    {message.role === 'user' ? 'Hoc sinh' : message.role === 'ai' ? 'AI gia su' : 'He thong'}
+                    {message.role === 'user' ? 'Học sinh' : message.role === 'ai' ? 'AI gia sư' : 'He thong'}
                   </strong>
                   <div>{message.content}</div>
                 </div>
@@ -469,7 +469,7 @@ export function ExamPage() {
                   void handleSendChat()
                 }
               }}
-              placeholder="Hoi AI ve cau dang lam..."
+              placeholder="Hỏi AI về câu đang làm..."
               style={styles.chatInput}
               value={chatInput}
             />
@@ -479,18 +479,18 @@ export function ExamPage() {
               style={styles.primaryButton}
               type="button"
             >
-              Gui
+              Gửi
             </button>
           </div>
           {chatStatus ? <p style={styles.chatStatus}>{chatStatus}</p> : null}
           <div style={styles.metaBox}>
-            <strong>Trang thai cau hien tai</strong>
+            <strong>Trạng thái câu hiện tại</strong>
             <p style={styles.metaText}>
               {questionLocked
-                ? `Da khoa. Dap an cua ban: ${selectedAnswerLabel}`
-                : 'Chua khoa, ban van co the doi dap an truoc khi check.'}
+                ? `Đã khóa. Dap an cua ban: ${selectedAnswerLabel}`
+                : 'Chưa khóa, bạn vẫn có thể đổi đáp án trước khi check.'}
             </p>
-            <p style={styles.metaText}>Dap an dung: {correctAnswerLabel}</p>
+            <p style={styles.metaText}>Đáp án đúng: {correctAnswerLabel}</p>
           </div>
         </section>
       </div>
@@ -592,7 +592,7 @@ function QuestionComposer({
                   }}
                   type="button"
                 >
-                  Dung
+                  Đúng
                 </button>
                 <button
                   disabled={questionLocked || isSubmitted}
@@ -617,11 +617,11 @@ function QuestionComposer({
     <div style={styles.answerList}>
       <div style={styles.shortAnswerCard}>
         <label style={styles.shortAnswerLabel}>
-          Dap an ngan
+          Đáp án ngắn
           <input
             disabled={questionLocked || isSubmitted}
             onChange={(event) => onSetShortAnswer(sessionId, question.questionId, event.target.value)}
-            placeholder="Nhap dap an cua ban..."
+            placeholder="Nhap đáp án cua ban..."
             style={styles.shortAnswerInput}
             type="text"
             value={shortAnswerValue}
@@ -650,7 +650,7 @@ function formatSyncTime(timestamp: number) {
   const deltaSeconds = Math.max(0, Math.floor((Date.now() - timestamp) / 1000))
 
   if (deltaSeconds < 5) {
-    return 'vua xong'
+    return 'vừa xong'
   }
 
   if (deltaSeconds < 60) {
@@ -662,14 +662,14 @@ function formatSyncTime(timestamp: number) {
 
 function formatQuestionType(question: DraftQuestion) {
   if (question.questionType === 'multiple_choice') {
-    return 'Nhieu lua chon'
+    return 'Nhieu lựa chọn'
   }
 
   if (question.questionType === 'true_false') {
-    return 'Dung / Sai'
+    return 'Đúng / Sai'
   }
 
-  return 'Tra loi ngan'
+  return 'Trả lời ngắn'
 }
 
 const styles = {

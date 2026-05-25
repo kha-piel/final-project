@@ -1,0 +1,1705 @@
+{
+  "source_pdf": "c:\\Users\\ADMIIN\\Downloads\\he-thong-bai-tap-trac-nghiem-day-so-cap-so-cong-va-cap-so-nhan.pdf",
+  "page_count": 62,
+  "raw_question_count": 928,
+  "selected_focus_question_count": 164,
+  "selection_policy": {
+    "high": "Đưa vào trọng tâm ôn tập trước.",
+    "medium": "Đưa vào ôn bổ trợ hoặc khi học sinh sai cùng chủ đề.",
+    "low": "Chỉ giữ làm nguồn tham khảo, không ưu tiên trong UI."
+  },
+  "focus_rules": [
+    {
+      "topic": "Cấp số cộng",
+      "skill": "Nhận biết cấp số cộng, tìm công sai và số hạng tổng quát",
+      "exam_frequency": "high",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng nhận biết công sai và dùng công thức u_n xuất hiện thường xuyên trong đề thi thử."
+    },
+    {
+      "topic": "Cấp số cộng",
+      "skill": "Tính tổng n số hạng đầu của cấp số cộng",
+      "exam_frequency": "high",
+      "difficulty_hint": "understanding_application",
+      "reason": "Dạng tính tổng S_n là trọng tâm cơ bản của cấp số cộng."
+    },
+    {
+      "topic": "Cấp số nhân",
+      "skill": "Nhận biết cấp số nhân, tìm công bội và số hạng tổng quát",
+      "exam_frequency": "high",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng nhận biết công bội và dùng u_n = u_1 q^(n-1) là dạng nền tảng hay gặp."
+    },
+    {
+      "topic": "Cấp số nhân",
+      "skill": "Bài toán thực tế lãi kép, tăng trưởng theo cấp số nhân",
+      "exam_frequency": "high",
+      "difficulty_hint": "application",
+      "reason": "Bài toán lãi kép/tăng trưởng là dạng vận dụng thực tế hay được đưa vào đề."
+    },
+    {
+      "topic": "Dãy số",
+      "skill": "Tìm số hạng theo công thức tổng quát hoặc truy hồi",
+      "exam_frequency": "medium",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng dãy số cơ bản cần giữ lại nhưng không nên ưu tiên hơn cấp số."
+    },
+    {
+      "topic": "Dãy số",
+      "skill": "Xét tăng giảm và bị chặn của dãy số",
+      "exam_frequency": "medium",
+      "difficulty_hint": "understanding_application",
+      "reason": "Dạng này hữu ích để ôn bổ trợ, thường xếp sau các công thức cấp số."
+    }
+  ],
+  "summary": {
+    "medium:Dãy số:Tìm số hạng theo công thức tổng quát hoặc truy hồi": 30,
+    "medium:Dãy số:Xét tăng giảm và bị chặn của dãy số": 30,
+    "high:Cấp số nhân:Bài toán thực tế lãi kép, tăng trưởng theo cấp số nhân": 30,
+    "high:Cấp số cộng:Tính tổng n số hạng đầu của cấp số cộng": 14,
+    "high:Cấp số cộng:Nhận biết cấp số cộng, tìm công sai và số hạng tổng quát": 30,
+    "high:Cấp số nhân:Nhận biết cấp số nhân, tìm công bội và số hạng tổng quát": 30
+  },
+  "questions": [
+    {
+      "question_number": "1",
+      "page": 3,
+      "topic": "Dãy số",
+      "skill": "Tìm số hạng theo công thức tổng quát hoặc truy hồi",
+      "exam_frequency": "medium",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng dãy số cơ bản cần giữ lại nhưng không nên ưu tiên hơn cấp số.",
+      "preview": "Câu 1. Cho dãy s ố   n u th ỏa m ãn 1 2 1 n n u n    . Tìm s ố hạng thứ 10 c ủa d ãy s ố đ ã cho. A. 51, 2 . B. 51, 3 . C. 51 ,1 . D. 102,3 ."
+    },
+    {
+      "question_number": "3",
+      "page": 3,
+      "topic": "Dãy số",
+      "skill": "Tìm số hạng theo công thức tổng quát hoặc truy hồi",
+      "exam_frequency": "medium",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng dãy số cơ bản cần giữ lại nhưng không nên ưu tiên hơn cấp số.",
+      "preview": "Câu 3 . Cho dãy s ố   n u cho b ởi công thức tổng quát 2 * 3 4 , n u n n     . Khi đó 5 u b ằng A. 103 . B. 23 . C. 503 . D. 97  ."
+    },
+    {
+      "question_number": "4",
+      "page": 3,
+      "topic": "Dãy số",
+      "skill": "Tìm số hạng theo công thức tổng quát hoặc truy hồi",
+      "exam_frequency": "medium",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng dãy số cơ bản cần giữ lại nhưng không nên ưu tiên hơn cấp số.",
+      "preview": "Câu 4 . Cho dãy s ố   n u đư ợc cho bởi công thức tổng quát 2 4 3 n u n   , n    .Khi đó 6 u b ằng: A. 112 . B. 652 . C. 22 . D. 503 ."
+    },
+    {
+      "question_number": "5",
+      "page": 3,
+      "topic": "Dãy số",
+      "skill": "Tìm số hạng theo công thức tổng quát hoặc truy hồi",
+      "exam_frequency": "medium",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng dãy số cơ bản cần giữ lại nhưng không nên ưu tiên hơn cấp số.",
+      "preview": "Câu 5 . Cho d ã y s ố   2 1 : 7 n n n u u n    . S ố h ạ ng th ứ 3 c ủ a d ã y b ằ ng A. 2 B. 0,5 C. 1 D. 4"
+    },
+    {
+      "question_number": "6",
+      "page": 3,
+      "topic": "Dãy số",
+      "skill": "Xét tăng giảm và bị chặn của dãy số",
+      "exam_frequency": "medium",
+      "difficulty_hint": "understanding_application",
+      "reason": "Dạng này hữu ích để ôn bổ trợ, thường xếp sau các công thức cấp số.",
+      "preview": "Câu 6 . Trong c á c d ã y s ố sau, d ã y s ố n à o l à d ã y s ố gi ả m A. 2 3 n u n   B. 2 2 3 n u n   C. 7 6 n n u n    D. sin n u n "
+    },
+    {
+      "question_number": "7",
+      "page": 3,
+      "topic": "Dãy số",
+      "skill": "Tìm số hạng theo công thức tổng quát hoặc truy hồi",
+      "exam_frequency": "medium",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng dãy số cơ bản cần giữ lại nhưng không nên ưu tiên hơn cấp số.",
+      "preview": "Câu 7 . T ì m s ố h ạ ng th ứ 5 c ủ a d ã y s ố   n u bi ế t r ằ ng 1 1 3 2 n n u u u        A. 10 B. 11 C. 14 D. 12"
+    },
+    {
+      "question_number": "8",
+      "page": 3,
+      "topic": "Dãy số",
+      "skill": "Xét tăng giảm và bị chặn của dãy số",
+      "exam_frequency": "medium",
+      "difficulty_hint": "understanding_application",
+      "reason": "Dạng này hữu ích để ôn bổ trợ, thường xếp sau các công thức cấp số.",
+      "preview": "Câu 8 . Cho c á c d ã y s ố 3 1 2 5; 2 ; ; 1 1 n n n n n n n u n u u u n n         . C ó bao nhiêu d ã y tăng A. 3 B. 2 C. 1 D. 4"
+    },
+    {
+      "question_number": "9",
+      "page": 3,
+      "topic": "Dãy số",
+      "skill": "Xét tăng giảm và bị chặn của dãy số",
+      "exam_frequency": "medium",
+      "difficulty_hint": "understanding_application",
+      "reason": "Dạng này hữu ích để ôn bổ trợ, thường xếp sau các công thức cấp số.",
+      "preview": "Câu 9 . X é t t í nh tăng, gi ả m c ủ a d ã y s ố   n u bi ế t 2 5 n u n n    . A. Tăng, ch ặ n dư ớ i B. Gi ả m, ch ặ n trên C. Gi ả m, ch ặ n dư ớ i D. Tăng, ch ặ n trên"
+    },
+    {
+      "question_number": "10",
+      "page": 3,
+      "topic": "Dãy số",
+      "skill": "Tìm số hạng theo công thức tổng quát hoặc truy hồi",
+      "exam_frequency": "medium",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng dãy số cơ bản cần giữ lại nhưng không nên ưu tiên hơn cấp số.",
+      "preview": "Câu 10 . T ì m s ố h ạ ng th ứ 5 c ủ a d ã y s ố   n u bi ế t r ằ ng 1 1 2 2 n n u u u       A. 30 B. 32 C. 14 D. 18"
+    },
+    {
+      "question_number": "12",
+      "page": 3,
+      "topic": "Dãy số",
+      "skill": "Xét tăng giảm và bị chặn của dãy số",
+      "exam_frequency": "medium",
+      "difficulty_hint": "understanding_application",
+      "reason": "Dạng này hữu ích để ôn bổ trợ, thường xếp sau các công thức cấp số.",
+      "preview": "Câu 12 . Cho c á c d ã y s ố 5 2 ; ; sin 4 2 n n n n u u n u n n n        . C ó bao nhiêu d ã y s ố b ị ch ặ n ? A. 2 B. 1 C. 3 D. 0"
+    },
+    {
+      "question_number": "13",
+      "page": 3,
+      "topic": "Dãy số",
+      "skill": "Xét tăng giảm và bị chặn của dãy số",
+      "exam_frequency": "medium",
+      "difficulty_hint": "understanding_application",
+      "reason": "Dạng này hữu ích để ôn bổ trợ, thường xếp sau các công thức cấp số.",
+      "preview": "Câu 1 3 . Cho d ã y   n u c ó 2 2 1 n an u n    . C ó bao nhiêu s ố nguyên âm a l ớ n hơn – 10 đ ể d ã y đ ã cho l à d ã y tăng A. 4 B. 5 C. 3 D. 6"
+    },
+    {
+      "question_number": "14",
+      "page": 3,
+      "topic": "Dãy số",
+      "skill": "Xét tăng giảm và bị chặn của dãy số",
+      "exam_frequency": "medium",
+      "difficulty_hint": "understanding_application",
+      "reason": "Dạng này hữu ích để ôn bổ trợ, thường xếp sau các công thức cấp số.",
+      "preview": "Câu 1 4 . T ì m đ ặ c t í nh c ủ a d ã y s ố   n u th ỏ a m ã n 1 1 1 1 2 n n u u u          A. Tăng, b ị ch ặ n B. Gi ả m, b ị ch ặ n C. Tăng, ch ặ n trên D. Gi ả m, ch ặ n dư ớ i V i ế t c ông th ứ c t ổ ng qu át c ủ a d ãy   n u m à m ỗ i s ố h ạ ng c ủ a n ó l à s ố t ự nhi ên chia h ế t cho 3 d ư 1 A. 3 1 n u n   B. 2 3 1 n u n   C. 3 2 n u n   D. 3 3 1 n u n  "
+    },
+    {
+      "question_number": "15",
+      "page": 3,
+      "topic": "Dãy số",
+      "skill": "Xét tăng giảm và bị chặn của dãy số",
+      "exam_frequency": "medium",
+      "difficulty_hint": "understanding_application",
+      "reason": "Dạng này hữu ích để ôn bổ trợ, thường xếp sau các công thức cấp số.",
+      "preview": "Câu 1 5 . T ì m đ ặ c t í nh c ủ a d ã y s ố   n u th ỏ a m ã n 2019 2020 n n u n    A. Tăng , b ị c h ặ n B. Gi ả m, b ị ch ặ n C. Tăng, ch ặ n trên D. Gi ả m, ch ặ n dư ớ i"
+    },
+    {
+      "question_number": "16",
+      "page": 3,
+      "topic": "Dãy số",
+      "skill": "Xét tăng giảm và bị chặn của dãy số",
+      "exam_frequency": "medium",
+      "difficulty_hint": "understanding_application",
+      "reason": "Dạng này hữu ích để ôn bổ trợ, thường xếp sau các công thức cấp số.",
+      "preview": "Câu 1 6 . D ã y s ố   n u th ỏ a m ã n 2 10 n u n n    . Đ ặ c t í nh c ủ a d ã y l à A. B ị ch ặ n trên B. B ị ch ặ n dư ớ i C. B ị ch ặ n D. Không b ị ch ặ n"
+    },
+    {
+      "question_number": "17",
+      "page": 4,
+      "topic": "Dãy số",
+      "skill": "Xét tăng giảm và bị chặn của dãy số",
+      "exam_frequency": "medium",
+      "difficulty_hint": "understanding_application",
+      "reason": "Dạng này hữu ích để ôn bổ trợ, thường xếp sau các công thức cấp số.",
+      "preview": "Câu 1 7 . X é t t í nh tăng, gi ả m c ủ a d ã y s ố 3 1 2 n n n u   . A. Tăng B. Gi ả m C. Không tăng, không gi ả m D. Không đ ổ i V i ế t c ông th ứ c t ổ ng qu át c ủ a d ãy   n u m à m ỗ i s ố h ạ ng c ủ a n ó l à s ố"
+    },
+    {
+      "question_number": "19",
+      "page": 4,
+      "topic": "Dãy số",
+      "skill": "Xét tăng giảm và bị chặn của dãy số",
+      "exam_frequency": "medium",
+      "difficulty_hint": "understanding_application",
+      "reason": "Dạng này hữu ích để ôn bổ trợ, thường xếp sau các công thức cấp số.",
+      "preview": "Câu 1 9 . X é t t í nh b ị ch ặ n c ủ a d ã y s ố   n u bi ế t 2 3 1 1 n n n u n     . A. B ị ch ặ n dư ớ i B. B ị ch ặ n C. B ị ch ặ n trên D. Không b ị ch ặ n"
+    },
+    {
+      "question_number": "21",
+      "page": 4,
+      "topic": "Dãy số",
+      "skill": "Xét tăng giảm và bị chặn của dãy số",
+      "exam_frequency": "medium",
+      "difficulty_hint": "understanding_application",
+      "reason": "Dạng này hữu ích để ôn bổ trợ, thường xếp sau các công thức cấp số.",
+      "preview": "Câu 21 . X é t t í nh tăng, g i ả m, b ị ch ặ n c ủ a d ã y s ố   n u bi ế t 2 2 1 1 n n n u n n      . A. Tăng, b ị ch ặ n B. B ị ch ặ n C. Không b ị ch ặ n D. B ị ch ặ n dư ớ i"
+    },
+    {
+      "question_number": "22",
+      "page": 4,
+      "topic": "Dãy số",
+      "skill": "Tìm số hạng theo công thức tổng quát hoặc truy hồi",
+      "exam_frequency": "medium",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng dãy số cơ bản cần giữ lại nhưng không nên ưu tiên hơn cấp số.",
+      "preview": "Câu 2 2 . D ã y s ố   n u c ó c á c s ố h ạ ng đ ầ u ti ên 8;15;22;29;36. S ố h ạ ng th ứ 24 c ủ a d ã y c ó đ ặ c đi ể m A . S ố ch í nh phương B. Chia h ế t cho 10 C. C ó 12 ư ớ c dương D. > 200"
+    },
+    {
+      "question_number": "24",
+      "page": 4,
+      "topic": "Dãy số",
+      "skill": "Tìm số hạng theo công thức tổng quát hoặc truy hồi",
+      "exam_frequency": "medium",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng dãy số cơ bản cần giữ lại nhưng không nên ưu tiên hơn cấp số.",
+      "preview": "Câu 2 4 . Cho d ã y s ố   n u th ỏ a m ã n c ó c á c s ố h ạ ng đ ầ u tiên – 1;3;19;53. S ố h ạ ng th ứ 7 c ủ a d ã y b ằ ng A. 323 B. 140 C. 117 D. 282"
+    },
+    {
+      "question_number": "25",
+      "page": 4,
+      "topic": "Dãy số",
+      "skill": "Tìm số hạng theo công thức tổng quát hoặc truy hồi",
+      "exam_frequency": "medium",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng dãy số cơ bản cần giữ lại nhưng không nên ưu tiên hơn cấp số.",
+      "preview": "Câu 2 5 . Cho d ã y s ố   n u th ỏ a m ã n 1 2 1 1 ( 1) n n n u u u           . S ố h ạ ng th ứ 100 c ủ a d ã y b ằ ng A. 100 B. 90 C. 93 D. 72"
+    },
+    {
+      "question_number": "29",
+      "page": 4,
+      "topic": "Dãy số",
+      "skill": "Tìm số hạng theo công thức tổng quát hoặc truy hồi",
+      "exam_frequency": "medium",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng dãy số cơ bản cần giữ lại nhưng không nên ưu tiên hơn cấp số.",
+      "preview": "Câu 2 9 . D ã y s ố   n u th ỏ a m ã n 1 3 1 1 n n u u u n          . S ố h ạ ng th ứ 100 c ủ a d ã y c ó 3 ch ữ s ố t ậ n c ù ng l à A. 501 B. 100 C. 402 D. 25"
+    },
+    {
+      "question_number": "31",
+      "page": 4,
+      "topic": "Dãy số",
+      "skill": "Tìm số hạng theo công thức tổng quát hoặc truy hồi",
+      "exam_frequency": "medium",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng dãy số cơ bản cần giữ lại nhưng không nên ưu tiên hơn cấp số.",
+      "preview": "Câu 31 . T ì m s ố h ạ ng th ứ 60 c ủ a d ã y s ố   n u th ỏ a m ã n 1 1 5 n n u u u n        A. 8850 B. 4520 C. 3210 D. 6290"
+    },
+    {
+      "question_number": "32",
+      "page": 4,
+      "topic": "Dãy số",
+      "skill": "Xét tăng giảm và bị chặn của dãy số",
+      "exam_frequency": "medium",
+      "difficulty_hint": "understanding_application",
+      "reason": "Dạng này hữu ích để ôn bổ trợ, thường xếp sau các công thức cấp số.",
+      "preview": "Câu 32 . X é t t í nh tăng, gi ả m, b ị ch ặ n c ủ a d ã y s ố   n u bi ế t 2 1 1 n n u n    . A. Tăng, b ị ch ặ n B. Gi ả m, b ị ch ặ n C. Không b ị ch ặ n D. B ị ch ặ n dư ớ i"
+    },
+    {
+      "question_number": "34",
+      "page": 4,
+      "topic": "Cấp số nhân",
+      "skill": "Bài toán thực tế lãi kép, tăng trưởng theo cấp số nhân",
+      "exam_frequency": "high",
+      "difficulty_hint": "application",
+      "reason": "Bài toán lãi kép/tăng trưởng là dạng vận dụng thực tế hay được đưa vào đề.",
+      "preview": "Câu 3 4 . M ột ng ư ời gửi v ào ngân hàng 150 tri ệu đồng theo thể thức l ãi kép v ới l ãi su ất 8% một năm. Sau 4 năm ngư ời đó rút tất cả tiền ra. Hỏi ng ư ời đó nhận đ ư ợc tất cả bao nhi êu ti ền c ả vốn lẫn l ãi? A. 198.000 .000 (đ ồng) . B . 204.073.344 (đ ồng) . B. 201.730.344 (đ ồng) . D. 203.327.214 (đ ồng) ."
+    },
+    {
+      "question_number": "35",
+      "page": 4,
+      "topic": "Cấp số nhân",
+      "skill": "Bài toán thực tế lãi kép, tăng trưởng theo cấp số nhân",
+      "exam_frequency": "high",
+      "difficulty_hint": "application",
+      "reason": "Bài toán lãi kép/tăng trưởng là dạng vận dụng thực tế hay được đưa vào đề.",
+      "preview": "Câu 3 5 . M ột ng ư ời gửi 100 tri ệu đồng v ào m ột ngân h àng v ới l ãi su ất 0, 4% /tháng. Bi ết rằng nếu không rút ti ền khỏi ngân h à ng thì c ứ sau mỗi tháng, số tiền l ãi s ẽ đ ư ợc nhập v ào v ốn ban đầu để tính lãi cho tháng ti ếp theo. Hỏi s au đúng 6 tháng, ngư ời đó lĩnh số tiền g ần nhất với số tiền n ào dư ới đây, n ếu trong khoảng thời gian n ày ngư ời đó không rút tiề n ra và lãi su ất không thay đổi?"
+    },
+    {
+      "question_number": "1",
+      "page": 5,
+      "topic": "Dãy số",
+      "skill": "Tìm số hạng theo công thức tổng quát hoặc truy hồi",
+      "exam_frequency": "medium",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng dãy số cơ bản cần giữ lại nhưng không nên ưu tiên hơn cấp số.",
+      "preview": "Câu 1. Cho dãy s ố   n U có s ố h ạ ng t ổ ng quát   * 1 , 2 n n U n N n     . S ố h ạ ng th ứ 100 c ủ a dãy s ố là A. 100 33 . 34 U  B. 100 37 . 34 U  C. 100 39 . 34 U  D. 100 35 . 34 U "
+    },
+    {
+      "question_number": "2",
+      "page": 5,
+      "topic": "Dãy số",
+      "skill": "Xét tăng giảm và bị chặn của dãy số",
+      "exam_frequency": "medium",
+      "difficulty_hint": "understanding_application",
+      "reason": "Dạng này hữu ích để ôn bổ trợ, thường xếp sau các công thức cấp số.",
+      "preview": "Câu 2 . Cho dãy s ố   n u có 9 n n u n   . D ãy b ị ch ặn tr ên b ởi s ố n ào A.4 B. 5 C. 6 D. 8"
+    },
+    {
+      "question_number": "5",
+      "page": 5,
+      "topic": "Dãy số",
+      "skill": "Tìm số hạng theo công thức tổng quát hoặc truy hồi",
+      "exam_frequency": "medium",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng dãy số cơ bản cần giữ lại nhưng không nên ưu tiên hơn cấp số.",
+      "preview": "Câu 5 . Cho dãy s ố   n u có 2 1 2 1 n n u n    . S ố 37 13 là s ố hạng thứ bao nhi êu c ủa d ãy s ố   n u ? A. 8 . B. 6 . C. 5 . D. 7 ."
+    },
+    {
+      "question_number": "10",
+      "page": 5,
+      "topic": "Dãy số",
+      "skill": "Xét tăng giảm và bị chặn của dãy số",
+      "exam_frequency": "medium",
+      "difficulty_hint": "understanding_application",
+      "reason": "Dạng này hữu ích để ôn bổ trợ, thường xếp sau các công thức cấp số.",
+      "preview": "Câu 1 0 . Cho dãy s ố   n u có 8 1 n n u n    . D ãy b ị ch ặn tr ên b ởi m ột s ố thu ộc kho ảng A.(1;3) B. (8;10) C . (3;4) D. (4; 7)"
+    },
+    {
+      "question_number": "12",
+      "page": 5,
+      "topic": "Dãy số",
+      "skill": "Tìm số hạng theo công thức tổng quát hoặc truy hồi",
+      "exam_frequency": "medium",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng dãy số cơ bản cần giữ lại nhưng không nên ưu tiên hơn cấp số.",
+      "preview": "Câu 1 2 . Cho dãy s ố   n u có s ố h ạ ng t ổ ng quát là 2 2 1 1 n n u n    . Khi đó 39 362 là s ố h ạ ng th ứ m ấ y c ủ a dãy s ố ? A. 20 . B. 19 . C. 22 . D. 21 ."
+    },
+    {
+      "question_number": "15",
+      "page": 5,
+      "topic": "Dãy số",
+      "skill": "Tìm số hạng theo công thức tổng quát hoặc truy hồi",
+      "exam_frequency": "medium",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng dãy số cơ bản cần giữ lại nhưng không nên ưu tiên hơn cấp số.",
+      "preview": "Câu 1 5 . Cho dãy s ố 1 1 4 n n u u u n        . Tìm s ố hạng thứ 5 c ủa d ãy s ố. A. 16 . B. 12 . C. 15 . D. 14 ."
+    },
+    {
+      "question_number": "16",
+      "page": 5,
+      "topic": "Cấp số cộng",
+      "skill": "Tính tổng n số hạng đầu của cấp số cộng",
+      "exam_frequency": "high",
+      "difficulty_hint": "understanding_application",
+      "reason": "Dạng tính tổng S_n là trọng tâm cơ bản của cấp số cộng.",
+      "preview": "Câu 1 6 . Cho dãy s ố có tổng n s ố hạng đầu ti ên đư ợc tính bởi công thức 2 4 n S n n   . S ố hạng thứ t ư c ủa d ãy s ố b ằng A. 3  . B. 6 . C. 3 . D. 6  ."
+    },
+    {
+      "question_number": "19",
+      "page": 6,
+      "topic": "Dãy số",
+      "skill": "Xét tăng giảm và bị chặn của dãy số",
+      "exam_frequency": "medium",
+      "difficulty_hint": "understanding_application",
+      "reason": "Dạng này hữu ích để ôn bổ trợ, thường xếp sau các công thức cấp số.",
+      "preview": "Câu 1 9 . C ho c ác d ãy s ố       , , n n n u v t c ó 1 8 ; ; 2 5 4 n n n n n u v t n n n        . H ỏi c ó bao nhi êu d ãy s ố b ị ch ặn A.2 B. 1 C. 3 D. 0"
+    },
+    {
+      "question_number": "20",
+      "page": 6,
+      "topic": "Dãy số",
+      "skill": "Xét tăng giảm và bị chặn của dãy số",
+      "exam_frequency": "medium",
+      "difficulty_hint": "understanding_application",
+      "reason": "Dạng này hữu ích để ôn bổ trợ, thường xếp sau các công thức cấp số.",
+      "preview": "Câu 20 . D ãy s ố   n u nào sau đây là d ãy s ố tăng ? A. 3 1 n n u    . B. sin n u n  . C. 2 3 n u n   . D. 2 1 n n u n    ."
+    },
+    {
+      "question_number": "21",
+      "page": 6,
+      "topic": "Dãy số",
+      "skill": "Xét tăng giảm và bị chặn của dãy số",
+      "exam_frequency": "medium",
+      "difficulty_hint": "understanding_application",
+      "reason": "Dạng này hữu ích để ôn bổ trợ, thường xếp sau các công thức cấp số.",
+      "preview": "Câu 2 1. Cho c ác d ãy s ố       , , n n n u v t c ó 2 3 2 4; 3 ; 2 n n n u n n v n n t n       . S ố l ư ợng d ãy t ăng l à A.2 B. 3 C. 1 D. 0"
+    },
+    {
+      "question_number": "23",
+      "page": 6,
+      "topic": "Dãy số",
+      "skill": "Xét tăng giảm và bị chặn của dãy số",
+      "exam_frequency": "medium",
+      "difficulty_hint": "understanding_application",
+      "reason": "Dạng này hữu ích để ôn bổ trợ, thường xếp sau các công thức cấp số.",
+      "preview": "Câu 23 . Trong các dãy s ố   n u xác đ ịnh bởi số hạng tổng quát n u sau, h ỏi d ãy s ố n ào là dãy s ố giảm? A. 2 n n u  . B. 2 5 n u n   . C.   3 n n u   . D. 1 3 2 n n u n    ."
+    },
+    {
+      "question_number": "24",
+      "page": 6,
+      "topic": "Dãy số",
+      "skill": "Xét tăng giảm và bị chặn của dãy số",
+      "exam_frequency": "medium",
+      "difficulty_hint": "understanding_application",
+      "reason": "Dạng này hữu ích để ôn bổ trợ, thường xếp sau các công thức cấp số.",
+      "preview": "Câu 24 . Cho dãy s ố   n u v ới 2 1 n u n   . Dãy s ố   n u là dãy s ố A. tăng. B. gi ảm. C. b ị chặn d ư ới bởi 2. D. b ị chặn tr ên b ởi 1."
+    },
+    {
+      "question_number": "25",
+      "page": 6,
+      "topic": "Dãy số",
+      "skill": "Xét tăng giảm và bị chặn của dãy số",
+      "exam_frequency": "medium",
+      "difficulty_hint": "understanding_application",
+      "reason": "Dạng này hữu ích để ôn bổ trợ, thường xếp sau các công thức cấp số.",
+      "preview": "Câu 25 . Trong các dãy s ố sau đây, d ãy s ố n ào là dãy s ố giảm? A. Dãy   n a , v ới 1 2         n n a . B. Dãy   n b v ới 2 1   n n b n . C. Dãy   n c , v ới 3 1 1   n c n . D. Dãy   n d , v ới 3.2  n n d ."
+    },
+    {
+      "question_number": "26",
+      "page": 6,
+      "topic": "Dãy số",
+      "skill": "Xét tăng giảm và bị chặn của dãy số",
+      "exam_frequency": "medium",
+      "difficulty_hint": "understanding_application",
+      "reason": "Dạng này hữu ích để ôn bổ trợ, thường xếp sau các công thức cấp số.",
+      "preview": "Câu 26 . Cho c ác d ãy s ố       , , n n n u v t c ó 2 2 3 2 4; ( 1) 3 ; 2 n n n u n n v a n n t n        . S ố l ư ợng d ãy t ăng l à A.3 B. 1 C. 2 D. 0"
+    },
+    {
+      "question_number": "28",
+      "page": 6,
+      "topic": "Dãy số",
+      "skill": "Xét tăng giảm và bị chặn của dãy số",
+      "exam_frequency": "medium",
+      "difficulty_hint": "understanding_application",
+      "reason": "Dạng này hữu ích để ôn bổ trợ, thường xếp sau các công thức cấp số.",
+      "preview": "Câu 2 8 . Cho dãy s ố   n u v ới 15 n u n n    th ì d ãy c ó ch ặn tr ên b ằng A.3 B. 1 C. 4 D. 5"
+    },
+    {
+      "question_number": "30",
+      "page": 6,
+      "topic": "Dãy số",
+      "skill": "Xét tăng giảm và bị chặn của dãy số",
+      "exam_frequency": "medium",
+      "difficulty_hint": "understanding_application",
+      "reason": "Dạng này hữu ích để ôn bổ trợ, thường xếp sau các công thức cấp số.",
+      "preview": "Câu 3 0 . Cho c ác d ãy s ố       , , n n n u v t c ó 2 2 8 9 8; ; 1 n n n n n u n n v t n n         . C ó ba o nhi êu d ãy b ị ch ặn d ư ới A.3 B. 2 C. 3 D. 4"
+    },
+    {
+      "question_number": "31",
+      "page": 6,
+      "topic": "Dãy số",
+      "skill": "Xét tăng giảm và bị chặn của dãy số",
+      "exam_frequency": "medium",
+      "difficulty_hint": "understanding_application",
+      "reason": "Dạng này hữu ích để ôn bổ trợ, thường xếp sau các công thức cấp số.",
+      "preview": "Câu 31 . Cho dãy s ố   n u v ới 4 3 4 5 n n n n n u    th ì d ãy b ị ch ặn tr ên b ởi A.1 B. 2 C. 1,25 D. 0,5"
+    },
+    {
+      "question_number": "33",
+      "page": 6,
+      "topic": "Dãy số",
+      "skill": "Xét tăng giảm và bị chặn của dãy số",
+      "exam_frequency": "medium",
+      "difficulty_hint": "understanding_application",
+      "reason": "Dạng này hữu ích để ôn bổ trợ, thường xếp sau các công thức cấp số.",
+      "preview": "Câu 33 . C ho c ác d ãy s ố       , , n n n u v t c ó   2 2 1 2 1 cos ; ; 2 2 4 5 n n n n n n n u v t n n n          . S ố l ư ợng d ãy b ị ch ặn l à A.2 B. 1 C. 0 D. 3 _________________________________"
+    },
+    {
+      "question_number": "2",
+      "page": 7,
+      "topic": "Dãy số",
+      "skill": "Xét tăng giảm và bị chặn của dãy số",
+      "exam_frequency": "medium",
+      "difficulty_hint": "understanding_application",
+      "reason": "Dạng này hữu ích để ôn bổ trợ, thường xếp sau các công thức cấp số.",
+      "preview": "Câu 2 . Trong các dãy s ố   n u đư ợc cho bởi số hạng tổng quát sau đây, d ãy s ố n ào là dãy s ố giảm? A. 2 , n u n n      . B. 1, n u n n       . C. 2 1 , n n u n n       . D. 1 , 2 n n u n      ."
+    },
+    {
+      "question_number": "4",
+      "page": 7,
+      "topic": "Dãy số",
+      "skill": "Xét tăng giảm và bị chặn của dãy số",
+      "exam_frequency": "medium",
+      "difficulty_hint": "understanding_application",
+      "reason": "Dạng này hữu ích để ôn bổ trợ, thường xếp sau các công thức cấp số.",
+      "preview": "Câu 4 . Trong các dãy s ố sau, d ãy s ố n ào là dãy s ố giảm? A. 2 n u n  . B. 2 n u n  . C. 3 1 n u n   . D. 2 1 1 n n u n    ."
+    },
+    {
+      "question_number": "5",
+      "page": 7,
+      "topic": "Dãy số",
+      "skill": "Xét tăng giảm và bị chặn của dãy số",
+      "exam_frequency": "medium",
+      "difficulty_hint": "understanding_application",
+      "reason": "Dạng này hữu ích để ôn bổ trợ, thường xếp sau các công thức cấp số.",
+      "preview": "Câu 5 . Dãy s ố   n u đư ợc gọi l à dãy s ố tăng nếu với mọi số tự nhi ên 1 n  A. 1 n n u u   B. 1 n n u u   C. 1 n n u u   D. 1 n n u u  "
+    },
+    {
+      "question_number": "7",
+      "page": 7,
+      "topic": "Dãy số",
+      "skill": "Xét tăng giảm và bị chặn của dãy số",
+      "exam_frequency": "medium",
+      "difficulty_hint": "understanding_application",
+      "reason": "Dạng này hữu ích để ôn bổ trợ, thường xếp sau các công thức cấp số.",
+      "preview": "Câu 7 . Dãy s ố n ào s au đây là d ã y s ố gi ảm? A.   5 3 , * 2 3 n n u n n      . B.   5 , * 4 1 n n u n n      . C.   3 2 3, * n u n n     . D.     cos 2 1 , * n u n n     ."
+    },
+    {
+      "question_number": "10",
+      "page": 7,
+      "topic": "Dãy số",
+      "skill": "Xét tăng giảm và bị chặn của dãy số",
+      "exam_frequency": "medium",
+      "difficulty_hint": "understanding_application",
+      "reason": "Dạng này hữu ích để ôn bổ trợ, thường xếp sau các công thức cấp số.",
+      "preview": "Câu 1 0 . Trong các dãy s ố   n u cho b ởi số hạng tổng quát n u sau, dãy s ố n ào là dãy s ố giảm? A. 1 2 n n u  . B. 3 1 1 n n u n    . C. 2 n u n  . D. 2 n u n   ."
+    },
+    {
+      "question_number": "17",
+      "page": 7,
+      "topic": "Dãy số",
+      "skill": "Tìm số hạng theo công thức tổng quát hoặc truy hồi",
+      "exam_frequency": "medium",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng dãy số cơ bản cần giữ lại nhưng không nên ưu tiên hơn cấp số.",
+      "preview": "Câu 17 . C ho d ãy s ố   n u c ó c ông th ức t ổng qu át 5 3 n n u   , c ó bao nhi êu s ố h ạng c ủa d ãy nh ỏ h ơn 20232023 v à c ó t ận c ùng b ằng 8 A. 10 B. 9 C. 8 D. K ết qu ả kh ác"
+    },
+    {
+      "question_number": "24",
+      "page": 8,
+      "topic": "Dãy số",
+      "skill": "Tìm số hạng theo công thức tổng quát hoặc truy hồi",
+      "exam_frequency": "medium",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng dãy số cơ bản cần giữ lại nhưng không nên ưu tiên hơn cấp số.",
+      "preview": "Câu 2 4 . C ho d ãy s ố   n u c ó c ông th ức t ổng qu át 6 1 n n u   , c ó bao nhi êu s ố h ạng trong d ãy th ỏa m ãn 69000 960000 n u   v à c ó t ận c ùng b ằng 7 ? A.2 B. 3 C. 1 D. 9"
+    },
+    {
+      "question_number": "25",
+      "page": 8,
+      "topic": "Dãy số",
+      "skill": "Tìm số hạng theo công thức tổng quát hoặc truy hồi",
+      "exam_frequency": "medium",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng dãy số cơ bản cần giữ lại nhưng không nên ưu tiên hơn cấp số.",
+      "preview": "Câu 2 5 . C ho d ãy s ố   n u c ó 2 4 3 n u n n    . T ừ s ố h ạng th ứ bao nhi êu c ủa d ãy th ì m ọi s ố h ạng lu ôn l ớn h ơn 50 A. 5 B. 7 C. 8 D. 6"
+    },
+    {
+      "question_number": "31",
+      "page": 8,
+      "topic": "Dãy số",
+      "skill": "Tìm số hạng theo công thức tổng quát hoặc truy hồi",
+      "exam_frequency": "medium",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng dãy số cơ bản cần giữ lại nhưng không nên ưu tiên hơn cấp số.",
+      "preview": "Câu 31 . C ho d ãy s ố   n u c ó c ông th ức t ổng qu át 10 7 n u n   , c ó bao nhi êu s ố h ạng c ủa d ãy nh ỏ h ơn 9 10 đ ồng th ời s ố h ạ ng đ ó l à m ột s ố ch ính ph ương ? A.5 B. 2 C. 0 D. 96"
+    },
+    {
+      "question_number": "9",
+      "page": 9,
+      "topic": "Dãy số",
+      "skill": "Tìm số hạng theo công thức tổng quát hoặc truy hồi",
+      "exam_frequency": "medium",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng dãy số cơ bản cần giữ lại nhưng không nên ưu tiên hơn cấp số.",
+      "preview": "Câu 9 . Cho d ã y s ố   n u th ỏ a m ã n 1 1 2 1 2 n n u u u            . S ố h ạ ng th ứ 10 c ủ a d ã y g ầ n nh ấ t v ớ i s ố n à o A. – 1,12 B. – 1,13 C. – 2 D. – 1,25"
+    },
+    {
+      "question_number": "15",
+      "page": 9,
+      "topic": "Dãy số",
+      "skill": "Tìm số hạng theo công thức tổng quát hoặc truy hồi",
+      "exam_frequency": "medium",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng dãy số cơ bản cần giữ lại nhưng không nên ưu tiên hơn cấp số.",
+      "preview": "Câu 1 5 . Cho dãy s ố   n u xác đ ịnh bỏi sin 3 n n u   , v ới 1 n  . Kh ẳng định n ào sau đây đúng? A. S ố hạng thứ 2 c ủa d ãy s ố l à 2 1 2 u  . B. D ãy s ố   n u b ị chặn."
+    },
+    {
+      "question_number": "20",
+      "page": 10,
+      "topic": "Dãy số",
+      "skill": "Tìm số hạng theo công thức tổng quát hoặc truy hồi",
+      "exam_frequency": "medium",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng dãy số cơ bản cần giữ lại nhưng không nên ưu tiên hơn cấp số.",
+      "preview": "Câu 20 . C ho c ác d ãy s ố c ó c ông th ức t ổng qu át 2 3 2 ; 3 1; 5 n n n u n n v n n t n n          . C ó bao nhi êu d ãy s ố l à d ãy s ố t ăng A.3 B. 1 C. 2 D. 0"
+    },
+    {
+      "question_number": "21",
+      "page": 10,
+      "topic": "Dãy số",
+      "skill": "Tìm số hạng theo công thức tổng quát hoặc truy hồi",
+      "exam_frequency": "medium",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng dãy số cơ bản cần giữ lại nhưng không nên ưu tiên hơn cấp số.",
+      "preview": "Câu 2 1 . C ho c ác d ãy s ố c ó c ông th ức t ổng qu át 2 2 8 20 1 5 ; ; ; 1 100 2 3 1 n n n n n n u v t h n n n n n           . D ã y n ào ch ứa nhi ều s ố h ạng nguy ên nh ất A. n u B. n v C. n t D. n h"
+    },
+    {
+      "question_number": "22",
+      "page": 10,
+      "topic": "Dãy số",
+      "skill": "Tìm số hạng theo công thức tổng quát hoặc truy hồi",
+      "exam_frequency": "medium",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng dãy số cơ bản cần giữ lại nhưng không nên ưu tiên hơn cấp số.",
+      "preview": "Câu 22. C ho c ác d ãy c ó c ông th ức t ổng qu át 1 1 ; 3 4; 1 n n n n u n n v n t n         . S ố l ư ợng d ãy gi ảm l à A.2 B. 3 C . 0 D. 1"
+    },
+    {
+      "question_number": "23",
+      "page": 10,
+      "topic": "Dãy số",
+      "skill": "Tìm số hạng theo công thức tổng quát hoặc truy hồi",
+      "exam_frequency": "medium",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng dãy số cơ bản cần giữ lại nhưng không nên ưu tiên hơn cấp số.",
+      "preview": "Câu 23 . C ho c ác d ãy s ố c ó c ông th ức t ổng qu át 2 4 ; ; 2 8 6 n n n n n n u v t n n      . S ố l ư ợng d ãy gi ảm l à A.3 B. 2 C. 1 D. 4"
+    },
+    {
+      "question_number": "26",
+      "page": 10,
+      "topic": "Dãy số",
+      "skill": "Tìm số hạng theo công thức tổng quát hoặc truy hồi",
+      "exam_frequency": "medium",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng dãy số cơ bản cần giữ lại nhưng không nên ưu tiên hơn cấp số.",
+      "preview": "Câu 26 . C ho d ãy s ố   n u c ó 2 10 2023 n u n n    . S ố h ạng nh ỏ nh ất c ủa d ãy l à s ố h ạng th ứ b ào nh i êu A.5 B. 4 C. 7 D. 10"
+    },
+    {
+      "question_number": "1",
+      "page": 11,
+      "topic": "Dãy số",
+      "skill": "Tìm số hạng theo công thức tổng quát hoặc truy hồi",
+      "exam_frequency": "medium",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng dãy số cơ bản cần giữ lại nhưng không nên ưu tiên hơn cấp số.",
+      "preview": "Câu 1. C ho d ãy s ố   n u c ó 2 n n u n   , s ố h ạng th ứ hai c ủa d ãy l à A.2 B. 3 C. 4 D. 6"
+    },
+    {
+      "question_number": "5",
+      "page": 11,
+      "topic": "Dãy số",
+      "skill": "Tìm số hạng theo công thức tổng quát hoặc truy hồi",
+      "exam_frequency": "medium",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng dãy số cơ bản cần giữ lại nhưng không nên ưu tiên hơn cấp số.",
+      "preview": "Câu 5 . C ho d ãy s ố   n u c ó 8 6 3 9 n n u n    , s ố h ạng 86 39 l à s ố h ạng th ứ bao nhi êu c ủa d ãy A.S ố h ạng th ứ 10 B. S ố h ạng th ứ 8 C. S ố h ạng th ứ 6 D. S ố h ạng th ứ 12"
+    },
+    {
+      "question_number": "10",
+      "page": 13,
+      "topic": "Dãy số",
+      "skill": "Tìm số hạng theo công thức tổng quát hoặc truy hồi",
+      "exam_frequency": "medium",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng dãy số cơ bản cần giữ lại nhưng không nên ưu tiên hơn cấp số.",
+      "preview": "Câu 1 0 . C ho c ác d ãy s ố c ó c ông th ức t ổng qu át 2 8 sin ; 6 ; 2 1 n n n n u v n n t n        . S ố l ư ợng d ãy b ị ch ặn l à A.3 B . 2 C . 1 D. 0"
+    },
+    {
+      "question_number": "13",
+      "page": 13,
+      "topic": "Dãy số",
+      "skill": "Tìm số hạng theo công thức tổng quát hoặc truy hồi",
+      "exam_frequency": "medium",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng dãy số cơ bản cần giữ lại nhưng không nên ưu tiên hơn cấp số.",
+      "preview": "Câu 1 3 . G ọ i n u l à s ố ch ấm ở h àng th ứ n trong h ìn h 1, g ọi n v l à t ổng di ện t ích c ác h ình t ô m àu ở h àng th ứ n trong h ình 2 (m ỗi ô vu ông nh ỏ l à m ột đ ơn v ị di ện t ích). D ự đo án c ông th ức t ổng qu át c ủa d ãy s ố   n v . A. 2 n v n  B. 3 n v n  C. 2 2 n v n  D. 3 2 n v n "
+    },
+    {
+      "question_number": "1",
+      "page": 15,
+      "topic": "Cấp số cộng",
+      "skill": "Nhận biết cấp số cộng, tìm công sai và số hạng tổng quát",
+      "exam_frequency": "high",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng nhận biết công sai và dùng công thức u_n xuất hiện thường xuyên trong đề thi thử.",
+      "preview": "Câu 1 . Cho c ấp số cộng   n u có 1 0,1; 0,1. u d    S ố hạng thứ 7 c ủa cấp số cộng n ày là A. 1 ,6. B. 6. C . 0, 5. D. 0, 6."
+    },
+    {
+      "question_number": "2",
+      "page": 15,
+      "topic": "Cấp số cộng",
+      "skill": "Nhận biết cấp số cộng, tìm công sai và số hạng tổng quát",
+      "exam_frequency": "high",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng nhận biết công sai và dùng công thức u_n xuất hiện thường xuyên trong đề thi thử.",
+      "preview": "Câu 2 . Cho c ấp số cộng   n u v ới 3 2 n u n   thì 60 S b ằng A. 6960  . B. 117  . C . đáp án khác. D. 116  ."
+    },
+    {
+      "question_number": "3",
+      "page": 15,
+      "topic": "Cấp số cộng",
+      "skill": "Nhận biết cấp số cộng, tìm công sai và số hạng tổng quát",
+      "exam_frequency": "high",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng nhận biết công sai và dùng công thức u_n xuất hiện thường xuyên trong đề thi thử.",
+      "preview": "Câu 3 . Cho c ấ p s ố c ộ ng   n u th ỏ a mãn 1 3 4, 10. u u   Công sai c ủ a c ấ p s ố c ộ ng b ằ ng A. 6. B. 6.  C . 3. D. 3. "
+    },
+    {
+      "question_number": "4",
+      "page": 15,
+      "topic": "Cấp số cộng",
+      "skill": "Nhận biết cấp số cộng, tìm công sai và số hạng tổng quát",
+      "exam_frequency": "high",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng nhận biết công sai và dùng công thức u_n xuất hiện thường xuyên trong đề thi thử.",
+      "preview": "Câu 4 . Cho c ấp số cộng có 1 3, 4 u d   . Ch ọn khẳng định đúng trong các khẳng định sau A. 5 15 u  . B. 4 8 u  . C . 3 5 u  . D. 2 2 u  ."
+    },
+    {
+      "question_number": "5",
+      "page": 15,
+      "topic": "Cấp số cộng",
+      "skill": "Nhận biết cấp số cộng, tìm công sai và số hạng tổng quát",
+      "exam_frequency": "high",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng nhận biết công sai và dùng công thức u_n xuất hiện thường xuyên trong đề thi thử.",
+      "preview": "Câu 5 . Cho c ấp số cộng   n u có 1 1 , 4 u d   . Tìm s ố hạng 12 u . A. 12 31 u  . B. 12 13 u  . C . 12 45 u  . D. 12 17 u  ."
+    },
+    {
+      "question_number": "6",
+      "page": 15,
+      "topic": "Cấp số cộng",
+      "skill": "Nhận biết cấp số cộng, tìm công sai và số hạng tổng quát",
+      "exam_frequency": "high",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng nhận biết công sai và dùng công thức u_n xuất hiện thường xuyên trong đề thi thử.",
+      "preview": "Câu 6 . Tìm công sai d c ủa cấp số cộng hữu hạn biết số hạng đầu 1 10 u  và s ố hạng cuối 21 50 u  . A. 3 d  . B . 2 d  . C. 4 d  . D. 2 d   ."
+    },
+    {
+      "question_number": "7",
+      "page": 15,
+      "topic": "Cấp số cộng",
+      "skill": "Nhận biết cấp số cộng, tìm công sai và số hạng tổng quát",
+      "exam_frequency": "high",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng nhận biết công sai và dùng công thức u_n xuất hiện thường xuyên trong đề thi thử.",
+      "preview": "Câu 7 . Cho c ấ p s ố c ộ ng ( ) n u có 1 2 4; 1 u u   . Giá tr ị c ủ a 10 u b ằ ng A. 10 31 u   . B . 10 23 u   . C. 10 20 u   . D. 10 15 u  ."
+    },
+    {
+      "question_number": "8",
+      "page": 15,
+      "topic": "Cấp số cộng",
+      "skill": "Nhận biết cấp số cộng, tìm công sai và số hạng tổng quát",
+      "exam_frequency": "high",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng nhận biết công sai và dùng công thức u_n xuất hiện thường xuyên trong đề thi thử.",
+      "preview": "Câu 8 . Cho c ấp số cộng   n u có 1 2  u , 3  d . S ố hạng thứ 7 c ủa cấp số cộng n ày là A . 20. B. 21 . C. 19 . D. 23 ."
+    },
+    {
+      "question_number": "9",
+      "page": 15,
+      "topic": "Cấp số cộng",
+      "skill": "Nhận biết cấp số cộng, tìm công sai và số hạng tổng quát",
+      "exam_frequency": "high",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng nhận biết công sai và dùng công thức u_n xuất hiện thường xuyên trong đề thi thử.",
+      "preview": "Câu 9 . Cho c ấ p s ố c ộ ng   n u c ó 3 1 n u n   . S ố h ạ ng th ứ 100 l à A. 299 B. 240 C. 180 D. 91"
+    },
+    {
+      "question_number": "10",
+      "page": 15,
+      "topic": "Cấp số cộng",
+      "skill": "Nhận biết cấp số cộng, tìm công sai và số hạng tổng quát",
+      "exam_frequency": "high",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng nhận biết công sai và dùng công thức u_n xuất hiện thường xuyên trong đề thi thử.",
+      "preview": "Câu 10 . Cho c ấ p s ố c ộ ng   n u c ó 3 1 n u n   . Công sai c ủ a c ấ p s ố c ộ ng l à A. 3 B. 4 C. 2 D. 1"
+    },
+    {
+      "question_number": "11",
+      "page": 15,
+      "topic": "Cấp số cộng",
+      "skill": "Nhận biết cấp số cộng, tìm công sai và số hạng tổng quát",
+      "exam_frequency": "high",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng nhận biết công sai và dùng công thức u_n xuất hiện thường xuyên trong đề thi thử.",
+      "preview": "Câu 11 . Vi ế t ba s ố h ạ ng xen gi ữ a 2 v à 22 đ ể đư ợ c m ộ t c ấ p s ố c ộ ng c ó 5 s ố h ạ ng. Khi đ ó t ổ ng ba s ố vi ế t thêm l à A. 36 B. 12 C. 28 D. 41"
+    },
+    {
+      "question_number": "12",
+      "page": 15,
+      "topic": "Cấp số cộng",
+      "skill": "Nhận biết cấp số cộng, tìm công sai và số hạng tổng quát",
+      "exam_frequency": "high",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng nhận biết công sai và dùng công thức u_n xuất hiện thường xuyên trong đề thi thử.",
+      "preview": "Câu 12 . C á c s ố – 7;x;11;y theo th ứ t ự l ậ p th à nh m ộ t c ấ p s ố c ộ n g. T í nh xy A. 12 B. 40 C. 28 D. 36"
+    },
+    {
+      "question_number": "13",
+      "page": 15,
+      "topic": "Cấp số cộng",
+      "skill": "Nhận biết cấp số cộng, tìm công sai và số hạng tổng quát",
+      "exam_frequency": "high",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng nhận biết công sai và dùng công thức u_n xuất hiện thường xuyên trong đề thi thử.",
+      "preview": "Câu 13 . Bi ế t r ằ ng 5 ;7 2 ;17 m m m    theo th ứ t ự t ạ o th à n h m ộ t c ấ p s ố c ộ ng. T í nh 3m + 4. A. 16 B. 10 C. 19 D. 18"
+    },
+    {
+      "question_number": "14",
+      "page": 15,
+      "topic": "Cấp số cộng",
+      "skill": "Nhận biết cấp số cộng, tìm công sai và số hạng tổng quát",
+      "exam_frequency": "high",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng nhận biết công sai và dùng công thức u_n xuất hiện thường xuyên trong đề thi thử.",
+      "preview": "Câu 14 . Cho hai s ố – 3 v à 23, vi ế t xen gi ữ a hai s ố n s ố h ạ ng đ ể t ấ t c ả c á c s ố đ ó t ạ o th à nh c ấ p s ố c ộ ng v ớ i d = 2. Gi á tr ị c ủ a n b ằ ng A. 14 B. 12 C. 10 D. 1 8"
+    },
+    {
+      "question_number": "15",
+      "page": 15,
+      "topic": "Cấp số cộng",
+      "skill": "Nhận biết cấp số cộng, tìm công sai và số hạng tổng quát",
+      "exam_frequency": "high",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng nhận biết công sai và dùng công thức u_n xuất hiện thường xuyên trong đề thi thử.",
+      "preview": "Câu 15 . C ấ p s ố c ộ ng c ó c á c s ố h ạ ng đ ầ u tiên l à 5;9;13;17. S ố h ạ ng th ứ 23 c ủ a d ã y c ó s ố ư ớ c nguyên dương l à A. 2 B. 4 C. 6 D. 8"
+    },
+    {
+      "question_number": "16",
+      "page": 15,
+      "topic": "Cấp số cộng",
+      "skill": "Nhận biết cấp số cộng, tìm công sai và số hạng tổng quát",
+      "exam_frequency": "high",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng nhận biết công sai và dùng công thức u_n xuất hiện thường xuyên trong đề thi thử.",
+      "preview": "Câu 16 . C ấ p s ố c ộ ng   n u c ó 3 15; 2 u d    . T ồ n t ạ i bao nhiêu s ố h ạ ng c ủ a c ấ p s ố đ ó l ớ n hơ n – 100 A. 60 B. 52 C. 18 D. 45"
+    },
+    {
+      "question_number": "17",
+      "page": 15,
+      "topic": "Cấp số cộng",
+      "skill": "Nhận biết cấp số cộng, tìm công sai và số hạng tổng quát",
+      "exam_frequency": "high",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng nhận biết công sai và dùng công thức u_n xuất hiện thường xuyên trong đề thi thử.",
+      "preview": "Câu 17 . Cho c á c d ã y s ố 3 8 2 ; 3 5; 3.2 5; 5 n n n n n n u n u n u u n          . S ố l ư ợ ng c ấ p s ố c ộ ng l à A. 3 B. 2 C. 4 D. 1"
+    },
+    {
+      "question_number": "18",
+      "page": 15,
+      "topic": "Cấp số cộng",
+      "skill": "Nhận biết cấp số cộng, tìm công sai và số hạng tổng quát",
+      "exam_frequency": "high",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng nhận biết công sai và dùng công thức u_n xuất hiện thường xuyên trong đề thi thử.",
+      "preview": "Câu 1 8 . Cho c ấ p s ố c ộ ng c ó s ố h ạ ng đ ầ u tiên l à – 5, công s ai d = 3. S ố 100 l à s ố h ạ ng th ứ bao nhiêu ? A. 36 B. 20 C. 15 D. 24"
+    },
+    {
+      "question_number": "19",
+      "page": 15,
+      "topic": "Cấp số cộng",
+      "skill": "Nhận biết cấp số cộng, tìm công sai và số hạng tổng quát",
+      "exam_frequency": "high",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng nhận biết công sai và dùng công thức u_n xuất hiện thường xuyên trong đề thi thử.",
+      "preview": "Câu 1 9 . B ố n s ố 5;x;15;y theo th ứ t ự t ạ o th à nh m ộ t c ấ p s ố c ộ ng. T í nh 3x + 2y A. 50 B. 70 C. 30 D. 80"
+    },
+    {
+      "question_number": "20",
+      "page": 15,
+      "topic": "Cấp số cộng",
+      "skill": "Nhận biết cấp số cộng, tìm công sai và số hạng tổng quát",
+      "exam_frequency": "high",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng nhận biết công sai và dùng công thức u_n xuất hiện thường xuyên trong đề thi thử.",
+      "preview": "Câu 2 0 . Tam gi á c ABC c ó ba g ó c l ậ p th à nh m ộ t c ấ p s ố c ộ ng, trong đ ó c ó m ộ t g ó c 25  . Hi ệ u s ố đo hai g ó c c ò n l ạ i (g ó c l ớ n tr ừ g ó c nh ỏ ) b ằ ng A. 25  B. 35  C. 5  D. 30 "
+    },
+    {
+      "question_number": "21",
+      "page": 15,
+      "topic": "Cấp số cộng",
+      "skill": "Nhận biết cấp số cộng, tìm công sai và số hạng tổng quát",
+      "exam_frequency": "high",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng nhận biết công sai và dùng công thức u_n xuất hiện thường xuyên trong đề thi thử.",
+      "preview": "Câu 2 1 . M ộ t c ấ p s ố c ộ ng c ó 8 s ố h ạ ng, s ố h ạ ng đ ầ u b ằ ng 5, s ố h ạ ng th ứ t á m b ằ ng 40. S ố h ạ ng th ứ 100 khi đ ó b ằ ng A. 400 B. 500 C. 420 D. 160"
+    },
+    {
+      "question_number": "22",
+      "page": 15,
+      "topic": "Cấp số cộng",
+      "skill": "Nhận biết cấp số cộng, tìm công sai và số hạng tổng quát",
+      "exam_frequency": "high",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng nhận biết công sai và dùng công thức u_n xuất hiện thường xuyên trong đề thi thử.",
+      "preview": "Câu 2 2 . C ấ p s ố c ộ ng   n u c ó 1 4; 5 u d    , S l à t ổ ng 100 s ố h ạ ng đ ầ u tiên c ủ a c ấ p s ố c ộ ng. Hai ch ữ s ố t ậ n c ù ng c ủ a S khi đ ó b ằ ng A. 20 B. 40 C. 50 D. 25"
+    },
+    {
+      "question_number": "23",
+      "page": 16,
+      "topic": "Cấp số cộng",
+      "skill": "Nhận biết cấp số cộng, tìm công sai và số hạng tổng quát",
+      "exam_frequency": "high",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng nhận biết công sai và dùng công thức u_n xuất hiện thường xuyên trong đề thi thử.",
+      "preview": "Câu 2 3 . C ấ p s ố c ộ ng   n u c ó 1 0, 25 u d     . T í nh 100 99 S S  . A. 24 B. 24,5 C. 10,25 D. 26,25"
+    },
+    {
+      "question_number": "24",
+      "page": 16,
+      "topic": "Cấp số cộng",
+      "skill": "Nhận biết cấp số cộng, tìm công sai và số hạng tổng quát",
+      "exam_frequency": "high",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng nhận biết công sai và dùng công thức u_n xuất hiện thường xuyên trong đề thi thử.",
+      "preview": "Câu 24 . Bi ế t b ố n góc c ủ a t ứ giác ABCD l ậ p thành m ộ t c ấ p s ố c ộ ng và góc A b ằ ng 30 đ ộ , tìm các góc còn l ạ i A. 75 đ ộ , 120 đ ộ , 65 đ ộ B. 72 đ ộ , 114 đ ộ , 156 đ ộ C. 70 đ ộ , 110 đ ộ , 150 đ ộ D. 80 đ ộ , 110 đ ộ , 135 đ ộ"
+    },
+    {
+      "question_number": "25",
+      "page": 16,
+      "topic": "Cấp số cộng",
+      "skill": "Nhận biết cấp số cộng, tìm công sai và số hạng tổng quát",
+      "exam_frequency": "high",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng nhận biết công sai và dùng công thức u_n xuất hiện thường xuyên trong đề thi thử.",
+      "preview": "Câu 2 5 . S ố h ạ ng t ổ ng qu á t m ộ t s ố c ấ p s ố c ộ ng l à 3 4 n u n   . T ổ ng bao nhiêu s ố h ạ ng đ ầ u tiên c ủ a d ã y b ằ ng 242 A. 11 B. 13 C. 10 D. 12"
+    },
+    {
+      "question_number": "27",
+      "page": 16,
+      "topic": "Cấp số cộng",
+      "skill": "Nhận biết cấp số cộng, tìm công sai và số hạng tổng quát",
+      "exam_frequency": "high",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng nhận biết công sai và dùng công thức u_n xuất hiện thường xuyên trong đề thi thử.",
+      "preview": "Câu 27 . Cho c ấ p s ố c ộ ng   n u c ó 1 3 5 1 6 15 27 u u u u u         . T ì m s ố h ạ ng th ứ 24 c ủ a d ã y. A. – 51 B. – 14 C. 10 D. 25"
+    },
+    {
+      "question_number": "29",
+      "page": 16,
+      "topic": "Cấp số cộng",
+      "skill": "Nhận biết cấp số cộng, tìm công sai và số hạng tổng quát",
+      "exam_frequency": "high",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng nhận biết công sai và dùng công thức u_n xuất hiện thường xuyên trong đề thi thử.",
+      "preview": "Câu 2 9 . Cho c ấ p s ố c ộ ng   n u c ó 8 2; 72 d S    . T ì m s ố h ạ ng đ ầ u tiên A. 1 5 B. 16 C. 10 D. 8"
+    },
+    {
+      "question_number": "30",
+      "page": 16,
+      "topic": "Cấp số cộng",
+      "skill": "Nhận biết cấp số cộng, tìm công sai và số hạng tổng quát",
+      "exam_frequency": "high",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng nhận biết công sai và dùng công thức u_n xuất hiện thường xuyên trong đề thi thử.",
+      "preview": "Câu 3 0 . T ính t ổ ng c ác gi á tr ị x đ ể 2 4; 5 ; 4 x x  t ạo th ành m ột c ấp s ố c ộng. A. 10 B. 5 C. 6 D. 8"
+    },
+    {
+      "question_number": "31",
+      "page": 16,
+      "topic": "Cấp số cộng",
+      "skill": "Tính tổng n số hạng đầu của cấp số cộng",
+      "exam_frequency": "high",
+      "difficulty_hint": "understanding_application",
+      "reason": "Dạng tính tổng S_n là trọng tâm cơ bản của cấp số cộng.",
+      "preview": "Câu 31 . T ổ ng n s ố h ạ ng đ ầ u tiên c ủ a m ộ t c ấ p s ố c ộ ng l à 2 4 n S n n   . S ố h ạ ng th ứ 2 7 c ủ a d ã y c ó ch ữ s ố t ậ n c ù ng l à A. 6 B. 7 C. 9 D. 5"
+    },
+    {
+      "question_number": "32",
+      "page": 16,
+      "topic": "Cấp số cộng",
+      "skill": "Nhận biết cấp số cộng, tìm công sai và số hạng tổng quát",
+      "exam_frequency": "high",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng nhận biết công sai và dùng công thức u_n xuất hiện thường xuyên trong đề thi thử.",
+      "preview": "Câu 32 . M ộ t c ấ p s ố c ộ ng c ó s ố h ạ ng đ ầ u l à 1, công sai l à 4, t ổ ng c ủ a n s ố h ạ ng đ ầ u tiên l à 561. Khi đ ó s ố h ạ ng th ứ n c ủ a c ấ p s ố c ộ ng đ ó l à A. 65 B. 56 C. 7 2 D. 100"
+    },
+    {
+      "question_number": "34",
+      "page": 16,
+      "topic": "Cấp số cộng",
+      "skill": "Nhận biết cấp số cộng, tìm công sai và số hạng tổng quát",
+      "exam_frequency": "high",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng nhận biết công sai và dùng công thức u_n xuất hiện thường xuyên trong đề thi thử.",
+      "preview": "Câu 3 4 . C ấ p s ố c ộ ng   n u c ó 1 2 3 2 2 2 1 2 3 27 275 u u u u u u            . T ì m s ố h ạ ng th ứ hai c ủ a c ấ p s ố c ộ ng. A. 7 B. 9 C. 3 D. 2"
+    },
+    {
+      "question_number": "37",
+      "page": 16,
+      "topic": "Cấp số cộng",
+      "skill": "Tính tổng n số hạng đầu của cấp số cộng",
+      "exam_frequency": "high",
+      "difficulty_hint": "understanding_application",
+      "reason": "Dạng tính tổng S_n là trọng tâm cơ bản của cấp số cộng.",
+      "preview": "Câu 3 7 . T ổ ng n s ố h ạ ng đ ầ u tiên c ủ a c ấ p s ố c ộ ng l à 2 3 19 4 n n n S   . S ố h ạ ng t h ứ 50 c ủ a d ã y b ằ ng A. 59 B. 69,5 C. 49,5 D. 52"
+    },
+    {
+      "question_number": "35",
+      "page": 18,
+      "topic": "Cấp số cộng",
+      "skill": "Tính tổng n số hạng đầu của cấp số cộng",
+      "exam_frequency": "high",
+      "difficulty_hint": "understanding_application",
+      "reason": "Dạng tính tổng S_n là trọng tâm cơ bản của cấp số cộng.",
+      "preview": "Câu 3 5 . T ổ ng n s ố h ạ ng đ ầ u tiên c ủ a m ộ t c ấ p s ố c ộ ng b ằ ng n ử a t ổ ng n s ố h ạ ng ti ế p theo. T í nh t ỉ s ố 3 n n S S . A. 4 B. – 5 C. 3 D. 2"
+    },
+    {
+      "question_number": "1",
+      "page": 21,
+      "topic": "Cấp số cộng",
+      "skill": "Tính tổng n số hạng đầu của cấp số cộng",
+      "exam_frequency": "high",
+      "difficulty_hint": "understanding_application",
+      "reason": "Dạng tính tổng S_n là trọng tâm cơ bản của cấp số cộng.",
+      "preview": "Câu 1. Cho c ấp số cộng có tổng n s ố hạng đầu l à 2 3 4 n S n n   , * n   . Giá tr ị của số hạng thứ 10 c ủa c ấp số cộng l à A. 10 55 u  . B. 10 67 u  . C. 10 61 u  . D. 10 59. u "
+    },
+    {
+      "question_number": "12",
+      "page": 21,
+      "topic": "Cấp số cộng",
+      "skill": "Tính tổng n số hạng đầu của cấp số cộng",
+      "exam_frequency": "high",
+      "difficulty_hint": "understanding_application",
+      "reason": "Dạng tính tổng S_n là trọng tâm cơ bản của cấp số cộng.",
+      "preview": "Câu 1 2 . Cho c ấp số cộng có tổng n số hạng đầu l à 2 3 4   n S n n , *  n  . Giá tr ị của số hạng thứ 10 c ủa cấp số cộng đó l à A. 10 67  u . B. 10 61  u . C. 62 . D. 10 59  u ."
+    },
+    {
+      "question_number": "13",
+      "page": 23,
+      "topic": "Cấp số cộng",
+      "skill": "Tính tổng n số hạng đầu của cấp số cộng",
+      "exam_frequency": "high",
+      "difficulty_hint": "understanding_application",
+      "reason": "Dạng tính tổng S_n là trọng tâm cơ bản của cấp số cộng.",
+      "preview": "Câu 13 . Cho c ấp số cộng   n u c ó t ổng n s ố h ạng đ ầu ti ên b ằng (3 1) n S n n   . T ính 6 4 2 4 28 u u u u        . A. 113 B. 120 C. 140 D. 105"
+    },
+    {
+      "question_number": "25",
+      "page": 24,
+      "topic": "Cấp số cộng",
+      "skill": "Tính tổng n số hạng đầu của cấp số cộng",
+      "exam_frequency": "high",
+      "difficulty_hint": "understanding_application",
+      "reason": "Dạng tính tổng S_n là trọng tâm cơ bản của cấp số cộng.",
+      "preview": "Câu 25 . C ấp số cộng   n u c ó t ổng n s ố h ạng đ ầu ti ên b ằng 2 3 5 2 n n n S   . T ìm ch ữ s ố t ận c ùng c ủa 2023 u . A. 30 B. 70 C. 80 D. 60"
+    },
+    {
+      "question_number": "9",
+      "page": 27,
+      "topic": "Cấp số nhân",
+      "skill": "Nhận biết cấp số nhân, tìm công bội và số hạng tổng quát",
+      "exam_frequency": "high",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng nhận biết công bội và dùng u_n = u_1 q^(n-1) là dạng nền tảng hay gặp.",
+      "preview": "Câu 9 . Tìm x > 0 đ ể 3;x + 1;12 là ba s ố h ạ ng liên ti ế p c ủ a m ộ t c ấ p s ố nhân. A. x = 5 B. x = 2 C. x = 5 D. x = 4"
+    },
+    {
+      "question_number": "10",
+      "page": 27,
+      "topic": "Cấp số nhân",
+      "skill": "Nhận biết cấp số nhân, tìm công bội và số hạng tổng quát",
+      "exam_frequency": "high",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng nhận biết công bội và dùng u_n = u_1 q^(n-1) là dạng nền tảng hay gặp.",
+      "preview": "Câu 10 . C ấ p s ố nhân   n u có 1 3 2; 8 u u   , công b ộ i q > 0. Tính 5 u q  . A. 30 B. 34 C. 20 D. 10"
+    },
+    {
+      "question_number": "11",
+      "page": 27,
+      "topic": "Cấp số nhân",
+      "skill": "Nhận biết cấp số nhân, tìm công bội và số hạng tổng quát",
+      "exam_frequency": "high",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng nhận biết công bội và dùng u_n = u_1 q^(n-1) là dạng nền tảng hay gặp.",
+      "preview": "Câu 11 . C ấ p s ố nhân   n u có công b ộ i q. M ệ nh đ ề nào sau đây đún g ? A. 1 1 . k k u u q   B. 1 1 2 k k k u u u     C. 1 2 . k k k u u u    D.   1 1 k u u k q   "
+    },
+    {
+      "question_number": "12",
+      "page": 27,
+      "topic": "Cấp số nhân",
+      "skill": "Nhận biết cấp số nhân, tìm công bội và số hạng tổng quát",
+      "exam_frequency": "high",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng nhận biết công bội và dùng u_n = u_1 q^(n-1) là dạng nền tảng hay gặp.",
+      "preview": "Câu 12 . Cho c ấ p s ố nhân có 15 s ố h ạ ng. Đ ẳ ng th ứ c nào sau đây đúng ? A. 1 15 2 14 u u u u  B. 1 15 5 11 u u u u  C. 1 15 6 9 u u u u  D. 1 15 12 4 u u u u "
+    },
+    {
+      "question_number": "13",
+      "page": 27,
+      "topic": "Cấp số nhân",
+      "skill": "Nhận biết cấp số nhân, tìm công bội và số hạng tổng quát",
+      "exam_frequency": "high",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng nhận biết công bội và dùng u_n = u_1 q^(n-1) là dạng nền tảng hay gặp.",
+      "preview": "Câu 1 3 . T ìm t ổ ng c ác gi á tr ị x đ ể 1 ; ; 5 6 x x  theo th ứ t ự l ập th ành m ột c ấp s ố nh ân A.5 B. 7 C. 4 D. 3"
+    },
+    {
+      "question_number": "14",
+      "page": 27,
+      "topic": "Cấp số nhân",
+      "skill": "Nhận biết cấp số nhân, tìm công bội và số hạng tổng quát",
+      "exam_frequency": "high",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng nhận biết công bội và dùng u_n = u_1 q^(n-1) là dạng nền tảng hay gặp.",
+      "preview": "Câu 14 . Tính 1 2 u q  bi ế t c ấ p s ố nhân   n u th ỏ a mãn 6 7 192; 384 u u   . A. 12 B. 10 C . 8 D. 24"
+    },
+    {
+      "question_number": "15",
+      "page": 27,
+      "topic": "Cấp số nhân",
+      "skill": "Nhận biết cấp số nhân, tìm công bội và số hạng tổng quát",
+      "exam_frequency": "high",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng nhận biết công bội và dùng u_n = u_1 q^(n-1) là dạng nền tảng hay gặp.",
+      "preview": "Câu 1 5 . Tính 1 2 u q  bi ế t c ấ p s ố nhân   n u th ỏ a mãn 4 2 5 3 36; 72 u u u u     . A. 30 B. 6 C. 10 D. 18"
+    },
+    {
+      "question_number": "16",
+      "page": 27,
+      "topic": "Cấp số nhân",
+      "skill": "Nhận biết cấp số nhân, tìm công bội và số hạng tổng quát",
+      "exam_frequency": "high",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng nhận biết công bội và dùng u_n = u_1 q^(n-1) là dạng nền tảng hay gặp.",
+      "preview": "Câu 1 6 . M ộ t c ấ p s ố nhân có s ố h ạ ng th ứ hai b ằ ng 4 và s ố h ạ ng th ứ sáu b ằ ng 64, s ố h ạ ng th ứ 20 c ủ a c ấ p s ố . A. 20 2 B. 1024 C. 21 2 D. 19 2"
+    },
+    {
+      "question_number": "17",
+      "page": 27,
+      "topic": "Cấp số nhân",
+      "skill": "Nhận biết cấp số nhân, tìm công bội và số hạng tổng quát",
+      "exam_frequency": "high",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng nhận biết công bội và dùng u_n = u_1 q^(n-1) là dạng nền tảng hay gặp.",
+      "preview": "Câu 1 7 . Thêm hai s ố th ự c dương x, y vào gi ữ a hai s ố 5;320 đ ể đư ợ c b ố n s ố 5;x;y;320 theo th ứ t ự l ậ p thành m ộ t c ấ p s ố nhân. Tính x + y. A. 150 B. 100 C. 60 D. 120"
+    },
+    {
+      "question_number": "18",
+      "page": 27,
+      "topic": "Cấp số nhân",
+      "skill": "Nhận biết cấp số nhân, tìm công bội và số hạng tổng quát",
+      "exam_frequency": "high",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng nhận biết công bội và dùng u_n = u_1 q^(n-1) là dạng nền tảng hay gặp.",
+      "preview": "Câu 1 8 . C ấ p s ố nhân   n u có ba s ố h ạ ng li ên ti ế p x;6;y. S ố h ạ n g ti ế p the o là A. 2 216 x B. 216 x C. 2 36 x D. 2 1296 x"
+    },
+    {
+      "question_number": "19",
+      "page": 27,
+      "topic": "Cấp số nhân",
+      "skill": "Nhận biết cấp số nhân, tìm công bội và số hạng tổng quát",
+      "exam_frequency": "high",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng nhận biết công bội và dùng u_n = u_1 q^(n-1) là dạng nền tảng hay gặp.",
+      "preview": "Câu 1 9 . C ấ p s ố nhân   n u có ba s ố h ạ ng đ ầ u tiên 3;9;27. S ố 2019 3 là s ố h ạ ng th ứ bao nhiêu ? A. 2018 B. 2019 C. 2020 D. 2021"
+    },
+    {
+      "question_number": "20",
+      "page": 27,
+      "topic": "Cấp số nhân",
+      "skill": "Nhận biết cấp số nhân, tìm công bội và số hạng tổng quát",
+      "exam_frequency": "high",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng nhận biết công bội và dùng u_n = u_1 q^(n-1) là dạng nền tảng hay gặp.",
+      "preview": "Câu 20 . Tính tích các giá tr ị x đ ể 2 1 ; ;3 5 x x x   theo th ứ t ự l ậ p thành m ộ t c ấ p s ố nhân."
+    },
+    {
+      "question_number": "21",
+      "page": 28,
+      "topic": "Cấp số nhân",
+      "skill": "Nhận biết cấp số nhân, tìm công bội và số hạng tổng quát",
+      "exam_frequency": "high",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng nhận biết công bội và dùng u_n = u_1 q^(n-1) là dạng nền tảng hay gặp.",
+      "preview": "Câu 21 . Cho c ấ p s ố nhân   n u th ỏ a mãn 1 1 3; 2 u q    . S ố 222 là s ố h ạ ng th ứ bao nhiêu c ủ a c ấ p s ố nhân ? A. 11 B. 12 C. 9 D. Không là s ố h ạ ng c ủ a dãy ."
+    },
+    {
+      "question_number": "23",
+      "page": 28,
+      "topic": "Cấp số nhân",
+      "skill": "Nhận biết cấp số nhân, tìm công bội và số hạng tổng quát",
+      "exam_frequency": "high",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng nhận biết công bội và dùng u_n = u_1 q^(n-1) là dạng nền tảng hay gặp.",
+      "preview": "Câu 23 . C ấ p s ố nhân có 7 s ố h ạ ng, s ố h ạ ng th ứ tư b ằ ng 6 và s ố th ứ 7 g ấ p 243 l ầ n s ố h ạ ng th ứ hai. Hãy tính giá tr ị bi ể u th ứ c 9u 1 + u 5 + u 7 . A. 120 B. 46 C. 182 D. 250 Câ u 24 . Cho c ấ p s ố nhân   n u th ỏ a mã n 4 3 8 2 ; 243 27 u u u   . Tính 3u 2 + 27u 4 . A. 3 B. 4 C. 5 D. 12"
+    },
+    {
+      "question_number": "25",
+      "page": 28,
+      "topic": "Cấp số nhân",
+      "skill": "Nhận biết cấp số nhân, tìm công bội và số hạng tổng quát",
+      "exam_frequency": "high",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng nhận biết công bội và dùng u_n = u_1 q^(n-1) là dạng nền tảng hay gặp.",
+      "preview": "Câu 2 5 . Tính 9x 4 + 3x 2 + 2 bi ế t 2x – 1; x; 2x + 1 theo th ứ t ự t ạ o thành m ộ t c ấ p s ố nhân. A. 15 B. 4 C. 5 D. 6"
+    },
+    {
+      "question_number": "26",
+      "page": 28,
+      "topic": "Cấp số nhân",
+      "skill": "Nhận biết cấp số nhân, tìm công bội và số hạng tổng quát",
+      "exam_frequency": "high",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng nhận biết công bội và dùng u_n = u_1 q^(n-1) là dạng nền tảng hay gặp.",
+      "preview": "Câu 2 6 . Tìm s ố h ạ ng cu ố i cùng c ủ a c ấ p s ố nhân có 6 s ố h ạ ng v ớ i q = 2 và t ổ ng các s ố h ạ ng b ằ ng 189. A. 96 B. 32 C. 104 D. 48"
+    },
+    {
+      "question_number": "27",
+      "page": 28,
+      "topic": "Cấp số cộng",
+      "skill": "Tính tổng n số hạng đầu của cấp số cộng",
+      "exam_frequency": "high",
+      "difficulty_hint": "understanding_application",
+      "reason": "Dạng tính tổng S_n là trọng tâm cơ bản của cấp số cộng.",
+      "preview": "Câu 2 7 . Cho c ấ p s ố nhân   n u có t ổ ng n s ố h ạ ng đ ầ u tiên là 5 1 n n S   . Tìm s ố h ạ ng th ứ tư c ủ a c ấ p s ố nhân. A. 500 B. 124 C. 100 D. 62 4 C âu 2 8 . C ấ p s ố nhân   n u có t ổ ng hai s ố h ạ ng đ ầ u tiên b ằ ng 4, t ổ ng c ủ a ba s ố h ạ ng đ ầ u tiên b ằ ng 13. Tính t ổ ng c ủ a năm s ố h ạ ng đ ầ u tiên c ủ a c ấ p s ố nhân đ ã cho, bi ế t công b ộ i c ủ a c ấ p s ố nhân là s ố dương. "
+    },
+    {
+      "question_number": "29",
+      "page": 28,
+      "topic": "Cấp số nhân",
+      "skill": "Nhận biết cấp số nhân, tìm công bội và số hạng tổng quát",
+      "exam_frequency": "high",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng nhận biết công bội và dùng u_n = u_1 q^(n-1) là dạng nền tảng hay gặp.",
+      "preview": "Câu 2 9 . Tính x 8 + x 2 + 5 khi 1; x 2 ; 6 – x 2 theo th ứ t ự l ậ p thành c ấ p s ố nhân. A. 29 B. 23 C. 15 D. 31"
+    },
+    {
+      "question_number": "30",
+      "page": 28,
+      "topic": "Cấp số nhân",
+      "skill": "Nhận biết cấp số nhân, tìm công bội và số hạng tổng quát",
+      "exam_frequency": "high",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng nhận biết công bội và dùng u_n = u_1 q^(n-1) là dạng nền tảng hay gặp.",
+      "preview": "Câu 30 . C ấ p s ố nhân   n u có s ố h ạ ng đ ầ u tiên b ằ ng 1. Tìm côn g b ộ i q đ ể 2 3 4 5 u u  đ ạ t giá tr ị nh ỏ nh ấ t. A. q = 1 B. q = 0,5 C. q = – 0,4 D. q = 0,2"
+    },
+    {
+      "question_number": "31",
+      "page": 28,
+      "topic": "Cấp số nhân",
+      "skill": "Nhận biết cấp số nhân, tìm công bội và số hạng tổng quát",
+      "exam_frequency": "high",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng nhận biết công bội và dùng u_n = u_1 q^(n-1) là dạng nền tảng hay gặp.",
+      "preview": "Câu 31 . Cho c ấ p s ố nhân   n u th ỏ a mãn 3 .5 2 n n u  . Tính công b ộ i q. A. q = 2 B. q = 3 C. q = 5 D. q = 4"
+    },
+    {
+      "question_number": "32",
+      "page": 28,
+      "topic": "Cấp số nhân",
+      "skill": "Nhận biết cấp số nhân, tìm công bội và số hạng tổng quát",
+      "exam_frequency": "high",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng nhận biết công bội và dùng u_n = u_1 q^(n-1) là dạng nền tảng hay gặp.",
+      "preview": "Câu 32 . M ộ t c ấ p s ố nhân có công b ộ i b ằ ng 3 và s ố h ạ ng đ ầ u b ằ ng 5, bi ế t s ố h ạ ng chính gi ữ a là 32805. H ỏ i c ấ p s ố nhân có bao nhiêu s ố h ạ ng ? A. 18 B. 17 C. 16 D. 9"
+    },
+    {
+      "question_number": "33",
+      "page": 28,
+      "topic": "Cấp số nhân",
+      "skill": "Nhận biết cấp số nhân, tìm công bội và số hạng tổng quát",
+      "exam_frequency": "high",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng nhận biết công bội và dùng u_n = u_1 q^(n-1) là dạng nền tảng hay gặp.",
+      "preview": "Câu 3 3 . C ấ p s ố nhân   n u có 1 3 5 1 7 65 325 u u u u u             c ó c ông b ội d ương th ì s ố h ạng th ứ hai b ằng A.10 B. 8 C. 12 D. 11"
+    },
+    {
+      "question_number": "34",
+      "page": 28,
+      "topic": "Cấp số nhân",
+      "skill": "Nhận biết cấp số nhân, tìm công bội và số hạng tổng quát",
+      "exam_frequency": "high",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng nhận biết công bội và dùng u_n = u_1 q^(n-1) là dạng nền tảng hay gặp.",
+      "preview": "Câu 3 4 . Cho c ấ p s ố nhân   n u th ỏ a mãn 1 3 5 1 7 65; 325 u u u u u      . Tính 3 u . A. 10 B. 15 C . 20 D. 10"
+    },
+    {
+      "question_number": "35",
+      "page": 28,
+      "topic": "Cấp số nhân",
+      "skill": "Nhận biết cấp số nhân, tìm công bội và số hạng tổng quát",
+      "exam_frequency": "high",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng nhận biết công bội và dùng u_n = u_1 q^(n-1) là dạng nền tảng hay gặp.",
+      "preview": "Câu 3 5 . Cho c ấ p s ố nhân   n u th ỏ a mãn 1 2 3 1 2 3 14; 64 u u u u u u     . Tính t ổ ng các giá tr ị x ả y ra c ủ a 1 u . A. 12 B . 10 C. 8 D. 14"
+    },
+    {
+      "question_number": "38",
+      "page": 28,
+      "topic": "Cấp số nhân",
+      "skill": "Nhận biết cấp số nhân, tìm công bội và số hạng tổng quát",
+      "exam_frequency": "high",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng nhận biết công bội và dùng u_n = u_1 q^(n-1) là dạng nền tảng hay gặp.",
+      "preview": "Câu 3 8 . Cho c ấ p s ố nhân   n u có các s ố h ạ ng khác 0 th ỏ a mãn 1 2 3 4 2 2 2 2 1 2 3 4 15 85 u u u u u u u u              Tính t ổ ng các giá tr ị x ả y ra c ủ a s ố h ạ ng đ ầ u tiên c ủ a c ấ p s ố nhân. A. 7 B. 8 C. 12 D. 14"
+    },
+    {
+      "question_number": "39",
+      "page": 28,
+      "topic": "Cấp số nhân",
+      "skill": "Nhận biết cấp số nhân, tìm công bội và số hạng tổng quát",
+      "exam_frequency": "high",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng nhận biết công bội và dùng u_n = u_1 q^(n-1) là dạng nền tảng hay gặp.",
+      "preview": "Câu 39 . M ộ t c ấ p s ố nhân có 5 s ố h ạ ng mà hai s ố h ạ ng đ ầ u tiên đ ề u dương, tích c ủ a s ố h ạ ng đ ầ u và s ố h ạ ng th ứ ba b ằ ng 1, tích s ố h ạ ng th ứ ba và s ố h ạ ng cu ố i là 1 16 . Tính 1 2 u q  . A. 3 B. 4 C. 1 D. 2"
+    },
+    {
+      "question_number": "1",
+      "page": 29,
+      "topic": "Cấp số nhân",
+      "skill": "Nhận biết cấp số nhân, tìm công bội và số hạng tổng quát",
+      "exam_frequency": "high",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng nhận biết công bội và dùng u_n = u_1 q^(n-1) là dạng nền tảng hay gặp.",
+      "preview": "Câu 1. Cho c ấ p s ố nhân   n u v ớ i 1 3 u  và công b ộ i 4 q  . Giá tr ị c ủ a 2 u b ằ ng A. 64 . B. 81 . C. 12 . D. 3 4 ."
+    },
+    {
+      "question_number": "2",
+      "page": 29,
+      "topic": "Cấp số nhân",
+      "skill": "Nhận biết cấp số nhân, tìm công bội và số hạng tổng quát",
+      "exam_frequency": "high",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng nhận biết công bội và dùng u_n = u_1 q^(n-1) là dạng nền tảng hay gặp.",
+      "preview": "Câu 2 . Cho c ấ p s ố nhân   n u v ớ i 1 4 u  và công b ộ i 3 q  . Giá tr ị c ủ a 2 u b ằ ng A. 64 . B. 81 . C. 12 . D. 4 3 ."
+    },
+    {
+      "question_number": "5",
+      "page": 29,
+      "topic": "Cấp số nhân",
+      "skill": "Nhận biết cấp số nhân, tìm công bội và số hạng tổng quát",
+      "exam_frequency": "high",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng nhận biết công bội và dùng u_n = u_1 q^(n-1) là dạng nền tảng hay gặp.",
+      "preview": "Câu 5 . Cho ba s ố a, b, c l ậ p thành m ộ t c ấ p s ố nhân th ỏ a mãn a > b > c; a + b + c = 19; abc = 216. Tính giá tr ị bi ể u th ứ c 2a + 3b + 4c. A. 16 B. 52 C. 24 D. 4 8"
+    },
+    {
+      "question_number": "6",
+      "page": 29,
+      "topic": "Cấp số nhân",
+      "skill": "Nhận biết cấp số nhân, tìm công bội và số hạng tổng quát",
+      "exam_frequency": "high",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng nhận biết công bội và dùng u_n = u_1 q^(n-1) là dạng nền tảng hay gặp.",
+      "preview": "Câu 6 . Tìm công b ộ i q > 0 khi c ấ p s ố nhân   n u có các s ố h ạ ng khác 0 th ỏ a mãn 1 2 3 2 2 2 1 2 3 7 2 3 57 u u u u u u            A. q = 3 B. q = 2 C. q = 2,5 D. q = 3,5"
+    },
+    {
+      "question_number": "7",
+      "page": 29,
+      "topic": "Cấp số nhân",
+      "skill": "Nhận biết cấp số nhân, tìm công bội và số hạng tổng quát",
+      "exam_frequency": "high",
+      "difficulty_hint": "recognition_understanding",
+      "reason": "Dạng nhận biết công bội và dùng u_n = u_1 q^(n-1) là dạng nền tảng hay gặp.",
+      "preview": "Câu 7 . Cho c ấ p s ố nhân   n u có t ổ ng 2 s ố h ạ ng đ ầ u là 4, t ổ ng 3 s ố h ạ ng đ ầ u là 13. Tính t ổ ng 5 s ố h ạ ng đ ầ u bi ế t r ằ ng t ổ ng 5 s ố h ạ ng đó là s ố nguyên. A. 14 0 B. 29 C. 121 D. 47"
+    },
+    {
+      "question_number": "6",
+      "page": 33,
+      "topic": "Cấp số nhân",
+      "skill": "Bài toán thực tế lãi kép, tăng trưởng theo cấp số nhân",
+      "exam_frequency": "high",
+      "difficulty_hint": "application",
+      "reason": "Bài toán lãi kép/tăng trưởng là dạng vận dụng thực tế hay được đưa vào đề.",
+      "preview": "Câu 6 . Cho dãy s ố   n a xác đ ịnh bởi 1 2 a  , 1 2 n n a a    , 1 n  , n   . Tính t ổng của 10 s ố hạng đầu ti ên c ủa dãy s ố . A. 2050 3 . B. 2046 . C. 682  . D. 2046  . C âu 7 . M ột ng ư ời gửi 50 tri ệu đồng v ào m ột ngân h àng theo hình th ức l ãi kép v ới l ãi su ất 6% / năm. H ỏi sau ít nh ất bao nhi êu năm ngư ời đ ó nh ận đ ư ợc số tiền nhiều h ơn 100 tri ệu đồng bao gồm cả gốc v à lãi? Gi ả s"
+    },
+    {
+      "question_number": "11",
+      "page": 33,
+      "topic": "Cấp số nhân",
+      "skill": "Bài toán thực tế lãi kép, tăng trưởng theo cấp số nhân",
+      "exam_frequency": "high",
+      "difficulty_hint": "application",
+      "reason": "Bài toán lãi kép/tăng trưởng là dạng vận dụng thực tế hay được đưa vào đề.",
+      "preview": "Câu 1 1 . Dãy s ố n ào trong các dãy s ố   n u đư ợc cho sau đây l à c ấp số nhân? A. 1 1 3 5 n n u u u          . B. 1 2 2 1 3, 2 . n n n u u u u u           . C. 1 1 3 n n u u nu       . D. 2 2 n u n  . C âu 1 2 . Ông A g ử i 200 tri ệu đồng v ào m ột ngân hàng theo hình th ức l ã i kép,v ới l ãi su ất l à 6,5% m ột năm và lãi su ất không đổi trong suốt t h ời gian gửi. Sau 5 năm, s ố ti"
+    },
+    {
+      "question_number": "14",
+      "page": 35,
+      "topic": "Cấp số nhân",
+      "skill": "Bài toán thực tế lãi kép, tăng trưởng theo cấp số nhân",
+      "exam_frequency": "high",
+      "difficulty_hint": "application",
+      "reason": "Bài toán lãi kép/tăng trưởng là dạng vận dụng thực tế hay được đưa vào đề.",
+      "preview": "Câu 1 4 . M ột ng ư ời gửi 200 tri ệu đồng v à o m ột ngân h àn g v ới l ãi su ất 0, 3% / thán g. Bi ế t r ằng n ếu không rút tiền khỏi ngân hàng thì c ứ sau m ỗi tháng, số tiền lãi s ẽ đ ư ợc nhập v ào v ố n ban đ ầu để tính l ãi cho tháng ti ếp theo. Hỏi sau ít nhất sau bao nhiêu tháng ngư ời đó thu đ ư ợc (c ả số tiền gửi ban đầu v à s ố tiền l ãi) hơn 225 tri ệu đồng? (Gi ả đ ịnh trong kho ảng th ời gian n ày lãi"
+    },
+    {
+      "question_number": "23",
+      "page": 36,
+      "topic": "Cấp số nhân",
+      "skill": "Bài toán thực tế lãi kép, tăng trưởng theo cấp số nhân",
+      "exam_frequency": "high",
+      "difficulty_hint": "application",
+      "reason": "Bài toán lãi kép/tăng trưởng là dạng vận dụng thực tế hay được đưa vào đề.",
+      "preview": "Câu 2 3 . M ột ng ư ời lầ n đ ầu gửi v à o ngân hàng 100 tri ệu đồng với k ì h ạn 3 th áng, lãi su ất 2% m ột quý theo h ình th ức l ãi kép. Sau đú ng 6 tháng, ngư ời đó gửi th êm 100 tri ệu đồng với kỳ hạn v à lãi su ất nh ư trư ớc đó. Tổng số ti ền ng ư ời đó thu đ ư ợ c 1 năm sau khi g ửi tiền gần nhất với kết quả n ào sau đây bi ết rằng tron g su ốt thời gian g ửi t i ền l ãi su ất ngân h àng không thay đ ổi v à "
+    },
+    {
+      "question_number": "19",
+      "page": 38,
+      "topic": "Cấp số nhân",
+      "skill": "Bài toán thực tế lãi kép, tăng trưởng theo cấp số nhân",
+      "exam_frequency": "high",
+      "difficulty_hint": "application",
+      "reason": "Bài toán lãi kép/tăng trưởng là dạng vận dụng thực tế hay được đưa vào đề.",
+      "preview": "Câu 19 . M ột bác nông dân có số tiền 20.000.000 đ ồng. Bác d ùng s ố tiền đó gửi ngân h àng lo ại k ì h ạn 6 tháng v ới l ãi su ất 8, 5% trên m ột năm th ì sau 5 n ăm 8 tháng bác nh ận đ ư ợc số tiền cả gốc lẫn l ãi là bao nhiêu? Bi ết r ằng bác không rút cả gốc lẫn lãi trong các đ ịnh k ì tr ư ớc đó v à n ếu rút tr ư ớc k ì h ạn th ì ngân hàng tr ả l ãi su ất theo lo ại không k ì h ạn 0, 01% trên m ột ng ày. . A . "
+    },
+    {
+      "question_number": "7",
+      "page": 39,
+      "topic": "Cấp số nhân",
+      "skill": "Bài toán thực tế lãi kép, tăng trưởng theo cấp số nhân",
+      "exam_frequency": "high",
+      "difficulty_hint": "application",
+      "reason": "Bài toán lãi kép/tăng trưởng là dạng vận dụng thực tế hay được đưa vào đề.",
+      "preview": "Câu 7 . Cho dãy s ố   n u xác đ ịnh bởi 1 1 2 4 2 2; 2 n n u u u n n            . Giá tr ị nhỏ nhất của n th ỏa m ãn đi ều kiện 17 1979.2 n n u  là A. 11 B. 1 5 C. 1 6 D. 12 C âu 8 . M ột ng ư ời gửi 50 tri ệu đồng v ào m ột ngân h àng theo hình th ức l ãi kép v ới l ãi su ất 6% / năm. H ỏi sau ít nh ất bao nhi êu năm ngư ời đó nhận đ ư ợc số tiền nhiều h ơn 100 tri ệu đồng bao gồm cả gốc v à lãi? Gi ả "
+    },
+    {
+      "question_number": "18",
+      "page": 40,
+      "topic": "Cấp số nhân",
+      "skill": "Bài toán thực tế lãi kép, tăng trưởng theo cấp số nhân",
+      "exam_frequency": "high",
+      "difficulty_hint": "application",
+      "reason": "Bài toán lãi kép/tăng trưởng là dạng vận dụng thực tế hay được đưa vào đề.",
+      "preview": "Câu 18 . M ộ t công ty trách nhi ệ m h ữ u h ạ n th ự c hi ệ n vi ệ c tr ả lương cho các k ỹ sư theo phương th ứ c sau: M ứ c lương c ủ a quý làm vi ệ c đ ầ u tiên cho công ty là 13,5 tri ệ u đ ồ ng/quý, và k ể t ừ quý làm vi ệ c th ứ hai, m ứ c lương s ẽ đư ợ c tăng thêm 500000 đ ồ n g/quý. Tính t ổ ng s ố ti ề n lương m ộ t k ỹ sư nh ậ n đư ợ c sau ba năm làm vi ệ c cho công ty. A. 198 tri ệ u đ ồ ng B. 195 tri ệ u"
+    },
+    {
+      "question_number": "26",
+      "page": 40,
+      "topic": "Cấp số nhân",
+      "skill": "Bài toán thực tế lãi kép, tăng trưởng theo cấp số nhân",
+      "exam_frequency": "high",
+      "difficulty_hint": "application",
+      "reason": "Bài toán lãi kép/tăng trưởng là dạng vận dụng thực tế hay được đưa vào đề.",
+      "preview": "Câu 2 6 . Cho dãy s ố   n u xác đ ị nh b ở i   1 1 , 4 1 n n n u a u u u     v ớ i m ọ i n = 1, 2, 3, ...Có bao nhiêu giá tr ị c ủ a a sao cho 2018 0 u  . A. 2016 2 1  B. 2017 2 1  C. 2018 2 1  D. 3 C âu 27 . M ột ng ư ời gửi số ti ền 100 triệu đồng v ào m ột ng ân hàng v ới l ãi su ất 8% m ột năm. Biết rằng nếu không rút t i ền ra khỏi ngân h àng thì c ứ sau mỗi năm, số tiền l ãi s ẽ đ ư ợc nhập v ào v ố"
+    },
+    {
+      "question_number": "4",
+      "page": 41,
+      "topic": "Cấp số nhân",
+      "skill": "Bài toán thực tế lãi kép, tăng trưởng theo cấp số nhân",
+      "exam_frequency": "high",
+      "difficulty_hint": "application",
+      "reason": "Bài toán lãi kép/tăng trưởng là dạng vận dụng thực tế hay được đưa vào đề.",
+      "preview": "Câu 4 . M ột ng ư ời lầ n đ ầu gửi v à o ngân hàng 100 tri ệu đồng với k ì h ạn 3 th áng, lãi su ất 2% m ột quý theo h ình th ức l ãi kép. Sau đú ng 6 tháng, ngư ời đó gửi th êm 100 tri ệu đồng với kỳ hạn v à lãi su ất nh ư trư ớc đó. Tổng số ti ền ng ư ời đó thu đ ư ợ c 1 năm sau khi g ửi tiền gần nhất với kết quả n ào sau đây bi ết rằng tron g su ốt thời gian g ửi t i ền l ãi su ất ngân h àng không thay đ ổi v à ng"
+    },
+    {
+      "question_number": "6",
+      "page": 41,
+      "topic": "Cấp số cộng",
+      "skill": "Tính tổng n số hạng đầu của cấp số cộng",
+      "exam_frequency": "high",
+      "difficulty_hint": "understanding_application",
+      "reason": "Dạng tính tổng S_n là trọng tâm cơ bản của cấp số cộng.",
+      "preview": "Câu 6 . Cho c ấ p s ố c ộ ng có t ổ ng n s ố h ạ ng đ ầ u ti ên là 2 3 4 n S n n   , n nguyên dương. T ìm s ố h ạ ng th ứ 10 c ủ a c ấ p s ố c ộ ng đó. A. 10 55 u  B. 10 67 u  C. 10 61 u  D. 10 59 u "
+    },
+    {
+      "question_number": "11",
+      "page": 41,
+      "topic": "Cấp số nhân",
+      "skill": "Bài toán thực tế lãi kép, tăng trưởng theo cấp số nhân",
+      "exam_frequency": "high",
+      "difficulty_hint": "application",
+      "reason": "Bài toán lãi kép/tăng trưởng là dạng vận dụng thực tế hay được đưa vào đề.",
+      "preview": "Câu 11 . M ột ng ư ời gửi 200 tri ệu đồng v à o m ột ngân h àn g v ới l ãi su ất 0, 3% / thán g. Bi ế t r ằng n ếu không rút tiền khỏi ngân hàng thì c ứ sau mỗi tháng, số tiền lãi s ẽ đ ư ợc nhập v ào v ố n ban đ ầu để tính l ãi cho tháng ti ếp theo. Hỏi sau ít nhất sau bao nhiêu tháng ngư ời đó thu đ ư ợc (c ả số tiền gửi ban đầu v à s ố tiền l ãi) hơn 225 tri ệu đồng? (Gi ả đ ịnh trong kho ảng th ời gian n ày lãi s"
+    },
+    {
+      "question_number": "13",
+      "page": 41,
+      "topic": "Cấp số nhân",
+      "skill": "Bài toán thực tế lãi kép, tăng trưởng theo cấp số nhân",
+      "exam_frequency": "high",
+      "difficulty_hint": "application",
+      "reason": "Bài toán lãi kép/tăng trưởng là dạng vận dụng thực tế hay được đưa vào đề.",
+      "preview": "Câu 13 . Ông Hùng d ự định gửi v ào ngân hàng m ột số tiền với l ãi su ất 6, 5% m ột nă m. Bi ết r ằng cứ sa u m ỗi năm s ố tiền l ãi s ẽ gộp v ào v ốn ban đầu. S ố tiền X (tri ệu đồng, X   ) nh ỏ nhất m à ông Hùng c ần gửi v ào ngân hàng đ ể sau ba năm (mới rút l ãi) thì s ố tiền l ãi có th ể mua mua một chiếc xe máy trị giá 60 tri ệu đồng l à A. 280 . B . 289 . C. 300 . D. 308 ."
+    },
+    {
+      "question_number": "2",
+      "page": 43,
+      "topic": "Cấp số nhân",
+      "skill": "Bài toán thực tế lãi kép, tăng trưởng theo cấp số nhân",
+      "exam_frequency": "high",
+      "difficulty_hint": "application",
+      "reason": "Bài toán lãi kép/tăng trưởng là dạng vận dụng thực tế hay được đưa vào đề.",
+      "preview": "Câu 2 . M ột ng ư ời gửi tiền v ào ngân hàng v ới l ãi su ất không thay đổi l à 8% / năm. Bi ết r ằ ng n ếu không rút tiền ra kh ỏi ngân h àng thì c ứ sau mỗi n ăm s ố ti ền l ãi đư ợc nhập v ào v ốn ban đầu. Hỏi số tiền ít nh ất ng ư ời đó phải gửi vào ngân hàng đ ể thu về tổng số tiền 500 tri ệu đồng sau đúng 3 nă m k ể t ừ ng ày g ửi (k ết quả l àm tri ệu) là bao nhiêu? A. 394 . B. 396 . C . 397 . D. 395 ."
+    },
+    {
+      "question_number": "8",
+      "page": 43,
+      "topic": "Cấp số nhân",
+      "skill": "Bài toán thực tế lãi kép, tăng trưởng theo cấp số nhân",
+      "exam_frequency": "high",
+      "difficulty_hint": "application",
+      "reason": "Bài toán lãi kép/tăng trưởng là dạng vận dụng thực tế hay được đưa vào đề.",
+      "preview": "Câu 8 . M ộ t ngư ời gửi ngân h àng 200 tri ệu đồng với k ì h ạn 1 tháng theo hình th ức l ãi kép, lãi su ất 0, 58% m ột tháng (k ể từ tháng thứ hai trở đi, tiền l ã i đư ợc tính theo phần trăm của tổng ti ền gốc v à ti ền l ãi tháng trư ớc đó) . H ỏi sau ít nh ất bao nhi êu tháng thì ng ư ời đó có tối thiểu 225 tri ệu đồng trong t ài kho ản tiết kiệm, b i ết rằng ngân hàng ch ỉ tính l ãi khi đ ến k ì h ạn? A . 21 th"
+    },
+    {
+      "question_number": "15",
+      "page": 43,
+      "topic": "Cấp số nhân",
+      "skill": "Bài toán thực tế lãi kép, tăng trưởng theo cấp số nhân",
+      "exam_frequency": "high",
+      "difficulty_hint": "application",
+      "reason": "Bài toán lãi kép/tăng trưởng là dạng vận dụng thực tế hay được đưa vào đề.",
+      "preview": "Câu 15 . M ột ng ư ời gửi 50 tri ệu đồng v ào m ột ngân hàng theo hình th ức l ãi kép v ới l ãi su ất 6% / năm. H ỏi sau ít nh ất bao nhi êu năm ngư ời đó nhận đ ư ợc số tiền nhiều h ơn 100 tri ệu đồng bao gồm cả gốc v à lãi? Gi ả sử tr ong su ốt thời gian gửi l ãi su ất không đổi v à ngư ời đó không rút tiền ra."
+    },
+    {
+      "question_number": "24",
+      "page": 44,
+      "topic": "Cấp số cộng",
+      "skill": "Tính tổng n số hạng đầu của cấp số cộng",
+      "exam_frequency": "high",
+      "difficulty_hint": "understanding_application",
+      "reason": "Dạng tính tổng S_n là trọng tâm cơ bản của cấp số cộng.",
+      "preview": "Câu 24 . Cho dãy s ố   n u có t ổ ng n s ố h ạ ng đ ầ u tiên c ủ a dã y là 2 5 3 2 n n n S   . Tính giá tr ị bi ể u th ứ c 1 2 2 3 48 49 49 50 1 1 1 1 ... T u u u u u u u u      . A. 9 246 T  B. T = 106 C. 49 246 T  D. 4 23 T "
+    },
+    {
+      "question_number": "7",
+      "page": 45,
+      "topic": "Cấp số nhân",
+      "skill": "Bài toán thực tế lãi kép, tăng trưởng theo cấp số nhân",
+      "exam_frequency": "high",
+      "difficulty_hint": "application",
+      "reason": "Bài toán lãi kép/tăng trưởng là dạng vận dụng thực tế hay được đưa vào đề.",
+      "preview": "Câu 7 . M ột bác nông dân c ó s ố ti ền 20.000.000 đ ồng. Bác d ùng s ố tiền đó gửi ngân hàng lo ại k ì h ạn 6 tháng với lãi su ất 8, 5% trên m ột năm t hì sau 5 n ăm 8 tháng bác nh ận đ ư ợc số tiền cả gốc lẫn l ãi là bao nhiêu? Bi ết r ằng bác không rút c ả gốc lẫn lãi tr ong các đ ịnh k ì trư ớc đ ó và n ếu rút tr ư ớc k ì h ạn th ì ngân hàng tr ả l ãi su ất theo loại không kì h ạn 0, 01% trên m ột ng ày. . A . 31"
+    },
+    {
+      "question_number": "12",
+      "page": 45,
+      "topic": "Cấp số nhân",
+      "skill": "Bài toán thực tế lãi kép, tăng trưởng theo cấp số nhân",
+      "exam_frequency": "high",
+      "difficulty_hint": "application",
+      "reason": "Bài toán lãi kép/tăng trưởng là dạng vận dụng thực tế hay được đưa vào đề.",
+      "preview": "Câu 1 2 . B ạn An g ửi t i ết kiệm một số tiền ba n đ ầu l à 1000000 đ ồng với l ãi su ất 0, 58% tháng ( không k ỳ hạn) . H ỏi bạn An phải gửi ít nhất bao nhi êu tháng thì đư ợc c ả vốn lẫn l ãi b ằng hoặc v ư ợt quá 1300000 đ ồng? A . 46 . B. 45 . C. 42 . D. 40 ."
+    },
+    {
+      "question_number": "13",
+      "page": 45,
+      "topic": "Cấp số nhân",
+      "skill": "Bài toán thực tế lãi kép, tăng trưởng theo cấp số nhân",
+      "exam_frequency": "high",
+      "difficulty_hint": "application",
+      "reason": "Bài toán lãi kép/tăng trưởng là dạng vận dụng thực tế hay được đưa vào đề.",
+      "preview": "Câu 1 3 . Ông X g ửi v ào ngân hàng 60 tri ệu đồng theo h ình th ức l ãi kép. Lãi su ất ngân h àng là 8%/năm. Sau 5 năm ông X ti ếp tục gửi th êm 60 tri ệu đồng nữa. Hỏi sau 10 năm k ể từ lần gửi đầu ti ên ông X đ ến rút to àn b ộ số ti ền gốc v à ti ền l ãi đư ợc l à bao nhiêu? (Bi ết l ãi su ất không thay đổi qua các năm ông X gửi tiền) . A . 217,695 (tri ệu đ ồng) . B. 231,815 (tri ệu đồng) . C. 190,271 (tri ệu đồ"
+    },
+    {
+      "question_number": "15",
+      "page": 46,
+      "topic": "Cấp số nhân",
+      "skill": "Bài toán thực tế lãi kép, tăng trưởng theo cấp số nhân",
+      "exam_frequency": "high",
+      "difficulty_hint": "application",
+      "reason": "Bài toán lãi kép/tăng trưởng là dạng vận dụng thực tế hay được đưa vào đề.",
+      "preview": "Câu 1 5 . M ột ng ư ời gửi 100 tri ệu đồng vào ngân hàng v ới l ãi su ất 7%/năm. Biết rằng nếu không rút tiề n ra kh ỏi ngân hàng thì c ứ sau mỗi năm, số tiền l ãi s ẽ đ ư ợc nhậ p vào v ốn ban đầu để tích l ãi cho n ăm ti ếp theo. Hỏi n gư ời đó phải gửi ít nh ất bao nhi êu năm đ ể nhận đ ư ợc t ổng số tiền c ả vốn ban đ ầu v à lãi nhi ều h ơn 140 tri ệu đ ồng nếu trong khoảng thời gian g ửi ng ư ời đó không tút tiề"
+    },
+    {
+      "question_number": "12",
+      "page": 47,
+      "topic": "Cấp số nhân",
+      "skill": "Bài toán thực tế lãi kép, tăng trưởng theo cấp số nhân",
+      "exam_frequency": "high",
+      "difficulty_hint": "application",
+      "reason": "Bài toán lãi kép/tăng trưởng là dạng vận dụng thực tế hay được đưa vào đề.",
+      "preview": "Câu 12 . Ông A g ửi 200 triệu đồng v ào m ột ngân h àng v ới h ình th ức l ãi kép, v ới l ãi su ất l à 6,5% m ột năm v à lãi su ất không đ ổi trong suốt quá tr ình g ửi. S au 5 năm s ố tiền lãi ( làm tròn đ ến h àng trăm) c ủa ông b ằng bao nhiêu? A. 80 tri ệu đồng . B. 65 tri ệu đồng . C . 74 tri ệu đồng. D. 274 t ri ệu đồng ."
+    },
+    {
+      "question_number": "15",
+      "page": 48,
+      "topic": "Cấp số cộng",
+      "skill": "Tính tổng n số hạng đầu của cấp số cộng",
+      "exam_frequency": "high",
+      "difficulty_hint": "understanding_application",
+      "reason": "Dạng tính tổng S_n là trọng tâm cơ bản của cấp số cộng.",
+      "preview": "Câu 15 . Cho dãy s ố   n u th ỏa m ãn   1 1 2 ; 3 2 2 1 1 n n n u u u n u      v ới n nguyên dương. G ọi n S là t ổng n s ố h ạng đầu ti ên c ủa d ãy s ố đó. Tính 2018 S . A. 2018 4036 4037 S  B. 2018 2019 2018 S  C. 2018 4038 4037 S  D. 2018 1992 1997 S "
+    },
+    {
+      "question_number": "17",
+      "page": 48,
+      "topic": "Cấp số nhân",
+      "skill": "Bài toán thực tế lãi kép, tăng trưởng theo cấp số nhân",
+      "exam_frequency": "high",
+      "difficulty_hint": "application",
+      "reason": "Bài toán lãi kép/tăng trưởng là dạng vận dụng thực tế hay được đưa vào đề.",
+      "preview": "Câu 17 . M ột ng ư ời gửi tiết kiệm v ào ngân hàng v ới l ãi su ất 7,5% / năm. Bi ết rằng nếu không rút tiền ra khỏi ngân hàng thì c ứ sau mỗi năm số tiền l ãi s ẽ đ ư ợc nhập v ào v ốn đ ể tính l ãi ch o nă m ti ếp theo. Hỏi sau ít nhất bao nhiêu năm ngư ời đó thu đ ư ợc cả số tiền gửi ban đầu v à lãi g ấp đôi số ti ền gửi ban đầ u, gi ả định trong kho ả ng th ời gian n ày lãi su ất không thay đổi và ngư ời đó không"
+    },
+    {
+      "question_number": "20",
+      "page": 48,
+      "topic": "Cấp số nhân",
+      "skill": "Bài toán thực tế lãi kép, tăng trưởng theo cấp số nhân",
+      "exam_frequency": "high",
+      "difficulty_hint": "application",
+      "reason": "Bài toán lãi kép/tăng trưởng là dạng vận dụng thực tế hay được đưa vào đề.",
+      "preview": "Câu 20 . M ột bác nông dân vừa bán một con trâu đ ư ợc số tiền l à 32.000.000 . Do chưa c ần d ùng đ ến số tiền n ên bá c nông dân mang toàn b ộ số tiền đó đi gửi tiết kiệm loại kỳ hạn 6 tháng v ào ngân hàng v ới l ãi su ất 5,7% một năm thì sa u 4 năm 6 tháng bác nông dân nh ận đ ư ợ c bao nhiêu ti ền cả vốn lẫn l ãi? A . 41.208.674 đ ồng B. 40.208.000 đ ồng C. 48.416.000 đ ồng D. 52.701.729 đ ồng"
+    },
+    {
+      "question_number": "23",
+      "page": 48,
+      "topic": "Cấp số nhân",
+      "skill": "Bài toán thực tế lãi kép, tăng trưởng theo cấp số nhân",
+      "exam_frequency": "high",
+      "difficulty_hint": "application",
+      "reason": "Bài toán lãi kép/tăng trưởng là dạng vận dụng thực tế hay được đưa vào đề.",
+      "preview": "Câu 23 . B ạ n Hùng trúng tuy ể n và o trư ờ ng đ ạ i h ọ c A nhưng v ì không đ ủ n ộ p h ọ c phí nên Hùng quy ế t đ ị nh vay ngân hàng trong 4 n ăm vay 3000000 đ ồ ng đ ể n ộ p h ọ c phí v ớ i lãi su ấ t 3%/năm. Sau khi t ố t nghi ệ p b ạ n Hùng ph ả i tr ả góp hàn g tháng s ố ti ề n T (không đ ổ i) cùng v ớ i lãi su ấ t 0,25%/tháng tro ng vòng 5 n ăm. S ố ti ề n T hàng tháng mà b ạ n Hùng ph ả i tr ả cho ngân hàng "
+    },
+    {
+      "question_number": "25",
+      "page": 48,
+      "topic": "Cấp số nhân",
+      "skill": "Bài toán thực tế lãi kép, tăng trưởng theo cấp số nhân",
+      "exam_frequency": "high",
+      "difficulty_hint": "application",
+      "reason": "Bài toán lãi kép/tăng trưởng là dạng vận dụng thực tế hay được đưa vào đề.",
+      "preview": "Câu 2 5 . M ột bác nông dân vừa bán m ột co n t râu đư ợc số tiền l à 32.000.000 . Do chưa c ần d ùng đ ến số tiền n ên bác nô ng dân mang toàn b ộ số tiền đó đi gửi tiết kiệm loại kỳ hạn 6 thá ng vào ngân hàng v ới l ãi su ất 5,7% một năm thì sau 4 n ăm 6 tháng bác nông dân nh ận đ ư ợc bao nhi êu ti ền cả v ốn lẫn l ãi ? A . 41.208.674 đ ồn g B. 40.208.000 đ ồng C. 48.416.000 đ ồng D. 52.701.729 đ ồng"
+    },
+    {
+      "question_number": "4",
+      "page": 49,
+      "topic": "Cấp số nhân",
+      "skill": "Bài toán thực tế lãi kép, tăng trưởng theo cấp số nhân",
+      "exam_frequency": "high",
+      "difficulty_hint": "application",
+      "reason": "Bài toán lãi kép/tăng trưởng là dạng vận dụng thực tế hay được đưa vào đề.",
+      "preview": "Câu 4 . M ộ t ngư ờ i đem 100 tri ệ u đ ồ ng đi g ử i ti ế t ki ệ m v ớ i k ỳ h ạ n 6 tháng, m ỗ i tháng lãi su ấ t l à 0,7% s ố ti ề n mà ngư ờ i đó có. H ỏ i sau khi k ế t k ỳ h ạ n, ngư ờ i đó đư ợ c nh ậ n v ề bao nhiêu ti ề n ? A.   5 8 10 0,007 đ ồ ng B.   5 8 10 1 ,007 đ ồ ng C.   5 8 10 1,006 D.   6 8 10 1 ,006"
+    },
+    {
+      "question_number": "8",
+      "page": 49,
+      "topic": "Cấp số nhân",
+      "skill": "Bài toán thực tế lãi kép, tăng trưởng theo cấp số nhân",
+      "exam_frequency": "high",
+      "difficulty_hint": "application",
+      "reason": "Bài toán lãi kép/tăng trưởng là dạng vận dụng thực tế hay được đưa vào đề.",
+      "preview": "Câu 8 . T ỉ l ệ t ă ng d â n s ố h ằ n g n ă m c ủ a m ộ t qu ố c gia X là 0, 2% . N ă m 1998 d â n s ố c ủ a qu ố c gia X là 125500000 ng ư ờ i. H ỏ i sau bao nhiêu n ă m th ì d â n s ố c ủ a qu ố c gia X là 140000000 ng ư ờ i? A. 54 n ă m. B. 6 n ă m . C . 55 n ă m . D. 5 n ă m ."
+    },
+    {
+      "question_number": "11",
+      "page": 49,
+      "topic": "Cấp số nhân",
+      "skill": "Bài toán thực tế lãi kép, tăng trưởng theo cấp số nhân",
+      "exam_frequency": "high",
+      "difficulty_hint": "application",
+      "reason": "Bài toán lãi kép/tăng trưởng là dạng vận dụng thực tế hay được đưa vào đề.",
+      "preview": "Câu 1 1 . Ông X g ử i ti ế t ki ệ m 100 tri ệ u đ ồ ng the o hình th ứ c lãi kép v ớ i lãi su ấ t không đ ổ i 0,5%/tháng. Do nhu c ầ u c ầ n chi tiêu nên c ứ m ỗ i tháng sau đó, ông rút ra 1 tri ệ u đ ồ ng t ừ s ố ti ề n c ủ a mì nh. H ỏ i c ứ như v ậ y thì tháng cu ố i cùng ông X rút n ố t đư ợ c bao nhiêu ti ề n ? A. 400879 đ ồ ng B. 975781 đ ồ ng C. 4 9400 đ ồ ng D. 970926 đ ồ ng"
+    },
+    {
+      "question_number": "25",
+      "page": 52,
+      "topic": "Cấp số nhân",
+      "skill": "Bài toán thực tế lãi kép, tăng trưởng theo cấp số nhân",
+      "exam_frequency": "high",
+      "difficulty_hint": "application",
+      "reason": "Bài toán lãi kép/tăng trưởng là dạng vận dụng thực tế hay được đưa vào đề.",
+      "preview": "Câu 25 . M ột bác nông dân c ó s ố ti ền 20.000.000 đ ồn g. Bác dùng s ố tiền đó gửi ngân hàng lo ại k ì h ạn 6 tháng v ới l ãi su ất 8, 5% trên m ột năm t hì sau 5 năm 8 tháng bác nh ận đ ư ợc số tiền cả gốc l ẫn l ãi là bao nhiêu? Bi ết r ằng bác không rút cả gốc lẫn lãi tr ong các đ ịnh k ì trư ớc đ ó và n ếu rút trư ớc k ì h ạn th ì ngân hàng tr ả l ãi su ất theo lo ại không k ì h ạn 0, 01% trên m ột ng ày. . A ."
+    },
+    {
+      "question_number": "31",
+      "page": 54,
+      "topic": "Cấp số nhân",
+      "skill": "Bài toán thực tế lãi kép, tăng trưởng theo cấp số nhân",
+      "exam_frequency": "high",
+      "difficulty_hint": "application",
+      "reason": "Bài toán lãi kép/tăng trưởng là dạng vận dụng thực tế hay được đưa vào đề.",
+      "preview": "Câu 31 . M ột ng ư ời gửi 200 tri ệu đồng v ào m ột ngân h àng v ới l ãi su ất 0, 3% / tháng. Bi ết rằng nếu không rút tiền khỏi ngân hàng thì c ứ sau mỗi tháng, số tiền l ãi s ẽ đ ư ợc nhập v ào v ốn ban đầu để tính l ãi cho tháng ti ếp theo. Hỏi s au ít nh ất sau bao nhiêu tháng ngư ời đó thu đ ư ợc (cả số tiền gửi ban đầu v à s ố tiền l ãi) h ơn 225 tri ệu đồng? (Giả định trong khoảng th ời gian n ày lãi su ất khô"
+    },
+    {
+      "question_number": "8",
+      "page": 61,
+      "topic": "Cấp số cộng",
+      "skill": "Tính tổng n số hạng đầu của cấp số cộng",
+      "exam_frequency": "high",
+      "difficulty_hint": "understanding_application",
+      "reason": "Dạng tính tổng S_n là trọng tâm cơ bản của cấp số cộng.",
+      "preview": "Câu 8 . Cho c ấp số cộng có tổng n s ố hạng đầu l à 2 3 4 n S n n   , * n   . Giá tr ị của số hạng thứ 10 c ủa cấp số c ộng l à A. 10 55 u  . B. 10 67 u  . C. 10 61 u  . D. 10 59. u "
+    },
+    {
+      "question_number": "28",
+      "page": 62,
+      "topic": "Cấp số cộng",
+      "skill": "Tính tổng n số hạng đầu của cấp số cộng",
+      "exam_frequency": "high",
+      "difficulty_hint": "understanding_application",
+      "reason": "Dạng tính tổng S_n là trọng tâm cơ bản của cấp số cộng.",
+      "preview": "Câu 2 8 . T ổ ng n s ố h ạ ng đ ầ u ti ên c ủ a c ấ p s ố c ộ ng b ằ ng n ử a t ổ ng n s ố h ạ ng ti ế p theo. T ính 3 n n S S . A.4 B. 3 C. 2 D. – 5"
+    }
+  ]
+}

@@ -19,7 +19,7 @@ export function AuthShell({ mode, title, description, form, statusMessage }: Aut
       <div className={`legacy-auth-container ${isLogin ? 'mode-login' : 'mode-register'}`}>
         <section className="legacy-auth-form-panel">
           <div className="legacy-auth-brand">THPTQG AI</div>
-          <div className="legacy-auth-mark">{isLogin ? 'Dang nhap' : 'Dang ky'}</div>
+          <div className="legacy-auth-mark">{isLogin ? 'Đăng nhập' : 'Đăng ký'}</div>
           <h1 className="legacy-auth-title">{title}</h1>
           <p className="legacy-auth-description">{description}</p>
           {form}
@@ -28,15 +28,15 @@ export function AuthShell({ mode, title, description, form, statusMessage }: Aut
 
         <aside className="legacy-auth-overlay">
           <div className="legacy-auth-overlay-inner">
-            <div className="legacy-auth-overlay-badge">Phien ban web</div>
+            <div className="legacy-auth-overlay-badge">Phiên bản web</div>
             <h2>{isLogin ? 'Chao mung tro lai' : 'Bat dau ngay'}</h2>
             <p>
               {isLogin
-                ? 'Dang nhap de tiep tuc lam bai, xem lich su va dong bo tien do hoc tap voi Supabase.'
-                : 'Tao tai khoan de bat dau luong on tap, lam de va nhan giai thich AI tren web.'}
+                ? 'Đăng nhập để tiếp tục làm bài, xem lịch sử và đồng bộ tiến độ học tập với Supabase.'
+                : 'Tạo tài khoản để bắt đầu luồng ôn tập, làm đề và nhận giải thích AI trên web.'}
             </p>
             <Link className="legacy-auth-switch" to={isLogin ? '/register' : '/login'}>
-              {isLogin ? 'Tao tai khoan' : 'Ve dang nhap'}
+              {isLogin ? 'Tạo tài khoản' : 'Về đăng nhập'}
             </Link>
           </div>
         </aside>

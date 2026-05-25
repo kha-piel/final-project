@@ -81,7 +81,7 @@ export function AuthBootstrap({ children }: AuthBootstrapProps) {
         }
 
         finishAsAnonymous(
-          error instanceof Error ? error.message : 'Khong the khoi tao auth session tu local cache.',
+          error instanceof Error ? error.message : 'Không thể khởi tạo auth session từ local cache.',
         )
       })
 
@@ -105,7 +105,7 @@ export function AuthBootstrap({ children }: AuthBootstrapProps) {
           return
         }
 
-        finishAsAnonymous(error instanceof Error ? error.message : 'Khong the khoi tao auth session.')
+        finishAsAnonymous(error instanceof Error ? error.message : 'Không thể khởi tạo auth session.')
       })
 
     return () => {

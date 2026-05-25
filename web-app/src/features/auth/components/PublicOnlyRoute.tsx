@@ -10,7 +10,7 @@ export function PublicOnlyRoute({ children }: PublicOnlyRouteProps) {
   const status = useAuthSessionStore((state) => state.status)
 
   if (status === 'booting') {
-    return <RouteLoadingCard message="Dang kiem tra auth session..." />
+    return <RouteLoadingCard message="Đang kiểm tra auth session..." />
   }
 
   if (status === 'authenticated') {

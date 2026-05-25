@@ -173,13 +173,52 @@ export const knowledgeReviewTopics: KnowledgeReviewTopic[] = [
     key: 'mu-logarit-cap-so',
     title: 'Mũ, logarit, cấp số và giới hạn',
     summary: 'Ôn phương trình mũ-logarit, cấp số cộng/nhân và giới hạn dãy số.',
-    aliases: ['mu', 'logarit', 'phuong trinh mu', 'phuong trinh logarit', 'cap so cong', 'cap so nhan', 'gioi han day so'],
+    aliases: ['mu', 'logarit', 'phuong trinh mu', 'phuong trinh logarit', 'cap so cong', 'cap so nhan', 'gioi han day so', 'day so'],
     sourcePaths: [
       'Toan_Hoc/1_Ham_So/7_phuong_trinh_mu_va_logarit.md',
       'Toan_Hoc/1_Ham_So/8_cap_so_cong_va_cap_so_nhan.md',
+      'Toan_Hoc/1_Ham_So/8_cap_so_cong_va_cap_so_nhan_exam_focus.md',
       'Toan_Hoc/5_Gioi_Han_Day_So/1_gioi_han_day_so.md',
     ],
     lessons: [
+      {
+        lessonKey: 'cap-so-trong-tam-thi',
+        title: 'Trọng tâm thi: cấp số cộng và cấp số nhân',
+        estimatedMinutes: 14,
+        content: `
+## Học trước vì hay xuất hiện
+
+### Cấp số cộng
+
+- Nhận biết dãy là cấp số cộng.
+- Tìm công sai $d$.
+- Tính số hạng tổng quát: $u_n=u_1+(n-1)d$.
+- Tính tổng $n$ số hạng đầu: $S_n=\\frac{n(u_1+u_n)}{2}$ hoặc $S_n=\\frac{n[2u_1+(n-1)d]}{2}$.
+- Tìm $n$ khi biết $u_n$ hoặc $S_n$.
+
+### Cấp số nhân
+
+- Nhận biết dãy là cấp số nhân.
+- Tìm công bội $q$.
+- Tính số hạng tổng quát: $u_n=u_1q^{n-1}$.
+- Tính tổng $n$ số hạng đầu: $S_n=\\frac{u_1(1-q^n)}{1-q}$ với $q \\ne 1$.
+- Bài toán thực tế: lãi kép, tăng trưởng, gửi tiền, dân số.
+
+## Ôn sau nếu còn yếu
+
+- Dãy số tăng/giảm.
+- Dãy bị chặn, chặn trên, chặn dưới.
+- Dãy truy hồi.
+- Tìm số hạng nguyên, số hạng chính phương.
+
+## Cách lọc câu khi luyện
+
+1. Ưu tiên câu nhận biết cấp số, tìm $d$, tìm $q$.
+2. Sau đó luyện câu tính $u_n$, $S_n$.
+3. Mức vận dụng mới thêm bài lãi kép/tăng trưởng.
+4. Câu dãy số thuần túy chỉ dùng để bổ trợ, không trộn quá nhiều vào bài ôn chính.
+`,
+      },
       {
         lessonKey: 'mu-log-cap-so',
         title: 'Mũ, logarit và cấp số',

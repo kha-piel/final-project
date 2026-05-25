@@ -20,7 +20,7 @@ type WeaknessAnalysisItem = {
   correctAnswer: string
 }
 
-const AUTO_WRONG_PROMPT = 'Hoc sinh chon sai cau nay. Hay giai thich giup toi!'
+const AUTO_WRONG_PROMPT = 'Học sinh chọn sai câu này. Hãy giải thích giúp tôi!'
 
 export async function requestAutoExplanation(input: {
   questionContent: string
@@ -70,7 +70,7 @@ export async function requestWeaknessAnalysis(items: WeaknessAnalysisItem[]) {
 
   if (!response.ok) {
     const errorText = await response.text()
-    throw new Error(errorText || `AI backend tra ve loi HTTP ${response.status}.`)
+    throw new Error(errorText || `AI backend trả về lỗi HTTP ${response.status}.`)
   }
 
   const data = (await response.json()) as ExplainResponse
@@ -93,7 +93,7 @@ async function requestExplanation(input: ExplainRequest) {
 
   if (!response.ok) {
     const errorText = await response.text()
-    throw new Error(errorText || `AI backend tra ve loi HTTP ${response.status}.`)
+    throw new Error(errorText || `AI backend trả về lỗi HTTP ${response.status}.`)
   }
 
   const data = (await response.json()) as ExplainResponse
@@ -103,7 +103,7 @@ async function requestExplanation(input: ExplainRequest) {
 function buildStudentAnswerPayload(prompt: string, selectedAnswer: string, systemPrompt: boolean) {
   const lines: string[] = []
   lines.push(`MODE: ${systemPrompt ? 'auto_explain' : 'follow_up'}`)
-  lines.push(`SELECTED_ANSWER: ${selectedAnswer || 'Chua chon'}`)
+  lines.push(`SELECTED_ANSWER: ${selectedAnswer || 'Chưa chọn'}`)
   lines.push(`MESSAGE: ${prompt}`)
   return lines.join('\n')
 }
@@ -119,7 +119,7 @@ async function callAiEndpoint(path: string, payload: unknown) {
     })
   } catch {
     throw new Error(
-      `Khong ket noi duoc toi AI backend (${env.aiApiBaseUrl}). Kiem tra ai_service co dang chay khong.`,
+      `Không kết nối được tới AI backend (${env.aiApiBaseUrl}). Kiểm tra ai_service có đang chạy không.`,
     )
   }
 }

@@ -14,25 +14,25 @@ import { useAuthSessionStore } from '../../features/auth/store/auth-session-stor
 
 const navigationItems = [
   {
-    label: 'Lam de thi thu',
+    label: 'Làm đề thi thử',
     to: '/practice',
     icon: FileText,
     match: ['/practice'],
   },
   {
-    label: 'On tap kien thuc',
+    label: 'Ôn tập kiến thức',
     to: '/dashboard',
     icon: BookOpen,
     match: ['/dashboard', '/exam', '/review'],
   },
   {
-    label: 'Lich su lam bai',
+    label: 'Lịch sử làm bài',
     to: '/history',
     icon: Clock3,
     match: ['/history'],
   },
   {
-    label: 'Ho so hoc sinh',
+    label: 'Hồ sơ học sinh',
     to: '/profile',
     icon: User,
     match: ['/profile', '/home'],
@@ -56,7 +56,7 @@ export function DashboardLayout() {
       await logout()
       navigate('/login', { replace: true })
     } catch (error) {
-      setLogoutError(error instanceof Error ? error.message : 'Dang xuat that bai.')
+      setLogoutError(error instanceof Error ? error.message : 'Đăng xuất thất bại.')
     }
   }
 
@@ -68,7 +68,7 @@ export function DashboardLayout() {
             currentPath={location.pathname}
             logoutError={logoutError}
             onLogout={handleLogout}
-            userLabel={user?.fullName || user?.username || user?.email || 'Hoc sinh'}
+            userLabel={user?.fullName || user?.username || user?.email || 'Học sinh'}
           />
         </aside>
 
@@ -82,7 +82,7 @@ export function DashboardLayout() {
             </NavLink>
 
             <button
-              aria-label={isMobileMenuOpen ? 'Dong menu' : 'Mo menu'}
+              aria-label={isMobileMenuOpen ? 'Đóng menu' : 'Mở menu'}
               className="rounded-2xl border border-slate-200 bg-slate-50 p-2 text-slate-700 transition active:scale-[0.98]"
               onClick={() => setIsMobileMenuOpen((value) => !value)}
               type="button"
@@ -101,7 +101,7 @@ export function DashboardLayout() {
                   currentPath={location.pathname}
                   logoutError={logoutError}
                   onLogout={handleLogout}
-                  userLabel={user?.fullName || user?.username || user?.email || 'Hoc sinh'}
+                  userLabel={user?.fullName || user?.username || user?.email || 'Học sinh'}
                 />
               </aside>
             </div>
@@ -139,13 +139,13 @@ function SidebarContent({
           THPTQG AI
         </NavLink>
         <p className="mt-3 max-w-[22ch] text-sm leading-6 text-slate-500">
-          Luong hoc tap tren web duoc sap xep gon, ro va san sang mo rong len mobile.
+          Luồng học tập trên web được sắp xếp gọn, rõ và sẵn sàng mở rộng lên mobile.
         </p>
       </div>
 
       <div className="mb-6 rounded-3xl border border-slate-200 bg-slate-50 p-4">
         <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400">
-          Tai khoan dang dung
+          Tài khoản đang dùng
         </div>
         <div className="mt-2 text-sm font-semibold text-slate-800">{userLabel}</div>
       </div>
@@ -198,7 +198,7 @@ function SidebarContent({
           <span className="flex h-10 w-10 items-center justify-center rounded-2xl border border-rose-100 bg-rose-50/70">
             <LogOut className="h-4.5 w-4.5" strokeWidth={1.8} />
           </span>
-          <span>Dang xuat</span>
+          <span>Đăng xuất</span>
         </button>
       </div>
     </div>

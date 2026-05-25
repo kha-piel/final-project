@@ -3,10 +3,10 @@ import type { SchoolExamPaper } from '../types/school-exam-types'
 export const mockSchoolExams: SchoolExamPaper[] = [
   {
     examId: 'cau-giay-pdf-2025',
-    examTitle: 'De khao sat Toan 12 nam 2025-2026',
-    schoolName: 'THPT Cau Giay',
-    city: 'Ha Noi',
-    subjectName: 'Toan hoc',
+    examTitle: 'Đề khảo sát Toán 12 năm 2025-2026',
+    schoolName: 'THPT Cầu Giấy',
+    city: 'Hà Nội',
+    subjectName: 'Toán học',
     year: 2025,
     durationMinutes: 50,
     pdfUrl: '/mock-pdfs/de-khao-sat-toan-12-nam-2025-2026-truong-thpt-cau-giay-ha-noi.pdf',
@@ -15,7 +15,7 @@ export const mockSchoolExams: SchoolExamPaper[] = [
       {
         questionId: 'cg-mc-01',
         questionNumber: 1,
-        prompt: 'Cho hinh hop ABCD.A\'B\'C\'D\'. Phat bieu nao sau day dung?',
+        prompt: 'Cho hình hộp ABCD.A\'B\'C\'D\'. Phát biểu nào sau đây đúng?',
         options: [
           { optionId: 'A', label: 'A', content: 'AA\' + A\'B\' + A\'D\' = A\'C\'' },
           { optionId: 'B', label: 'B', content: 'AA\' + A\'B\' + A\'D\' = CA\'' },
@@ -27,7 +27,7 @@ export const mockSchoolExams: SchoolExamPaper[] = [
       {
         questionId: 'cg-mc-02',
         questionNumber: 2,
-        prompt: 'Trong khong gian Oxyz, mot vecto phap tuyen cua mat phang 2x + 3y + z - 1 = 0 la',
+        prompt: 'Trong không gian Oxyz, một vectơ pháp tuyến của mặt phẳng 2x + 3y + z - 1 = 0 là',
         options: [
           { optionId: 'A', label: 'A', content: '(1; -2; 3)' },
           { optionId: 'B', label: 'B', content: '(1; 2; 3)' },
@@ -39,7 +39,7 @@ export const mockSchoolExams: SchoolExamPaper[] = [
       {
         questionId: 'cg-mc-03',
         questionNumber: 3,
-        prompt: 'Tap nghiem cua bat phuong trinh log3(x + 1) <= 2 la',
+        prompt: 'Tập nghiệm của bất phương trình log3(x + 1) <= 2 là',
         options: [
           { optionId: 'A', label: 'A', content: '(1; 9]' },
           { optionId: 'B', label: 'B', content: '(-inf; 9]' },
@@ -51,7 +51,7 @@ export const mockSchoolExams: SchoolExamPaper[] = [
       {
         questionId: 'cg-mc-04',
         questionNumber: 4,
-        prompt: 'Cho khoi lang tru co dien tich day 7a^2 va chieu cao 2a. The tich bang',
+        prompt: 'Cho khối lăng trụ có diện tích đáy 7a^2 và chiều cao 2a. Thể tích bằng',
         options: [
           { optionId: 'A', label: 'A', content: '7a^3' },
           { optionId: 'B', label: 'B', content: '14a^3 / 3' },
@@ -63,7 +63,7 @@ export const mockSchoolExams: SchoolExamPaper[] = [
       {
         questionId: 'cg-mc-05',
         questionNumber: 5,
-        prompt: 'Cho hinh chop S.ABCD co day ABCD la hinh binh hanh tam O. Mat phang nao song song voi (MNO)?',
+        prompt: 'Cho hình chóp S.ABCD có đáy ABCD là hình bình hành tâm O. Mặt phẳng nào song song với (MNO)?',
         options: [
           { optionId: 'A', label: 'A', content: '(SBC)' },
           { optionId: 'B', label: 'B', content: '(SCD)' },
@@ -75,7 +75,7 @@ export const mockSchoolExams: SchoolExamPaper[] = [
       {
         questionId: 'cg-mc-06',
         questionNumber: 6,
-        prompt: 'Ho nguyen ham cua ham so f(x) = sin x + 4x^3 la',
+        prompt: 'Họ nguyên hàm của hàm số f(x) = sin x + 4x^3 là',
         options: [
           { optionId: 'A', label: 'A', content: '-cos x + x^4 + C' },
           { optionId: 'B', label: 'B', content: 'cos x + x^4 + C' },
@@ -87,7 +87,7 @@ export const mockSchoolExams: SchoolExamPaper[] = [
       {
         questionId: 'cg-mc-07',
         questionNumber: 7,
-        prompt: 'Tap nghiem cua phuong trinh sin x = 0 la',
+        prompt: 'Tập nghiệm của phương trình sin x = 0 là',
         options: [
           { optionId: 'A', label: 'A', content: 'x = pi/2 + k2pi' },
           { optionId: 'B', label: 'B', content: 'x = kpi' },
@@ -99,7 +99,7 @@ export const mockSchoolExams: SchoolExamPaper[] = [
       {
         questionId: 'cg-mc-08',
         questionNumber: 8,
-        prompt: 'Chon ngau nhien hai so khac nhau tu 25 so nguyen duong dau tien. Xac suat tong la so le bang',
+        prompt: 'Chọn ngẫu nhiên hai số khác nhau từ 25 số nguyên dương đầu tiên. Xác suất tổng là số lẻ bằng',
         options: [
           { optionId: 'A', label: 'A', content: '12/25' },
           { optionId: 'B', label: 'B', content: '11/25' },
@@ -111,7 +111,7 @@ export const mockSchoolExams: SchoolExamPaper[] = [
       {
         questionId: 'cg-mc-09',
         questionNumber: 9,
-        prompt: 'Menh de dung cho the tich khoi tron xoay sinh ra khi quay H quanh truc Ox la',
+        prompt: 'Mệnh đề đúng cho thể tích khối tròn xoay sinh ra khi quay H quanh trục Ox là',
         options: [
           { optionId: 'A', label: 'A', content: 'V = pi integral (x^2+3) dx' },
           { optionId: 'B', label: 'B', content: 'V = integral (x^2+3) dx' },
@@ -123,7 +123,7 @@ export const mockSchoolExams: SchoolExamPaper[] = [
       {
         questionId: 'cg-mc-10',
         questionNumber: 10,
-        prompt: 'Duong tiem can ngang cua do thi trong hinh la',
+        prompt: 'Đường tiệm cận ngang của đồ thị trong hình là',
         options: [
           { optionId: 'A', label: 'A', content: 'x = 1' },
           { optionId: 'B', label: 'B', content: 'x = -1' },
@@ -135,7 +135,7 @@ export const mockSchoolExams: SchoolExamPaper[] = [
       {
         questionId: 'cg-mc-11',
         questionNumber: 11,
-        prompt: 'Gia tri cua tich phan tu 0 den 1 cua 2x dx bang',
+        prompt: 'Giá trị của tích phân từ 0 đến 1 của 2x dx bằng',
         options: [
           { optionId: 'A', label: 'A', content: '0' },
           { optionId: 'B', label: 'B', content: '1' },
@@ -147,7 +147,7 @@ export const mockSchoolExams: SchoolExamPaper[] = [
       {
         questionId: 'cg-mc-12',
         questionNumber: 12,
-        prompt: 'Gia tri lon nhat cua y = -x^2 + 4x - 1 bang',
+        prompt: 'Giá trị lớn nhất của y = -x^2 + 4x - 1 bằng',
         options: [
           { optionId: 'A', label: 'A', content: '2' },
           { optionId: 'B', label: 'B', content: '3' },
@@ -161,45 +161,45 @@ export const mockSchoolExams: SchoolExamPaper[] = [
       {
         questionId: 'cg-tf-01',
         questionNumber: 13,
-        prompt: 'Xet ham so y = x^2 - 2x + 1.',
+        prompt: 'Xét hàm số y = x^2 - 2x + 1.',
         statements: [
-          { statementId: 'a', label: 'a', content: 'Ham so co dinh tai x = 1.', isCorrect: false },
-          { statementId: 'b', label: 'b', content: 'Gia tri nho nhat cua ham so bang 0.', isCorrect: true },
-          { statementId: 'c', label: 'c', content: 'Do thi co truc doi xung x = 1.', isCorrect: true },
-          { statementId: 'd', label: 'd', content: 'Ham so nghich bien tren (1; +inf).', isCorrect: false },
+          { statementId: 'a', label: 'a', content: 'Hàm số có đỉnh tại x = 1.', isCorrect: false },
+          { statementId: 'b', label: 'b', content: 'Giá trị nhỏ nhất của hàm số bằng 0.', isCorrect: true },
+          { statementId: 'c', label: 'c', content: 'Đồ thị có trục đối xứng x = 1.', isCorrect: true },
+          { statementId: 'd', label: 'd', content: 'Hàm số nghịch biến trên (1; +inf).', isCorrect: false },
         ],
       },
       {
         questionId: 'cg-tf-02',
         questionNumber: 14,
-        prompt: 'Cho cap so nhan (un) voi u1 = 3, q = 2.',
+        prompt: 'Cho cấp số nhân (un) với u1 = 3, q = 2.',
         statements: [
           { statementId: 'a', label: 'a', content: 'u2 = 6.', isCorrect: true },
           { statementId: 'b', label: 'b', content: 'u4 = 24.', isCorrect: true },
-          { statementId: 'c', label: 'c', content: 'Cong boi cua day la 3.', isCorrect: false },
-          { statementId: 'd', label: 'd', content: 'Tong 3 so hang dau bang 21.', isCorrect: true },
+          { statementId: 'c', label: 'c', content: 'Công bội của dãy là 3.', isCorrect: false },
+          { statementId: 'd', label: 'd', content: 'Tổng 3 số hạng đầu bằng 21.', isCorrect: true },
         ],
       },
       {
         questionId: 'cg-tf-03',
         questionNumber: 15,
-        prompt: 'Xet ham so y = (x - 1) / (x + 1).',
+        prompt: 'Xét hàm số y = (x - 1) / (x + 1).',
         statements: [
-          { statementId: 'a', label: 'a', content: 'Tap xac dinh la R tru -1.', isCorrect: true },
-          { statementId: 'b', label: 'b', content: 'Do thi co tiem can ngang y = 1.', isCorrect: true },
-          { statementId: 'c', label: 'c', content: 'Ham so dong bien tren tung khoang xac dinh.', isCorrect: true },
-          { statementId: 'd', label: 'd', content: 'Do thi di qua diem (0;1).', isCorrect: false },
+          { statementId: 'a', label: 'a', content: 'Tập xác định là R trừ -1.', isCorrect: true },
+          { statementId: 'b', label: 'b', content: 'Đồ thị có tiệm cận ngang y = 1.', isCorrect: true },
+          { statementId: 'c', label: 'c', content: 'Hàm số đồng biến trên từng khoảng xác định.', isCorrect: true },
+          { statementId: 'd', label: 'd', content: 'Đồ thị đi qua điểm (0;1).', isCorrect: false },
         ],
       },
       {
         questionId: 'cg-tf-04',
         questionNumber: 16,
-        prompt: 'Xet bieu thuc P = log3(9x).',
+        prompt: 'Xét biểu thức P = log3(9x).',
         statements: [
-          { statementId: 'a', label: 'a', content: 'Dieu kien xac dinh la x > 0.', isCorrect: true },
+          { statementId: 'a', label: 'a', content: 'Điều kiện xác định là x > 0.', isCorrect: true },
           { statementId: 'b', label: 'b', content: 'P = 2 + log3(x).', isCorrect: true },
           { statementId: 'c', label: 'c', content: 'P = log3(9) . log3(x).', isCorrect: false },
-          { statementId: 'd', label: 'd', content: 'Neu x = 1/9 thi P = 0.', isCorrect: true },
+          { statementId: 'd', label: 'd', content: 'Nếu x = 1/9 thì P = 0.', isCorrect: true },
         ],
       },
     ],
@@ -207,37 +207,37 @@ export const mockSchoolExams: SchoolExamPaper[] = [
       {
         questionId: 'cg-sa-01',
         questionNumber: 17,
-        prompt: 'Tinh dao ham cua ham so y = 5x^2 tai x = 1.',
+        prompt: 'Tính đạo hàm của hàm số y = 5x^2 tại x = 1.',
         acceptedResponses: ['10'],
       },
       {
         questionId: 'cg-sa-02',
         questionNumber: 18,
-        prompt: 'Tinh tong cac nghiem cua phuong trinh x^2 - 5x + 6 = 0.',
+        prompt: 'Tính tổng các nghiệm của phương trình x^2 - 5x + 6 = 0.',
         acceptedResponses: ['5'],
       },
       {
         questionId: 'cg-sa-03',
         questionNumber: 19,
-        prompt: 'Cho hinh hop chu nhat co kich thuoc 2, 3, 4. Tinh the tich.',
+        prompt: 'Cho hình hộp chữ nhật có kích thước 2, 3, 4. Tính thể tích.',
         acceptedResponses: ['24'],
       },
       {
         questionId: 'cg-sa-04',
         questionNumber: 20,
-        prompt: 'Tinh gia tri cua C(5,2).',
+        prompt: 'Tính giá trị của C(5,2).',
         acceptedResponses: ['10'],
       },
       {
         questionId: 'cg-sa-05',
         questionNumber: 21,
-        prompt: 'Giai phuong trinh 2^x = 16. Nhap gia tri x.',
+        prompt: 'Giải phương trình 2^x = 16. Nhập giá trị x.',
         acceptedResponses: ['4'],
       },
       {
         questionId: 'cg-sa-06',
         questionNumber: 22,
-        prompt: 'Gia tri cuc tieu cua ham so y = x^2 - 4x + 7 bang bao nhieu?',
+        prompt: 'Giá trị cực tiểu của hàm số y = x^2 - 4x + 7 bằng bao nhiêu?',
         acceptedResponses: ['3'],
       },
     ],

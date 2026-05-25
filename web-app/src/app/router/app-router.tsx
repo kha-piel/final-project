@@ -163,7 +163,7 @@ function RouteLoading() {
         boxShadow: '0 12px 28px rgba(18, 52, 77, 0.06)',
       }}
     >
-      Dang tai du lieu...
+      Đang tải du lieu...
     </div>
   )
 }

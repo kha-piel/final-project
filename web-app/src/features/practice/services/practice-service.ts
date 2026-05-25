@@ -84,7 +84,7 @@ export async function createPracticeExamSession(input: {
 }): Promise<ExamDraftSession> {
   const blueprint = practiceBlueprints.find((item) => item.blueprintId === input.blueprintId)
   if (!blueprint) {
-    throw new Error('Khong tim thay blueprint de thi thu.')
+    throw new Error('Không tìm thấy blueprint đề thi thử.')
   }
 
   const questionBank = await loadPracticeQuestionBank(input.subjectId)
@@ -96,7 +96,7 @@ export async function createPracticeExamSession(input: {
 
   const dominantLevel = resolveDominantLevel(blueprint)
   const sessionId = crypto.randomUUID()
-  const preferredSchoolLabel = input.preferredSchoolName?.trim() || 'tong hop nhieu truong'
+  const preferredSchoolLabel = input.preferredSchoolName?.trim() || 'tổng hợp nhieu truong'
 
   return {
     sessionId,
@@ -104,7 +104,7 @@ export async function createPracticeExamSession(input: {
     subjectId: input.subjectId,
     subjectName: input.subjectName,
     topicId: 'practice-mock',
-    topicName: 'Thi thu tong hop',
+    topicName: 'Thi thử tổng hợp',
     difficultyLevel: dominantLevel,
     difficultyLabel: 'Phan bo 4 muc theo blueprint',
     durationMinutes: blueprint.durationMinutes,
@@ -166,7 +166,7 @@ function buildBlueprintQuestions(input: {
 
       if (picked.length < neededCount) {
         throw new Error(
-          `Kho cau hoi hien chi co ${picked.length}/${neededCount} cau ${section.questionType} cho muc ${levelKey}.`,
+          `Kho câu hỏi hien chi co ${picked.length}/${neededCount} câu ${section.questionType} cho muc ${levelKey}.`,
         )
       }
 
@@ -306,7 +306,7 @@ function mapSchoolExamQuestionToPracticeQuestion(
     questionId: question.questionId,
     topicId: buildTopicId(question),
     subjectId,
-    subjectName: 'Toan hoc',
+    subjectName: 'Toán học',
     level: question.difficultyLevel,
     questionType: question.questionType,
     explanation: null,

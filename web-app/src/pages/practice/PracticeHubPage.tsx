@@ -11,7 +11,7 @@ import { fetchSchoolExamCatalog } from '../../features/practice/services/school-
 import type { PracticeExamCatalogItem } from '../../features/practice/types/practice-types'
 
 const SUBJECT_ID = 'TOAN'
-const SUBJECT_NAME = 'Toan hoc'
+const SUBJECT_NAME = 'Toán học'
 
 export function PracticeHubPage() {
   const navigate = useNavigate()
@@ -47,7 +47,7 @@ export function PracticeHubPage() {
       .catch((error: unknown) => {
         if (isMounted) {
           setCatalogErrorMessage(
-            error instanceof Error ? error.message : 'Khong the tai danh sach de truong.',
+            error instanceof Error ? error.message : 'Không thể tải danh sách đề trường.',
           )
         }
       })
@@ -132,7 +132,7 @@ export function PracticeHubPage() {
       createSession(session)
       navigate(`/exam/${session.sessionId}`)
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : 'Khong the tao de thi thu.')
+      setErrorMessage(error instanceof Error ? error.message : 'Không thể tạo đề thi thử.')
     }
   }
 
@@ -145,18 +145,18 @@ export function PracticeHubPage() {
         <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
           <div>
             <h1 className="max-w-3xl text-4xl font-extrabold tracking-tight text-slate-950 md:text-5xl">
-              Tim de theo truong va tao de thi thu ngau nhien theo dung khung dang bai.
+              Tìm đề theo trường và tạo đề thi thử ngẫu nhiên theo đúng khung dạng bài.
             </h1>
             <p className="mt-4 max-w-2xl text-base leading-7 text-slate-700">
-              De truong duoc doc tu Supabase kem PDF, ma de va answer key. Phan tao de tong hop van
-              dung blueprint local de sinh session luyen tap nhanh.
+              Đề trường được đọc từ Supabase kèm PDF, mã đề và answer key. Phần tạo đề tổng hợp vẫn
+              dùng blueprint local để sinh session luyện tập nhanh.
             </p>
           </div>
 
           <div className="grid gap-3 rounded-[28px] border border-white/70 bg-white/70 p-5 backdrop-blur">
-            <StatCard label="De truong" value={isLoadingCatalog ? '...' : `${catalogItemsRaw.length}`} />
-            <StatCard label="Tong cau hoi that" value={isLoadingQuestionBank ? '...' : `${bankOverview.totalQuestions}`} />
-            <StatCard label="So truong nguon" value={isLoadingQuestionBank ? '...' : `${bankOverview.schools}`} />
+            <StatCard label="Đề trường" value={isLoadingCatalog ? '...' : `${catalogItemsRaw.length}`} />
+            <StatCard label="Tổng câu hỏi thật" value={isLoadingQuestionBank ? '...' : `${bankOverview.totalQuestions}`} />
+            <StatCard label="Số trường nguon" value={isLoadingQuestionBank ? '...' : `${bankOverview.schools}`} />
           </div>
         </div>
       </div>
@@ -166,12 +166,12 @@ export function PracticeHubPage() {
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
               <div className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
-                Thu vien de truong
+                Thư viện đề trường
               </div>
-              <h2 className="mt-2 text-2xl font-bold text-slate-950">Tim kiem de theo truong</h2>
+              <h2 className="mt-2 text-2xl font-bold text-slate-950">Tìm kiếm đề theo trường</h2>
             </div>
             <div className="rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-medium text-slate-600">
-              {catalogItems.length} de tim thay
+              {catalogItems.length} đề tìm thấy
             </div>
           </div>
 
@@ -179,7 +179,7 @@ export function PracticeHubPage() {
             <input
               className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-sky-400 focus:bg-white"
               onChange={(event) => setKeyword(event.target.value)}
-              placeholder="Tim theo ten truong, ten de, tag..."
+              placeholder="Tìm theo tên trường, tên đề, tag..."
               value={keyword}
             />
             <select
@@ -189,7 +189,7 @@ export function PracticeHubPage() {
               }
               value={yearFilter}
             >
-              <option value="all">Tat ca nam</option>
+              <option value="all">Tất cả nam</option>
               {years.map((year) => (
                 <option key={year} value={year}>
                   {year}
@@ -207,11 +207,11 @@ export function PracticeHubPage() {
 
             {isLoadingCatalog ? (
               <div className="rounded-[24px] border border-slate-200 bg-slate-50 px-5 py-4 text-sm text-slate-600">
-                Dang tai danh sach de truong...
+                Đang tải danh sach đề trường...
               </div>
             ) : catalogItems.length === 0 ? (
               <div className="rounded-[24px] border border-slate-200 bg-slate-50 px-5 py-4 text-sm text-slate-600">
-                Chua co de truong nao trong Supabase.
+                Chưa có đề trường nao trong Supabase.
               </div>
             ) : (
               catalogItems.map((item) => (
@@ -238,7 +238,7 @@ export function PracticeHubPage() {
                         className="rounded-2xl bg-slate-950 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800"
                         to={`/practice/school-exams/${item.schoolExamPageId}`}
                       >
-                        Lam de truong
+                        Lam đề trường
                       </Link>
                     ) : null}
                   </div>
@@ -253,7 +253,7 @@ export function PracticeHubPage() {
                     ))}
                   </div>
                   {item.sourcePath ? (
-                    <p className="mt-4 text-xs text-slate-500">Nguon data: {item.sourcePath}</p>
+                    <p className="mt-4 text-xs text-slate-500">Nguồn data: {item.sourcePath}</p>
                   ) : null}
                 </article>
               ))
@@ -264,17 +264,17 @@ export function PracticeHubPage() {
         <section className="space-y-6">
           <div className="rounded-[28px] border border-slate-200 bg-slate-950 p-6 text-white shadow-[0_20px_60px_rgba(15,23,42,0.14)]">
             <div className="text-xs font-semibold uppercase tracking-[0.18em] text-sky-200">
-              Tao de thi thu
+              Tạo đề thi thử
             </div>
-            <h2 className="mt-3 text-2xl font-bold">Sinh de ngau nhien theo blueprint</h2>
+            <h2 className="mt-3 text-2xl font-bold">Sinh đề ngẫu nhiên theo blueprint</h2>
             <p className="mt-3 text-sm leading-7 text-slate-300">
-              De se duoc boc ngau nhien tu kho cau hoi de truong tren Supabase, uu tien cau cua truong
-              ban chon, sau do fallback sang nhieu truong neu kho khong du.
+              Đề sẽ được bốc ngẫu nhiên từ kho câu hỏi đề trường trên Supabase, ưu tiên câu của trường
+              bạn chọn, sau đó fallback sang nhiều trường nếu kho không đủ.
             </p>
 
             <div className="mt-5 grid gap-4">
               <label className="grid gap-2 text-sm">
-                <span className="font-medium text-slate-200">Blueprint dang dung</span>
+                <span className="font-medium text-slate-200">Blueprint đang dùng</span>
                 <select
                   className="rounded-2xl border border-slate-700 bg-slate-900 px-4 py-3 text-slate-100 outline-none transition focus:border-sky-400"
                   onChange={(event) => setSelectedBlueprintId(event.target.value)}
@@ -289,13 +289,13 @@ export function PracticeHubPage() {
               </label>
 
               <label className="grid gap-2 text-sm">
-                <span className="font-medium text-slate-200">Uu tien cau hoi cua truong</span>
+                <span className="font-medium text-slate-200">Uu tien câu hỏi cua truong</span>
                 <select
                   className="rounded-2xl border border-slate-700 bg-slate-900 px-4 py-3 text-slate-100 outline-none transition focus:border-sky-400"
                   onChange={(event) => setSelectedSchoolName(event.target.value)}
                   value={selectedSchoolName}
                 >
-                  <option value="">Tong hop nhieu truong</option>
+                  <option value="">Tổng hợp nhieu truong</option>
                   {schoolOptions.map((schoolName) => (
                     <option key={schoolName} value={schoolName}>
                       {schoolName}
@@ -319,7 +319,7 @@ export function PracticeHubPage() {
                     >
                       <div className="flex items-center justify-between gap-3 text-sm font-semibold">
                         <span>{section.title}</span>
-                        <span>{section.count} cau</span>
+                        <span>{section.count} câu</span>
                       </div>
                       <p className="mt-2 text-xs text-slate-400">
                         NB {section.levelCounts[1]} | TH {section.levelCounts[2]} | VD {section.levelCounts[3]} | VDC {section.levelCounts[4]}
@@ -337,23 +337,23 @@ export function PracticeHubPage() {
               onClick={handleGenerateExam}
               type="button"
             >
-              Tao de va vao bai ngay
+              Tạo đề và vào bài ngay
             </button>
           </div>
 
           <div className="rounded-[28px] border border-slate-200 bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.06)]">
             <div className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
-              Tinh trang kho du lieu
+              Tình trạng kho dữ liệu
             </div>
             <div className="mt-4 grid gap-3 sm:grid-cols-2">
               <InfoTile label="Multiple choice" value={`${bankOverview.typeCounts.multiple_choice ?? 0}`} />
-              <InfoTile label="Dung / Sai" value={`${bankOverview.typeCounts.true_false ?? 0}`} />
-              <InfoTile label="Tra loi ngan" value={`${bankOverview.typeCounts.short_answer ?? 0}`} />
-              <InfoTile label="Muc VDC" value={`${bankOverview.levelCounts[4] ?? 0}`} />
+              <InfoTile label="Đúng / Sai" value={`${bankOverview.typeCounts.true_false ?? 0}`} />
+              <InfoTile label="Trả lời ngắn" value={`${bankOverview.typeCounts.short_answer ?? 0}`} />
+              <InfoTile label="Mức VDC" value={`${bankOverview.levelCounts[4] ?? 0}`} />
             </div>
             <p className="mt-4 text-sm leading-7 text-slate-600">
-              Blueprint tong hop da dung kho cau hoi de truong that, co chong trung cau va gioi han
-              so cau toi da tren moi de nguon truoc khi fallback.
+              Blueprint tổng hợp đã dùng kho câu hỏi đề trường thật, có chống trùng câu và giới hạn
+              số câu tối đa trên mỗi đề nguồn trước khi fallback.
             </p>
           </div>
         </section>
