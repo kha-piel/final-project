@@ -1,10 +1,8 @@
 import json
 import os
-import base64
 import logging
 import re
 import tempfile
-import time
 import unicodedata
 from pathlib import Path
 from typing import Any
@@ -50,9 +48,7 @@ if not GEMINI_API_KEY:
 client = genai.Client(api_key=GEMINI_API_KEY)
 MODEL_NAME = "gemini-2.5-flash"
 BASE_VAULT_PATH = Path(__file__).resolve().parent.parent / "docs" / "knowledge-base"
-PDF_UPLOAD_POLL_INTERVAL_SECONDS = 2.0
-PDF_UPLOAD_TIMEOUT_SECONDS = 300.0
-PDF_TEXT_EXTRACTION_MIN_CHARS = 600
+PDF_TEXT_EXTRACTION_MIN_CHARS = 120
 logger = logging.getLogger("ai_service.admin_import")
 
 
@@ -497,52 +493,13 @@ def build_pdf_text_exam_prompt(
 {base_prompt}
 
 NGUON TRICH TEXT TU PDF:
-Backend da trich text truc tiep tu PDF bang PyMuPDF de tang toc. Hay uu tien nguon text nay.
+Backend da trich text truc tiep tu PDF bang PyMuPDF. CHI duoc phep dua vao nguon text nay.
+Khong duoc doc anh, khong duoc suy luan tu hinh, khong duoc dung PDF image/File API.
 Neu thay dau "--- PAGE N ---", dung N lam pageNumber cua cau hoi gan nhat.
-Neu text thieu hinh/so do/bang, hay set hasImage=true va them warning de giao vien kiem tra PDF goc.
+Neu text thieu do co hinh/so do/bang thi giu lai phan text doc duoc, them warning, va tuyet doi khong tu them noi dung.
 
 {extracted_text}
 """.strip()
-
-
-def wait_for_uploaded_pdf(file_name: str) -> Any:
-    started_at = time.time()
-    while True:
-        uploaded = client.files.get(name=file_name)
-        state = getattr(getattr(uploaded, "state", None), "name", None) or str(
-            getattr(uploaded, "state", "UNKNOWN")
-        )
-        state = state.upper()
-
-        if state == "ACTIVE":
-            return uploaded
-
-        if state == "FAILED":
-            raise HTTPException(status_code=500, detail="Gemini danh dau PDF upload bi loi.")
-
-        if time.time() - started_at > PDF_UPLOAD_TIMEOUT_SECONDS:
-            raise HTTPException(status_code=504, detail="Het thoi gian cho Gemini xu ly PDF.")
-
-        time.sleep(PDF_UPLOAD_POLL_INTERVAL_SECONDS)
-
-
-def generate_pdf_json(uploaded_file: Any, prompt: str) -> str:
-    try:
-        response = client.models.generate_content(
-            model=MODEL_NAME,
-            contents=[uploaded_file, prompt],
-            config=types.GenerateContentConfig(
-                response_mime_type="application/json",
-                temperature=0,
-            ),
-        )
-    except Exception as exc:  # noqa: BLE001
-        raise HTTPException(status_code=500, detail=f"Loi khi goi Gemini PDF: {exc}") from exc
-
-    text = getattr(response, "text", None)
-    if not text:
-        raise HTTPException(status_code=500, detail="Gemini khong tra ve JSON tu PDF.")
-    return text
 
 
 def generate_pdf_text_json(prompt: str) -> str:
@@ -562,24 +519,6 @@ def generate_pdf_text_json(prompt: str) -> str:
     if not text:
         raise HTTPException(status_code=500, detail="Gemini khong tra ve JSON tu PDF text.")
     return text
-
-
-def render_pdf_page_data_url(pdf_path: Path, page_number: int) -> str | None:
-    if fitz is None or page_number <= 0:
-        return None
-
-    try:
-        document = fitz.open(pdf_path)
-        page_index = min(max(page_number - 1, 0), max(document.page_count - 1, 0))
-        page = document.load_page(page_index)
-        pixmap = page.get_pixmap(matrix=fitz.Matrix(1.4, 1.4), alpha=False)
-        data = pixmap.tobytes("png")
-        document.close()
-    except Exception:
-        return None
-
-    encoded = base64.b64encode(data).decode("ascii")
-    return f"data:image/png;base64,{encoded}"
 
 
 def normalize_pdf_question(
@@ -635,7 +574,7 @@ def normalize_pdf_question(
     has_image = bool(item.get("hasImage", item.get("has_image", False)))
     assets: list[PdfExamAsset] = []
     if has_image:
-        warnings.append("Cau co hinh: backend khong tu gan anh, giao vien can them anh thu cong.")
+        warnings.append("Cau co hinh trong PDF goc. Backend hien chi xu ly text, can giao vien doi chieu neu can.")
 
     changes: list[ValidatedExamChange] = []
     for change in item.get("changes", []):
@@ -650,15 +589,6 @@ def normalize_pdf_question(
             )
 
     question_text = str(item.get("questionText", item.get("question_text", "")) or "").strip()
-    if has_image:
-        question_text = ""
-        if question_type == "multiple_choice":
-            options = [ValidatedExamOption(label=label, text="") for label in ["A", "B", "C", "D"]]
-        elif question_type == "true_false":
-            statements = [PdfExamStatement(label=label, text="") for label in ["a", "b", "c", "d"]]
-        warnings.append(
-            "Cau co hinh: backend da de trong noi dung de bai/lua chon de giao vien tu nhap tay cho chinh xac."
-        )
 
     is_valid = True
     if not question_text:
@@ -878,6 +808,26 @@ def extract_json_text(raw_text: str) -> str:
         return text[first_brace:last_brace + 1]
 
     return text
+
+
+def parse_model_json_payload(raw_model_response: str) -> dict[str, Any]:
+    try:
+        parsed_payload = json.loads(extract_json_text(raw_model_response))
+    except json.JSONDecodeError:
+        return {}
+
+    if not isinstance(parsed_payload, dict):
+        return {}
+
+    return parsed_payload
+
+
+def payload_contains_questions(payload: dict[str, Any]) -> bool:
+    raw_questions = payload.get("questions", [])
+    if not isinstance(raw_questions, list):
+        return False
+
+    return any(isinstance(item, dict) for item in raw_questions)
 
 
 def normalize_warning_list(raw_warnings: Any) -> list[str]:
@@ -1162,8 +1112,6 @@ async def validate_exam_pdf(
 
     answer_key_map = parse_answer_key_text(answer_key_text)
     tmp_path: Path | None = None
-    uploaded_file = None
-
     try:
         with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp_file:
             tmp_path = Path(tmp_file.name)
@@ -1174,40 +1122,25 @@ async def validate_exam_pdf(
         extracted_text = extract_pdf_text(tmp_path)
         logger.info("Extracted PDF text length: %s", len(extracted_text))
 
-        if len(extracted_text) >= PDF_TEXT_EXTRACTION_MIN_CHARS:
-            logger.info("Using fast text-first Gemini extraction.")
-            prompt = build_pdf_text_exam_prompt(
-                pdf_name=pdf_file.filename,
-                subject_code=cleaned_subject_code,
-                subject_name=cleaned_subject_name,
-                answer_key_map=answer_key_map,
-                extracted_text=extracted_text,
+        if len(extracted_text) < PDF_TEXT_EXTRACTION_MIN_CHARS:
+            raise HTTPException(
+                status_code=422,
+                detail=(
+                    "Khong trich xuat du text tu PDF. Backend hien chi xu ly text, khong quet anh. "
+                    "Hay dung PDF co text layer hoac OCR file truoc khi import."
+                ),
             )
-            raw_model_response = generate_pdf_text_json(prompt)
-        else:
-            logger.info("PDF text too short. Falling back to Gemini File API.")
-            uploaded_file = client.files.upload(
-                file=tmp_path,
-                config={"mime_type": "application/pdf"},
-            )
-            logger.info("Uploaded PDF to Gemini File API: %s", uploaded_file.name)
-            uploaded_file = wait_for_uploaded_pdf(uploaded_file.name)
-            logger.info("Gemini File API is ACTIVE: %s", uploaded_file.name)
-            prompt = build_pdf_exam_prompt(
-                pdf_name=pdf_file.filename,
-                subject_code=cleaned_subject_code,
-                subject_name=cleaned_subject_name,
-                answer_key_map=answer_key_map,
-            )
-            raw_model_response = generate_pdf_json(uploaded_file, prompt)
 
-        try:
-            parsed_payload = json.loads(extract_json_text(raw_model_response))
-        except json.JSONDecodeError:
-            parsed_payload = {}
-
-        if not isinstance(parsed_payload, dict):
-            parsed_payload = {}
+        logger.info("Using text-only Gemini extraction.")
+        prompt = build_pdf_text_exam_prompt(
+            pdf_name=pdf_file.filename,
+            subject_code=cleaned_subject_code,
+            subject_name=cleaned_subject_name,
+            answer_key_map=answer_key_map,
+            extracted_text=extracted_text,
+        )
+        raw_model_response = generate_pdf_text_json(prompt)
+        parsed_payload = parse_model_json_payload(raw_model_response)
 
         response = normalize_pdf_exam_response(
             parsed_payload,
@@ -1229,13 +1162,10 @@ async def validate_exam_pdf(
             len(response.questions),
             response.is_valid,
         )
+        if not payload_contains_questions(parsed_payload):
+            logger.warning("Text-only extraction returned no questions: file=%s", pdf_file.filename)
         return response.model_dump(by_alias=True)
     finally:
-        if uploaded_file is not None:
-            try:
-                client.files.delete(name=uploaded_file.name)
-            except Exception:
-                pass
         if tmp_path and tmp_path.exists():
             tmp_path.unlink(missing_ok=True)
 

@@ -1,4 +1,4 @@
-import { getSupabaseBrowserClient } from '../../../lib/supabase/client'
+﻿import { getSupabaseBrowserClient } from '../../../lib/supabase/client'
 import { fetchSchoolExamCatalog, fetchSchoolExamQuestionBank } from '../../practice/services/school-exam-service'
 import { normalizeSchoolExamMarkdown } from '../../practice/utils/school-exam-content'
 import type {
@@ -68,7 +68,12 @@ type AttemptHistoryRow = {
 
 const schoolExamBankCache = new Map<string, Promise<Awaited<ReturnType<typeof fetchSchoolExamQuestionBank>>>>()
 
-const defaultSubjectOptions: SubjectOption[] = [
+export const allowedMainSubjects: SubjectOption[] = [
+  {
+    subjectId: 'TOAN',
+    subjectCode: 'TOAN',
+    subjectName: 'Toán học',
+  },
   {
     subjectId: 'VAT_LY',
     subjectCode: 'VAT_LY',
@@ -81,20 +86,31 @@ const defaultSubjectOptions: SubjectOption[] = [
   },
 ]
 
+const subjectAliasByKey: Record<string, SubjectOption> = {
+  TOAN: allowedMainSubjects[0],
+  MATH: allowedMainSubjects[0],
+  LY: allowedMainSubjects[1],
+  VAT_LY: allowedMainSubjects[1],
+  PHYSICS: allowedMainSubjects[1],
+  HOA: allowedMainSubjects[2],
+  HOA_HOC: allowedMainSubjects[2],
+  CHEMISTRY: allowedMainSubjects[2],
+}
+
 const defaultTopicsBySubjectId: Record<string, TopicOption[]> = {
   VAT_LY: [
-    ['vat-ly/dao-dong-co', 'Dao động cơ'],
-    ['vat-ly/song-co', 'Sóng cơ'],
-    ['vat-ly/dien-xoay-chieu', 'Điện xoay chiều'],
-    ['vat-ly/dao-dong-va-song-dien-tu', 'Dao động và sóng điện từ'],
-    ['vat-ly/song-anh-sang', 'Sóng ánh sáng'],
-    ['vat-ly/luong-tu-anh-sang', 'Lượng tử ánh sáng'],
-    ['vat-ly/hat-nhan-nguyen-tu', 'Hạt nhân nguyên tử'],
-    ['vat-ly/dien-tich-dien-truong', 'Điện tích và điện trường'],
-    ['vat-ly/dong-dien-khong-doi', 'Dòng điện không đổi'],
-    ['vat-ly/tu-truong', 'Từ trường'],
-    ['vat-ly/cam-ung-dien-tu', 'Cảm ứng điện từ'],
-    ['vat-ly/quang-hoc', 'Quang học'],
+    ['school-exam/dao-dong-co', 'Dao động cơ'],
+    ['school-exam/song-co', 'Sóng cơ'],
+    ['school-exam/dien-xoay-chieu', 'Điện xoay chiều'],
+    ['school-exam/dao-dong-va-song-dien-tu', 'Dao động và sóng điện từ'],
+    ['school-exam/song-anh-sang', 'Sóng ánh sáng'],
+    ['school-exam/luong-tu-anh-sang', 'Lượng tử ánh sáng'],
+    ['school-exam/hat-nhan-nguyen-tu', 'Hạt nhân nguyên tử'],
+    ['school-exam/dien-tich-va-dien-truong', 'Điện tích và điện trường'],
+    ['school-exam/dong-dien-khong-doi', 'Dòng điện không đổi'],
+    ['school-exam/tu-truong', 'Từ trường'],
+    ['school-exam/cam-ung-dien-tu', 'Cảm ứng điện từ'],
+    ['school-exam/quang-hoc', 'Quang học'],
   ].map(([topicId, topicName], index) => ({
     topicId,
     subjectId: 'VAT_LY',
@@ -107,7 +123,7 @@ const defaultTopicsBySubjectId: Record<string, TopicOption[]> = {
     ['hoa-hoc/toc-do-phan-ung-va-can-bang-hoa-hoc', 'Tốc độ phản ứng và cân bằng hóa học'],
     ['hoa-hoc/dung-dich-ph-va-chuan-do', 'Dung dịch, pH và chuẩn độ'],
     ['hoa-hoc/este-lipit', 'Este và lipit'],
-    ['hoa-hoc/cacbohidrat', 'Cacbohiđrat'],
+    ['hoa-hoc/cacbohidrat', 'Cacbohidrat'],
     ['hoa-hoc/amin-amino-axit-protein', 'Amin, amino axit và protein'],
     ['hoa-hoc/polime', 'Polime'],
     ['hoa-hoc/dai-cuong-kim-loai', 'Đại cương kim loại'],
@@ -135,13 +151,14 @@ export async function fetchSubjects(): Promise<SubjectOption[]> {
           return acc
         }
 
-        const key = item.subjectId.trim().toUpperCase()
-        if (!acc.has(key)) {
-          acc.set(key, {
-            subjectId: item.subjectId,
-            subjectCode: item.subjectId,
-            subjectName: item.subjectName,
-          })
+        const normalizedSubject = normalizeMainSubject({
+          subjectId: item.subjectId,
+          subjectCode: item.subjectId,
+          subjectName: item.subjectName,
+        })
+
+        if (normalizedSubject && !acc.has(normalizedSubject.subjectId)) {
+          acc.set(normalizedSubject.subjectId, normalizedSubject)
         }
         return acc
       }, subjectMap)
@@ -151,21 +168,28 @@ export async function fetchSubjects(): Promise<SubjectOption[]> {
 
   try {
     for (const subject of await fetchLegacySubjects()) {
-      subjectMap.set(subject.subjectId.trim().toUpperCase(), subject)
+      const normalizedSubject = normalizeMainSubject(subject)
+      if (normalizedSubject && !subjectMap.has(normalizedSubject.subjectId)) {
+        subjectMap.set(normalizedSubject.subjectId, normalizedSubject)
+      }
     }
   } catch {
     // Default subjects below keep the dashboard useful before seed data exists.
   }
 
-  for (const subject of defaultSubjectOptions) {
+  for (const subject of allowedMainSubjects) {
     if (!subjectMap.has(subject.subjectId)) {
       subjectMap.set(subject.subjectId, subject)
     }
   }
 
-  return Array.from(subjectMap.values()).sort((left, right) =>
-    left.subjectName.localeCompare(right.subjectName, 'vi'),
-  )
+  return allowedMainSubjects
+    .filter((subject) => subjectMap.has(subject.subjectId))
+    .map((subject) => ({
+      subjectId: subject.subjectId,
+      subjectCode: subject.subjectCode,
+      subjectName: subject.subjectName,
+    }))
 }
 
 export async function fetchTopicsBySubjectId(subjectId: string): Promise<TopicOption[]> {
@@ -479,6 +503,32 @@ function isSchoolExamTopicId(topicId: string) {
   return topicId.trim().startsWith('school-exam/')
 }
 
+function normalizeMainSubject(subject: SubjectOption) {
+  const rawKey = [
+    subject.subjectId,
+    subject.subjectCode,
+    subject.subjectName,
+  ]
+    .join(' ')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toUpperCase()
+
+  if (rawKey.includes('TOAN') || rawKey.includes('MATH')) {
+    return subjectAliasByKey.TOAN
+  }
+
+  if (rawKey.includes('VAT_LY') || rawKey.includes('VAT LY') || rawKey.includes('LY') || rawKey.includes('PHYSIC')) {
+    return subjectAliasByKey.VAT_LY
+  }
+
+  if (rawKey.includes('HOA_HOC') || rawKey.includes('HOA HOC') || rawKey.includes('HOA') || rawKey.includes('CHEM')) {
+    return subjectAliasByKey.HOA_HOC
+  }
+
+  return null
+}
+
 function normalizeAnswers(rows: AnswerRow[] | null): DraftAnswer[] {
   if (!rows) {
     return []
@@ -513,3 +563,4 @@ function shuffle<T>(items: T[]) {
 
   return shuffled
 }
+

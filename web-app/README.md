@@ -59,9 +59,8 @@ npm run dev
 
 Neu muon test day du luong AI giai thich:
 
-```bash
-cd ai_service
-uvicorn main:app --reload --port 8000
+```powershell
+.\scripts\run-ai-service.ps1
 ```
 
 Build production:

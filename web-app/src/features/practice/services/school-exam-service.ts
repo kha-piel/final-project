@@ -10,6 +10,7 @@ import { supplementalKnowledgeReviewQuestions } from '../data/supplemental-knowl
 import { supplementalMatPhangOxyzReviewedQuestions } from '../data/supplemental-mat-phang-oxyz-reviewed'
 import { supplementalMuLogaritReviewedQuestions } from '../data/supplemental-mu-logarit-reviewed'
 import { supplementalNguyenHamReviewedQuestions } from '../data/supplemental-nguyen-ham-reviewed'
+import { supplementalPhysicsTopicQuestions } from '../data/supplemental-physics-topic-questions'
 import { supplementalOxyzReviewedQuestions } from '../data/supplemental-oxyz-reviewed'
 import { supplementalQuyHoachTuyenTinhReviewedQuestions } from '../data/supplemental-quy-hoach-tuyen-tinh-reviewed'
 import { supplementalTichPhanDienTichReviewedQuestions } from '../data/supplemental-tich-phan-dien-tich-reviewed'
@@ -679,6 +680,10 @@ function mapAssetPaths(assets: SchoolExamQuestionAssetRow[] | null | undefined) 
 }
 
 function getSupplementalQuestionBank(subjectId: string) {
+  if (subjectId === 'VAT_LY') {
+    return supplementalPhysicsTopicQuestions
+  }
+
   if (subjectId !== 'TOAN') {
     return []
   }

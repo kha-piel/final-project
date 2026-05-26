@@ -22,9 +22,23 @@ mvn javafx:run
 
 ### AI service
 
-```bash
-cd ai_service
-uvicorn main:app --reload --port 8000
+Từ thư mục gốc của project:
+
+```powershell
+.\scripts\run-ai-service.ps1
+```
+
+Nếu đang chạy thủ công trong terminal:
+
+```powershell
+# Khi terminal dang o thu muc goc final-project
+cd .\ai_service
+.\.venv\Scripts\python.exe -m uvicorn main:app --reload --port 8000
+```
+
+```powershell
+# Khi terminal da o san trong thu muc ai_service
+.\.venv\Scripts\python.exe -m uvicorn main:app --reload --port 8000
 ```
 
 ### Seed database

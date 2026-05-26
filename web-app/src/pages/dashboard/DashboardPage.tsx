@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { PageCard } from '../../components/ui/PageCard'
 import {
+  allowedMainSubjects,
   fetchQuestionsForCustomExam,
   fetchSubjects,
   fetchTopicsBySubjectId,
@@ -54,7 +55,7 @@ export function DashboardPage() {
     if (!hasSupabaseEnv()) {
       setIsLoadingSubjects(false)
       setErrorMessage(
-        'Chua co env Supabase cho web-app. Copy web-app/.env.example thanh web-app/.env.local va dien gia tri that.',
+        'Chưa có env Supabase cho web-app. Copy web-app/.env.example thành web-app/.env.local và điền giá trị thật.',
       )
       return
     }
@@ -65,12 +66,13 @@ export function DashboardPage() {
     void fetchSubjects()
       .then((rows) => {
         if (isMounted) {
-          setSubjects(rows)
+          const allowedSubjectIds = new Set(allowedMainSubjects.map((subject) => subject.subjectId))
+          setSubjects(rows.filter((subject) => allowedSubjectIds.has(subject.subjectId)))
         }
       })
       .catch((error: unknown) => {
         if (isMounted) {
-          setErrorMessage(error instanceof Error ? error.message : 'Khong the tai mon hoc.')
+          setErrorMessage(error instanceof Error ? error.message : 'Không thể tải môn học.')
         }
       })
       .finally(() => {
@@ -105,7 +107,7 @@ export function DashboardPage() {
       })
       .catch((error: unknown) => {
         if (isMounted) {
-          setErrorMessage(error instanceof Error ? error.message : 'Khong the tai chuyen de.')
+          setErrorMessage(error instanceof Error ? error.message : 'Không thể tải chuyên đề.')
         }
       })
       .finally(() => {
@@ -123,7 +125,7 @@ export function DashboardPage() {
     setErrorMessage('')
 
     if (!selectedSubject || !selectedTopic || !selectedDifficultyOption) {
-      setErrorMessage('Vui long chon day du mon hoc, chuyen de, muc do va dang cau hoi.')
+      setErrorMessage('Vui lòng chọn đầy đủ môn học, chuyên đề, mức độ và dạng câu hỏi.')
       return
     }
 
@@ -138,14 +140,14 @@ export function DashboardPage() {
       )
 
       if (questions.length === 0) {
-        setErrorMessage('Chuyen de nay hien chua co cau hoi nao cho cau hinh da chon.')
+        setErrorMessage('Chuyên đề này hiện chưa có câu hỏi nào cho cấu hình đã chọn.')
         return
       }
 
       const sessionId = crypto.randomUUID()
       createSession({
         sessionId,
-        title: `De tu chon - ${selectedSubject.subjectName} - ${selectedTopic.topicName} - ${selectedDifficultyOption.label}`,
+        title: `Đề tự chọn - ${selectedSubject.subjectName} - ${selectedTopic.topicName} - ${selectedDifficultyOption.label}`,
         subjectId: selectedSubject.subjectId,
         subjectName: selectedSubject.subjectName,
         topicId: selectedTopic.topicId,
@@ -160,7 +162,7 @@ export function DashboardPage() {
 
       navigate(`/exam/${sessionId}`)
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : 'Khong the tao de tu chon.')
+      setErrorMessage(error instanceof Error ? error.message : 'Không thể tạo đề tự chọn.')
     } finally {
       setIsCreatingExam(false)
     }
@@ -200,7 +202,7 @@ export function DashboardPage() {
               onChange={(event) => setSelectedSubjectId(event.target.value)}
               value={selectedSubjectId}
             >
-              <option value="">Tất cả môn học</option>
+              <option value="">Chọn môn học</option>
               {subjects.map((subject) => (
                 <option key={subject.subjectId} value={subject.subjectId}>
                   {subject.subjectName}
