@@ -7,6 +7,16 @@ export type AuthUserSummary = {
   fullName?: string
   role?: string
   status?: string
+  schoolName?: string
+  provinceCity?: string
+  className?: string
+  phoneNumber?: string
+  thptqgExamYear?: number
+  admissionCombo?: string
+  targetScore?: number
+  targetUniversity?: string
+  targetMajor?: string
+  studyNote?: string
 }
 
 type AuthSessionState = {

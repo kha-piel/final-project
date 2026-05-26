@@ -26,8 +26,8 @@ export function HomePage() {
       <div style={styles.metaRow}>
         <MetaPill label="Email" value={user?.email ?? '--'} />
         <MetaPill label="Username" value={user?.username ?? '--'} />
-        <MetaPill label="Role" value={user?.role ?? 'student'} />
-        <MetaPill label="Status" value={user?.status ?? 'active'} />
+        <MetaPill label="Role" value={user?.role ?? 'dang tai...'} />
+        <MetaPill label="Status" value={user?.status ?? 'dang tai...'} />
       </div>
 
       <div style={styles.grid}>

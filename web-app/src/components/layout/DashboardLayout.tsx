@@ -1,43 +1,52 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import {
   BookOpen,
   Clock3,
   FileText,
   LogOut,
   Menu,
+  Shield,
   User,
   X,
+  type LucideIcon,
 } from 'lucide-react'
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { logout } from '../../features/auth/services/auth-service'
 import { useAuthSessionStore } from '../../features/auth/store/auth-session-store'
 
-const navigationItems = [
+type NavigationItem = {
+  label: string
+  to: string
+  icon: LucideIcon
+  match: string[]
+}
+
+const baseNavigationItems: NavigationItem[] = [
   {
-    label: 'Làm đề thi thử',
+    label: 'Lam de thi thu',
     to: '/practice',
     icon: FileText,
     match: ['/practice'],
   },
   {
-    label: 'Ôn tập kiến thức',
+    label: 'On tap kien thuc',
     to: '/dashboard',
     icon: BookOpen,
     match: ['/dashboard', '/exam', '/review'],
   },
   {
-    label: 'Lịch sử làm bài',
+    label: 'Lich su lam bai',
     to: '/history',
     icon: Clock3,
     match: ['/history'],
   },
   {
-    label: 'Hồ sơ học sinh',
+    label: 'Ho so hoc sinh',
     to: '/profile',
     icon: User,
     match: ['/profile', '/home'],
   },
-] as const
+]
 
 export function DashboardLayout() {
   const navigate = useNavigate()
@@ -45,10 +54,7 @@ export function DashboardLayout() {
   const user = useAuthSessionStore((state) => state.user)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [logoutError, setLogoutError] = useState('')
-
-  useEffect(() => {
-    setIsMobileMenuOpen(false)
-  }, [location.pathname])
+  const navigationItems = getNavigationItems(user?.role)
 
   async function handleLogout() {
     try {
@@ -56,7 +62,7 @@ export function DashboardLayout() {
       await logout()
       navigate('/login', { replace: true })
     } catch (error) {
-      setLogoutError(error instanceof Error ? error.message : 'Đăng xuất thất bại.')
+      setLogoutError(error instanceof Error ? error.message : 'Dang xuat that bai.')
     }
   }
 
@@ -67,8 +73,10 @@ export function DashboardLayout() {
           <SidebarContent
             currentPath={location.pathname}
             logoutError={logoutError}
+            navigationItems={navigationItems}
+            onNavigate={() => setIsMobileMenuOpen(false)}
             onLogout={handleLogout}
-            userLabel={user?.fullName || user?.username || user?.email || 'Học sinh'}
+            userLabel={user?.fullName || user?.username || user?.email || 'Hoc sinh'}
           />
         </aside>
 
@@ -82,17 +90,24 @@ export function DashboardLayout() {
             </NavLink>
 
             <button
-              aria-label={isMobileMenuOpen ? 'Đóng menu' : 'Mở menu'}
+              aria-label={isMobileMenuOpen ? 'Dong menu' : 'Mo menu'}
               className="rounded-2xl border border-slate-200 bg-slate-50 p-2 text-slate-700 transition active:scale-[0.98]"
               onClick={() => setIsMobileMenuOpen((value) => !value)}
               type="button"
             >
-              {isMobileMenuOpen ? <X className="h-5 w-5" strokeWidth={1.8} /> : <Menu className="h-5 w-5" strokeWidth={1.8} />}
+              {isMobileMenuOpen ? (
+                <X className="h-5 w-5" strokeWidth={1.8} />
+              ) : (
+                <Menu className="h-5 w-5" strokeWidth={1.8} />
+              )}
             </button>
           </header>
 
           {isMobileMenuOpen ? (
-            <div className="fixed inset-0 z-30 bg-slate-950/30 md:hidden" onClick={() => setIsMobileMenuOpen(false)}>
+            <div
+              className="fixed inset-0 z-30 bg-slate-950/30 md:hidden"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
               <aside
                 className="h-full w-[86vw] max-w-xs border-r border-slate-200 bg-white px-4 py-5 shadow-[0_24px_64px_rgba(15,23,42,0.16)]"
                 onClick={(event) => event.stopPropagation()}
@@ -100,8 +115,10 @@ export function DashboardLayout() {
                 <SidebarContent
                   currentPath={location.pathname}
                   logoutError={logoutError}
+                  navigationItems={navigationItems}
+                  onNavigate={() => setIsMobileMenuOpen(false)}
                   onLogout={handleLogout}
-                  userLabel={user?.fullName || user?.username || user?.email || 'Học sinh'}
+                  userLabel={user?.fullName || user?.username || user?.email || 'Hoc sinh'}
                 />
               </aside>
             </div>
@@ -122,11 +139,15 @@ function SidebarContent({
   currentPath,
   onLogout,
   logoutError,
+  navigationItems,
+  onNavigate,
   userLabel,
 }: {
   currentPath: string
   onLogout: () => void | Promise<void>
   logoutError: string
+  navigationItems: NavigationItem[]
+  onNavigate: () => void
   userLabel: string
 }) {
   return (
@@ -139,13 +160,13 @@ function SidebarContent({
           THPTQG AI
         </NavLink>
         <p className="mt-3 max-w-[22ch] text-sm leading-6 text-slate-500">
-          Luồng học tập trên web được sắp xếp gọn, rõ và sẵn sàng mở rộng lên mobile.
+          Luong hoc tap tren web duoc sap xep gon, ro va san sang mo rong len mobile.
         </p>
       </div>
 
       <div className="mb-6 rounded-3xl border border-slate-200 bg-slate-50 p-4">
         <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400">
-          Tài khoản đang dùng
+          Tai khoan dang dung
         </div>
         <div className="mt-2 text-sm font-semibold text-slate-800">{userLabel}</div>
       </div>
@@ -165,6 +186,7 @@ function SidebarContent({
                   ? 'bg-blue-100 text-blue-700 shadow-[inset_0_1px_0_rgba(255,255,255,0.7)]'
                   : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900',
               ].join(' ')}
+              onClick={onNavigate}
               to={item.to}
             >
               <span
@@ -198,9 +220,25 @@ function SidebarContent({
           <span className="flex h-10 w-10 items-center justify-center rounded-2xl border border-rose-100 bg-rose-50/70">
             <LogOut className="h-4.5 w-4.5" strokeWidth={1.8} />
           </span>
-          <span>Đăng xuất</span>
+          <span>Dang xuat</span>
         </button>
       </div>
     </div>
   )
+}
+
+function getNavigationItems(userRole?: string) {
+  const items = [...baseNavigationItems]
+  const normalizedRole = userRole?.trim().toLowerCase() ?? ''
+
+  if (normalizedRole === 'admin' || normalizedRole === 'teacher') {
+    items.push({
+      label: 'Nhap de thi',
+      to: '/admin/import-exam',
+      icon: Shield,
+      match: ['/admin'],
+    })
+  }
+
+  return items
 }

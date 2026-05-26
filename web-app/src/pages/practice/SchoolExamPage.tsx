@@ -1,7 +1,8 @@
-import { useEffect, useMemo, useState, type ReactNode } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
+import { Link, useBlocker, useParams } from 'react-router-dom'
 import { PageCard } from '../../components/ui/PageCard'
 import { MarkdownContent } from '../../components/ui/MarkdownContent'
+import { useAuthSessionStore } from '../../features/auth/store/auth-session-store'
 import {
   fetchSchoolExamAnswerKey,
   fetchSchoolExamById,
@@ -16,13 +17,20 @@ import {
 import type {
   SchoolExamAnswerKeyEntry,
   SchoolExamPaperRecord,
+  SchoolExamQuestionOptionRecord,
   SchoolExamQuestionRecord,
+  SchoolExamQuestionStatementRecord,
 } from '../../features/practice/types/school-exam-types'
 import { RecommendedReviewLinks } from '../../features/review/components/RecommendedReviewLinks'
 import {
   inferKnowledgeReviewTopics,
   type KnowledgeReviewTopic,
 } from '../../features/review/knowledge-review-topics'
+import {
+  persistCompletedSchoolExamAttempt,
+  saveSchoolExamAiMessages,
+  type SchoolExamAiMessageInput,
+} from '../../features/practice/services/school-exam-attempt-service'
 
 type QuestionSelectionMap = Record<string, string>
 type TrueFalseSelectionMap = Record<string, Record<string, boolean>>
@@ -34,6 +42,9 @@ type ReviewItem = {
   correctAnswer: string
   correct: boolean
   questionContent: string
+  questionStem: string
+  options: SchoolExamQuestionOptionRecord[]
+  statements: SchoolExamQuestionStatementRecord[]
   topic: string
   obsidianSourcePath: string
   explanation: string
@@ -47,6 +58,7 @@ type ReviewChatMessage = {
 
 export function SchoolExamPage() {
   const { examId = '' } = useParams()
+  const authUser = useAuthSessionStore((state) => state.user)
   const [exam, setExam] = useState<SchoolExamPaperRecord | null>(null)
   const [isLoadingExam, setIsLoadingExam] = useState(true)
   const [isLoadingAnswerKey, setIsLoadingAnswerKey] = useState(false)
@@ -69,6 +81,9 @@ export function SchoolExamPage() {
   const [selectedReviewQuestionNumber, setSelectedReviewQuestionNumber] = useState<number | null>(null)
   const [selectedReviewChatInput, setSelectedReviewChatInput] = useState('')
   const [aiChatHistoryByQuestion, setAiChatHistoryByQuestion] = useState<Record<number, ReviewChatMessage[]>>({})
+  const [isSavingAttempt, setIsSavingAttempt] = useState(false)
+  const [schoolAttemptId, setSchoolAttemptId] = useState('')
+  const startedAtRef = useRef(Date.now())
 
   useEffect(() => {
     let isMounted = true
@@ -97,6 +112,8 @@ export function SchoolExamPage() {
         setSelectedReviewQuestionNumber(null)
         setSelectedReviewChatInput('')
         setAiChatHistoryByQuestion({})
+        setSchoolAttemptId('')
+        startedAtRef.current = Date.now()
       })
       .catch((error: unknown) => {
         if (isMounted) {
@@ -193,6 +210,49 @@ export function SchoolExamPage() {
 
     return () => window.clearInterval(timerId)
   }, [exam, remainingSeconds, submitted])
+
+  const hasStartedAttempt = useMemo(() => {
+    return (
+      Object.keys(selectedChoices).length > 0 ||
+      Object.keys(selectedTrueFalse).length > 0 ||
+      Object.values(shortAnswers).some((value) => value.trim()) ||
+      Object.values(aiChatHistoryByQuestion).some((messages) => messages.length > 0)
+    )
+  }, [aiChatHistoryByQuestion, selectedChoices, selectedTrueFalse, shortAnswers])
+
+  const shouldWarnBeforeExit = Boolean(exam && hasStartedAttempt && !submitted)
+  const navigationBlocker = useBlocker(shouldWarnBeforeExit)
+
+  useEffect(() => {
+    if (navigationBlocker.state !== 'blocked') {
+      return
+    }
+
+    const shouldLeave = window.confirm(
+      'Bai lam de thi thu cua truong se bi reset neu ban roi trang luc nay. Ban van muon thoat?',
+    )
+
+    if (shouldLeave) {
+      navigationBlocker.proceed()
+      return
+    }
+
+    navigationBlocker.reset()
+  }, [navigationBlocker])
+
+  useEffect(() => {
+    if (!shouldWarnBeforeExit) {
+      return
+    }
+
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      event.preventDefault()
+      event.returnValue = ''
+    }
+
+    window.addEventListener('beforeunload', handleBeforeUnload)
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload)
+  }, [shouldWarnBeforeExit])
 
   const answerKeyByQuestionNumber = useMemo(() => {
     return answerKeyEntries.reduce<Record<number, string>>((acc, item) => {
@@ -301,6 +361,9 @@ export function SchoolExamPage() {
         const record = questionRecordByNumber[questionNumber]
         const displayQuestionLabel = buildDisplayQuestionLabel(section, questionNumber)
         const questionContent = buildQuestionContent(record, displayQuestionLabel)
+        const questionStem = record?.questionText ?? ''
+        const options = record?.options ?? []
+        const statements = record?.statements ?? []
         const topic = record?.topic ?? ''
         const obsidianSourcePath = record?.obsidianSourcePath ?? ''
         const explanation = aiExplanationByQuestion[questionNumber] ?? ''
@@ -318,6 +381,9 @@ export function SchoolExamPage() {
             correctAnswer,
             correct: selectedChoices[questionKey] === (answerKeyByQuestionNumber[questionNumber] ?? ''),
             questionContent,
+            questionStem,
+            options,
+            statements,
             topic,
             obsidianSourcePath,
             explanation,
@@ -357,6 +423,9 @@ export function SchoolExamPage() {
             correctAnswer,
             correct,
             questionContent,
+            questionStem,
+            options,
+            statements,
             topic,
             obsidianSourcePath,
             explanation,
@@ -375,6 +444,9 @@ export function SchoolExamPage() {
           correctAnswer,
           correct: acceptedResponses.some((candidate) => normalizeAnswer(candidate) === normalizeAnswer(selectedAnswer)),
           questionContent,
+          questionStem,
+          options,
+          statements,
           topic,
           obsidianSourcePath,
           explanation,
@@ -384,7 +456,7 @@ export function SchoolExamPage() {
     }
 
     return items
-  }, [aiExplanationByQuestion, answerKeyByQuestionNumber, exam, questionRecords, selectedChoices, selectedTrueFalse, shortAnswers])
+  }, [aiExplanationByQuestion, answerKeyByQuestionNumber, exam, questionRecordByNumber, selectedChoices, selectedTrueFalse, shortAnswers])
 
   const wrongReviewItems = useMemo(
     () => reviewItems.filter((item) => !item.correct),
@@ -397,6 +469,11 @@ export function SchoolExamPage() {
     }
     return reviewItems.find((item) => item.questionNumber === selectedReviewQuestionNumber) ?? null
   }, [reviewItems, selectedReviewQuestionNumber])
+
+  const selectedVariant = useMemo(
+    () => exam?.variants.find((variant) => variant.variantId === selectedVariantId) ?? null,
+    [exam, selectedVariantId],
+  )
 
   async function handleExplainWrongAnswer(item: ReviewItem) {
     if (!item.questionContent.trim()) {
@@ -430,6 +507,16 @@ export function SchoolExamPage() {
           { role: 'ai', content: explanation },
         ],
       }))
+      await persistReviewAiMessages(item.questionNumber, [
+        {
+          role: 'user',
+          content: `Vi sao ${item.displayQuestionLabel.toLowerCase()} em lam sai?`,
+        },
+        {
+          role: 'assistant',
+          content: explanation,
+        },
+      ])
     } catch (error) {
       setAiErrorByQuestion((state) => ({
         ...state,
@@ -468,6 +555,16 @@ export function SchoolExamPage() {
         ...state,
         [item.questionNumber]: [...(state[item.questionNumber] ?? []), { role: 'ai', content: explanation }],
       }))
+      await persistReviewAiMessages(item.questionNumber, [
+        {
+          role: 'user',
+          content: trimmed,
+        },
+        {
+          role: 'assistant',
+          content: explanation,
+        },
+      ])
     } catch (error) {
       setAiErrorByQuestion((state) => ({
         ...state,
@@ -477,6 +574,84 @@ export function SchoolExamPage() {
     } finally {
       setIsAiBusyByQuestion((state) => ({ ...state, [item.questionNumber]: false }))
     }
+  }
+
+  async function handleSubmitSchoolExam() {
+    if (!exam || !summary || !selectedVariant || submitted || isSavingAttempt) {
+      return
+    }
+
+    setLoadErrorMessage('')
+    setIsSavingAttempt(true)
+
+    try {
+      if (!authUser?.id) {
+        throw new Error('Khong tim thay tai khoan dang nhap de luu lich su bai lam.')
+      }
+
+      const attemptId = await persistCompletedSchoolExamAttempt({
+        userId: authUser.id,
+        schoolExamId: exam.examId,
+        variantId: selectedVariant.variantId,
+        variantCode: selectedVariant.variantCode,
+        score: summary.score,
+        correctCount: summary.correctCount,
+        wrongCount: wrongReviewItems.length,
+        skippedCount: Math.max(0, summary.totalCount - summary.answeredCount),
+        totalCount: summary.totalCount,
+        startedAt: startedAtRef.current,
+        completedAt: Date.now(),
+        answers: reviewItems.map((item) => ({
+          questionNumber: item.questionNumber,
+          questionType: item.partCode,
+          selectedAnswer: item.selectedAnswer,
+          correctAnswer: item.correctAnswer,
+          isCorrect: item.correct,
+          questionContent: item.questionContent,
+          topic: item.topic,
+          metadata: {
+            display_question_label: item.displayQuestionLabel,
+            obsidian_source_path: item.obsidianSourcePath,
+            asset_urls: item.assetUrls,
+          },
+        })),
+        aiMessages: buildPersistableAiMessages(aiChatHistoryByQuestion),
+        metadata: {
+          exam_title: exam.examTitle,
+          school_name: exam.schoolName,
+          city: exam.city,
+          subject_name: exam.subjectName,
+          year: exam.year,
+          duration_minutes: exam.durationMinutes,
+          answered_count: summary.answeredCount,
+        },
+      })
+
+      setSchoolAttemptId(attemptId)
+      setSubmitted(true)
+    } catch (error) {
+      setLoadErrorMessage(error instanceof Error ? error.message : 'Khong the luu lich su bai lam.')
+    } finally {
+      setIsSavingAttempt(false)
+    }
+  }
+
+  async function persistReviewAiMessages(
+    questionNumber: number,
+    messages: Array<{ role: 'user' | 'assistant' | 'system'; content: string }>,
+  ) {
+    if (!schoolAttemptId) {
+      return
+    }
+
+    await saveSchoolExamAiMessages(
+      schoolAttemptId,
+      messages.map((message) => ({
+        questionNumber,
+        role: message.role,
+        content: message.content,
+      })),
+    )
   }
 
   async function handleAnalyzeWeaknesses() {
@@ -539,8 +714,6 @@ export function SchoolExamPage() {
       </PageCard>
     )
   }
-
-  const selectedVariant = exam.variants.find((variant) => variant.variantId === selectedVariantId) ?? null
 
   if (submitted && summary) {
     return (
@@ -705,38 +878,11 @@ export function SchoolExamPage() {
                     </div>
                     <div className="mt-3 text-base leading-8 text-slate-800">
                       <MarkdownContent
-                        content={selectedReviewItem.questionContent || 'Chưa có nội dung câu hỏi.'}
+                        content={selectedReviewItem.questionStem || 'Chưa có nội dung câu hỏi.'}
                         className="text-base leading-8 text-slate-800"
                       />
                     </div>
                   </div>
-
-                  {selectedReviewItem.partCode === 'multiple_choice' ? (
-                    <div className="mt-5 rounded-[24px] border border-slate-200 bg-white p-5">
-                      <div className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">
-                        Các lựa chọn trong câu hỏi
-                      </div>
-                      <SchoolExamChoiceReview
-                        correctAnswer={selectedReviewItem.correctAnswer}
-                        questionContent={selectedReviewItem.questionContent}
-                        selectedAnswer={selectedReviewItem.selectedAnswer}
-                      />
-                    </div>
-                  ) : null}
-
-                  {selectedReviewItem.partCode === 'true_false' ? (
-                    <div className="mt-5 rounded-[24px] border border-slate-200 bg-white p-5">
-                      <div className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">
-                        Các mệnh đề trong câu hỏi
-                      </div>
-                      <SchoolExamTrueFalseReview
-                        correctAnswer={selectedReviewItem.correctAnswer}
-                        questionContent={selectedReviewItem.questionContent}
-                        selectedAnswer={selectedReviewItem.selectedAnswer}
-                      />
-                    </div>
-                  ) : null}
-
                   {selectedReviewItem.assetUrls.length > 0 ? (
                     <div className="mt-5 grid gap-4">
                       {selectedReviewItem.assetUrls.map((assetUrl, index) => (
@@ -753,6 +899,35 @@ export function SchoolExamPage() {
                       ))}
                     </div>
                   ) : null}
+
+
+
+                  {selectedReviewItem.partCode === 'multiple_choice' ? (
+                    <div className="mt-5 rounded-[24px] border border-slate-200 bg-white p-5">
+                      <div className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">
+                        Các lựa chọn trong câu hỏi
+                      </div>
+                      <SchoolExamChoiceReview
+                        correctAnswer={selectedReviewItem.correctAnswer}
+                        options={selectedReviewItem.options}
+                        selectedAnswer={selectedReviewItem.selectedAnswer}
+                      />
+                    </div>
+                  ) : null}
+
+                  {selectedReviewItem.partCode === 'true_false' ? (
+                    <div className="mt-5 rounded-[24px] border border-slate-200 bg-white p-5">
+                      <div className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">
+                        Các mệnh đề trong câu hỏi
+                      </div>
+                      <SchoolExamTrueFalseReview
+                        correctAnswer={selectedReviewItem.correctAnswer}
+                        statements={selectedReviewItem.statements}
+                        selectedAnswer={selectedReviewItem.selectedAnswer}
+                      />
+                    </div>
+                  ) : null}
+
 
                   <div className="mt-5 grid gap-3 md:grid-cols-2">
                     <div className="rounded-[22px] border border-slate-200 bg-white px-4 py-4">
@@ -947,11 +1122,11 @@ export function SchoolExamPage() {
 
                 <button
                   className="rounded-2xl bg-slate-950 px-5 py-3 text-sm font-bold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-300"
-                  disabled={!selectedVariantId || isLoadingAnswerKey || answerKeyEntries.length === 0}
-                  onClick={() => setSubmitted(true)}
+                  disabled={!selectedVariantId || isLoadingAnswerKey || answerKeyEntries.length === 0 || isSavingAttempt}
+                  onClick={() => void handleSubmitSchoolExam()}
                   type="button"
                 >
-                  {isLoadingAnswerKey ? 'Đang tải đáp án...' : 'Nộp bài'}
+                  {isLoadingAnswerKey ? 'Đang tải đáp án...' : isSavingAttempt ? 'Đang lưu...' : 'Nộp bài'}
                 </button>
               </div>
             </div>
@@ -967,23 +1142,22 @@ export function SchoolExamPage() {
                 <div className="grid gap-4">
                   {buildQuestionNumbers(section.startQuestionNumber, section.endQuestionNumber).map((questionNumber) => {
                     const questionKey = String(questionNumber)
+                    const displayQuestionLabel = buildDisplayQuestionLabel(section, questionNumber)
                     return (
                       <article
                         key={questionNumber}
                         className="rounded-[24px] border border-slate-200 bg-slate-50 p-4"
                       >
-                        <div className="mb-3 text-sm font-semibold text-slate-900">
-                          {buildDisplayQuestionLabel(section, questionNumber)}
-                        </div>
-                        <div className="grid gap-3 sm:grid-cols-2">
+                        <div className="mb-3 text-sm font-semibold text-slate-900">{displayQuestionLabel}</div>
+                        <div className="grid grid-cols-4 gap-2">
                           {buildChoiceLabels(section.optionsPerQuestion).map((label) => {
                             const isSelected = selectedChoices[questionKey] === label
                             return (
                               <label
                                 key={label}
-                                className={`flex cursor-pointer items-start gap-3 rounded-2xl border px-4 py-3 text-sm transition ${
+                                className={`flex cursor-pointer items-center justify-center gap-2 rounded-2xl border px-3 py-3 text-sm font-bold transition ${
                                   isSelected
-                                    ? 'border-sky-400 bg-white text-slate-950'
+                                    ? 'border-sky-500 bg-sky-50 text-sky-800'
                                     : 'border-slate-200 bg-white text-slate-700'
                                 }`}
                               >
@@ -999,7 +1173,7 @@ export function SchoolExamPage() {
                                   }
                                   type="radio"
                                 />
-                                <span className="text-base font-bold tracking-[0.08em]">{label}</span>
+                                <span className="text-base tracking-[0.08em]">{label}</span>
                               </label>
                             )
                           })}
@@ -1026,16 +1200,15 @@ export function SchoolExamPage() {
                   {buildQuestionNumbers(section.startQuestionNumber, section.endQuestionNumber).map((questionNumber) => {
                     const questionKey = String(questionNumber)
                     const labels = buildStatementLabels(section.statementCount)
+                    const displayQuestionLabel = buildDisplayQuestionLabel(section, questionNumber)
                     return (
                       <article
                         key={questionNumber}
                         className="rounded-[24px] border border-slate-200 bg-slate-50 p-4"
                       >
-                        <div className="mb-3 text-sm font-semibold text-slate-900">
-                          {buildDisplayQuestionLabel(section, questionNumber)}
-                        </div>
+                        <div className="mb-3 text-sm font-semibold text-slate-900">{displayQuestionLabel}</div>
                         <div className="overflow-hidden rounded-[18px] border border-slate-200 bg-white">
-                          <div className="grid grid-cols-[1fr_64px_64px] border-b border-slate-200 bg-slate-100 text-xs font-bold uppercase tracking-[0.14em] text-slate-500">
+                          <div className="grid grid-cols-[72px_1fr_1fr] border-b border-slate-200 bg-slate-100 text-xs font-bold uppercase tracking-[0.14em] text-slate-500">
                             <div className="px-4 py-3">Y</div>
                             <div className="border-l border-slate-200 px-4 py-3 text-center">D</div>
                             <div className="border-l border-slate-200 px-4 py-3 text-center">S</div>
@@ -1045,9 +1218,9 @@ export function SchoolExamPage() {
                             return (
                               <div
                                 key={label}
-                                className="grid grid-cols-[1fr_64px_64px] border-b border-slate-200 text-sm last:border-b-0"
+                                className="grid grid-cols-[72px_1fr_1fr] border-b border-slate-200 text-sm last:border-b-0"
                               >
-                                <div className="px-4 py-3 font-semibold uppercase tracking-[0.08em] text-slate-700">
+                                <div className="px-4 py-3 text-center font-semibold uppercase tracking-[0.08em] text-slate-700">
                                   {label}
                                 </div>
                                 <label className="flex items-center justify-center border-l border-slate-200">
@@ -1107,14 +1280,13 @@ export function SchoolExamPage() {
                 <div className="grid gap-4 sm:grid-cols-2">
                   {buildQuestionNumbers(section.startQuestionNumber, section.endQuestionNumber).map((questionNumber) => {
                     const questionKey = String(questionNumber)
+                    const displayQuestionLabel = buildDisplayQuestionLabel(section, questionNumber)
                     return (
                       <article
                         key={questionNumber}
                         className="rounded-[24px] border border-slate-200 bg-slate-50 p-4"
                       >
-                        <div className="mb-3 text-sm font-semibold text-slate-900">
-                          {buildDisplayQuestionLabel(section, questionNumber)}
-                        </div>
+                        <div className="mb-3 text-sm font-semibold text-slate-900">{displayQuestionLabel}</div>
                         <input
                           className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 outline-none focus:border-sky-400"
                           disabled={submitted}
@@ -1146,16 +1318,31 @@ export function SchoolExamPage() {
   )
 }
 
+function buildPersistableAiMessages(
+  messagesByQuestion: Record<number, ReviewChatMessage[]>,
+): SchoolExamAiMessageInput[] {
+  return Object.entries(messagesByQuestion).flatMap(([questionNumber, messages]) =>
+    messages.map((message) => ({
+      questionNumber: Number(questionNumber),
+      role: message.role === 'ai' ? 'assistant' : message.role,
+      content: message.content,
+    })),
+  )
+}
+
 function SchoolExamChoiceReview({
   correctAnswer,
-  questionContent,
+  options,
   selectedAnswer,
 }: {
   correctAnswer: string
-  questionContent: string
+  options: SchoolExamQuestionOptionRecord[]
   selectedAnswer: string
 }) {
-  const choices = extractMultipleChoiceOptions(questionContent)
+  const choices = options.map((option) => ({
+    label: option.optionLabel,
+    content: option.optionText,
+  }))
 
   if (choices.length === 0) {
     return (
@@ -1203,14 +1390,13 @@ function SchoolExamChoiceReview({
 
 function SchoolExamTrueFalseReview({
   correctAnswer,
-  questionContent,
+  statements,
   selectedAnswer,
 }: {
   correctAnswer: string
-  questionContent: string
+  statements: SchoolExamQuestionStatementRecord[]
   selectedAnswer: string
 }) {
-  const statements = extractTrueFalseStatements(questionContent)
   const selectedValues = normalizeTrueFalseAnswer(selectedAnswer)
   const correctValues = normalizeTrueFalseAnswer(correctAnswer)
 
@@ -1248,50 +1434,12 @@ function SchoolExamTrueFalseReview({
                 Đáp án đúng: {formatTrueFalseLetter(correctValue)}
               </span>
             </div>
-            <MarkdownContent content={statement.content} className="text-sm leading-7" />
+            <MarkdownContent content={statement.text} className="text-sm leading-7" />
           </div>
         )
       })}
     </div>
   )
-}
-
-function extractMultipleChoiceOptions(questionContent: string) {
-  const labelMatches = [...questionContent.matchAll(/(?:^|\s)([A-F])\.\s*/g)]
-  if (labelMatches.length < 2) {
-    return []
-  }
-
-  return labelMatches
-    .map((match, index) => {
-      const nextMatch = labelMatches[index + 1]
-      const start = (match.index ?? 0) + match[0].length
-      const end = nextMatch?.index ?? questionContent.length
-      return {
-        label: match[1],
-        content: questionContent.slice(start, end).trim(),
-      }
-    })
-    .filter((choice) => choice.content.length > 0)
-}
-
-function extractTrueFalseStatements(questionContent: string) {
-  const labelMatches = [...questionContent.matchAll(/(?:^|\s)([a-f])\)\s*/g)]
-  if (labelMatches.length < 2) {
-    return []
-  }
-
-  return labelMatches
-    .map((match, index) => {
-      const nextMatch = labelMatches[index + 1]
-      const start = (match.index ?? 0) + match[0].length
-      const end = nextMatch?.index ?? questionContent.length
-      return {
-        label: match[1],
-        content: questionContent.slice(start, end).trim(),
-      }
-    })
-    .filter((statement) => statement.content.length > 0)
 }
 
 function formatTrueFalseLetter(value: string) {
@@ -1439,15 +1587,22 @@ function buildRenderableAssetPaths(record: SchoolExamQuestionRecord | undefined)
   }
 
   if (record.assets && record.assets.length > 0) {
-    return record.assets
-      .filter((asset) => asset.assetType !== 'question_block')
+    const figureAssetPaths = [...record.assets]
+      .sort((left, right) => left.displayOrder - right.displayOrder)
+      .filter((asset) => asset.assetType === 'figure')
       .map((asset) => asset.assetPath)
+
+    return [...new Set(figureAssetPaths)]
   }
 
-  return record.assetPaths.filter((assetPath) => /_hinh\d+\./i.test(assetPath))
+  return [...new Set(record.assetPaths.filter((assetPath) => /_hinh\d+\.(png|jpe?g|webp)$/i.test(assetPath)))]
 }
 
 function buildSchoolExamAssetUrl(pdfUrl: string, assetPath: string) {
+  if (/^https?:\/\//i.test(assetPath)) {
+    return assetPath
+  }
+
   const normalizedAssetPath = assetPath.replace(/^\/+/, '')
   const pdfFileName = pdfUrl.split('/').pop() ?? ''
   const examSlug = pdfFileName.replace(/\.pdf$/i, '')

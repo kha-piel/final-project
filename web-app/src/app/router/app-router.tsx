@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import { Suspense, lazy, type ReactNode } from 'react'
 import { createBrowserRouter, Navigate } from 'react-router-dom'
 import { RootLayout } from '../../components/layout/RootLayout'
@@ -43,6 +44,11 @@ const ReviewPage = lazy(() =>
 const KnowledgeReviewPage = lazy(() =>
   import('../../pages/review/KnowledgeReviewPage').then((module) => ({
     default: module.KnowledgeReviewPage,
+  })),
+)
+const ImportExamPage = lazy(() =>
+  import('../../pages/admin/ImportExamPage').then((module) => ({
+    default: module.ImportExamPage,
   })),
 )
 
@@ -144,6 +150,14 @@ export const appRouter = createBrowserRouter([
         element: (
           <ProtectedRoute>
             {withSuspense(<KnowledgeReviewPage />)}
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'admin/import-exam',
+        element: (
+          <ProtectedRoute allowedRoles={['admin', 'teacher']}>
+            {withSuspense(<ImportExamPage />)}
           </ProtectedRoute>
         ),
       },

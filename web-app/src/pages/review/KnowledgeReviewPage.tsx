@@ -449,7 +449,10 @@ function buildAssetUrls(question: SchoolExamQuestionRecord) {
   const examSlug = pdfUrl.split('/').pop()?.replace(/\.pdf$/i, '') ?? ''
   const renderableAssets =
     question.assets && question.assets.length > 0
-      ? question.assets.filter((asset) => asset.assetType !== 'question_block').map((asset) => asset.assetPath)
+      ? question.assets
+          .filter((asset) => asset.assetType === 'figure')
+          .sort((left, right) => left.displayOrder - right.displayOrder)
+          .map((asset) => asset.assetPath)
       : question.assetPaths.filter((assetPath) => /_hinh\d+\./i.test(assetPath))
 
   return renderableAssets.map((assetPath) => `/school-exam-assets/${examSlug}/${assetPath}`)

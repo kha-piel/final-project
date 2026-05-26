@@ -68,11 +68,69 @@ type AttemptHistoryRow = {
 
 const schoolExamBankCache = new Map<string, Promise<Awaited<ReturnType<typeof fetchSchoolExamQuestionBank>>>>()
 
+const defaultSubjectOptions: SubjectOption[] = [
+  {
+    subjectId: 'VAT_LY',
+    subjectCode: 'VAT_LY',
+    subjectName: 'Vật lí',
+  },
+  {
+    subjectId: 'HOA_HOC',
+    subjectCode: 'HOA_HOC',
+    subjectName: 'Hóa học',
+  },
+]
+
+const defaultTopicsBySubjectId: Record<string, TopicOption[]> = {
+  VAT_LY: [
+    ['vat-ly/dao-dong-co', 'Dao động cơ'],
+    ['vat-ly/song-co', 'Sóng cơ'],
+    ['vat-ly/dien-xoay-chieu', 'Điện xoay chiều'],
+    ['vat-ly/dao-dong-va-song-dien-tu', 'Dao động và sóng điện từ'],
+    ['vat-ly/song-anh-sang', 'Sóng ánh sáng'],
+    ['vat-ly/luong-tu-anh-sang', 'Lượng tử ánh sáng'],
+    ['vat-ly/hat-nhan-nguyen-tu', 'Hạt nhân nguyên tử'],
+    ['vat-ly/dien-tich-dien-truong', 'Điện tích và điện trường'],
+    ['vat-ly/dong-dien-khong-doi', 'Dòng điện không đổi'],
+    ['vat-ly/tu-truong', 'Từ trường'],
+    ['vat-ly/cam-ung-dien-tu', 'Cảm ứng điện từ'],
+    ['vat-ly/quang-hoc', 'Quang học'],
+  ].map(([topicId, topicName], index) => ({
+    topicId,
+    subjectId: 'VAT_LY',
+    topicName,
+    topicOrder: index + 1,
+  })),
+  HOA_HOC: [
+    ['hoa-hoc/cau-tao-nguyen-tu-bang-tuan-hoan-lien-ket', 'Cấu tạo nguyên tử, bảng tuần hoàn và liên kết hóa học'],
+    ['hoa-hoc/phan-ung-oxi-hoa-khu', 'Phản ứng oxi hóa khử'],
+    ['hoa-hoc/toc-do-phan-ung-va-can-bang-hoa-hoc', 'Tốc độ phản ứng và cân bằng hóa học'],
+    ['hoa-hoc/dung-dich-ph-va-chuan-do', 'Dung dịch, pH và chuẩn độ'],
+    ['hoa-hoc/este-lipit', 'Este và lipit'],
+    ['hoa-hoc/cacbohidrat', 'Cacbohiđrat'],
+    ['hoa-hoc/amin-amino-axit-protein', 'Amin, amino axit và protein'],
+    ['hoa-hoc/polime', 'Polime'],
+    ['hoa-hoc/dai-cuong-kim-loai', 'Đại cương kim loại'],
+    ['hoa-hoc/kim-loai-kiem-kiem-tho-nhom', 'Kim loại kiềm, kiềm thổ và nhôm'],
+    ['hoa-hoc/sat-va-hop-chat', 'Sắt và hợp chất của sắt'],
+    ['hoa-hoc/dien-phan', 'Điện phân'],
+    ['hoa-hoc/tong-hop-vo-co', 'Tổng hợp hóa vô cơ'],
+    ['hoa-hoc/tong-hop-huu-co', 'Tổng hợp hóa hữu cơ'],
+    ['hoa-hoc/hoa-hoc-voi-thuc-tien', 'Hóa học với thực tiễn'],
+  ].map(([topicId, topicName], index) => ({
+    topicId,
+    subjectId: 'HOA_HOC',
+    topicName,
+    topicOrder: index + 1,
+  })),
+}
+
 export async function fetchSubjects(): Promise<SubjectOption[]> {
+  const subjectMap = new Map<string, SubjectOption>()
+
   try {
     const catalog = await fetchSchoolExamCatalog()
-    const schoolExamSubjects = Array.from(
-      catalog.reduce((acc, item) => {
+    catalog.reduce((acc, item) => {
         if (!item.subjectId || !item.subjectName) {
           return acc
         }
@@ -86,31 +144,64 @@ export async function fetchSubjects(): Promise<SubjectOption[]> {
           })
         }
         return acc
-      }, new Map<string, SubjectOption>()),
-    ).map(([, value]) => value)
-
-    if (schoolExamSubjects.length > 0) {
-      return schoolExamSubjects.sort((left, right) => left.subjectName.localeCompare(right.subjectName))
-    }
+      }, subjectMap)
   } catch {
-    // Fall through to legacy subjects table.
+    // Fall through to legacy/default subjects.
   }
 
-  return fetchLegacySubjects()
+  try {
+    for (const subject of await fetchLegacySubjects()) {
+      subjectMap.set(subject.subjectId.trim().toUpperCase(), subject)
+    }
+  } catch {
+    // Default subjects below keep the dashboard useful before seed data exists.
+  }
+
+  for (const subject of defaultSubjectOptions) {
+    if (!subjectMap.has(subject.subjectId)) {
+      subjectMap.set(subject.subjectId, subject)
+    }
+  }
+
+  return Array.from(subjectMap.values()).sort((left, right) =>
+    left.subjectName.localeCompare(right.subjectName, 'vi'),
+  )
 }
 
 export async function fetchTopicsBySubjectId(subjectId: string): Promise<TopicOption[]> {
+  const topicMap = new Map<string, TopicOption>()
+
   try {
     const questionBank = await loadSchoolExamQuestionBank(subjectId)
     const schoolExamTopics = buildTopicOptionsFromQuestionBank(questionBank, subjectId)
-    if (schoolExamTopics.length > 0) {
-      return schoolExamTopics
+    for (const topic of schoolExamTopics) {
+      topicMap.set(topic.topicId, topic)
     }
   } catch {
-    // Fall through to legacy topics table.
+    // Fall through to legacy/default topics.
   }
 
-  return fetchLegacyTopicsBySubjectId(subjectId)
+  try {
+    for (const topic of await fetchLegacyTopicsBySubjectId(subjectId)) {
+      topicMap.set(topic.topicId, topic)
+    }
+  } catch {
+    // Default topics below cover empty subject banks.
+  }
+
+  for (const topic of defaultTopicsBySubjectId[subjectId.trim().toUpperCase()] ?? []) {
+    if (!topicMap.has(topic.topicId)) {
+      topicMap.set(topic.topicId, topic)
+    }
+  }
+
+  return Array.from(topicMap.values()).sort((left, right) => {
+    if (left.topicOrder !== right.topicOrder) {
+      return left.topicOrder - right.topicOrder
+    }
+
+    return left.topicName.localeCompare(right.topicName, 'vi')
+  })
 }
 
 export async function fetchQuestionsForCustomExam(
@@ -347,7 +438,8 @@ function buildSchoolExamAssetUrls(
   const examSlug = question.pdfUrl.split('/').pop()?.replace(/\.pdf$/i, '') ?? ''
   const renderableAssets = question.assets && question.assets.length > 0
     ? question.assets
-      .filter((asset) => asset.assetType !== 'question_block')
+      .filter((asset) => asset.assetType === 'figure')
+      .sort((left, right) => left.displayOrder - right.displayOrder)
       .map((asset) => asset.assetPath)
     : (question.assetPaths ?? []).filter((assetPath) => /_hinh\d+\./i.test(assetPath))
 

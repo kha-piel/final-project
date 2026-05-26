@@ -381,7 +381,8 @@ function buildAssetUrls(question: Awaited<ReturnType<typeof fetchSchoolExamQuest
   const examSlug = question.pdfUrl.split('/').pop()?.replace(/\.pdf$/i, '') ?? ''
   const renderableAssets = question.assets && question.assets.length > 0
     ? question.assets
-      .filter((asset) => asset.assetType !== 'question_block')
+      .filter((asset) => asset.assetType === 'figure')
+      .sort((left, right) => left.displayOrder - right.displayOrder)
       .map((asset) => asset.assetPath)
     : (question.assetPaths ?? []).filter((assetPath) => /_hinh\d+\./i.test(assetPath))
 

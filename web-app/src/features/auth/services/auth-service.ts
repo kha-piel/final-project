@@ -19,7 +19,22 @@ type UserProfileRow = {
   full_name: string | null
   role: string | null
   status: string | null
+  school_name: string | null
+  province_city: string | null
+  class_name: string | null
+  phone_number: string | null
+  thptqg_exam_year: number | null
+  admission_combo: string | null
+  target_score: number | null
+  target_university: string | null
+  target_major: string | null
+  study_note: string | null
 }
+
+const profileSelect =
+  'user_id, username, email, full_name, role, status, school_name, province_city, class_name, phone_number, thptqg_exam_year, admission_combo, target_score, target_university, target_major, study_note'
+
+const localDevelopmentAdminEmails = new Set(['admin@local.test'])
 
 export async function loginWithEmail(email: string, password: string) {
   const supabase = getSupabaseBrowserClient()
@@ -141,7 +156,7 @@ export async function getCachedAuthUserSummary(): Promise<AuthUserSummary | null
     return null
   }
 
-  return buildFallbackSummary(authUser)
+  return resolveUserSummary(authUser)
 }
 
 export function onAuthStateChange(callback: (user: AuthUserSummary | null) => void) {
@@ -155,13 +170,11 @@ export function onAuthStateChange(callback: (user: AuthUserSummary | null) => vo
       return
     }
 
-    callback(buildFallbackSummary(authUser))
-
     try {
       const summary = await resolveUserSummary(authUser)
       callback(summary)
     } catch {
-      return
+      callback(buildFallbackSummary(authUser))
     }
   })
 
@@ -171,7 +184,7 @@ export function onAuthStateChange(callback: (user: AuthUserSummary | null) => vo
 }
 
 async function resolveUserSummary(user: User): Promise<AuthUserSummary> {
-  const profile = await fetchProfileWithTimeout(user.id)
+  const profile = await fetchProfileWithTimeout(user)
   if (!profile) {
     return buildFallbackSummary(user)
   }
@@ -183,6 +196,16 @@ async function resolveUserSummary(user: User): Promise<AuthUserSummary> {
     fullName: profile.full_name ?? undefined,
     role: profile.role ?? undefined,
     status: profile.status ?? undefined,
+    schoolName: profile.school_name ?? undefined,
+    provinceCity: profile.province_city ?? undefined,
+    className: profile.class_name ?? undefined,
+    phoneNumber: profile.phone_number ?? undefined,
+    thptqgExamYear: profile.thptqg_exam_year ?? undefined,
+    admissionCombo: profile.admission_combo ?? undefined,
+    targetScore: profile.target_score ?? undefined,
+    targetUniversity: profile.target_university ?? undefined,
+    targetMajor: profile.target_major ?? undefined,
+    studyNote: profile.study_note ?? undefined,
   }
 }
 
@@ -190,7 +213,7 @@ async function fetchProfile(userId: string): Promise<UserProfileRow | null> {
   const supabase = getSupabaseBrowserClient()
   const { data, error } = await supabase
     .from('user_profiles')
-    .select('user_id, username, email, full_name, role, status')
+    .select(profileSelect)
     .eq('user_id', userId)
     .maybeSingle<UserProfileRow>()
 
@@ -201,10 +224,38 @@ async function fetchProfile(userId: string): Promise<UserProfileRow | null> {
   return data
 }
 
-async function fetchProfileWithTimeout(userId: string, timeoutMs = 1200) {
+async function fetchProfileByEmail(email: string): Promise<UserProfileRow | null> {
+  const supabase = getSupabaseBrowserClient()
+  const { data, error } = await supabase
+    .from('user_profiles')
+    .select(profileSelect)
+    .eq('email', normalizeEmail(email))
+    .maybeSingle<UserProfileRow>()
+
+  if (error) {
+    return null
+  }
+
+  return data
+}
+
+async function fetchProfileForUser(user: User) {
+  const profileById = await fetchProfile(user.id)
+  if (profileById) {
+    return profileById
+  }
+
+  if (!user.email) {
+    return null
+  }
+
+  return fetchProfileByEmail(user.email)
+}
+
+async function fetchProfileWithTimeout(user: User, timeoutMs = 6000) {
   try {
     const profile = await Promise.race([
-      fetchProfile(userId),
+      fetchProfileForUser(user),
       new Promise<null>((resolve) => {
         window.setTimeout(() => resolve(null), timeoutMs)
       }),
@@ -223,6 +274,20 @@ async function ensureProfile(input: {
   fullName: string
 }) {
   const supabase = getSupabaseBrowserClient()
+
+  const existingProfile = await fetchProfile(input.userId)
+  if (existingProfile) {
+    await supabase
+      .from('user_profiles')
+      .update({
+        email: input.email,
+        username: input.username,
+        full_name: input.fullName,
+      })
+      .eq('user_id', input.userId)
+    return
+  }
+
   await supabase.from('user_profiles').upsert(
     {
       user_id: input.userId,
@@ -239,15 +304,21 @@ async function ensureProfile(input: {
 }
 
 function buildFallbackSummary(user: User): AuthUserSummary {
+  const email = user.email ?? ''
+  const normalizedEmail = normalizeEmail(email)
+  const isLocalDevelopmentAdmin = localDevelopmentAdminEmails.has(normalizedEmail)
+
   return {
     id: user.id,
-    email: user.email ?? '',
-    username: readStringMetadata(user, 'username') ?? user.email?.split('@')[0],
+    email,
+    username: readStringMetadata(user, 'username') ?? email.split('@')[0],
     fullName:
       readStringMetadata(user, 'full_name') ??
       readStringMetadata(user, 'name') ??
-      user.email ??
+      email ??
       '',
+    role: readStringMetadata(user, 'role') ?? (isLocalDevelopmentAdmin ? 'admin' : undefined),
+    status: readStringMetadata(user, 'status') ?? (isLocalDevelopmentAdmin ? 'active' : undefined),
   }
 }
 

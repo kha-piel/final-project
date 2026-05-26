@@ -37,6 +37,7 @@ export function ReviewPage() {
   const [isLoadingPersistedReview, setIsLoadingPersistedReview] = useState(false)
   const [persistedReviewError, setPersistedReviewError] = useState('')
 
+  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     if (session && runtime && summary) {
       return
@@ -71,6 +72,7 @@ export function ReviewPage() {
       isMounted = false
     }
   }, [runtime, session, sessionId, summary])
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   if (session && runtime && summary) {
     return (

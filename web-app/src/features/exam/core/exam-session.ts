@@ -172,8 +172,8 @@ export function checkQuestion(
   runtime: ExamRuntimeSession,
   question: DraftQuestion,
 ): CheckedQuestionResult {
-  let hasSelection = false
-  let isCorrect = false
+  let hasSelection: boolean
+  let isCorrect: boolean
 
   if (question.questionType === 'multiple_choice') {
     const selectedAnswerId = getSelectedAnswerId(runtime, question.questionId)

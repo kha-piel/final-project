@@ -33,6 +33,7 @@ export function PracticeHubPage() {
   })
   const [isLoadingQuestionBank, setIsLoadingQuestionBank] = useState(true)
 
+  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     let isMounted = true
     setIsLoadingCatalog(true)
@@ -61,6 +62,7 @@ export function PracticeHubPage() {
       isMounted = false
     }
   }, [])
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   const catalogItems = useMemo(
     () =>
@@ -87,6 +89,7 @@ export function PracticeHubPage() {
 
   const selectedBlueprint = blueprints.find((blueprint) => blueprint.blueprintId === selectedBlueprintId) ?? null
 
+  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     let isMounted = true
     setIsLoadingQuestionBank(true)
@@ -117,6 +120,7 @@ export function PracticeHubPage() {
       isMounted = false
     }
   }, [])
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   async function handleGenerateExam() {
     setErrorMessage('')
