@@ -230,6 +230,7 @@ export function PracticeHubPage() {
                     </p>
                   </div>
                   <div className="flex shrink-0 flex-wrap gap-2">
+<<<<<<< HEAD
                     {item.pdfUrl ? (
                       <a
                         className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 hover:text-slate-900"
@@ -240,6 +241,15 @@ export function PracticeHubPage() {
                         Xem PDF trước
                       </a>
                     ) : null}
+=======
+                    <button
+                      className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 hover:text-slate-900"
+                      onClick={() => setSelectedSchoolName(item.schoolName)}
+                      type="button"
+                    >
+                      Ưu tiên trường này
+                    </button>
+>>>>>>> b0f699ec5b4f32512b2665e363b62a98f41c77d6
                     {item.schoolExamPageId ? (
                       <Link
                         className="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 hover:shadow"
@@ -279,11 +289,19 @@ export function PracticeHubPage() {
 
           <div className="mt-6 grid gap-4">
             <label className="grid gap-2 text-sm">
+<<<<<<< HEAD
               <span className="font-medium text-slate-700">Môn thi</span>
               <select
                 className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition focus:border-sky-400 focus:bg-white"
                 onChange={(event) => handleSubjectChange(event.target.value)}
                 value={selectedSubjectId}
+=======
+              <span className="font-medium text-slate-700">Blueprint đang dùng</span>
+              <select
+                className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition focus:border-sky-400 focus:bg-white"
+                onChange={(event) => setSelectedBlueprintId(event.target.value)}
+                value={selectedBlueprintId}
+>>>>>>> b0f699ec5b4f32512b2665e363b62a98f41c77d6
               >
                 {SUBJECT_OPTIONS.map((subject) => (
                   <option key={subject.subjectId} value={subject.subjectId}>
@@ -351,8 +369,12 @@ export function PracticeHubPage() {
           {errorMessage ? <p className="mt-4 text-sm font-medium text-rose-600">{errorMessage}</p> : null}
 
           <button
+<<<<<<< HEAD
             className="mt-6 w-full rounded-[22px] bg-blue-600 px-6 py-4 text-sm font-bold text-white shadow-sm transition hover:bg-blue-700 hover:shadow active:scale-[0.98] disabled:cursor-not-allowed disabled:bg-slate-300 disabled:shadow-none"
             disabled={!selectedBlueprint}
+=======
+            className="mt-6 w-full rounded-[22px] bg-blue-600 px-6 py-4 text-sm font-bold text-white shadow-sm transition hover:bg-blue-700 hover:shadow active:scale-[0.98]"
+>>>>>>> b0f699ec5b4f32512b2665e363b62a98f41c77d6
             onClick={handleGenerateExam}
             type="button"
           >

@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="MaterialThemeProjectNewConfig">
@@ -23,4 +24,31 @@
     </option>
   </component>
 >>>>>>> ff04e3e756e532d1e06d56623c184000f17942d8
+=======
+<<<<<<< HEAD
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="MaterialThemeProjectNewConfig">
+    <option name="metadata">
+      <MTProjectMetadataState>
+        <option name="migrated" value="true" />
+        <option name="pristineConfig" value="false" />
+        <option name="userId" value="137800e9:19af893c1bb:-7ff9" />
+      </MTProjectMetadataState>
+    </option>
+  </component>
+=======
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="MaterialThemeProjectNewConfig">
+    <option name="metadata">
+      <MTProjectMetadataState>
+        <option name="migrated" value="true" />
+        <option name="pristineConfig" value="false" />
+        <option name="userId" value="137800e9:19af893c1bb:-7ff9" />
+      </MTProjectMetadataState>
+    </option>
+  </component>
+>>>>>>> ff04e3e756e532d1e06d56623c184000f17942d8
+>>>>>>> b0f699ec5b4f32512b2665e363b62a98f41c77d6
 </project>
