@@ -13,7 +13,6 @@
   "pdf_public_url": "/school-exams/truong-x-hoa-hoc-2025.pdf",
   "source_path": "data_scraper/input/school_exams/truong-x-hoa-hoc-2025.pdf",
   "variant_code": "DEFAULT",
-  "variant_id": "truong-x-hoa-hoc-2025-default",
   "tags": ["de truong", "hoa hoc 12", "pdf"],
   "manifest_path": "obsidian_vault/assets/Hoa_Hoc/truong-x-hoa-hoc-2025/manifest.json",
   "answer_key_path": "obsidian_vault/parsed/Hoa_Hoc/truong-x-hoa-hoc-2025/answer_key.json",

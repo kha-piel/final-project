@@ -1,11 +1,5 @@
 begin;
 
-delete from public.school_exam_answer_keys
-where variant_id in ('thpt-tran-phu-quang-ninh-2026-lan-3-default');
-
-delete from public.school_exam_variants
-where variant_id in ('thpt-tran-phu-quang-ninh-2026-lan-3-default');
-
 delete from public.school_exam_sections
 where exam_id in ('thpt-tran-phu-quang-ninh-2026-lan-3');
 
@@ -23,7 +17,7 @@ where exam_id in ('thpt-tran-phu-quang-ninh-2026-lan-3');
 
 insert into public.school_exams (
   exam_id, title, school_name, city, subject_code, subject_name,
-  year, duration_minutes, pdf_url, answer_key_provided, source_path, tags, is_active
+  year, duration_minutes, pdf_url, display_variant_code, answer_key_provided, source_path, tags, is_active
 ) values (
   'thpt-tran-phu-quang-ninh-2026-lan-3',
   'De thi thu TN THPT 2026 mon Toan lan 3 THPT Tran Phu Quang Ninh',
@@ -34,6 +28,7 @@ insert into public.school_exams (
   2026,
   90,
   '/school-exams/thpt-tran-phu-quang-ninh-2026-lan-3.pdf',
+  'DEFAULT',
   true,
   'data_scraper/input/school_exams/thpt-tran-phu-quang-ninh-2026-lan-3.pdf',
   array['de thi thu', 'toan', '2026', 'quang ninh', 'pdf'],
@@ -80,40 +75,5 @@ insert into public.school_exam_sections (
     0,
     0
   );
-
-insert into public.school_exam_variants (
-  variant_id, exam_id, variant_code, display_order
-) values (
-  'thpt-tran-phu-quang-ninh-2026-lan-3-default',
-  'thpt-tran-phu-quang-ninh-2026-lan-3',
-  'DEFAULT',
-  1
-);
-
-insert into public.school_exam_answer_keys (
-  variant_id, question_number, answer_value
-) values
-  ('thpt-tran-phu-quang-ninh-2026-lan-3-default', 1, 'A'),
-  ('thpt-tran-phu-quang-ninh-2026-lan-3-default', 2, 'B'),
-  ('thpt-tran-phu-quang-ninh-2026-lan-3-default', 3, 'C'),
-  ('thpt-tran-phu-quang-ninh-2026-lan-3-default', 4, 'D'),
-  ('thpt-tran-phu-quang-ninh-2026-lan-3-default', 5, 'C'),
-  ('thpt-tran-phu-quang-ninh-2026-lan-3-default', 6, 'A'),
-  ('thpt-tran-phu-quang-ninh-2026-lan-3-default', 7, 'D'),
-  ('thpt-tran-phu-quang-ninh-2026-lan-3-default', 8, 'A'),
-  ('thpt-tran-phu-quang-ninh-2026-lan-3-default', 9, 'D'),
-  ('thpt-tran-phu-quang-ninh-2026-lan-3-default', 10, 'C'),
-  ('thpt-tran-phu-quang-ninh-2026-lan-3-default', 11, 'B'),
-  ('thpt-tran-phu-quang-ninh-2026-lan-3-default', 12, 'C'),
-  ('thpt-tran-phu-quang-ninh-2026-lan-3-default', 13, 'DSSD'),
-  ('thpt-tran-phu-quang-ninh-2026-lan-3-default', 14, 'SSSD'),
-  ('thpt-tran-phu-quang-ninh-2026-lan-3-default', 15, 'DSDD'),
-  ('thpt-tran-phu-quang-ninh-2026-lan-3-default', 16, 'SDSD'),
-  ('thpt-tran-phu-quang-ninh-2026-lan-3-default', 17, '34'),
-  ('thpt-tran-phu-quang-ninh-2026-lan-3-default', 18, '4'),
-  ('thpt-tran-phu-quang-ninh-2026-lan-3-default', 19, '711'),
-  ('thpt-tran-phu-quang-ninh-2026-lan-3-default', 20, '4,8'),
-  ('thpt-tran-phu-quang-ninh-2026-lan-3-default', 21, '0,72'),
-  ('thpt-tran-phu-quang-ninh-2026-lan-3-default', 22, '3659');
 
 commit;

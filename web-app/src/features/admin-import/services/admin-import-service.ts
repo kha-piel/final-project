@@ -24,7 +24,6 @@ export type AdminExamDraft = {
   year: number
   durationMinutes: number
   variantCode: string
-  variantId?: string | null
   pdfStoragePath: string
   pdfUrl: string
 }
@@ -90,7 +89,6 @@ export type ManagedImportedExam = {
   sourcePath: string | null
   isActive: boolean
   createdAt: string
-  variantId: string | null
   variantCode: string
 }
 
@@ -107,7 +105,6 @@ type UpdateManagedImportedExamInput = {
   subjectCode: SubjectCode
   year: number
   durationMinutes: number
-  variantId: string | null
   variantCode: string
   isActive: boolean
 }
@@ -119,6 +116,7 @@ type ManagedExamQuestionRow = {
   difficulty_level: number | null
   question_type: AdminQuestionType
   question_text: string
+  correct_answer: string | null
   statement_json: Array<{ label: string; text: string }> | null
   topic: string | null
   obsidian_source_path: string | null
@@ -369,7 +367,6 @@ export async function saveAdminImportedExam(input: SaveAdminImportedExamInput) {
   const supabase = getSupabaseBrowserClient()
   const draft = input.draft
   const examId = draft.examDraft.examId
-  const variantId = `${examId}-${slugify(draft.examDraft.variantCode)}`
   const issues = getDraftValidationIssues({
     draft,
     pdfFile: input.pdfFile,
@@ -408,6 +405,7 @@ export async function saveAdminImportedExam(input: SaveAdminImportedExamInput) {
     year: draft.examDraft.year,
     duration_minutes: draft.examDraft.durationMinutes,
     pdf_url: uploadedPdfUrl,
+    display_variant_code: draft.examDraft.variantCode,
     answer_key_provided: questionsWithUploadedAssets.every((question) =>
       Boolean(question.correctAnswer.trim()),
     ),
@@ -415,19 +413,6 @@ export async function saveAdminImportedExam(input: SaveAdminImportedExamInput) {
     tags: ['admin-import', draft.examDraft.subjectCode.toLowerCase()],
     is_active: true,
   }
-
-  const variantRow = {
-    variant_id: variantId,
-    exam_id: examId,
-    variant_code: draft.examDraft.variantCode,
-    display_order: 1,
-  }
-
-  const answerKeyRows = questionsWithUploadedAssets.map((question) => ({
-    variant_id: variantId,
-    question_number: question.questionNumber,
-    answer_value: question.correctAnswer.trim().toUpperCase(),
-  }))
 
   const questionRows = questionsWithUploadedAssets.map((question) => ({
     question_id: buildQuestionId(examId, question.questionNumber),
@@ -437,6 +422,7 @@ export async function saveAdminImportedExam(input: SaveAdminImportedExamInput) {
     difficulty_level: null,
     question_type: question.questionType,
     question_text: question.questionText.trim(),
+    correct_answer: question.correctAnswer.trim().toUpperCase(),
     statement_json:
       question.questionType === 'true_false'
         ? question.statements.map((statement) => ({
@@ -497,18 +483,6 @@ export async function saveAdminImportedExam(input: SaveAdminImportedExamInput) {
       throw new Error(`Khong the tao school_exam_sections: ${sectionError.message}`)
     }
 
-    const { error: variantError } = await supabase.from('school_exam_variants').insert(variantRow)
-    if (variantError) {
-      throw new Error(`Khong the tao school_exam_variants: ${variantError.message}`)
-    }
-
-    const { error: answerKeyError } = await supabase
-      .from('school_exam_answer_keys')
-      .insert(answerKeyRows)
-    if (answerKeyError) {
-      throw new Error(`Khong the tao school_exam_answer_keys: ${answerKeyError.message}`)
-    }
-
     const { error: questionsError } = await supabase
       .from('school_exam_questions')
       .insert(questionRows)
@@ -551,7 +525,7 @@ export async function fetchManagedImportedExams() {
   const { data, error } = await supabase
     .from('school_exams')
     .select(
-      'exam_id, title, school_name, city, subject_code, subject_name, year, duration_minutes, pdf_url, source_path, is_active, created_at, variants:school_exam_variants(variant_id, variant_code, display_order)',
+      'exam_id, title, school_name, city, subject_code, subject_name, year, duration_minutes, pdf_url, display_variant_code, source_path, is_active, created_at',
     )
     .order('created_at', { ascending: false })
     .limit(24)
@@ -560,11 +534,7 @@ export async function fetchManagedImportedExams() {
     throw new Error(`Khong the tai danh sach de da nhap: ${error.message}`)
   }
 
-  return (data ?? []).map((row) => {
-    const variants = Array.isArray(row.variants) ? row.variants : []
-    const primaryVariant = [...variants].sort((left, right) => left.display_order - right.display_order)[0]
-
-    return {
+  return (data ?? []).map((row) => ({
       examId: row.exam_id,
       title: row.title,
       schoolName: row.school_name,
@@ -577,10 +547,8 @@ export async function fetchManagedImportedExams() {
       sourcePath: row.source_path ?? null,
       isActive: row.is_active,
       createdAt: row.created_at,
-      variantId: primaryVariant?.variant_id ?? null,
-      variantCode: primaryVariant?.variant_code ?? '',
-    } satisfies ManagedImportedExam
-  })
+      variantCode: row.display_variant_code ?? 'DEFAULT',
+    }) satisfies ManagedImportedExam)
 }
 
 export async function updateManagedImportedExam(input: UpdateManagedImportedExamInput) {
@@ -599,6 +567,7 @@ export async function updateManagedImportedExam(input: UpdateManagedImportedExam
     subject_name: subject.name,
     year: input.year,
     duration_minutes: input.durationMinutes,
+    display_variant_code: input.variantCode.trim() || 'DEFAULT',
     is_active: input.isActive,
   }
 
@@ -611,18 +580,6 @@ export async function updateManagedImportedExam(input: UpdateManagedImportedExam
     throw new Error(`Khong the cap nhat thong tin de thi: ${examError.message}`)
   }
 
-  if (input.variantId) {
-    const { error: variantError } = await supabase
-      .from('school_exam_variants')
-      .update({
-        variant_code: input.variantCode.trim(),
-      })
-      .eq('variant_id', input.variantId)
-
-    if (variantError) {
-      throw new Error(`Khong the cap nhat ma de: ${variantError.message}`)
-    }
-  }
 }
 
 export async function fetchManagedImportedExamDraft(examId: string) {
@@ -630,7 +587,7 @@ export async function fetchManagedImportedExamDraft(examId: string) {
   const { data: examRow, error: examError } = await supabase
     .from('school_exams')
     .select(
-      'exam_id, title, school_name, city, subject_code, subject_name, year, duration_minutes, pdf_url, variants:school_exam_variants(variant_id, variant_code, display_order)',
+      'exam_id, title, school_name, city, subject_code, subject_name, year, duration_minutes, pdf_url, display_variant_code',
     )
     .eq('exam_id', examId)
     .maybeSingle<{
@@ -643,11 +600,7 @@ export async function fetchManagedImportedExamDraft(examId: string) {
       year: number
       duration_minutes: number
       pdf_url: string
-      variants: Array<{
-        variant_id: string
-        variant_code: string
-        display_order: number
-      }> | null
+      display_variant_code: string | null
     }>()
 
   if (examError) {
@@ -658,30 +611,10 @@ export async function fetchManagedImportedExamDraft(examId: string) {
     throw new Error('Khong tim thay de thi can chinh sua.')
   }
 
-  const primaryVariant = [...(examRow.variants ?? [])].sort(
-    (left, right) => left.display_order - right.display_order,
-  )[0]
-
-  const { data: answerRows, error: answerError } = primaryVariant
-    ? await supabase
-        .from('school_exam_answer_keys')
-        .select('question_number, answer_value')
-        .eq('variant_id', primaryVariant.variant_id)
-        .returns<Array<{ question_number: number; answer_value: string }>>()
-    : { data: [], error: null }
-
-  if (answerError) {
-    throw new Error(`Khong the tai dap an de thi: ${answerError.message}`)
-  }
-
-  const answerMap = new Map(
-    (answerRows ?? []).map((row) => [row.question_number, row.answer_value]),
-  )
-
   const { data: questionRows, error: questionError } = await supabase
     .from('school_exam_questions')
     .select(
-      'question_id, exam_id, question_number, difficulty_level, question_type, question_text, statement_json, topic, obsidian_source_path, has_image, metadata, options:school_exam_question_options(option_label, option_text, display_order), assets:school_exam_question_assets(asset_type, asset_path, display_order)',
+      'question_id, exam_id, question_number, difficulty_level, question_type, question_text, correct_answer, statement_json, topic, obsidian_source_path, has_image, metadata, options:school_exam_question_options(option_label, option_text, display_order), assets:school_exam_question_assets(asset_type, asset_path, display_order)',
     )
     .eq('exam_id', examId)
     .order('question_number', { ascending: true })
@@ -703,8 +636,7 @@ export async function fetchManagedImportedExamDraft(examId: string) {
       subjectName: examRow.subject_name,
       year: examRow.year,
       durationMinutes: examRow.duration_minutes,
-      variantCode: primaryVariant?.variant_code ?? '101',
-      variantId: primaryVariant?.variant_id ?? null,
+      variantCode: examRow.display_variant_code ?? '101',
       pdfStoragePath: '',
       pdfUrl: examRow.pdf_url,
     },
@@ -723,7 +655,7 @@ export async function fetchManagedImportedExamDraft(examId: string) {
             label: statement.label as AdminImportStatement['label'],
             text: statement.text,
           })),
-          correctAnswer: answerMap.get(question.question_number) ?? '',
+          correctAnswer: question.correct_answer ?? '',
           isValid: true,
           warnings: [],
           changes: [],
@@ -747,8 +679,6 @@ export async function saveManagedImportedExamDraft(input: {
   const supabase = getSupabaseBrowserClient()
   const draft = input.draft
   const examId = draft.examDraft.examId
-  const variantId =
-    draft.examDraft.variantId ?? `${examId}-${slugify(draft.examDraft.variantCode || '101')}`
 
   const issues = getDraftValidationIssues({
     draft,
@@ -771,6 +701,7 @@ export async function saveManagedImportedExamDraft(input: {
     difficulty_level: null,
     question_type: question.questionType,
     question_text: question.questionText.trim(),
+    correct_answer: question.correctAnswer.trim().toUpperCase(),
     statement_json:
       question.questionType === 'true_false'
         ? question.statements.map((statement) => ({
@@ -818,12 +749,6 @@ export async function saveManagedImportedExamDraft(input: {
       }))
   })
 
-  const answerKeyRows = questionsWithUploadedAssets.map((question) => ({
-    variant_id: variantId,
-    question_number: question.questionNumber,
-    answer_value: question.correctAnswer.trim().toUpperCase(),
-  }))
-
   const { error: examUpdateError } = await supabase
     .from('school_exams')
     .update({
@@ -834,6 +759,7 @@ export async function saveManagedImportedExamDraft(input: {
       subject_name: draft.examDraft.subjectName,
       year: draft.examDraft.year,
       duration_minutes: draft.examDraft.durationMinutes,
+      display_variant_code: draft.examDraft.variantCode || 'DEFAULT',
       answer_key_provided: questionsWithUploadedAssets.every((question) =>
         Boolean(question.correctAnswer.trim()),
       ),
@@ -842,29 +768,6 @@ export async function saveManagedImportedExamDraft(input: {
 
   if (examUpdateError) {
     throw new Error(`Khong the cap nhat thong tin tong cua de: ${examUpdateError.message}`)
-  }
-
-  const { error: variantUpsertError } = await supabase.from('school_exam_variants').upsert(
-    {
-      variant_id: variantId,
-      exam_id: examId,
-      variant_code: draft.examDraft.variantCode,
-      display_order: 1,
-    },
-    { onConflict: 'variant_id' },
-  )
-
-  if (variantUpsertError) {
-    throw new Error(`Khong the cap nhat ma de: ${variantUpsertError.message}`)
-  }
-
-  const { error: answerDeleteError } = await supabase
-    .from('school_exam_answer_keys')
-    .delete()
-    .eq('variant_id', variantId)
-
-  if (answerDeleteError) {
-    throw new Error(`Khong the lam moi dap an cu: ${answerDeleteError.message}`)
   }
 
   const { error: questionDeleteError } = await supabase
@@ -890,14 +793,6 @@ export async function saveManagedImportedExamDraft(input: {
     if (sectionInsertError) {
       throw new Error(`Khong the luu lai cac phan de thi: ${sectionInsertError.message}`)
     }
-  }
-
-  const { error: answerInsertError } = await supabase
-    .from('school_exam_answer_keys')
-    .insert(answerKeyRows)
-
-  if (answerInsertError) {
-    throw new Error(`Khong the luu dap an moi: ${answerInsertError.message}`)
   }
 
   const { error: questionInsertError } = await supabase

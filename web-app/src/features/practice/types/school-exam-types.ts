@@ -40,6 +40,7 @@ export type SchoolExamPaper = {
   year: number
   durationMinutes: number
   pdfUrl: string
+  displayVariantCode?: string
   answerKeyProvided: boolean
   multipleChoiceQuestions: SchoolExamChoiceQuestion[]
   trueFalseQuestions: SchoolExamTrueFalseQuestion[]
@@ -60,12 +61,6 @@ export type SchoolExamSectionRecord = {
   statementCount: number
 }
 
-export type SchoolExamVariantRecord = {
-  variantId: string
-  variantCode: string
-  displayOrder: number
-}
-
 export type SchoolExamPaperRecord = {
   examId: string
   examTitle: string
@@ -76,16 +71,11 @@ export type SchoolExamPaperRecord = {
   year: number
   durationMinutes: number
   pdfUrl: string
+  displayVariantCode: string
   answerKeyProvided: boolean
   sourcePath?: string
   tags: string[]
   sections: SchoolExamSectionRecord[]
-  variants: SchoolExamVariantRecord[]
-}
-
-export type SchoolExamAnswerKeyEntry = {
-  questionNumber: number
-  answerValue: string
 }
 
 export type SchoolExamQuestionOptionRecord = {

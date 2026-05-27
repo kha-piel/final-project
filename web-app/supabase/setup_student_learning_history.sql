@@ -42,7 +42,6 @@ create table if not exists public.student_school_exam_attempts (
   attempt_id uuid primary key default gen_random_uuid(),
   user_id uuid not null references auth.users (id) on delete cascade,
   school_exam_id text not null references public.school_exams (exam_id) on delete cascade,
-  variant_id text null references public.school_exam_variants (variant_id) on delete set null,
   variant_code text null,
   score numeric(5, 2) null,
   correct_count integer not null default 0,

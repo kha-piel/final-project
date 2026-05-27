@@ -28,8 +28,6 @@ $$;
 
 alter table public.school_exams enable row level security;
 alter table public.school_exam_sections enable row level security;
-alter table public.school_exam_variants enable row level security;
-alter table public.school_exam_answer_keys enable row level security;
 alter table public.school_exam_questions enable row level security;
 alter table public.school_exam_question_options enable row level security;
 alter table public.school_exam_question_assets enable row level security;
@@ -88,64 +86,6 @@ with check (public.current_user_is_school_exam_admin());
 
 create policy "school_exam_sections_admin_delete"
 on public.school_exam_sections
-for delete
-to authenticated
-using (public.current_user_is_school_exam_admin());
-
-drop policy if exists "school_exam_variants_read_all" on public.school_exam_variants;
-drop policy if exists "school_exam_variants_admin_insert" on public.school_exam_variants;
-drop policy if exists "school_exam_variants_admin_update" on public.school_exam_variants;
-drop policy if exists "school_exam_variants_admin_delete" on public.school_exam_variants;
-
-create policy "school_exam_variants_read_all"
-on public.school_exam_variants
-for select
-using (true);
-
-create policy "school_exam_variants_admin_insert"
-on public.school_exam_variants
-for insert
-to authenticated
-with check (public.current_user_is_school_exam_admin());
-
-create policy "school_exam_variants_admin_update"
-on public.school_exam_variants
-for update
-to authenticated
-using (public.current_user_is_school_exam_admin())
-with check (public.current_user_is_school_exam_admin());
-
-create policy "school_exam_variants_admin_delete"
-on public.school_exam_variants
-for delete
-to authenticated
-using (public.current_user_is_school_exam_admin());
-
-drop policy if exists "school_exam_answer_keys_read_all" on public.school_exam_answer_keys;
-drop policy if exists "school_exam_answer_keys_admin_insert" on public.school_exam_answer_keys;
-drop policy if exists "school_exam_answer_keys_admin_update" on public.school_exam_answer_keys;
-drop policy if exists "school_exam_answer_keys_admin_delete" on public.school_exam_answer_keys;
-
-create policy "school_exam_answer_keys_read_all"
-on public.school_exam_answer_keys
-for select
-using (true);
-
-create policy "school_exam_answer_keys_admin_insert"
-on public.school_exam_answer_keys
-for insert
-to authenticated
-with check (public.current_user_is_school_exam_admin());
-
-create policy "school_exam_answer_keys_admin_update"
-on public.school_exam_answer_keys
-for update
-to authenticated
-using (public.current_user_is_school_exam_admin())
-with check (public.current_user_is_school_exam_admin());
-
-create policy "school_exam_answer_keys_admin_delete"
-on public.school_exam_answer_keys
 for delete
 to authenticated
 using (public.current_user_is_school_exam_admin());

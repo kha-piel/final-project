@@ -26,10 +26,10 @@ Khi them de moi, can chot cac thong tin nay truoc de pipeline khong bi lech:
 - `subject_folder`: dung `Toan`, `Vat_Ly`, hoac `Hoa_Hoc`.
 - `subject_code`: dung `TOAN`, `VAT_LY`, hoac `HOA_HOC`.
 - PDF goc cua de.
-- Bang dap an theo tung ma de. Neu chi co mot ma de thi de `variant_code` la `DEFAULT`.
+- Bang dap an cua PDF dang cao; `variant_code` chi la ma de hien thi tren FE.
 - Cau truc phan thi: Phan I trac nghiem, Phan II dung/sai, Phan III tra loi ngan, kem so cau bat dau/ket thuc.
 - Anh crop cho cau co hinh, bang, do thi, cong thuc kho OCR.
-- Neu co nhieu ma de, can xac dinh ma de nao ung voi PDF/cau hoi dang cao.
+- Neu PDF in ma de that, dien ma do vao `variant_code`; DB van luu dap an truc tiep theo tung cau.
 
 ## Quy uoc anh crop
 Thu muc anh cua tung de:
@@ -59,7 +59,7 @@ Format toi thieu:
 
 ```json
 {
-  "variant_code": "DEFAULT",
+  "variant_code": "101",
   "answers": {
     "1": "A",
     "2": "D",

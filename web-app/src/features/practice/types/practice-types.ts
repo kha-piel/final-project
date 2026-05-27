@@ -10,6 +10,7 @@ export type PracticeExamCatalogItem = {
   subjectName: string
   year: number
   durationMinutes: number
+  pdfUrl?: string
   sourcePath?: string
   tags: string[]
 }
@@ -24,6 +25,8 @@ export type PracticeBlueprintSection = {
 
 export type PracticeBlueprint = {
   blueprintId: string
+  subjectId: string
+  subjectName: string
   name: string
   description: string
   durationMinutes: number

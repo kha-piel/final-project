@@ -11,6 +11,7 @@ create table if not exists public.school_exams (
   year integer not null,
   duration_minutes integer not null default 50,
   pdf_url text not null,
+  display_variant_code text not null default 'DEFAULT',
   answer_key_provided boolean not null default false,
   source_path text null,
   tags text[] not null default '{}',
@@ -34,35 +35,11 @@ create table if not exists public.school_exam_sections (
   constraint school_exam_sections_range_ck check (end_question_number >= start_question_number)
 );
 
-create table if not exists public.school_exam_variants (
-  variant_id text primary key,
-  exam_id text not null references public.school_exams (exam_id) on delete cascade,
-  variant_code text not null,
-  display_order integer not null default 0,
-  created_at timestamptz not null default now(),
-  constraint school_exam_variants_exam_code_uq unique (exam_id, variant_code)
-);
-
-create table if not exists public.school_exam_answer_keys (
-  answer_key_id bigint generated always as identity primary key,
-  variant_id text not null references public.school_exam_variants (variant_id) on delete cascade,
-  question_number integer not null,
-  answer_value text not null,
-  created_at timestamptz not null default now(),
-  constraint school_exam_answer_keys_variant_question_uq unique (variant_id, question_number)
-);
-
 create index if not exists idx_school_exams_subject_year
   on public.school_exams (subject_code, year desc);
 
 create index if not exists idx_school_exam_sections_exam_order
   on public.school_exam_sections (exam_id, display_order);
-
-create index if not exists idx_school_exam_variants_exam_order
-  on public.school_exam_variants (exam_id, display_order);
-
-create index if not exists idx_school_exam_answer_keys_variant_question
-  on public.school_exam_answer_keys (variant_id, question_number);
 
 create or replace function public.set_school_exam_updated_at()
 returns trigger
@@ -93,6 +70,7 @@ create table if not exists public.school_exam_questions (
   difficulty_level integer null check (difficulty_level between 1 and 4),
   question_type text not null check (question_type in ('multiple_choice', 'true_false', 'short_answer')),
   question_text text not null,
+  correct_answer text null,
   statement_json jsonb not null default '[]'::jsonb,
   explanation text null,
   topic text null,
@@ -159,12 +137,6 @@ execute function public.set_school_exam_question_updated_at();
 
 begin;
 
-delete from public.school_exam_answer_keys
-where variant_id in ('chuyen-le-khiet-quang-2025-default');
-
-delete from public.school_exam_variants
-where variant_id in ('chuyen-le-khiet-quang-2025-default');
-
 delete from public.school_exam_sections
 where exam_id in ('chuyen-le-khiet-quang-2025');
 
@@ -182,7 +154,7 @@ where exam_id in ('chuyen-le-khiet-quang-2025');
 
 insert into public.school_exams (
   exam_id, title, school_name, city, subject_code, subject_name,
-  year, duration_minutes, pdf_url, answer_key_provided, source_path, tags, is_active
+  year, duration_minutes, pdf_url, display_variant_code, answer_key_provided, source_path, tags, is_active
 ) values (
   'chuyen-le-khiet-quang-2025',
   'De Toan Chuyen Le Khiet Quang nam hoc 2025-2026',
@@ -193,6 +165,7 @@ insert into public.school_exams (
   2025,
   90,
   '/school-exams/chuyen-le-khiet-quang-2025.pdf',
+  'DEFAULT',
   true,
   'data_scraper/input/school_exams/chuyen-le-khiet-quang-2025.pdf',
   array['de truong', 'toan', '2025-2026', 'pdf'],
@@ -240,41 +213,6 @@ insert into public.school_exam_sections (
     0
   );
 
-insert into public.school_exam_variants (
-  variant_id, exam_id, variant_code, display_order
-) values (
-  'chuyen-le-khiet-quang-2025-default',
-  'chuyen-le-khiet-quang-2025',
-  'DEFAULT',
-  1
-);
-
-insert into public.school_exam_answer_keys (
-  variant_id, question_number, answer_value
-) values
-  ('chuyen-le-khiet-quang-2025-default', 1, 'B'),
-  ('chuyen-le-khiet-quang-2025-default', 2, 'A'),
-  ('chuyen-le-khiet-quang-2025-default', 3, 'C'),
-  ('chuyen-le-khiet-quang-2025-default', 4, 'B'),
-  ('chuyen-le-khiet-quang-2025-default', 5, 'D'),
-  ('chuyen-le-khiet-quang-2025-default', 6, 'D'),
-  ('chuyen-le-khiet-quang-2025-default', 7, 'D'),
-  ('chuyen-le-khiet-quang-2025-default', 8, 'C'),
-  ('chuyen-le-khiet-quang-2025-default', 9, 'D'),
-  ('chuyen-le-khiet-quang-2025-default', 10, 'C'),
-  ('chuyen-le-khiet-quang-2025-default', 11, 'D'),
-  ('chuyen-le-khiet-quang-2025-default', 12, 'D'),
-  ('chuyen-le-khiet-quang-2025-default', 13, 'SSSD'),
-  ('chuyen-le-khiet-quang-2025-default', 14, 'DDDD'),
-  ('chuyen-le-khiet-quang-2025-default', 15, 'DSSD'),
-  ('chuyen-le-khiet-quang-2025-default', 16, 'DSDS'),
-  ('chuyen-le-khiet-quang-2025-default', 17, '3432'),
-  ('chuyen-le-khiet-quang-2025-default', 18, '0,66 kg'),
-  ('chuyen-le-khiet-quang-2025-default', 19, '40 khach'),
-  ('chuyen-le-khiet-quang-2025-default', 20, '2502'),
-  ('chuyen-le-khiet-quang-2025-default', 21, '3'),
-  ('chuyen-le-khiet-quang-2025-default', 22, '0,17');
-
 commit;
 
 
@@ -294,7 +232,7 @@ where exam_id = 'chuyen-le-khiet-quang-2025';
 
 insert into public.school_exam_questions (
   question_id, exam_id, section_id, question_number, difficulty_level, question_type,
-  question_text, statement_json, explanation, topic, obsidian_source_path,
+  question_text, correct_answer, statement_json, explanation, topic, obsidian_source_path,
   has_image, metadata
 ) values (
   'chuyen-le-khiet-quang-2025-q01',
@@ -304,6 +242,7 @@ insert into public.school_exam_questions (
   1,
   'multiple_choice',
   'Cho hàm số $y = f(x)$ liên tục trên $\mathbb{R}$ và có một nguyên hàm là $F(x)$. Biết rằng $F(1) = 9$, $F(2) = 5$. Giá trị của biểu thức $\int_{1}^{2} f(x) dx$ bằng',
+  'B',
   '[]'::jsonb,
   null,
   'Nguyên hàm',
@@ -354,7 +293,7 @@ insert into public.school_exam_question_options (
 
 insert into public.school_exam_questions (
   question_id, exam_id, section_id, question_number, difficulty_level, question_type,
-  question_text, statement_json, explanation, topic, obsidian_source_path,
+  question_text, correct_answer, statement_json, explanation, topic, obsidian_source_path,
   has_image, metadata
 ) values (
   'chuyen-le-khiet-quang-2025-q02',
@@ -364,6 +303,7 @@ insert into public.school_exam_questions (
   1,
   'multiple_choice',
   'Tập nghiệm của bất phương trình $2^{2+x^2} > 16$ là',
+  'A',
   '[]'::jsonb,
   null,
   'Phương trình mũ và logarit',
@@ -414,7 +354,7 @@ insert into public.school_exam_question_options (
 
 insert into public.school_exam_questions (
   question_id, exam_id, section_id, question_number, difficulty_level, question_type,
-  question_text, statement_json, explanation, topic, obsidian_source_path,
+  question_text, correct_answer, statement_json, explanation, topic, obsidian_source_path,
   has_image, metadata
 ) values (
   'chuyen-le-khiet-quang-2025-q03',
@@ -424,6 +364,7 @@ insert into public.school_exam_questions (
   1,
   'multiple_choice',
   'Cho hàm số $y = f(x)$ xác định trên $\mathbb{R}$ và có bảng biến thiên như bảng dưới đây. Khẳng định nào sau đây đúng?',
+  'C',
   '[]'::jsonb,
   null,
   'Khảo sát và đọc đồ thị hàm số',
@@ -496,7 +437,7 @@ insert into public.school_exam_question_assets (
 
 insert into public.school_exam_questions (
   question_id, exam_id, section_id, question_number, difficulty_level, question_type,
-  question_text, statement_json, explanation, topic, obsidian_source_path,
+  question_text, correct_answer, statement_json, explanation, topic, obsidian_source_path,
   has_image, metadata
 ) values (
   'chuyen-le-khiet-quang-2025-q04',
@@ -506,6 +447,7 @@ insert into public.school_exam_questions (
   1,
   'multiple_choice',
   'Họ nguyên hàm của hàm số $f(x) = \sin x$ là',
+  'B',
   '[]'::jsonb,
   null,
   'Nguyên hàm',
@@ -556,7 +498,7 @@ insert into public.school_exam_question_options (
 
 insert into public.school_exam_questions (
   question_id, exam_id, section_id, question_number, difficulty_level, question_type,
-  question_text, statement_json, explanation, topic, obsidian_source_path,
+  question_text, correct_answer, statement_json, explanation, topic, obsidian_source_path,
   has_image, metadata
 ) values (
   'chuyen-le-khiet-quang-2025-q05',
@@ -569,6 +511,7 @@ insert into public.school_exam_questions (
 Quãng đường (km) [2,7; 3,0) [3,0; 3,3) [3,3; 3,6) [3,6; 3,9) [3,9; 4,2)
 Số ngày 3 6 5 4 2
 Phương sai của mẫu số liệu ghép nhóm là',
+  'D',
   '[]'::jsonb,
   null,
   'Tứ phân vị và số liệu ghép nhóm',
@@ -641,7 +584,7 @@ insert into public.school_exam_question_assets (
 
 insert into public.school_exam_questions (
   question_id, exam_id, section_id, question_number, difficulty_level, question_type,
-  question_text, statement_json, explanation, topic, obsidian_source_path,
+  question_text, correct_answer, statement_json, explanation, topic, obsidian_source_path,
   has_image, metadata
 ) values (
   'chuyen-le-khiet-quang-2025-q06',
@@ -651,6 +594,7 @@ insert into public.school_exam_questions (
   2,
   'multiple_choice',
   'Cho hình chóp $S.ABCD$ có đáy $ABCD$ là hình bình hành tâm $O$. Gọi $E, I, K$ lần lượt là trung điểm của các cạnh $SB, BC, CD$. Mặt phẳng nào sau đây song song với $(SAD)$?',
+  'D',
   '[]'::jsonb,
   null,
   'Hình học không gian với véc tơ',
@@ -723,7 +667,7 @@ insert into public.school_exam_question_assets (
 
 insert into public.school_exam_questions (
   question_id, exam_id, section_id, question_number, difficulty_level, question_type,
-  question_text, statement_json, explanation, topic, obsidian_source_path,
+  question_text, correct_answer, statement_json, explanation, topic, obsidian_source_path,
   has_image, metadata
 ) values (
   'chuyen-le-khiet-quang-2025-q07',
@@ -733,6 +677,7 @@ insert into public.school_exam_questions (
   2,
   'multiple_choice',
   'Cho tứ diện $ABCD$. Gọi $G$ là trọng tâm của tam giác $BCD$. Khẳng định nào sau đây là sai?',
+  'D',
   '[]'::jsonb,
   null,
   null,
@@ -783,7 +728,7 @@ insert into public.school_exam_question_options (
 
 insert into public.school_exam_questions (
   question_id, exam_id, section_id, question_number, difficulty_level, question_type,
-  question_text, statement_json, explanation, topic, obsidian_source_path,
+  question_text, correct_answer, statement_json, explanation, topic, obsidian_source_path,
   has_image, metadata
 ) values (
   'chuyen-le-khiet-quang-2025-q08',
@@ -793,6 +738,7 @@ insert into public.school_exam_questions (
   2,
   'multiple_choice',
   'Dãy số nào trong các dãy số được cho dưới đây là một cấp số nhân?',
+  'C',
   '[]'::jsonb,
   null,
   'Cấp số cộng và cấp số nhân',
@@ -843,7 +789,7 @@ insert into public.school_exam_question_options (
 
 insert into public.school_exam_questions (
   question_id, exam_id, section_id, question_number, difficulty_level, question_type,
-  question_text, statement_json, explanation, topic, obsidian_source_path,
+  question_text, correct_answer, statement_json, explanation, topic, obsidian_source_path,
   has_image, metadata
 ) values (
   'chuyen-le-khiet-quang-2025-q09',
@@ -853,6 +799,7 @@ insert into public.school_exam_questions (
   3,
   'multiple_choice',
   'Chọn mệnh đề sai trong các mệnh đề sau?',
+  'D',
   '[]'::jsonb,
   null,
   null,
@@ -903,7 +850,7 @@ insert into public.school_exam_question_options (
 
 insert into public.school_exam_questions (
   question_id, exam_id, section_id, question_number, difficulty_level, question_type,
-  question_text, statement_json, explanation, topic, obsidian_source_path,
+  question_text, correct_answer, statement_json, explanation, topic, obsidian_source_path,
   has_image, metadata
 ) values (
   'chuyen-le-khiet-quang-2025-q10',
@@ -913,6 +860,7 @@ insert into public.school_exam_questions (
   3,
   'multiple_choice',
   'Cho hình chóp $S.ABCD$ có đáy là hình vuông và $SA \perp (ABCD)$. Mặt phẳng nào sau đây vuông góc với mặt phẳng $(SCD)$?',
+  'C',
   '[]'::jsonb,
   null,
   'Hình học không gian với véc tơ',
@@ -985,7 +933,7 @@ insert into public.school_exam_question_assets (
 
 insert into public.school_exam_questions (
   question_id, exam_id, section_id, question_number, difficulty_level, question_type,
-  question_text, statement_json, explanation, topic, obsidian_source_path,
+  question_text, correct_answer, statement_json, explanation, topic, obsidian_source_path,
   has_image, metadata
 ) values (
   'chuyen-le-khiet-quang-2025-q11',
@@ -995,6 +943,7 @@ insert into public.school_exam_questions (
   3,
   'multiple_choice',
   'Trong không gian với hệ tọa độ $Oxyz$, véc-tơ nào sau đây là véc-tơ pháp tuyến của mặt phẳng $(P): 2x - y + z + 3 = 0$?',
+  'D',
   '[]'::jsonb,
   null,
   'Phương trình mặt phẳng trong Oxyz',
@@ -1045,7 +994,7 @@ insert into public.school_exam_question_options (
 
 insert into public.school_exam_questions (
   question_id, exam_id, section_id, question_number, difficulty_level, question_type,
-  question_text, statement_json, explanation, topic, obsidian_source_path,
+  question_text, correct_answer, statement_json, explanation, topic, obsidian_source_path,
   has_image, metadata
 ) values (
   'chuyen-le-khiet-quang-2025-q12',
@@ -1055,6 +1004,7 @@ insert into public.school_exam_questions (
   4,
   'multiple_choice',
   'Trong không gian với hệ tọa độ $Oxyz$, phương trình nào sau đây là phương trình mặt cầu?',
+  'D',
   '[]'::jsonb,
   null,
   'Hệ trục tọa độ Oxyz',
@@ -1105,7 +1055,7 @@ insert into public.school_exam_question_options (
 
 insert into public.school_exam_questions (
   question_id, exam_id, section_id, question_number, difficulty_level, question_type,
-  question_text, statement_json, explanation, topic, obsidian_source_path,
+  question_text, correct_answer, statement_json, explanation, topic, obsidian_source_path,
   has_image, metadata
 ) values (
   'chuyen-le-khiet-quang-2025-q13',
@@ -1115,6 +1065,7 @@ insert into public.school_exam_questions (
   2,
   'true_false',
   'Cho hàm số $f(x) = \sqrt{x} + \sqrt{32 - x}$.',
+  'SSSD',
   '[{"label": "a", "text": "Hàm số có tập xác định là $(0; 32)$."}, {"label": "b", "text": "$f''(x) = \\frac{1}{2\\sqrt{x}} + \\frac{1}{2\\sqrt{32-x}}$"}, {"label": "c", "text": "Phương trình $f''(x) = 0$ có hai nghiệm phân biệt."}, {"label": "d", "text": "Hàm số đạt giá trị lớn nhất là $M$ và giá trị nhỏ nhất là $m$ thì $\\frac{M}{m} = \\frac{\\sqrt{2}}{2}$"}]'::jsonb,
   null,
   null,
@@ -1125,7 +1076,7 @@ insert into public.school_exam_questions (
 
 insert into public.school_exam_questions (
   question_id, exam_id, section_id, question_number, difficulty_level, question_type,
-  question_text, statement_json, explanation, topic, obsidian_source_path,
+  question_text, correct_answer, statement_json, explanation, topic, obsidian_source_path,
   has_image, metadata
 ) values (
   'chuyen-le-khiet-quang-2025-q14',
@@ -1136,6 +1087,7 @@ insert into public.school_exam_questions (
   'true_false',
   'Trong một trò chơi điện tử, với hệ trục tọa độ $Oxyz$ cho trước, đơn vị giả định trên mỗi trục là mét, người chơi điều khiển nhân vật chính như một chất điểm di động trên mặt đất (là mặt phẳng $Oxy$). Sau khi chiến đấu để vượt qua thử thách, nhân vật chính muốn qua màn thì phải đến vị trí gần với một phi thuyền để được bay vào trong phi thuyền đi đến một màn khác, gặp những thử thách mới.
 Giả sử nhân vật chính sau khi chiến đấu xong màn một thì đứng ở vị trí $A$ có tọa độ $(1; 2; 0)$, khi ấy trên bầu trời xuất hiện một chiếc phi thuyền ở vị trí $(-8; -3; 4)$, nhân vật chính nếu cách phi thuyền không quá 5 mét thì được phép bay vào phi thuyền.',
+  'DDDD',
   '[{"label": "a", "text": "Vùng được phép bay được giới hạn bởi mặt cầu có phương trình $(x+8)^2+(y+3)^2+(z-4)^2 = 25$."}, {"label": "b", "text": "Khi nhân vật chính vừa chiến đấu xong thì khoảng cách ngắn nhất từ nhân vật chính đến vùng được phép bay bằng $6,05$ m (làm tròn đến hàng phần trăm)."}, {"label": "c", "text": "Nhân vật chính chạy trên một đường thẳng $d$ để đến được vị trí gần vùng được phép bay nhất, phương trình tham số đường thẳng $d$ là $\\begin{cases} x = 1+9t \\\\ y = 2 + 5t \\\\ z=0 \\end{cases}$"}, {"label": "d", "text": "Nhân vật chính xuất phát từ $A$, chạy trên đường thẳng $d$ với gia tốc $1$ m/s$^2$, ngay khi được phép thì bay lên phi thuyền với tốc độ $6$ m/s. Tổng thời gian của quá trình nói trên bằng $4,7$ giây (làm tròn đến hàng phần chục)."}]'::jsonb,
   null,
   'Phương trình mặt phẳng trong Oxyz',
@@ -1146,7 +1098,7 @@ Giả sử nhân vật chính sau khi chiến đấu xong màn một thì đứn
 
 insert into public.school_exam_questions (
   question_id, exam_id, section_id, question_number, difficulty_level, question_type,
-  question_text, statement_json, explanation, topic, obsidian_source_path,
+  question_text, correct_answer, statement_json, explanation, topic, obsidian_source_path,
   has_image, metadata
 ) values (
   'chuyen-le-khiet-quang-2025-q15',
@@ -1156,6 +1108,7 @@ insert into public.school_exam_questions (
   3,
   'true_false',
   'Tháp giải nhiệt tại một nhà máy điện hạt nhân có hình dạng là một phần của khối tròn xoay khi cho hypebol $(H)$ quay quanh một trục đối xứng của $(H)$. Tháp có chiều cao là $120$ mét, bán kính đáy dưới bằng $40$ mét. Thiết lập hệ trục tọa độ $Oxy$ như hình vẽ sao cho mặt cắt dạng hypebol của tháp nhận $Oy$ làm trục đối xứng; lấy đơn vị trên mỗi trục là mét. gốc $O$ ở vị trí có độ cao $80$ mét so với mặt đất và đoạn giao nhau giữa trục $Ox$ với tháp bằng $30$ mét.',
+  'DSSD',
   '[{"label": "a", "text": "Diện tích đáy dưới của tháp bằng $5027$ m$^2$ (làm tròn đến hàng đơn vị)."}, {"label": "b", "text": "Các điểm $(-20; 0)$, $(20; 0)$ thuộc hypebol $(H)$."}, {"label": "c", "text": "Phương trình $(H)$ là $\\frac{x^2}{15^2} - \\frac{y^2}{11520} = 1$."}, {"label": "d", "text": "Thể tích của tháp giải nhiệt này bằng $214414$ m$^3$ (làm tròn đến hàng đơn vị)."}]'::jsonb,
   null,
   'Hệ trục tọa độ Oxyz',
@@ -1188,7 +1141,7 @@ insert into public.school_exam_question_assets (
 
 insert into public.school_exam_questions (
   question_id, exam_id, section_id, question_number, difficulty_level, question_type,
-  question_text, statement_json, explanation, topic, obsidian_source_path,
+  question_text, correct_answer, statement_json, explanation, topic, obsidian_source_path,
   has_image, metadata
 ) values (
   'chuyen-le-khiet-quang-2025-q16',
@@ -1198,6 +1151,7 @@ insert into public.school_exam_questions (
   4,
   'true_false',
   'Bạn Bắc chuẩn bị đi dã ngoại tại Bùi Hui trong hai ngày thứ Bảy và Chủ nhật. Biết rằng ở Bùi Hui, mỗi ngày chỉ có nắng hoặc mưa, nếu một ngày là nắng thì khả năng ngày hôm sau vẫn nắng là $80\%$, còn nếu một ngày là mưa thì khả năng ngày hôm sau vẫn mưa là $30\%$. Theo dự báo thời tiết, xác suất trời sẽ nắng vào thứ Bảy là $70\%$.',
+  'DSDS',
   '[{"label": "a", "text": "Xác suất để cả hai ngày nắng là $0,56$."}, {"label": "b", "text": "Xác suất để có ít nhất một ngày nắng là $0,9$."}, {"label": "c", "text": "Xác suất để Chủ nhật nắng là $0,77$."}, {"label": "d", "text": "Biết Chủ nhật là ngày nắng, xác suất để thứ Bảy là ngày nắng là $0,7$."}]'::jsonb,
   null,
   'Xác suất biến cố độc lập',
@@ -1208,7 +1162,7 @@ insert into public.school_exam_questions (
 
 insert into public.school_exam_questions (
   question_id, exam_id, section_id, question_number, difficulty_level, question_type,
-  question_text, statement_json, explanation, topic, obsidian_source_path,
+  question_text, correct_answer, statement_json, explanation, topic, obsidian_source_path,
   has_image, metadata
 ) values (
   'chuyen-le-khiet-quang-2025-q17',
@@ -1218,6 +1172,7 @@ insert into public.school_exam_questions (
   1,
   'short_answer',
   'Hai đội tuyển $A$ và $B$ tham gia giải bóng bàn. Mỗi đội có $7$ người đã được sắp xếp theo một thứ tự nhất định. Đầu tiên, người thứ nhất của đội $A$, đấu với người thứ nhất của đội $B$ và người thua sẽ bị loại. Sau đó, người chiến thắng đấu tiếp với người thứ hai của đội kia, các trận thi đấu tiếp theo diễn ra tương tự. Cuộc thi đấu kết thúc cho đến khi tất cả người chơi của $1$ đội đều bị loại và đội còn lại là chiến thắng. Hỏi có bao nhiêu cách diễn ra cuộc thi đấu?',
+  '3432',
   '[]'::jsonb,
   null,
   'Quy hoạch tuyến tính và bài toán tối ưu',
@@ -1228,7 +1183,7 @@ insert into public.school_exam_questions (
 
 insert into public.school_exam_questions (
   question_id, exam_id, section_id, question_number, difficulty_level, question_type,
-  question_text, statement_json, explanation, topic, obsidian_source_path,
+  question_text, correct_answer, statement_json, explanation, topic, obsidian_source_path,
   has_image, metadata
 ) values (
   'chuyen-le-khiet-quang-2025-q18',
@@ -1242,6 +1197,7 @@ vitamin A(mg) vitamin B (mg) vitamin K(mg)
 X 200 600 8
 Y 500 300 6
 Từ hai loại thực phẩm $X$ và $Y$, người ta muốn tạo ra một lượng thực phẩm hỗn hợp chứa ít nhất $2000$ mg vitamin A, $3000$ mg vitamin B, $48$ mg vitamin K. Lượng thực phẩm hỗn hợp có khối lượng nhỏ nhất thỏa mãn yêu cầu trên là bao nhiêu? (đơn vị: kilogam; làm tròn đến hàng phần trăm)',
+  '0,66 kg',
   '[]'::jsonb,
   null,
   'Cực trị, GTLN và GTNN',
@@ -1274,7 +1230,7 @@ insert into public.school_exam_question_assets (
 
 insert into public.school_exam_questions (
   question_id, exam_id, section_id, question_number, difficulty_level, question_type,
-  question_text, statement_json, explanation, topic, obsidian_source_path,
+  question_text, correct_answer, statement_json, explanation, topic, obsidian_source_path,
   has_image, metadata
 ) values (
   'chuyen-le-khiet-quang-2025-q19',
@@ -1284,6 +1240,7 @@ insert into public.school_exam_questions (
   2,
   'short_answer',
   'Một công ty du lịch thông báo giá tiền cho chuyến đi tham quan của một nhóm khách du lịch như sau: $20$ khách đầu tiên có giá là $30$ USD/người; nếu có nhiều hơn $20$ người đăng kí thì cứ có thêm $1$ người, giá vé sẽ giảm $1$ USD/người cho toàn bộ hành khách. Hỏi công ty nên giới hạn số lượng hành khách tối đa là bao nhiêu để công ty không bị lỗ? Biết rằng chi phí của chuyến đi là $400$ USD.',
+  '40 khach',
   '[]'::jsonb,
   null,
   'Cực trị, GTLN và GTNN',
@@ -1294,7 +1251,7 @@ insert into public.school_exam_questions (
 
 insert into public.school_exam_questions (
   question_id, exam_id, section_id, question_number, difficulty_level, question_type,
-  question_text, statement_json, explanation, topic, obsidian_source_path,
+  question_text, correct_answer, statement_json, explanation, topic, obsidian_source_path,
   has_image, metadata
 ) values (
   'chuyen-le-khiet-quang-2025-q20',
@@ -1304,6 +1261,7 @@ insert into public.school_exam_questions (
   2,
   'short_answer',
   'Một viên gạch hình vuông $ABCD$ có cạnh $60$. Người ta trang trí viên gạch bằng các đường cong $(L_1)$, $(L_2)$. $(L_1)$ là tập hợp các điểm $M$ thỏa $MC = MA + 50$ hoặc $MA = MC + 50$. Khi quay đường cong $(L_1)$ quanh tâm viên gạch hình vuông đó một góc $90^\circ$ ta được đường cong $(L_2)$. Tính diện tích hình phẳng giới hạn bởi các đường cong $(L_1)$, $(L_2)$ và các cạnh viên gạch (phần màu trắng, kết quả làm tròn đến hàng đơn vị).',
+  '2502',
   '[]'::jsonb,
   null,
   'Tích phân và diện tích hình phẳng',
@@ -1336,7 +1294,7 @@ insert into public.school_exam_question_assets (
 
 insert into public.school_exam_questions (
   question_id, exam_id, section_id, question_number, difficulty_level, question_type,
-  question_text, statement_json, explanation, topic, obsidian_source_path,
+  question_text, correct_answer, statement_json, explanation, topic, obsidian_source_path,
   has_image, metadata
 ) values (
   'chuyen-le-khiet-quang-2025-q21',
@@ -1346,6 +1304,7 @@ insert into public.school_exam_questions (
   3,
   'short_answer',
   'Cho hình lăng trụ tam giác đều $ABC.A''B''C''$ có tất cả các cạnh bằng $2$ cm. Gọi $M$ và $N$ lần lượt là trung điểm $B''C$ và $A''B''$. Gọi $\alpha$ là góc tạo bởi $MN$ và $(BCC''B'')$. Tính $\tan^2 \alpha$.',
+  '3',
   '[]'::jsonb,
   null,
   'Hình học không gian với véc tơ',
@@ -1356,7 +1315,7 @@ insert into public.school_exam_questions (
 
 insert into public.school_exam_questions (
   question_id, exam_id, section_id, question_number, difficulty_level, question_type,
-  question_text, statement_json, explanation, topic, obsidian_source_path,
+  question_text, correct_answer, statement_json, explanation, topic, obsidian_source_path,
   has_image, metadata
 ) values (
   'chuyen-le-khiet-quang-2025-q22',
@@ -1366,6 +1325,7 @@ insert into public.school_exam_questions (
   4,
   'short_answer',
   'Bốn tay vợt Tennis An, Bình, Công và Duy tham gia vào một giải đấu có tổng cộng ba trận đấu. Đầu tiên, hai người chơi được chọn ngẫu nhiên để chơi với nhau; hai người chơi còn lại cũng chơi với nhau. Những người chiến thắng trong hai trận đấu đó sẽ thi đấu với nhau để quyết định nhà vô địch giải đấu. An, Bình và Công ngang sức nhau (nghĩa là, khi một trận đấu được chơi giữa hai người trong ba người An, Bình, Công, xác suất mỗi người chơi thắng là $\frac{1}{2}$). Khi Duy đấu với An, Bình hoặc Công, xác suất Duy thắng là $0,7$. Xác định xác suất Bình vô địch giải đấu.',
+  '0,17',
   '[]'::jsonb,
   null,
   'Xác suất biến cố độc lập',

@@ -47,7 +47,6 @@ type ManagedExamFormState = {
   subjectCode: SubjectCode
   year: string
   durationMinutes: string
-  variantId: string | null
   variantCode: string
   isActive: boolean
 }
@@ -91,10 +90,6 @@ export function ImportExamPage() {
       pdfFile,
     })
   }, [pdfFile, result])
-
-  useEffect(() => {
-    setPartOneAnswers((current) => resizeAnswerChoiceState(current, partOneQuestionCount))
-  }, [partOneQuestionCount])
 
   const answerKeyText = useMemo(
     () =>
@@ -145,12 +140,14 @@ export function ImportExamPage() {
 
   function updateSubject(subjectCode: SubjectCode) {
     const subject = subjectOptions.find((item) => item.code === subjectCode)
+    const nextPartOneQuestionCount = getPartOneQuestionCount(subjectCode)
     setMetadata((current) => ({
       ...current,
       subjectCode,
       subjectName: subject?.name ?? current.subjectName,
       durationMinutes: subject?.durationMinutes ?? current.durationMinutes,
     }))
+    setPartOneAnswers((current) => resizeAnswerChoiceState(current, nextPartOneQuestionCount))
     setResult(null)
   }
 
@@ -398,7 +395,6 @@ export function ImportExamPage() {
       subjectCode: exam.subjectCode,
       year: String(exam.year),
       durationMinutes: String(exam.durationMinutes),
-      variantId: exam.variantId,
       variantCode: exam.variantCode,
       isActive: exam.isActive,
     })
@@ -464,7 +460,6 @@ export function ImportExamPage() {
         subjectCode: managedForm.subjectCode,
         year: Number(managedForm.year) || new Date().getFullYear(),
         durationMinutes: Number(managedForm.durationMinutes) || 0,
-        variantId: managedForm.variantId,
         variantCode: managedForm.variantCode,
         isActive: managedForm.isActive,
       })

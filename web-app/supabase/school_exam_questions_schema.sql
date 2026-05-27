@@ -6,6 +6,7 @@ create table if not exists public.school_exam_questions (
   difficulty_level integer null check (difficulty_level between 1 and 4),
   question_type text not null check (question_type in ('multiple_choice', 'true_false', 'short_answer')),
   question_text text not null,
+  correct_answer text null,
   statement_json jsonb not null default '[]'::jsonb,
   explanation text null,
   topic text null,

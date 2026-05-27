@@ -140,7 +140,7 @@ def build_seed_sql(exam_id: str, payload: dict[str, Any]) -> str:
 
         lines.append("insert into public.school_exam_questions (")
         lines.append("  question_id, exam_id, section_id, question_number, difficulty_level, question_type,")
-        lines.append("  question_text, statement_json, explanation, topic, obsidian_source_path,")
+        lines.append("  question_text, correct_answer, statement_json, explanation, topic, obsidian_source_path,")
         lines.append("  has_image, metadata")
         lines.append(") values (")
         lines.append(f"  {sql_quote(question_id)},")
@@ -150,6 +150,7 @@ def build_seed_sql(exam_id: str, payload: dict[str, Any]) -> str:
         lines.append(f"  {difficulty_level},")
         lines.append(f"  {sql_quote(str(item.get('question_type', part)))},")
         lines.append(f"  {sql_quote(str(item.get('question_text', '')))},")
+        lines.append(f"  {sql_quote(str(item.get('correct_answer', '')).strip())},")
         lines.append(f"  {sql_json(statement_json)},")
         lines.append(f"  {sql_quote(item.get('explanation')) if item.get('explanation') else 'null'},")
         lines.append(f"  {sql_quote(item.get('topic')) if item.get('topic') else 'null'},")

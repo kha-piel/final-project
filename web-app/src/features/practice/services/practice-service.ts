@@ -25,12 +25,14 @@ type SelectionContext = {
 
 const SUBJECT_ID_TO_CODE: Record<string, string> = {
   TOAN: 'TOAN',
+  VAT_LY: 'VAT_LY',
+  HOA_HOC: 'HOA_HOC',
 }
 
 const SOFT_MAX_QUESTIONS_PER_SOURCE_EXAM = 3
 const SOFT_MAX_QUESTIONS_PER_TOPIC = 2
 
-let questionBankCache: PracticeQuestion[] | null = null
+const questionBankCacheBySubject = new Map<string, PracticeQuestion[]>()
 
 export function searchPracticeExamCatalog(
   catalog: PracticeExamCatalogItem[],
@@ -115,19 +117,22 @@ export async function createPracticeExamSession(input: {
 }
 
 async function loadPracticeQuestionBank(subjectId: string): Promise<PracticeQuestion[]> {
-  if (questionBankCache) {
-    return filterQuestionBankBySubject(questionBankCache, subjectId)
+  const cached = questionBankCacheBySubject.get(subjectId)
+  if (cached) {
+    return cached
   }
 
   const subjectCode = SUBJECT_ID_TO_CODE[subjectId] ?? subjectId
   const remoteBank = await fetchSchoolExamQuestionBank(subjectCode)
   if (remoteBank.length > 0) {
-    questionBankCache = remoteBank.map((question) => mapSchoolExamQuestionToPracticeQuestion(question, subjectId))
-    return filterQuestionBankBySubject(questionBankCache, subjectId)
+    const mappedBank = remoteBank.map((question) => mapSchoolExamQuestionToPracticeQuestion(question, subjectId))
+    questionBankCacheBySubject.set(subjectId, mappedBank)
+    return mappedBank
   }
 
-  questionBankCache = await loadMockQuestionBank()
-  return filterQuestionBankBySubject(questionBankCache, subjectId)
+  const mockBank = filterQuestionBankBySubject(await loadMockQuestionBank(), subjectId)
+  questionBankCacheBySubject.set(subjectId, mockBank)
+  return mockBank
 }
 
 async function loadMockQuestionBank() {
@@ -309,7 +314,7 @@ function mapSchoolExamQuestionToPracticeQuestion(
     questionId: question.questionId,
     topicId: buildTopicId(question),
     subjectId,
-    subjectName: 'Toán học',
+    subjectName: getSubjectName(subjectId),
     level: question.difficultyLevel,
     questionType: question.questionType,
     explanation: null,
@@ -351,6 +356,10 @@ function mapSchoolExamQuestionToPracticeQuestion(
     year: question.year ?? 0,
     tags: question.tags ?? [],
   }
+}
+
+function getSubjectName(subjectId: string) {
+  return practiceBlueprints.find((blueprint) => blueprint.subjectId === subjectId)?.subjectName ?? subjectId
 }
 
 function resolveCorrectOptionLabel(question: Awaited<ReturnType<typeof fetchSchoolExamQuestionBank>>[number]) {

@@ -9,8 +9,13 @@ import {
 import { fetchSchoolExamCatalog } from '../../features/practice/services/school-exam-service'
 import type { PracticeExamCatalogItem } from '../../features/practice/types/practice-types'
 
-const SUBJECT_ID = 'TOAN'
-const SUBJECT_NAME = 'Toan hoc'
+const SUBJECT_OPTIONS = [
+  { subjectId: 'TOAN', subjectName: 'Toán học', label: 'Toán' },
+  { subjectId: 'VAT_LY', subjectName: 'Vật lý', label: 'Vật lý' },
+  { subjectId: 'HOA_HOC', subjectName: 'Hóa học', label: 'Hóa học' },
+]
+
+const DEFAULT_SUBJECT_ID = SUBJECT_OPTIONS[0].subjectId
 
 export function PracticeHubPage() {
   const navigate = useNavigate()
@@ -18,6 +23,7 @@ export function PracticeHubPage() {
 
   const [keyword, setKeyword] = useState('')
   const [yearFilter, setYearFilter] = useState<'all' | number>('all')
+  const [selectedSubjectId, setSelectedSubjectId] = useState(DEFAULT_SUBJECT_ID)
   const [selectedSchoolName, setSelectedSchoolName] = useState('')
   const [selectedBlueprintId, setSelectedBlueprintId] = useState(getPracticeBlueprints()[0]?.blueprintId ?? '')
   const [errorMessage, setErrorMessage] = useState('')
@@ -62,35 +68,62 @@ export function PracticeHubPage() {
     () =>
       searchPracticeExamCatalog(catalogItemsRaw, {
         keyword,
-        subjectId: SUBJECT_ID,
+        subjectId: selectedSubjectId,
         year: yearFilter,
       }),
-    [catalogItemsRaw, keyword, yearFilter],
+    [catalogItemsRaw, keyword, selectedSubjectId, yearFilter],
   )
 
   const blueprints = useMemo(() => getPracticeBlueprints(), [])
+  const subjectBlueprints = useMemo(
+    () => blueprints.filter((blueprint) => blueprint.subjectId === selectedSubjectId),
+    [blueprints, selectedSubjectId],
+  )
   const years = useMemo(
-    () => Array.from(new Set(catalogItemsRaw.map((item) => item.year))).sort((left, right) => right - left),
-    [catalogItemsRaw],
+    () =>
+      Array.from(
+        new Set(
+          catalogItemsRaw
+            .filter((item) => item.subjectId === selectedSubjectId)
+            .map((item) => item.year),
+        ),
+      ).sort((left, right) => right - left),
+    [catalogItemsRaw, selectedSubjectId],
   )
   const schoolOptions = useMemo(
     () =>
-      Array.from(new Set(catalogItemsRaw.map((item) => item.schoolName))).sort((left, right) =>
-        left.localeCompare(right),
-      ),
-    [catalogItemsRaw],
+      Array.from(
+        new Set(
+          catalogItemsRaw
+            .filter((item) => item.subjectId === selectedSubjectId)
+            .map((item) => item.schoolName),
+        ),
+      ).sort((left, right) => left.localeCompare(right)),
+    [catalogItemsRaw, selectedSubjectId],
   )
 
-  const selectedBlueprint = blueprints.find((blueprint) => blueprint.blueprintId === selectedBlueprintId) ?? null
+  const selectedBlueprint =
+    subjectBlueprints.find((blueprint) => blueprint.blueprintId === selectedBlueprintId) ??
+    subjectBlueprints[0] ??
+    null
+  const selectedSubject = SUBJECT_OPTIONS.find((subject) => subject.subjectId === selectedSubjectId) ?? SUBJECT_OPTIONS[0]
+
+  function handleSubjectChange(subjectId: string) {
+    const nextBlueprint = blueprints.find((blueprint) => blueprint.subjectId === subjectId)
+    setSelectedSubjectId(subjectId)
+    setSelectedBlueprintId(nextBlueprint?.blueprintId ?? '')
+    setSelectedSchoolName('')
+    setYearFilter('all')
+  }
 
   async function handleGenerateExam() {
     setErrorMessage('')
 
     try {
       const session = await createPracticeExamSession({
-        blueprintId: selectedBlueprintId,
-        subjectId: SUBJECT_ID,
-        subjectName: SUBJECT_NAME,
+        blueprintId: selectedBlueprint?.blueprintId ?? selectedBlueprintId,
+        subjectId: selectedSubject.subjectId,
+        subjectName: selectedSubject.subjectName,
         preferredSchoolName: selectedSchoolName || undefined,
       })
 
@@ -197,13 +230,16 @@ export function PracticeHubPage() {
                     </p>
                   </div>
                   <div className="flex shrink-0 flex-wrap gap-2">
-                    <button
-                      className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 hover:text-slate-900"
-                      onClick={() => setSelectedSchoolName(item.schoolName)}
-                      type="button"
-                    >
-                      Ưu tiên trường này
-                    </button>
+                    {item.pdfUrl ? (
+                      <a
+                        className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 hover:text-slate-900"
+                        href={item.pdfUrl}
+                        rel="noreferrer"
+                        target="_blank"
+                      >
+                        Xem PDF trước
+                      </a>
+                    ) : null}
                     {item.schoolExamPageId ? (
                       <Link
                         className="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 hover:shadow"
@@ -243,13 +279,28 @@ export function PracticeHubPage() {
 
           <div className="mt-6 grid gap-4">
             <label className="grid gap-2 text-sm">
+              <span className="font-medium text-slate-700">Môn thi</span>
+              <select
+                className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition focus:border-sky-400 focus:bg-white"
+                onChange={(event) => handleSubjectChange(event.target.value)}
+                value={selectedSubjectId}
+              >
+                {SUBJECT_OPTIONS.map((subject) => (
+                  <option key={subject.subjectId} value={subject.subjectId}>
+                    {subject.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <label className="grid gap-2 text-sm">
               <span className="font-medium text-slate-700">Blueprint đang dùng</span>
               <select
                 className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition focus:border-sky-400 focus:bg-white"
                 onChange={(event) => setSelectedBlueprintId(event.target.value)}
-                value={selectedBlueprintId}
+                value={selectedBlueprint?.blueprintId ?? ''}
               >
-                {blueprints.map((blueprint) => (
+                {subjectBlueprints.map((blueprint) => (
                   <option key={blueprint.blueprintId} value={blueprint.blueprintId}>
                     {blueprint.name}
                   </option>
@@ -300,7 +351,8 @@ export function PracticeHubPage() {
           {errorMessage ? <p className="mt-4 text-sm font-medium text-rose-600">{errorMessage}</p> : null}
 
           <button
-            className="mt-6 w-full rounded-[22px] bg-blue-600 px-6 py-4 text-sm font-bold text-white shadow-sm transition hover:bg-blue-700 hover:shadow active:scale-[0.98]"
+            className="mt-6 w-full rounded-[22px] bg-blue-600 px-6 py-4 text-sm font-bold text-white shadow-sm transition hover:bg-blue-700 hover:shadow active:scale-[0.98] disabled:cursor-not-allowed disabled:bg-slate-300 disabled:shadow-none"
+            disabled={!selectedBlueprint}
             onClick={handleGenerateExam}
             type="button"
           >

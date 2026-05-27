@@ -13,7 +13,6 @@
   "pdf_public_url": "/school-exams/thpt-tran-phu-quang-ninh-2026-lan-3.pdf",
   "source_path": "data_scraper/input/school_exams/thpt-tran-phu-quang-ninh-2026-lan-3.pdf",
   "variant_code": "DEFAULT",
-  "variant_id": "thpt-tran-phu-quang-ninh-2026-lan-3-default",
   "tags": ["de thi thu", "toan", "2026", "quang ninh", "pdf"],
   "manifest_path": "obsidian_vault/assets/Toan/thpt-tran-phu-quang-ninh-2026-lan-3/manifest.json",
   "answer_key_path": "obsidian_vault/parsed/Toan/thpt-tran-phu-quang-ninh-2026-lan-3/answer_key.json",

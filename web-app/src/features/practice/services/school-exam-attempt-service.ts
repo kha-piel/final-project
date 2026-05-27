@@ -26,7 +26,6 @@ export type SchoolExamAiMessageInput = {
 export type PersistSchoolExamAttemptInput = {
   userId: string
   schoolExamId: string
-  variantId: string | null
   variantCode: string | null
   score: number
   correctCount: number
@@ -177,7 +176,6 @@ export async function persistCompletedSchoolExamAttempt(input: PersistSchoolExam
     .insert({
       user_id: input.userId,
       school_exam_id: input.schoolExamId,
-      variant_id: input.variantId,
       variant_code: input.variantCode,
       score: input.score,
       correct_count: input.correctCount,

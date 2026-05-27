@@ -19,7 +19,7 @@ def resolve_project_root() -> Path:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Sinh seed SQL cho school_exams / sections / variants / answer_keys tu exam config."
+        description="Sinh seed SQL cho school_exams / sections tu exam config."
     )
     parser.add_argument("--config", default=DEFAULT_CONFIG)
     return parser.parse_args()
@@ -40,22 +40,14 @@ def sql_array(values: list[str]) -> str:
     return f"array[{quoted}]"
 
 
-def build_seed_sql(config: dict[str, Any], answer_key: dict[str, Any]) -> str:
+def build_seed_sql(config: dict[str, Any]) -> str:
     exam_id = str(config["exam_id"])
-    variant_id = str(config["variant_id"])
     variant_code = str(config["variant_code"])
     sections: list[dict[str, Any]] = config["sections"]
-    answers: dict[str, str] = answer_key["answers"]
 
     lines: list[str] = ["begin;", ""]
     lines.extend(
         [
-            "delete from public.school_exam_answer_keys",
-            f"where variant_id in ({sql_quote(variant_id)});",
-            "",
-            "delete from public.school_exam_variants",
-            f"where variant_id in ({sql_quote(variant_id)});",
-            "",
             "delete from public.school_exam_sections",
             f"where exam_id in ({sql_quote(exam_id)});",
             "",
@@ -78,7 +70,7 @@ def build_seed_sql(config: dict[str, Any], answer_key: dict[str, Any]) -> str:
         [
             "insert into public.school_exams (",
             "  exam_id, title, school_name, city, subject_code, subject_name,",
-            "  year, duration_minutes, pdf_url, answer_key_provided, source_path, tags, is_active",
+            "  year, duration_minutes, pdf_url, display_variant_code, answer_key_provided, source_path, tags, is_active",
             ") values (",
             f"  {sql_quote(exam_id)},",
             f"  {sql_quote(str(config['title']))},",
@@ -89,6 +81,7 @@ def build_seed_sql(config: dict[str, Any], answer_key: dict[str, Any]) -> str:
             f"  {int(config['year'])},",
             f"  {int(config['duration_minutes'])},",
             f"  {sql_quote(str(config['pdf_public_url']))},",
+            f"  {sql_quote(variant_code)},",
             "  true,",
             f"  {sql_quote(str(config['source_path']))},",
             f"  {sql_array(list(config.get('tags', [])))},",
@@ -126,29 +119,6 @@ def build_seed_sql(config: dict[str, Any], answer_key: dict[str, Any]) -> str:
     lines.append(",\n".join(section_lines) + ";")
     lines.append("")
 
-    lines.extend(
-        [
-            "insert into public.school_exam_variants (",
-            "  variant_id, exam_id, variant_code, display_order",
-            ") values (",
-            f"  {sql_quote(variant_id)},",
-            f"  {sql_quote(exam_id)},",
-            f"  {sql_quote(variant_code)},",
-            "  1",
-            ");",
-            "",
-        ]
-    )
-
-    lines.append("insert into public.school_exam_answer_keys (")
-    lines.append("  variant_id, question_number, answer_value")
-    lines.append(") values")
-    answer_lines = [
-        f"  ({sql_quote(variant_id)}, {int(question_number)}, {sql_quote(str(answer_value))})"
-        for question_number, answer_value in sorted(answers.items(), key=lambda item: int(item[0]))
-    ]
-    lines.append(",\n".join(answer_lines) + ";")
-    lines.append("")
     lines.append("commit;")
     lines.append("")
     return "\n".join(lines)
@@ -164,21 +134,13 @@ def main() -> int:
         return 1
 
     config = load_json(config_path)
-    answer_key_path = (project_root / config["answer_key_path"]).resolve()
     output_sql_path = (project_root / config["exam_seed_sql_path"]).resolve()
-
-    if not answer_key_path.exists():
-        print(f"[FATAL] Khong tim thay answer_key.json: {answer_key_path}")
-        return 1
-
-    answer_key = load_json(answer_key_path)
-    sql_text = build_seed_sql(config, answer_key)
+    sql_text = build_seed_sql(config)
     output_sql_path.parent.mkdir(parents=True, exist_ok=True)
     output_sql_path.write_text(sql_text, encoding="utf-8")
 
     print("=== School exam seed complete ===")
     print(f"Config      : {config_path}")
-    print(f"Answer key  : {answer_key_path}")
     print(f"Output SQL  : {output_sql_path}")
     return 0
 
