@@ -1314,30 +1314,30 @@ async def validate_exam_pdf(
     duration_minutes: int = Form(alias="durationMinutes"),
     answer_key_text: str = Form(default="", alias="answerKeyText"),
 ):
-    if not pdf_file.filename or not pdf_file.filename.lower().endswith(".pdf"):
-        raise HTTPException(status_code=400, detail="Chi ho tro file PDF.")
-
-    cleaned_subject_code = subject_code.strip().upper()
-    cleaned_subject_name = subject_name.strip()
-    cleaned_school_name = school_name.strip()
-    cleaned_city = city.strip()
-    cleaned_variant_code = variant_code.strip()
-
-    if cleaned_subject_code not in {"TOAN", "VAT_LY", "HOA_HOC"}:
-        raise HTTPException(status_code=400, detail="Mon hoc khong hop le.")
-
-    if not all((cleaned_subject_name, cleaned_school_name, cleaned_city, cleaned_variant_code)):
-        raise HTTPException(status_code=400, detail="Thieu metadata bat buoc cua de thi.")
-
-    if year < 2000 or year > 2100:
-        raise HTTPException(status_code=400, detail="Nam thi khong hop le.")
-
-    if duration_minutes <= 0 or duration_minutes > 300:
-        raise HTTPException(status_code=400, detail="Thoi luong lam bai khong hop le.")
-
-    answer_key_map = parse_answer_key_text(answer_key_text)
     tmp_path: Path | None = None
     try:
+        if not pdf_file.filename or not pdf_file.filename.lower().endswith(".pdf"):
+            raise HTTPException(status_code=400, detail="Chi ho tro file PDF.")
+
+        cleaned_subject_code = subject_code.strip().upper()
+        cleaned_subject_name = subject_name.strip()
+        cleaned_school_name = school_name.strip()
+        cleaned_city = city.strip()
+        cleaned_variant_code = variant_code.strip()
+
+        if cleaned_subject_code not in {"TOAN", "VAT_LY", "HOA_HOC"}:
+            raise HTTPException(status_code=400, detail="Mon hoc khong hop le.")
+
+        if not all((cleaned_subject_name, cleaned_school_name, cleaned_city, cleaned_variant_code)):
+            raise HTTPException(status_code=400, detail="Thieu metadata bat buoc cua de thi.")
+
+        if year < 2000 or year > 2100:
+            raise HTTPException(status_code=400, detail="Nam thi khong hop le.")
+
+        if duration_minutes <= 0 or duration_minutes > 300:
+            raise HTTPException(status_code=400, detail="Thoi luong lam bai khong hop le.")
+
+        answer_key_map = parse_answer_key_text(answer_key_text)
         with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp_file:
             tmp_path = Path(tmp_file.name)
             while chunk := await pdf_file.read(1024 * 1024):
@@ -1405,6 +1405,24 @@ async def validate_exam_pdf(
         if not payload_contains_questions(parsed_payload):
             logger.warning("Text-only extraction returned no questions: file=%s", pdf_file.filename)
         return response.model_dump(by_alias=True)
+    except HTTPException:
+        raise
+    except Exception as exc:  # noqa: BLE001
+        logger.exception("Unexpected PDF validation failure for file=%s", pdf_file.filename)
+        error_message = str(exc).strip() or exc.__class__.__name__
+        if "reported as leaked" in error_message.lower():
+            raise HTTPException(
+                status_code=500,
+                detail=(
+                    "GEMINI_API_KEY hien tai da bi Google khoa vi bi lo. "
+                    "Hay tao API key moi trong Google AI Studio, cap nhat ai_service/.env, "
+                    "sau do restart ai_service."
+                ),
+            ) from exc
+        raise HTTPException(
+            status_code=500,
+            detail=f"Khong the phan tich PDF bang Gemini: {error_message}",
+        ) from exc
     finally:
         if tmp_path and tmp_path.exists():
             tmp_path.unlink(missing_ok=True)

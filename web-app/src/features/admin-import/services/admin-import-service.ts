@@ -134,9 +134,46 @@ type ManagedExamQuestionRow = {
   }> | null
 }
 
+type ManagedImportedExamRow = {
+  exam_id: string
+  title: string
+  school_name: string
+  city: string
+  subject_code: SubjectCode
+  subject_name: string
+  year: number
+  duration_minutes: number
+  pdf_url: string
+  source_path: string | null
+  is_active: boolean
+  created_at: string
+  display_variant_code?: string | null
+}
+
+type ManagedImportedExamDraftRow = {
+  exam_id: string
+  title: string
+  school_name: string
+  city: string
+  subject_code: SubjectCode
+  subject_name: string
+  year: number
+  duration_minutes: number
+  pdf_url: string
+  display_variant_code?: string | null
+}
+
 type SectionPart = AdminQuestionType
 
 const STORAGE_BUCKET = 'school-exams'
+const MISSING_DISPLAY_VARIANT_CODE_PATTERNS = [
+  "could not find the 'display_variant_code' column",
+  'column "display_variant_code" does not exist',
+]
+const MISSING_CORRECT_ANSWER_PATTERNS = [
+  "could not find the 'correct_answer' column",
+  'column "correct_answer" does not exist',
+]
 
 export const subjectOptions: Array<{
   code: SubjectCode
@@ -395,7 +432,7 @@ export async function saveAdminImportedExam(input: SaveAdminImportedExamInput) {
   const sectionRows = buildSectionRows(examId, questionsWithUploadedAssets)
   const sectionIdByType = new Map(sectionRows.map((section) => [section.part_code, section.section_id]))
 
-  const examRow = {
+  const examBaseRow = {
     exam_id: examId,
     title: draft.examDraft.title,
     school_name: draft.examDraft.schoolName,
@@ -405,7 +442,6 @@ export async function saveAdminImportedExam(input: SaveAdminImportedExamInput) {
     year: draft.examDraft.year,
     duration_minutes: draft.examDraft.durationMinutes,
     pdf_url: uploadedPdfUrl,
-    display_variant_code: draft.examDraft.variantCode,
     answer_key_provided: questionsWithUploadedAssets.every((question) =>
       Boolean(question.correctAnswer.trim()),
     ),
@@ -438,6 +474,7 @@ export async function saveAdminImportedExam(input: SaveAdminImportedExamInput) {
       source_question_number: question.questionNumber,
       import_source: 'admin_pdf_dashboard',
       review_status: 'pending_review',
+      correct_answer_fallback: question.correctAnswer.trim().toUpperCase(),
     },
   }))
 
@@ -472,7 +509,7 @@ export async function saveAdminImportedExam(input: SaveAdminImportedExamInput) {
 
   let hasInsertedExam = false
   try {
-    const { error: examError } = await supabase.from('school_exams').insert(examRow)
+    const examError = await insertSchoolExamRow(supabase, examBaseRow, draft.examDraft.variantCode)
     if (examError) {
       throw new Error(`Khong the tao school_exams: ${examError.message}`)
     }
@@ -483,9 +520,7 @@ export async function saveAdminImportedExam(input: SaveAdminImportedExamInput) {
       throw new Error(`Khong the tao school_exam_sections: ${sectionError.message}`)
     }
 
-    const { error: questionsError } = await supabase
-      .from('school_exam_questions')
-      .insert(questionRows)
+    const questionsError = await insertSchoolExamQuestions(supabase, questionRows)
     if (questionsError) {
       throw new Error(`Khong the tao school_exam_questions: ${questionsError.message}`)
     }
@@ -522,19 +557,41 @@ export async function saveAdminImportedExam(input: SaveAdminImportedExamInput) {
 
 export async function fetchManagedImportedExams() {
   const supabase = getSupabaseBrowserClient()
-  const { data, error } = await supabase
-    .from('school_exams')
-    .select(
-      'exam_id, title, school_name, city, subject_code, subject_name, year, duration_minutes, pdf_url, display_variant_code, source_path, is_active, created_at',
-    )
-    .order('created_at', { ascending: false })
-    .limit(24)
+  const queryWithVariant = () =>
+    supabase
+      .from('school_exams')
+      .select(
+        'exam_id, title, school_name, city, subject_code, subject_name, year, duration_minutes, pdf_url, display_variant_code, source_path, is_active, created_at',
+      )
+      .order('created_at', { ascending: false })
+      .limit(24)
+  const queryWithoutVariant = () =>
+    supabase
+      .from('school_exams')
+      .select(
+        'exam_id, title, school_name, city, subject_code, subject_name, year, duration_minutes, pdf_url, source_path, is_active, created_at',
+      )
+      .order('created_at', { ascending: false })
+      .limit(24)
+
+  let { data, error }: {
+    data: ManagedImportedExamRow[] | null
+    error: Awaited<ReturnType<typeof queryWithVariant>>['error']
+  } = await queryWithVariant()
+  let hasDisplayVariantCode = true
+
+  if (error && isMissingDisplayVariantCodeError(error.message)) {
+    hasDisplayVariantCode = false
+    const fallbackResult = await queryWithoutVariant()
+    data = fallbackResult.data
+    error = fallbackResult.error
+  }
 
   if (error) {
     throw new Error(`Khong the tai danh sach de da nhap: ${error.message}`)
   }
 
-  return (data ?? []).map((row) => ({
+  return ((data ?? []) as ManagedImportedExamRow[]).map((row) => ({
       examId: row.exam_id,
       title: row.title,
       schoolName: row.school_name,
@@ -547,7 +604,10 @@ export async function fetchManagedImportedExams() {
       sourcePath: row.source_path ?? null,
       isActive: row.is_active,
       createdAt: row.created_at,
-      variantCode: row.display_variant_code ?? 'DEFAULT',
+      variantCode:
+        hasDisplayVariantCode && 'display_variant_code' in row
+          ? ((row.display_variant_code as string | null) ?? deriveVariantCodeFromExamId(row.exam_id, 'DEFAULT'))
+          : deriveVariantCodeFromExamId(row.exam_id, 'DEFAULT'),
     }) satisfies ManagedImportedExam)
 }
 
@@ -567,14 +627,21 @@ export async function updateManagedImportedExam(input: UpdateManagedImportedExam
     subject_name: subject.name,
     year: input.year,
     duration_minutes: input.durationMinutes,
-    display_variant_code: input.variantCode.trim() || 'DEFAULT',
     is_active: input.isActive,
   }
-
-  const { error: examError } = await supabase
+  const payloadWithVariant = {
+    ...payload,
+    display_variant_code: input.variantCode.trim() || 'DEFAULT',
+  }
+  let { error: examError } = await supabase
     .from('school_exams')
-    .update(payload)
+    .update(payloadWithVariant)
     .eq('exam_id', input.examId)
+
+  if (examError && isMissingDisplayVariantCodeError(examError.message)) {
+    const fallback = await supabase.from('school_exams').update(payload).eq('exam_id', input.examId)
+    examError = fallback.error
+  }
 
   if (examError) {
     throw new Error(`Khong the cap nhat thong tin de thi: ${examError.message}`)
@@ -584,24 +651,56 @@ export async function updateManagedImportedExam(input: UpdateManagedImportedExam
 
 export async function fetchManagedImportedExamDraft(examId: string) {
   const supabase = getSupabaseBrowserClient()
-  const { data: examRow, error: examError } = await supabase
-    .from('school_exams')
-    .select(
-      'exam_id, title, school_name, city, subject_code, subject_name, year, duration_minutes, pdf_url, display_variant_code',
-    )
-    .eq('exam_id', examId)
-    .maybeSingle<{
-      exam_id: string
-      title: string
-      school_name: string
-      city: string
-      subject_code: SubjectCode
-      subject_name: string
-      year: number
-      duration_minutes: number
-      pdf_url: string
-      display_variant_code: string | null
-    }>()
+  const queryWithVariant = () =>
+    supabase
+      .from('school_exams')
+      .select(
+        'exam_id, title, school_name, city, subject_code, subject_name, year, duration_minutes, pdf_url, display_variant_code',
+      )
+      .eq('exam_id', examId)
+      .maybeSingle<{
+        exam_id: string
+        title: string
+        school_name: string
+        city: string
+        subject_code: SubjectCode
+        subject_name: string
+        year: number
+        duration_minutes: number
+        pdf_url: string
+        display_variant_code: string | null
+      }>()
+  const queryWithoutVariant = () =>
+    supabase
+      .from('school_exams')
+      .select(
+        'exam_id, title, school_name, city, subject_code, subject_name, year, duration_minutes, pdf_url',
+      )
+      .eq('exam_id', examId)
+      .maybeSingle<{
+        exam_id: string
+        title: string
+        school_name: string
+        city: string
+        subject_code: SubjectCode
+        subject_name: string
+        year: number
+        duration_minutes: number
+        pdf_url: string
+      }>()
+
+  let { data: examRow, error: examError }: {
+    data: ManagedImportedExamDraftRow | null
+    error: Awaited<ReturnType<typeof queryWithVariant>>['error']
+  } = await queryWithVariant()
+  let hasDisplayVariantCode = true
+
+  if (examError && isMissingDisplayVariantCodeError(examError.message)) {
+    hasDisplayVariantCode = false
+    const fallback = await queryWithoutVariant()
+    examRow = fallback.data
+    examError = fallback.error
+  }
 
   if (examError) {
     throw new Error(`Khong the tai thong tin de thi: ${examError.message}`)
@@ -611,14 +710,35 @@ export async function fetchManagedImportedExamDraft(examId: string) {
     throw new Error('Khong tim thay de thi can chinh sua.')
   }
 
-  const { data: questionRows, error: questionError } = await supabase
-    .from('school_exam_questions')
-    .select(
-      'question_id, exam_id, question_number, difficulty_level, question_type, question_text, correct_answer, statement_json, topic, obsidian_source_path, has_image, metadata, options:school_exam_question_options(option_label, option_text, display_order), assets:school_exam_question_assets(asset_type, asset_path, display_order)',
-    )
-    .eq('exam_id', examId)
-    .order('question_number', { ascending: true })
-    .returns<ManagedExamQuestionRow[]>()
+  const queryQuestionsWithAnswer = () =>
+    supabase
+      .from('school_exam_questions')
+      .select(
+        'question_id, exam_id, question_number, difficulty_level, question_type, question_text, correct_answer, statement_json, topic, obsidian_source_path, has_image, metadata, options:school_exam_question_options(option_label, option_text, display_order), assets:school_exam_question_assets(asset_type, asset_path, display_order)',
+      )
+      .eq('exam_id', examId)
+      .order('question_number', { ascending: true })
+      .returns<ManagedExamQuestionRow[]>()
+  const queryQuestionsWithoutAnswer = () =>
+    supabase
+      .from('school_exam_questions')
+      .select(
+        'question_id, exam_id, question_number, difficulty_level, question_type, question_text, statement_json, topic, obsidian_source_path, has_image, metadata, options:school_exam_question_options(option_label, option_text, display_order), assets:school_exam_question_assets(asset_type, asset_path, display_order)',
+      )
+      .eq('exam_id', examId)
+      .order('question_number', { ascending: true })
+      .returns<Array<Omit<ManagedExamQuestionRow, 'correct_answer'> & { correct_answer?: string | null }>>()
+
+  let { data: questionRows, error: questionError }: {
+    data: Array<ManagedExamQuestionRow | (Omit<ManagedExamQuestionRow, 'correct_answer'> & { correct_answer?: string | null })> | null
+    error: Awaited<ReturnType<typeof queryQuestionsWithAnswer>>['error']
+  } = await queryQuestionsWithAnswer()
+
+  if (questionError && isMissingCorrectAnswerError(questionError.message)) {
+    const fallback = await queryQuestionsWithoutAnswer()
+    questionRows = fallback.data
+    questionError = fallback.error
+  }
 
   if (questionError) {
     throw new Error(`Khong the tai cau hoi cua de thi: ${questionError.message}`)
@@ -636,7 +756,10 @@ export async function fetchManagedImportedExamDraft(examId: string) {
       subjectName: examRow.subject_name,
       year: examRow.year,
       durationMinutes: examRow.duration_minutes,
-      variantCode: examRow.display_variant_code ?? '101',
+      variantCode:
+        hasDisplayVariantCode && 'display_variant_code' in examRow
+          ? ((examRow.display_variant_code as string | null) ?? deriveVariantCodeFromExamId(examRow.exam_id))
+          : deriveVariantCodeFromExamId(examRow.exam_id),
       pdfStoragePath: '',
       pdfUrl: examRow.pdf_url,
     },
@@ -655,7 +778,7 @@ export async function fetchManagedImportedExamDraft(examId: string) {
             label: statement.label as AdminImportStatement['label'],
             text: statement.text,
           })),
-          correctAnswer: question.correct_answer ?? '',
+          correctAnswer: resolveCorrectAnswer(question.correct_answer, question.metadata),
           isValid: true,
           warnings: [],
           changes: [],
@@ -717,6 +840,7 @@ export async function saveManagedImportedExamDraft(input: {
       source_question_number: question.questionNumber,
       import_source: 'admin_pdf_dashboard',
       review_status: 'edited_after_import',
+      correct_answer_fallback: question.correctAnswer.trim().toUpperCase(),
     },
   }))
 
@@ -749,22 +873,30 @@ export async function saveManagedImportedExamDraft(input: {
       }))
   })
 
-  const { error: examUpdateError } = await supabase
+  const examUpdateBase = {
+    title: draft.examDraft.title,
+    school_name: draft.examDraft.schoolName,
+    city: draft.examDraft.city,
+    subject_code: draft.examDraft.subjectCode,
+    subject_name: draft.examDraft.subjectName,
+    year: draft.examDraft.year,
+    duration_minutes: draft.examDraft.durationMinutes,
+    answer_key_provided: questionsWithUploadedAssets.every((question) =>
+      Boolean(question.correctAnswer.trim()),
+    ),
+  }
+  let { error: examUpdateError } = await supabase
     .from('school_exams')
     .update({
-      title: draft.examDraft.title,
-      school_name: draft.examDraft.schoolName,
-      city: draft.examDraft.city,
-      subject_code: draft.examDraft.subjectCode,
-      subject_name: draft.examDraft.subjectName,
-      year: draft.examDraft.year,
-      duration_minutes: draft.examDraft.durationMinutes,
+      ...examUpdateBase,
       display_variant_code: draft.examDraft.variantCode || 'DEFAULT',
-      answer_key_provided: questionsWithUploadedAssets.every((question) =>
-        Boolean(question.correctAnswer.trim()),
-      ),
     })
     .eq('exam_id', examId)
+
+  if (examUpdateError && isMissingDisplayVariantCodeError(examUpdateError.message)) {
+    const fallback = await supabase.from('school_exams').update(examUpdateBase).eq('exam_id', examId)
+    examUpdateError = fallback.error
+  }
 
   if (examUpdateError) {
     throw new Error(`Khong the cap nhat thong tin tong cua de: ${examUpdateError.message}`)
@@ -795,9 +927,7 @@ export async function saveManagedImportedExamDraft(input: {
     }
   }
 
-  const { error: questionInsertError } = await supabase
-    .from('school_exam_questions')
-    .insert(questionRows)
+  const questionInsertError = await insertSchoolExamQuestions(supabase, questionRows)
 
   if (questionInsertError) {
     throw new Error(`Khong the luu cau hoi moi: ${questionInsertError.message}`)
@@ -850,6 +980,68 @@ function normalizeValidationResponse(payload: AdminImportValidationResponse): Ad
       normalizeQuestion(question, index + 1),
     ),
   }
+}
+
+async function insertSchoolExamRow(
+  supabase: ReturnType<typeof getSupabaseBrowserClient>,
+  examBaseRow: Record<string, unknown>,
+  variantCode: string,
+) {
+  const withVariantResult = await supabase.from('school_exams').insert({
+    ...examBaseRow,
+    display_variant_code: variantCode,
+  })
+
+  if (!withVariantResult.error || !isMissingDisplayVariantCodeError(withVariantResult.error.message)) {
+    return withVariantResult.error
+  }
+
+  const fallbackResult = await supabase.from('school_exams').insert(examBaseRow)
+  return fallbackResult.error
+}
+
+async function insertSchoolExamQuestions(
+  supabase: ReturnType<typeof getSupabaseBrowserClient>,
+  questionRows: Array<Record<string, unknown>>,
+) {
+  const withAnswerResult = await supabase.from('school_exam_questions').insert(questionRows)
+  if (!withAnswerResult.error || !isMissingCorrectAnswerError(withAnswerResult.error.message)) {
+    return withAnswerResult.error
+  }
+
+  const fallbackRows = questionRows.map(({ correct_answer: _correctAnswer, ...row }) => row)
+  const fallbackResult = await supabase.from('school_exam_questions').insert(fallbackRows)
+  return fallbackResult.error
+}
+
+function isMissingDisplayVariantCodeError(message: string) {
+  const normalized = message.toLowerCase()
+  return MISSING_DISPLAY_VARIANT_CODE_PATTERNS.some((pattern) => normalized.includes(pattern))
+}
+
+function isMissingCorrectAnswerError(message: string) {
+  const normalized = message.toLowerCase()
+  return MISSING_CORRECT_ANSWER_PATTERNS.some((pattern) => normalized.includes(pattern))
+}
+
+function resolveCorrectAnswer(
+  directAnswer: string | null | undefined,
+  metadata: Record<string, unknown> | null | undefined,
+) {
+  if (typeof directAnswer === 'string' && directAnswer.trim()) {
+    return directAnswer
+  }
+
+  const metadataAnswer = metadata?.correct_answer_fallback
+  return typeof metadataAnswer === 'string' ? metadataAnswer : ''
+}
+
+function deriveVariantCodeFromExamId(examId: string, fallback = '101') {
+  const segments = examId
+    .split('-')
+    .map((segment) => segment.trim())
+    .filter(Boolean)
+  return segments.at(-1)?.toUpperCase() ?? fallback
 }
 
 async function removeStoragePrefix(prefix: string) {

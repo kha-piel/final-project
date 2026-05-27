@@ -178,7 +178,18 @@ export function PracticeHubPage() {
           </div>
         </div>
 
-        <div className="mt-5 grid gap-3 md:grid-cols-[1fr_180px]">
+        <div className="mt-5 grid gap-3 md:grid-cols-[220px_1fr_180px]">
+          <select
+            className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-sky-400 focus:bg-white"
+            onChange={(event) => handleSubjectChange(event.target.value)}
+            value={selectedSubjectId}
+          >
+            {SUBJECT_OPTIONS.map((subject) => (
+              <option key={subject.subjectId} value={subject.subjectId}>
+                {subject.label}
+              </option>
+            ))}
+          </select>
           <input
             className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-sky-400 focus:bg-white"
             onChange={(event) => setKeyword(event.target.value)}

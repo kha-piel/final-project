@@ -56,6 +56,19 @@ type SchoolExamDetailRow = {
   sections: SchoolExamSectionRow[] | null
 }
 
+type SchoolExamDetailRowCompat = Omit<SchoolExamDetailRow, 'display_variant_code'> & {
+  display_variant_code?: string
+}
+
+const MISSING_DISPLAY_VARIANT_CODE_PATTERNS = [
+  "could not find the 'display_variant_code' column",
+  'column "display_variant_code" does not exist',
+]
+const MISSING_CORRECT_ANSWER_PATTERNS = [
+  "could not find the 'correct_answer' column",
+  'column "correct_answer" does not exist',
+]
+
 type SchoolExamQuestionOptionRow = {
   option_label: string
   option_text: string
@@ -71,6 +84,7 @@ type SchoolExamQuestionMetadataRow = {
   source_question_number?: number
   section_number?: number
   difficulty_level?: number
+  correct_answer_fallback?: string
 }
 
 type SchoolExamQuestionRow = {
@@ -174,7 +188,7 @@ async function fetchSchoolExamCatalogUncached(): Promise<PracticeExamCatalogItem
     return buildFallbackCatalog()
   }
 
-  return data.map((item) => ({
+  const remoteCatalog = data.map((item) => ({
     examId: item.exam_id,
     schoolExamPageId: item.exam_id,
     examTitle: formatSchoolExamDisplayTitle({
@@ -192,6 +206,8 @@ async function fetchSchoolExamCatalogUncached(): Promise<PracticeExamCatalogItem
     sourcePath: item.source_path ?? undefined,
     tags: item.tags ?? [],
   }))
+
+  return mergeCatalogItems(remoteCatalog, await buildFallbackCatalog())
 }
 
 export async function fetchSchoolExamById(examId: string): Promise<SchoolExamPaperRecord | null> {
@@ -212,14 +228,41 @@ async function fetchSchoolExamByIdUncached(examId: string): Promise<SchoolExamPa
   }
 
   const supabase = getSupabaseBrowserClient()
-  const { data, error } = await supabase
-    .from('school_exams')
-    .select(
-      'exam_id, title, school_name, city, subject_code, subject_name, year, duration_minutes, pdf_url, display_variant_code, answer_key_provided, source_path, tags, sections:school_exam_sections(section_id, part_code, title, instructions, start_question_number, end_question_number, display_order, options_per_question, statement_count)',
-    )
-    .eq('exam_id', examId)
-    .eq('is_active', true)
-    .maybeSingle<SchoolExamDetailRow>()
+  const queryWithVariant = () =>
+    supabase
+      .from('school_exams')
+      .select(
+        'exam_id, title, school_name, city, subject_code, subject_name, year, duration_minutes, pdf_url, display_variant_code, answer_key_provided, source_path, tags, sections:school_exam_sections(section_id, part_code, title, instructions, start_question_number, end_question_number, display_order, options_per_question, statement_count)',
+      )
+      .eq('exam_id', examId)
+      .eq('is_active', true)
+      .maybeSingle<SchoolExamDetailRow>()
+  const queryWithoutVariant = () =>
+    supabase
+      .from('school_exams')
+      .select(
+        'exam_id, title, school_name, city, subject_code, subject_name, year, duration_minutes, pdf_url, answer_key_provided, source_path, tags, sections:school_exam_sections(section_id, part_code, title, instructions, start_question_number, end_question_number, display_order, options_per_question, statement_count)',
+      )
+      .eq('exam_id', examId)
+      .eq('is_active', true)
+      .maybeSingle<
+        Omit<SchoolExamDetailRow, 'display_variant_code'> & {
+          display_variant_code?: string
+        }
+      >()
+
+  let { data, error }: {
+    data: SchoolExamDetailRowCompat | null
+    error: Awaited<ReturnType<typeof queryWithVariant>>['error']
+  } = await queryWithVariant()
+  let hasDisplayVariantCode = true
+
+  if (error && isMissingDisplayVariantCodeError(error.message)) {
+    hasDisplayVariantCode = false
+    const fallback = await queryWithoutVariant()
+    data = fallback.data
+    error = fallback.error
+  }
 
   if (error) {
     if (shouldFallbackToLocalMock(error.message)) {
@@ -247,7 +290,10 @@ async function fetchSchoolExamByIdUncached(examId: string): Promise<SchoolExamPa
     year: data.year,
     durationMinutes: data.duration_minutes,
     pdfUrl: data.pdf_url,
-    displayVariantCode: data.display_variant_code || 'DEFAULT',
+    displayVariantCode:
+      hasDisplayVariantCode
+        ? (data.display_variant_code || deriveVariantCodeFromExamId(data.exam_id, 'DEFAULT'))
+        : deriveVariantCodeFromExamId(data.exam_id, 'DEFAULT'),
     answerKeyProvided: data.answer_key_provided,
     sourcePath: data.source_path ?? undefined,
     tags: data.tags ?? [],
@@ -286,14 +332,35 @@ async function fetchSchoolExamQuestionsUncached(examId: string): Promise<SchoolE
   }
 
   const supabase = getSupabaseBrowserClient()
-  const { data, error } = await supabase
-    .from('school_exam_questions')
-    .select(
-      'question_id, exam_id, question_number, question_type, question_text, correct_answer, statement_json, topic, obsidian_source_path, has_image, metadata, options:school_exam_question_options(option_label, option_text, display_order), assets:school_exam_question_assets(asset_type, asset_path, display_order)',
-    )
-    .eq('exam_id', examId)
-    .order('question_number', { ascending: true })
-    .returns<SchoolExamQuestionRow[]>()
+  const queryWithAnswer = () =>
+    supabase
+      .from('school_exam_questions')
+      .select(
+        'question_id, exam_id, question_number, question_type, question_text, correct_answer, statement_json, topic, obsidian_source_path, has_image, metadata, options:school_exam_question_options(option_label, option_text, display_order), assets:school_exam_question_assets(asset_type, asset_path, display_order)',
+      )
+      .eq('exam_id', examId)
+      .order('question_number', { ascending: true })
+      .returns<SchoolExamQuestionRow[]>()
+  const queryWithoutAnswer = () =>
+    supabase
+      .from('school_exam_questions')
+      .select(
+        'question_id, exam_id, question_number, question_type, question_text, statement_json, topic, obsidian_source_path, has_image, metadata, options:school_exam_question_options(option_label, option_text, display_order), assets:school_exam_question_assets(asset_type, asset_path, display_order)',
+      )
+      .eq('exam_id', examId)
+      .order('question_number', { ascending: true })
+      .returns<Array<Omit<SchoolExamQuestionRow, 'correct_answer'> & { correct_answer?: string | null }>>()
+
+  let { data, error }: {
+    data: Array<SchoolExamQuestionRow | (Omit<SchoolExamQuestionRow, 'correct_answer'> & { correct_answer?: string | null })> | null
+    error: Awaited<ReturnType<typeof queryWithAnswer>>['error']
+  } = await queryWithAnswer()
+
+  if (error && isMissingCorrectAnswerError(error.message)) {
+    const fallback = await queryWithoutAnswer()
+    data = fallback.data
+    error = fallback.error
+  }
 
   if (error) {
     if (shouldFallbackToLocalMock(error.message)) {
@@ -303,18 +370,18 @@ async function fetchSchoolExamQuestionsUncached(examId: string): Promise<SchoolE
     throw new Error(`KhÃ´ng thá»ƒ táº£i danh sÃ¡ch cÃ¢u há»i Ä‘á» trÆ°á»ng: ${error.message}`)
   }
 
-  if (!data.length) {
+  if (!(data ?? []).length) {
     return buildFallbackQuestionRecords(examId)
   }
 
-  return data.map((item) => ({
+  return (data ?? []).map((item) => ({
     questionId: item.question_id,
     examId: item.exam_id,
     questionNumber: item.question_number,
     difficultyLevel: normalizeDifficultyLevel(item.difficulty_level ?? null, item.metadata, item.question_type, item.question_number),
     questionType: item.question_type,
     questionText: item.question_text,
-    answerValue: item.correct_answer ?? '',
+    answerValue: resolveCorrectAnswer(item.correct_answer, item.metadata),
     statements: item.statement_json ?? [],
     options: [...(item.options ?? [])].sort((left, right) => left.display_order - right.display_order).map((option) => ({
       optionLabel: option.option_label,
@@ -410,15 +477,37 @@ async function fetchSchoolExamQuestionBankUncached(subjectId: string): Promise<S
 
   const supabase = getSupabaseBrowserClient()
 
-  const { data, error } = await supabase
-    .from('school_exam_questions')
-    .select(
-      'question_id, exam_id, question_number, question_type, question_text, correct_answer, statement_json, topic, obsidian_source_path, has_image, metadata, options:school_exam_question_options(option_label, option_text, display_order), assets:school_exam_question_assets(asset_type, asset_path, display_order), exam:school_exams!inner(exam_id, title, school_name, year, pdf_url, tags, is_active, subject_code)',
-    )
-    .eq('exam.subject_code', subjectId)
-    .eq('exam.is_active', true)
-    .order('question_number', { ascending: true })
-    .returns<SchoolExamQuestionBankRow[]>()
+  const queryBankWithAnswer = () =>
+    supabase
+      .from('school_exam_questions')
+      .select(
+        'question_id, exam_id, question_number, question_type, question_text, correct_answer, statement_json, topic, obsidian_source_path, has_image, metadata, options:school_exam_question_options(option_label, option_text, display_order), assets:school_exam_question_assets(asset_type, asset_path, display_order), exam:school_exams!inner(exam_id, title, school_name, year, pdf_url, tags, is_active, subject_code)',
+      )
+      .eq('exam.subject_code', subjectId)
+      .eq('exam.is_active', true)
+      .order('question_number', { ascending: true })
+      .returns<SchoolExamQuestionBankRow[]>()
+  const queryBankWithoutAnswer = () =>
+    supabase
+      .from('school_exam_questions')
+      .select(
+        'question_id, exam_id, question_number, question_type, question_text, statement_json, topic, obsidian_source_path, has_image, metadata, options:school_exam_question_options(option_label, option_text, display_order), assets:school_exam_question_assets(asset_type, asset_path, display_order), exam:school_exams!inner(exam_id, title, school_name, year, pdf_url, tags, is_active, subject_code)',
+      )
+      .eq('exam.subject_code', subjectId)
+      .eq('exam.is_active', true)
+      .order('question_number', { ascending: true })
+      .returns<Array<Omit<SchoolExamQuestionBankRow, 'correct_answer'> & { correct_answer?: string | null }>>()
+
+  let { data, error }: {
+    data: Array<SchoolExamQuestionBankRow | (Omit<SchoolExamQuestionBankRow, 'correct_answer'> & { correct_answer?: string | null })> | null
+    error: Awaited<ReturnType<typeof queryBankWithAnswer>>['error']
+  } = await queryBankWithAnswer()
+
+  if (error && isMissingCorrectAnswerError(error.message)) {
+    const fallback = await queryBankWithoutAnswer()
+    data = fallback.data
+    error = fallback.error
+  }
 
   if (error) {
     if (shouldFallbackToLocalMock(error.message)) {
@@ -428,7 +517,7 @@ async function fetchSchoolExamQuestionBankUncached(subjectId: string): Promise<S
     throw new Error(`KhÃ´ng thá»ƒ táº£i kho cÃ¢u há»i Ä‘á» trÆ°á»ng: ${error.message}`)
   }
 
-  const remoteQuestions = data
+  const remoteQuestions = (data ?? [])
     .filter((item) => item.exam?.is_active)
     .map((item) => ({
       questionId: item.question_id,
@@ -450,7 +539,7 @@ async function fetchSchoolExamQuestionBankUncached(subjectId: string): Promise<S
       topic: item.topic ?? '',
       obsidianSourcePath: item.obsidian_source_path ?? '',
       hasImage: item.has_image,
-      answerValue: item.correct_answer ?? '',
+      answerValue: resolveCorrectAnswer(item.correct_answer, item.metadata),
       sourceQuestionNumber: item.metadata?.source_question_number,
       sourceSectionNumber: item.metadata?.section_number,
       examTitle: formatSchoolExamDisplayTitle({
@@ -556,13 +645,84 @@ async function buildFallbackCatalog(): Promise<PracticeExamCatalogItem[]> {
     examTitle: exam.examTitle,
     schoolName: exam.schoolName,
     city: exam.city,
-    subjectId: 'TOAN',
+    subjectId: inferSubjectIdFromName(exam.subjectName),
     subjectName: exam.subjectName,
     year: exam.year,
     durationMinutes: exam.durationMinutes,
     pdfUrl: exam.pdfUrl,
     tags: ['fallback', 'local mock'],
   }))
+}
+
+function isMissingDisplayVariantCodeError(message: string) {
+  const normalized = message.toLowerCase()
+  return MISSING_DISPLAY_VARIANT_CODE_PATTERNS.some((pattern) => normalized.includes(pattern))
+}
+
+function isMissingCorrectAnswerError(message: string) {
+  const normalized = message.toLowerCase()
+  return MISSING_CORRECT_ANSWER_PATTERNS.some((pattern) => normalized.includes(pattern))
+}
+
+function resolveCorrectAnswer(
+  directAnswer: string | null | undefined,
+  metadata: SchoolExamQuestionMetadataRow | null | undefined,
+) {
+  if (typeof directAnswer === 'string' && directAnswer.trim()) {
+    return directAnswer
+  }
+
+  const metadataAnswer = metadata?.correct_answer_fallback
+  return typeof metadataAnswer === 'string' ? metadataAnswer : ''
+}
+
+function inferSubjectIdFromName(subjectName: string) {
+  const normalized = subjectName
+    .trim()
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+
+  if (normalized.includes('vat ly') || normalized.includes('ly hoc')) {
+    return 'VAT_LY'
+  }
+
+  if (normalized.includes('hoa hoc')) {
+    return 'HOA_HOC'
+  }
+
+  return 'TOAN'
+}
+
+function mergeCatalogItems(
+  primary: PracticeExamCatalogItem[],
+  secondary: PracticeExamCatalogItem[],
+) {
+  const merged = new Map<string, PracticeExamCatalogItem>()
+
+  for (const item of secondary) {
+    merged.set(item.examId, item)
+  }
+
+  for (const item of primary) {
+    merged.set(item.examId, item)
+  }
+
+  return Array.from(merged.values()).sort((left, right) => {
+    if (right.year !== left.year) {
+      return right.year - left.year
+    }
+
+    return left.examTitle.localeCompare(right.examTitle)
+  })
+}
+
+function deriveVariantCodeFromExamId(examId: string, fallback = 'DEFAULT') {
+  const segments = examId
+    .split('-')
+    .map((segment) => segment.trim())
+    .filter(Boolean)
+  return segments.at(-1)?.toUpperCase() ?? fallback
 }
 
 async function buildFallbackExam(examId: string): Promise<SchoolExamPaperRecord | null> {
@@ -577,7 +737,7 @@ async function buildFallbackExam(examId: string): Promise<SchoolExamPaperRecord 
     examTitle: exam.examTitle,
     schoolName: exam.schoolName,
     city: exam.city,
-    subjectId: 'TOAN',
+    subjectId: inferSubjectIdFromName(exam.subjectName),
     subjectName: exam.subjectName,
     year: exam.year,
     durationMinutes: exam.durationMinutes,
@@ -714,12 +874,17 @@ function mapAssetPaths(assets: SchoolExamQuestionAssetRow[] | null | undefined) 
 }
 
 async function getSupplementalQuestionBank(subjectId: string) {
+  const mockQuestions = await getMockQuestionBankBySubject(subjectId)
+
   if (subjectId === 'VAT_LY') {
-    return (await import('../data/supplemental-physics-topic-questions')).supplementalPhysicsTopicQuestions
+    return [
+      ...mockQuestions,
+      ...(await import('../data/supplemental-physics-topic-questions')).supplementalPhysicsTopicQuestions,
+    ]
   }
 
   if (subjectId !== 'TOAN') {
-    return []
+    return mockQuestions
   }
 
   const [
@@ -757,6 +922,7 @@ async function getSupplementalQuestionBank(subjectId: string) {
   ])
 
   return [
+    ...mockQuestions,
     ...supplementalKnowledgeReviewQuestions,
     ...supplementalGTLNGTNNReviewedQuestions,
     ...supplementalKhaoSatDoThiReviewedQuestions,
@@ -777,4 +943,19 @@ async function getSupplementalQuestionBank(subjectId: string) {
 
 async function loadMockSchoolExams() {
   return (await import('../data/mock-school-exams')).mockSchoolExams
+}
+
+async function getMockQuestionBankBySubject(subjectId: string): Promise<SchoolExamQuestionRecord[]> {
+  const exams = await loadMockSchoolExams()
+  const matchingExams = exams.filter((exam) => inferSubjectIdFromName(exam.subjectName) === subjectId)
+
+  if (matchingExams.length === 0) {
+    return []
+  }
+
+  const questionGroups = await Promise.all(
+    matchingExams.map((exam) => buildFallbackQuestionRecords(exam.examId)),
+  )
+
+  return questionGroups.flat()
 }
