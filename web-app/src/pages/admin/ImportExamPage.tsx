@@ -36,6 +36,9 @@ import {
 
 type AnswerChoice = 'A' | 'B' | 'C' | 'D'
 type AnswerKeyByNumber = Record<number, string>
+const PART_TWO_COUNT = 4
+const PART_THREE_COUNT = 6
+
 type ManagedExamFormState = {
   examId: string
   title: string
@@ -54,11 +57,16 @@ export function ImportExamPage() {
   const fileInputRef = useRef<HTMLInputElement | null>(null)
   const [metadata, setMetadata] = useState<AdminImportMetadata>(createEmptyMetadata())
   const [pdfFile, setPdfFile] = useState<File | null>(null)
+  const partOneQuestionCount = getPartOneQuestionCount(metadata.subjectCode)
   const [partOneAnswers, setPartOneAnswers] = useState<Record<number, AnswerChoice | ''>>(
-    () => createAnswerChoiceState(12),
+    () => createAnswerChoiceState(partOneQuestionCount),
   )
-  const [partTwoAnswers, setPartTwoAnswers] = useState<AnswerKeyByNumber>(() => createAnswerTextState(4))
-  const [partThreeAnswers, setPartThreeAnswers] = useState<AnswerKeyByNumber>(() => createAnswerTextState(6))
+  const [partTwoAnswers, setPartTwoAnswers] = useState<AnswerKeyByNumber>(() =>
+    createAnswerTextState(PART_TWO_COUNT),
+  )
+  const [partThreeAnswers, setPartThreeAnswers] = useState<AnswerKeyByNumber>(() =>
+    createAnswerTextState(PART_THREE_COUNT),
+  )
   const [dragActive, setDragActive] = useState(false)
   const [isValidating, setIsValidating] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
@@ -84,14 +92,21 @@ export function ImportExamPage() {
     })
   }, [pdfFile, result])
 
+  useEffect(() => {
+    setPartOneAnswers((current) => resizeAnswerChoiceState(current, partOneQuestionCount))
+  }, [partOneQuestionCount])
+
   const answerKeyText = useMemo(
     () =>
       buildAnswerKeyText({
         partOneAnswers,
         partTwoAnswers,
         partThreeAnswers,
+        partOneQuestionCount,
+        partTwoQuestionCount: PART_TWO_COUNT,
+        partThreeQuestionCount: PART_THREE_COUNT,
       }),
-    [partOneAnswers, partThreeAnswers, partTwoAnswers],
+    [partOneAnswers, partOneQuestionCount, partThreeAnswers, partTwoAnswers],
   )
   const topicSuggestions = useMemo(
     () => topicOptionsBySubjectCode[metadata.subjectCode] ?? [],
@@ -733,7 +748,7 @@ export function ImportExamPage() {
                   title="Phan I"
                 >
                   <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 lg:grid-cols-6">
-                    {buildNumberRange(1, 12).map((questionNumber) => (
+                    {buildNumberRange(1, partOneQuestionCount).map((questionNumber) => (
                       <AnswerChoiceField
                         key={questionNumber}
                         questionNumber={questionNumber}
@@ -755,7 +770,7 @@ export function ImportExamPage() {
                   title="Phan II"
                 >
                   <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
-                    {buildNumberRange(1, 4).map((questionNumber) => (
+                    {buildNumberRange(1, PART_TWO_COUNT).map((questionNumber) => (
                       <AnswerTextField
                         key={questionNumber}
                         maxLength={4}
@@ -779,7 +794,7 @@ export function ImportExamPage() {
                   title="Phan III"
                 >
                   <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
-                    {buildNumberRange(1, 6).map((questionNumber) => (
+                    {buildNumberRange(1, PART_THREE_COUNT).map((questionNumber) => (
                       <AnswerTextField
                         key={questionNumber}
                         onChange={(value) => {
@@ -798,7 +813,7 @@ export function ImportExamPage() {
                 </AnswerKeySection>
               </div>
               <p className="mt-2 text-xs leading-5 text-slate-500">
-                He thong tu map thanh chuoi dap an noi bo theo so cau 1-12, 13-16 va 17-22. Neu thieu dap an, preview se canh bao de giao vien sua.
+                {buildAnswerKeyHint(partOneQuestionCount, PART_TWO_COUNT, PART_THREE_COUNT)} Neu thieu dap an, preview se canh bao de giao vien sua.
               </p>
             </div>
           </section>
@@ -1686,6 +1701,16 @@ function createAnswerTextState(total: number): AnswerKeyByNumber {
   }, {})
 }
 
+function resizeAnswerChoiceState(
+  current: Record<number, AnswerChoice | ''>,
+  total: number,
+): Record<number, AnswerChoice | ''> {
+  return buildNumberRange(1, total).reduce<Record<number, AnswerChoice | ''>>((acc, questionNumber) => {
+    acc[questionNumber] = current[questionNumber] ?? ''
+    return acc
+  }, {})
+}
+
 function buildNumberRange(start: number, end: number) {
   return Array.from({ length: end - start + 1 }, (_, index) => start + index)
 }
@@ -1694,31 +1719,46 @@ function buildAnswerKeyText(input: {
   partOneAnswers: Record<number, AnswerChoice | ''>
   partTwoAnswers: AnswerKeyByNumber
   partThreeAnswers: AnswerKeyByNumber
+  partOneQuestionCount: number
+  partTwoQuestionCount: number
+  partThreeQuestionCount: number
 }) {
   const entries: string[] = []
 
-  for (const questionNumber of buildNumberRange(1, 12)) {
+  for (const questionNumber of buildNumberRange(1, input.partOneQuestionCount)) {
     const value = input.partOneAnswers[questionNumber]?.trim()
     if (value) {
       entries.push(`${questionNumber}.${value}`)
     }
   }
 
-  for (const localNumber of buildNumberRange(1, 4)) {
+  for (const localNumber of buildNumberRange(1, input.partTwoQuestionCount)) {
     const value = input.partTwoAnswers[localNumber]?.trim().toUpperCase()
     if (value) {
-      entries.push(`${localNumber + 12}.${value}`)
+      entries.push(`${localNumber + input.partOneQuestionCount}.${value}`)
     }
   }
 
-  for (const localNumber of buildNumberRange(1, 6)) {
+  for (const localNumber of buildNumberRange(1, input.partThreeQuestionCount)) {
     const value = input.partThreeAnswers[localNumber]?.trim()
     if (value) {
-      entries.push(`${localNumber + 16}: ${value}`)
+      entries.push(`${localNumber + input.partOneQuestionCount + input.partTwoQuestionCount}: ${value}`)
     }
   }
 
   return entries.join(', ')
+}
+
+function getPartOneQuestionCount(subjectCode: SubjectCode) {
+  return subjectCode === 'VAT_LY' || subjectCode === 'HOA_HOC' ? 18 : 12
+}
+
+function buildAnswerKeyHint(partOneCount: number, partTwoCount: number, partThreeCount: number) {
+  const partTwoStart = partOneCount + 1
+  const partTwoEnd = partOneCount + partTwoCount
+  const partThreeStart = partTwoEnd + 1
+  const partThreeEnd = partTwoEnd + partThreeCount
+  return `He thong tu map thanh chuoi dap an noi bo theo so cau 1-${partOneCount}, ${partTwoStart}-${partTwoEnd} va ${partThreeStart}-${partThreeEnd}.`
 }
 
 function AnswerField({
