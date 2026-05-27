@@ -1,0 +1,61 @@
+{
+  "exam_slug": "thpt-tran-phu-quang-ninh-2026-lan-3",
+  "exam_id": "thpt-tran-phu-quang-ninh-2026-lan-3",
+  "title": "De thi thu TN THPT 2026 mon Toan lan 3 THPT Tran Phu Quang Ninh",
+  "school_name": "THPT Tran Phu",
+  "city": "Quang Ninh",
+  "subject_code": "TOAN",
+  "subject_name": "Toan hoc",
+  "subject_folder": "Toan",
+  "year": 2026,
+  "duration_minutes": 90,
+  "pdf_input_path": "data_scraper/input/school_exams/thpt-tran-phu-quang-ninh-2026-lan-3.pdf",
+  "pdf_public_url": "/school-exams/thpt-tran-phu-quang-ninh-2026-lan-3.pdf",
+  "source_path": "data_scraper/input/school_exams/thpt-tran-phu-quang-ninh-2026-lan-3.pdf",
+  "variant_code": "DEFAULT",
+  "variant_id": "thpt-tran-phu-quang-ninh-2026-lan-3-default",
+  "tags": ["de thi thu", "toan", "2026", "quang ninh", "pdf"],
+  "manifest_path": "obsidian_vault/assets/Toan/thpt-tran-phu-quang-ninh-2026-lan-3/manifest.json",
+  "answer_key_path": "obsidian_vault/parsed/Toan/thpt-tran-phu-quang-ninh-2026-lan-3/answer_key.json",
+  "extract_json_path": "data_scraper/output/school_exams/json/thpt-tran-phu-quang-ninh-2026-lan-3/school_exam_input.json",
+  "extract_markdown_dir": "data_scraper/output/school_exams/markdown/thpt-tran-phu-quang-ninh-2026-lan-3",
+  "extract_json_dir": "data_scraper/output/school_exams/json/thpt-tran-phu-quang-ninh-2026-lan-3",
+  "questions_json_path": "obsidian_vault/parsed/Toan/thpt-tran-phu-quang-ninh-2026-lan-3/questions.json",
+  "topic_report_path": "obsidian_vault/parsed/Toan/thpt-tran-phu-quang-ninh-2026-lan-3/topic_suggestion_report.json",
+  "review_status_path": "obsidian_vault/parsed/Toan/thpt-tran-phu-quang-ninh-2026-lan-3/review_status.json",
+  "exam_seed_sql_path": "web-app/supabase/seed_school_exam_thpt_tran_phu_quang_ninh_2026_lan_3.sql",
+  "question_seed_sql_path": "web-app/supabase/seed_school_exam_questions_thpt-tran-phu-quang-ninh-2026-lan-3.sql",
+  "import_bundle_sql_path": "web-app/supabase/import_school_exam_thpt-tran-phu-quang-ninh-2026-lan-3.sql",
+  "sections": [
+    {
+      "part_code": "multiple_choice",
+      "title": "Phan I. Trac nghiem nhieu lua chon",
+      "instructions": "Cau 1 den 12, moi cau chon 1 trong 4 dap an.",
+      "start_question_number": 1,
+      "end_question_number": 12,
+      "display_order": 1,
+      "options_per_question": 4,
+      "statement_count": 0
+    },
+    {
+      "part_code": "true_false",
+      "title": "Phan II. Dung / Sai",
+      "instructions": "Cau 13 den 16, moi cau co 4 y a, b, c, d va chon D hoac S cho tung y.",
+      "start_question_number": 13,
+      "end_question_number": 16,
+      "display_order": 2,
+      "options_per_question": 0,
+      "statement_count": 4
+    },
+    {
+      "part_code": "short_answer",
+      "title": "Phan III. Tra loi ngan",
+      "instructions": "Cau 17 den 22, nhap dap an vao o trong.",
+      "start_question_number": 17,
+      "end_question_number": 22,
+      "display_order": 3,
+      "options_per_question": 0,
+      "statement_count": 0
+    }
+  ]
+}

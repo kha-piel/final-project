@@ -1,0 +1,3 @@
+google-genai
+python-dotenv
+pypdf>=6.4.0

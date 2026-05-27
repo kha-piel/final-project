@@ -1,0 +1,191 @@
+{
+  "exam_slug": "thpt-van-lang-ha-noi-2025",
+  "questions_json": "C:\\Users\\ADMIIN\\IdeaProjects\\final-project\\obsidian_vault\\parsed\\Toan\\thpt-van-lang-ha-noi-2025\\questions.json",
+  "kb_root": "C:\\Users\\ADMIIN\\IdeaProjects\\final-project\\docs\\knowledge-base\\Toan_Hoc",
+  "summary": {
+    "question_count": 22,
+    "suggested_count": 22,
+    "topic_filled_count": 22,
+    "source_path_filled_count": 22,
+    "unresolved_count": 0,
+    "missing_kb_count": 0
+  },
+  "entries": [
+    {
+      "question_number": 1,
+      "part": "multiple_choice",
+      "suggested_topic": "Hình học không gian với véc tơ",
+      "suggested_obsidian_source_path": "Toan_Hoc/2_Hinh_Hoc_Khong_Gian/1_vecto_trong_khong_gian.md",
+      "kb_file_available": true,
+      "reason": "Match keyword heuristic -> Hình học không gian với véc tơ."
+    },
+    {
+      "question_number": 2,
+      "part": "multiple_choice",
+      "suggested_topic": "Hình học không gian với véc tơ",
+      "suggested_obsidian_source_path": "Toan_Hoc/2_Hinh_Hoc_Khong_Gian/1_vecto_trong_khong_gian.md",
+      "kb_file_available": true,
+      "reason": "Match keyword heuristic -> Hình học không gian với véc tơ."
+    },
+    {
+      "question_number": 3,
+      "part": "multiple_choice",
+      "suggested_topic": "Nguyên hàm",
+      "suggested_obsidian_source_path": "Toan_Hoc/4_Nguyen_Ham_Tich_Phan/1_nguyen_ham.md",
+      "kb_file_available": true,
+      "reason": "Match keyword heuristic -> Nguyên hàm."
+    },
+    {
+      "question_number": 4,
+      "part": "multiple_choice",
+      "suggested_topic": "Phương trình mũ và logarit",
+      "suggested_obsidian_source_path": "Toan_Hoc/1_Ham_So/7_phuong_trinh_mu_va_logarit.md",
+      "kb_file_available": true,
+      "reason": "Match keyword heuristic -> Phương trình mũ và logarit."
+    },
+    {
+      "question_number": 5,
+      "part": "multiple_choice",
+      "suggested_topic": "Phương trình mặt phẳng trong Oxyz",
+      "suggested_obsidian_source_path": "Toan_Hoc/2_Hinh_Hoc_Khong_Gian/4_phuong_trinh_mat_phang.md",
+      "kb_file_available": true,
+      "reason": "Match keyword heuristic -> Phương trình mặt phẳng trong Oxyz."
+    },
+    {
+      "question_number": 6,
+      "part": "multiple_choice",
+      "suggested_topic": "Đường tiệm cận",
+      "suggested_obsidian_source_path": "Toan_Hoc/1_Ham_So/4_duong_tiem_can.md",
+      "kb_file_available": true,
+      "reason": "Match keyword heuristic -> Đường tiệm cận."
+    },
+    {
+      "question_number": 7,
+      "part": "multiple_choice",
+      "suggested_topic": "Xác suất biến cố độc lập",
+      "suggested_obsidian_source_path": "Toan_Hoc/3_Thong_Ke_Xac_Suat/3_xac_suat_co_dieu_kien.md",
+      "kb_file_available": true,
+      "reason": "Match keyword heuristic -> Xác suất biến cố độc lập."
+    },
+    {
+      "question_number": 8,
+      "part": "multiple_choice",
+      "suggested_topic": "Hình học không gian với véc tơ",
+      "suggested_obsidian_source_path": "Toan_Hoc/2_Hinh_Hoc_Khong_Gian/1_vecto_trong_khong_gian.md",
+      "kb_file_available": true,
+      "reason": "Match keyword heuristic -> Hình học không gian với véc tơ."
+    },
+    {
+      "question_number": 9,
+      "part": "multiple_choice",
+      "suggested_topic": "Tứ phân vị và số liệu ghép nhóm",
+      "suggested_obsidian_source_path": "Toan_Hoc/3_Thong_Ke_Xac_Suat/1_khoang_bien_thien_tu_phan_vi.md",
+      "kb_file_available": true,
+      "reason": "Match keyword heuristic -> Tứ phân vị và số liệu ghép nhóm."
+    },
+    {
+      "question_number": 10,
+      "part": "multiple_choice",
+      "suggested_topic": "Tích phân và diện tích hình phẳng",
+      "suggested_obsidian_source_path": "Toan_Hoc/4_Nguyen_Ham_Tich_Phan/3_ung_dung_hinh_hoc_tich_phan.md",
+      "kb_file_available": true,
+      "reason": "Match keyword heuristic -> Tích phân và diện tích hình phẳng."
+    },
+    {
+      "question_number": 11,
+      "part": "multiple_choice",
+      "suggested_topic": "Cấp số cộng và cấp số nhân",
+      "suggested_obsidian_source_path": "Toan_Hoc/1_Ham_So/8_cap_so_cong_va_cap_so_nhan.md",
+      "kb_file_available": true,
+      "reason": "Match keyword heuristic -> Cấp số cộng và cấp số nhân."
+    },
+    {
+      "question_number": 12,
+      "part": "multiple_choice",
+      "suggested_topic": "Khảo sát và đọc đồ thị hàm số",
+      "suggested_obsidian_source_path": "Toan_Hoc/1_Ham_So/5_khao_sat_do_thi.md",
+      "kb_file_available": true,
+      "reason": "Match keyword heuristic -> Khảo sát và đọc đồ thị hàm số."
+    },
+    {
+      "question_number": 13,
+      "part": "true_false",
+      "suggested_topic": "Giới hạn dãy số",
+      "suggested_obsidian_source_path": "Toan_Hoc/5_Gioi_Han_Day_So/1_gioi_han_day_so.md",
+      "kb_file_available": true,
+      "reason": "Match keyword heuristic -> Giới hạn dãy số."
+    },
+    {
+      "question_number": 14,
+      "part": "true_false",
+      "suggested_topic": "Cực trị, GTLN và GTNN",
+      "suggested_obsidian_source_path": "Toan_Hoc/1_Ham_So/3_gia_tri_lon_nhat_nho_nhat.md",
+      "kb_file_available": true,
+      "reason": "Match keyword heuristic -> Cực trị, GTLN và GTNN."
+    },
+    {
+      "question_number": 15,
+      "part": "true_false",
+      "suggested_topic": "Hệ trục tọa độ Oxyz",
+      "suggested_obsidian_source_path": "Toan_Hoc/2_Hinh_Hoc_Khong_Gian/2_he_truc_toa_do_Oxyz.md",
+      "kb_file_available": true,
+      "reason": "Match keyword heuristic -> Hệ trục tọa độ Oxyz."
+    },
+    {
+      "question_number": 16,
+      "part": "true_false",
+      "suggested_topic": "Tích phân và diện tích hình phẳng",
+      "suggested_obsidian_source_path": "Toan_Hoc/4_Nguyen_Ham_Tich_Phan/3_ung_dung_hinh_hoc_tich_phan.md",
+      "kb_file_available": true,
+      "reason": "Match keyword heuristic -> Tích phân và diện tích hình phẳng."
+    },
+    {
+      "question_number": 17,
+      "part": "short_answer",
+      "suggested_topic": "Hình học không gian với véc tơ",
+      "suggested_obsidian_source_path": "Toan_Hoc/2_Hinh_Hoc_Khong_Gian/1_vecto_trong_khong_gian.md",
+      "kb_file_available": true,
+      "reason": "Match keyword heuristic -> Hình học không gian với véc tơ."
+    },
+    {
+      "question_number": 18,
+      "part": "short_answer",
+      "suggested_topic": "Xác suất biến cố độc lập",
+      "suggested_obsidian_source_path": "Toan_Hoc/3_Thong_Ke_Xac_Suat/3_xac_suat_co_dieu_kien.md",
+      "kb_file_available": true,
+      "reason": "Match keyword heuristic -> Xác suất biến cố độc lập."
+    },
+    {
+      "question_number": 19,
+      "part": "short_answer",
+      "suggested_topic": "Hình học không gian với véc tơ",
+      "suggested_obsidian_source_path": "Toan_Hoc/2_Hinh_Hoc_Khong_Gian/1_vecto_trong_khong_gian.md",
+      "kb_file_available": true,
+      "reason": "Match keyword heuristic -> Hình học không gian với véc tơ."
+    },
+    {
+      "question_number": 20,
+      "part": "short_answer",
+      "suggested_topic": "Cực trị, GTLN và GTNN",
+      "suggested_obsidian_source_path": "Toan_Hoc/1_Ham_So/3_gia_tri_lon_nhat_nho_nhat.md",
+      "kb_file_available": true,
+      "reason": "Match keyword heuristic -> Cực trị, GTLN và GTNN."
+    },
+    {
+      "question_number": 21,
+      "part": "short_answer",
+      "suggested_topic": "Tổ hợp, xác suất và đếm",
+      "suggested_obsidian_source_path": "Toan_Hoc/5_To_Hop_Xac_Suat/1_quy_tac_dem_va_hoan_vi_to_hop.md",
+      "kb_file_available": true,
+      "reason": "Match keyword heuristic -> Tổ hợp, xác suất và đếm."
+    },
+    {
+      "question_number": 22,
+      "part": "short_answer",
+      "suggested_topic": "Cực trị, GTLN và GTNN",
+      "suggested_obsidian_source_path": "Toan_Hoc/1_Ham_So/3_gia_tri_lon_nhat_nho_nhat.md",
+      "kb_file_available": true,
+      "reason": "Match keyword heuristic -> Cực trị, GTLN và GTNN."
+    }
+  ]
+}

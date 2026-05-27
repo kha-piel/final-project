@@ -1,0 +1,10 @@
+{
+  "exam_slug": "chuyen-le-khiet-quang-2025",
+  "status": "pending_assets",
+  "notes": [
+    "Da dien answer_key.json.",
+    "Crop anh cau co hinh vao obsidian_vault/assets/Toan/chuyen-le-khiet-quang-2025 va cap nhat manifest.json.",
+    "Khong chay pipeline khi answer_key.json con trong.",
+    "Neu da sua tay questions.json thi khong overwrite lai neu chua co yeu cau."
+  ]
+}

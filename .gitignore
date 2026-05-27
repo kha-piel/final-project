@@ -37,3 +37,21 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+### Database ###
+*.db
+*.class
+
+### Python ###
+__pycache__/
+*.py[cod]
+*$py.class
+.env
+venv/
+.venv/
+
+### IntelliJ IDEA (full) ###
+.idea/
+
+### Misc ###
+final-project/

@@ -1,0 +1,36 @@
+{
+  "exam_slug": "thpt-tran-phu-quang-ninh-2026-lan-3",
+  "subject_folder": "Toan",
+  "assets": [
+    {
+      "part_code": "multiple_choice",
+      "source_question_number": 2,
+      "question_block": "TN_Cau02.png",
+      "figures": ["TN_Cau02_hinh1.png"]
+    },
+    {
+      "part_code": "multiple_choice",
+      "source_question_number": 3,
+      "question_block": "TN_Cau03.png",
+      "figures": ["TN_Cau03_hinh1.png"]
+    },
+    {
+      "part_code": "multiple_choice",
+      "source_question_number": 4,
+      "question_block": "TN_Cau04.png",
+      "figures": ["TN_Cau04_hinh1.png"]
+    },
+    {
+      "part_code": "multiple_choice",
+      "source_question_number": 5,
+      "question_block": "TN_Cau05.png",
+      "figures": ["TN_Cau05_hinh1.png"]
+    },
+    {
+      "part_code": "short_answer",
+      "source_question_number": 3,
+      "question_block": "TLN_Cau03.png",
+      "figures": ["TLN_Cau03_hinh1.png"]
+    }
+  ]
+}

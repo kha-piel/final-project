@@ -1,0 +1,493 @@
+{
+  "source_pdf": "school_exam_input.pdf",
+  "sections": [
+    {
+      "section_number": 1,
+      "section_type": "multiple_choice",
+      "questions": [
+        {
+          "question_number": 1,
+          "type": "multiple_choice",
+          "has_image": false,
+          "stem": "Tìm nguyên hàm của hàm số $f(x)=2\\sin x$.",
+          "options": [
+            {
+              "label": "A",
+              "text": "$\\int 2 \\sin x dx = -2 \\cos x + C$."
+            },
+            {
+              "label": "B",
+              "text": "$\\int 2 \\sin x dx = \\sin 2x + C$."
+            },
+            {
+              "label": "C",
+              "text": "$\\int 2 \\sin x dx = \\sin^2 x + C$ ."
+            },
+            {
+              "label": "D",
+              "text": "$\\int 2 \\sin x dx = 2 \\cos x + C$."
+            }
+          ],
+          "statements": [],
+          "notes": ""
+        },
+        {
+          "question_number": 2,
+          "type": "multiple_choice",
+          "has_image": true,
+          "stem": "Cho hình lập phương $ABCD.A'B'C'D'$ có cạnh 2 (tham khảo hình vẽ dưới). Độ dài vecto $\\vec{u} = \\vec{AB}+ \\vec{AD}+\\vec{A'C'}$ bằng",
+          "options": [
+            {
+              "label": "A",
+              "text": "$4\\sqrt{3}$."
+            },
+            {
+              "label": "B",
+              "text": "$4\\sqrt{2}$."
+            },
+            {
+              "label": "C",
+              "text": "$2\\sqrt{3}$."
+            },
+            {
+              "label": "D",
+              "text": "$2\\sqrt{2}$."
+            }
+          ],
+          "statements": [],
+          "notes": ""
+        },
+        {
+          "question_number": 3,
+          "type": "multiple_choice",
+          "has_image": true,
+          "stem": "Cho hàm số $y = f(x)$ có bảng biến thiên như sau:\nx | $-\\infty$ | 0 | 3 | $+\\infty$\nf'(x) | + | 0 | - | 0 | +\nf(x) | $-\\infty$ | 2 | | $+\\infty$\n| | | -4 |\nGiá trị cực tiểu của hàm số đã cho bằng",
+          "options": [
+            {
+              "label": "A",
+              "text": "0."
+            },
+            {
+              "label": "B",
+              "text": "2."
+            },
+            {
+              "label": "C",
+              "text": "-4."
+            },
+            {
+              "label": "D",
+              "text": "3."
+            }
+          ],
+          "statements": [],
+          "notes": ""
+        },
+        {
+          "question_number": 4,
+          "type": "multiple_choice",
+          "has_image": true,
+          "stem": "Thống kê điểm trung bình môn Toán của một số học sinh lớp 12 được mẫu số liệu sau\nKhoảng điểm || $[6,5;7)$ | $[7;7,5)$ | $[7,5;8)$ | $[8;8,5)$ | $[8,5;9)$ | $[9;9,5)$ | $[9,5;10)$\nTần số | 8 | 10 | 16 | 24 | 13 | 7 | 4\nPhương sai của mẫu số liệu về điểm trung bình môn Toán của các học sinh đó là bao nhiêu? (kết quả làm tròn đến hàng phần trăm)",
+          "options": [
+            {
+              "label": "A",
+              "text": "0,62."
+            },
+            {
+              "label": "B",
+              "text": "0,79."
+            },
+            {
+              "label": "C",
+              "text": "0,78."
+            },
+            {
+              "label": "D",
+              "text": "0,61."
+            }
+          ],
+          "statements": [],
+          "notes": ""
+        },
+        {
+          "question_number": 5,
+          "type": "multiple_choice",
+          "has_image": true,
+          "stem": "Cho hình lập phương $ABCD.A'B'C'D'$. Mệnh đề nào sau đây sai?",
+          "options": [
+            {
+              "label": "A",
+              "text": "$BD$ song song với $(CB'D')$."
+            },
+            {
+              "label": "B",
+              "text": "$BD$ song song với $(A'C'D')$."
+            },
+            {
+              "label": "C",
+              "text": "$BD$ vuông góc với $(ADD'A')$."
+            },
+            {
+              "label": "D",
+              "text": "$BD$ vuông góc với $(ACC'A')$."
+            }
+          ],
+          "statements": [],
+          "notes": ""
+        },
+        {
+          "question_number": 6,
+          "type": "multiple_choice",
+          "has_image": false,
+          "stem": "Trong không gian $Oxyz$, cho mặt cầu $(S)$ có tâm $I(0;-2;1)$ và bán kính $R = 5$. Phương trình của $(S)$ là",
+          "options": [
+            {
+              "label": "A",
+              "text": "$x^2 + (y+2)^2 + (z-1)^2 = 25$."
+            },
+            {
+              "label": "B",
+              "text": "$x^2 + (y-2)^2 + (z+1)^2 = 25$."
+            },
+            {
+              "label": "C",
+              "text": "$x^2+(y-2)^2 + (z + 1)^2 = 5$ ."
+            },
+            {
+              "label": "D",
+              "text": "$x^2 + (y+2)^2 + (z-1)^2 = 5$ ."
+            }
+          ],
+          "statements": [],
+          "notes": ""
+        },
+        {
+          "question_number": 7,
+          "type": "multiple_choice",
+          "has_image": false,
+          "stem": "Cho cấp số nhân $(u_n)$ với $u_1 = 3$ và công bội $q = 2$. Giá trị của $u_2$ bằng",
+          "options": [
+            {
+              "label": "A",
+              "text": "$\\frac{3}{2}$."
+            },
+            {
+              "label": "B",
+              "text": "9."
+            },
+            {
+              "label": "C",
+              "text": "8."
+            },
+            {
+              "label": "D",
+              "text": "6."
+            }
+          ],
+          "statements": [],
+          "notes": ""
+        },
+        {
+          "question_number": 8,
+          "type": "multiple_choice",
+          "has_image": false,
+          "stem": "Phương trình $\\cos x = \\frac{\\sqrt{2}}{2}$ có tập nghiệm là",
+          "options": [
+            {
+              "label": "A",
+              "text": "$\\left\\{x=\\pm\\frac{\\pi}{4}+k2\\pi; k \\in \\mathbb{Z}\\right\\}$."
+            },
+            {
+              "label": "B",
+              "text": "$\\left\\{x=\\pm\\frac{\\pi}{3}+k2\\pi;k \\in \\mathbb{Z}\\right\\}$"
+            },
+            {
+              "label": "C",
+              "text": "$\\left\\{x=\\pm\\frac{\\pi}{3}+k\\pi;k\\in\\mathbb{Z}\\right\\}$."
+            },
+            {
+              "label": "D",
+              "text": "$\\left\\{x=\\pm\\frac{3\\pi}{4}+k2\\pi;k \\in \\mathbb{Z}\\right\\}$"
+            }
+          ],
+          "statements": [],
+          "notes": ""
+        },
+        {
+          "question_number": 9,
+          "type": "multiple_choice",
+          "has_image": false,
+          "stem": "Tiệm cận ngang của đồ thị hàm số $y = \\frac{4x+1}{x-1}$ là",
+          "options": [
+            {
+              "label": "A",
+              "text": "$y=-\\frac{1}{4}$."
+            },
+            {
+              "label": "B",
+              "text": "$y=1$."
+            },
+            {
+              "label": "C",
+              "text": "$y = -1$."
+            },
+            {
+              "label": "D",
+              "text": "$y=4$."
+            }
+          ],
+          "statements": [],
+          "notes": ""
+        },
+        {
+          "question_number": 10,
+          "type": "multiple_choice",
+          "has_image": false,
+          "stem": "Trong không gian $Oxyz$, cho điểm $M(1;2;-1)$ và mặt phẳng $(P): x + 2y + z = 0$. Mặt phẳng $(Q)$ qua $M$ và song song với $(P)$ có phương trình là",
+          "options": [
+            {
+              "label": "A",
+              "text": "$x+2y-z-6=0$."
+            },
+            {
+              "label": "B",
+              "text": "$x+2y+z-1=0$."
+            },
+            {
+              "label": "C",
+              "text": "$x+2y+z-4=0$."
+            },
+            {
+              "label": "D",
+              "text": "$x+2y+z+4 = 0$ ."
+            }
+          ],
+          "statements": [],
+          "notes": ""
+        },
+        {
+          "question_number": 11,
+          "type": "multiple_choice",
+          "has_image": false,
+          "stem": "Cho hình chóp $S.ABC$ có đáy $ABC$ là tam giác vuông tại $A$ với $AB = a, AC = 2a$ cạnh $SA$ vuông góc với $(ABC)$ và $SA = a\\sqrt{3}$. Tính thể tích khối chóp $S.ABC$.",
+          "options": [
+            {
+              "label": "A",
+              "text": "$\\frac{a^3\\sqrt{3}}{4}$."
+            },
+            {
+              "label": "B",
+              "text": "$\\frac{a^3\\sqrt{3}}{3}$."
+            },
+            {
+              "label": "C",
+              "text": "$\\frac{a^3\\sqrt{3}}{6}$."
+            },
+            {
+              "label": "D",
+              "text": "$a^3\\sqrt{3}$."
+            }
+          ],
+          "statements": [],
+          "notes": ""
+        },
+        {
+          "question_number": 12,
+          "type": "multiple_choice",
+          "has_image": false,
+          "stem": "Nghiệm của phương trình $3^{x-2} =9$ là",
+          "options": [
+            {
+              "label": "A",
+              "text": "$x = -4$."
+            },
+            {
+              "label": "B",
+              "text": "$x=-3$."
+            },
+            {
+              "label": "C",
+              "text": "$x = 4$."
+            },
+            {
+              "label": "D",
+              "text": "$x = 3$."
+            }
+          ],
+          "statements": [],
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "section_number": 2,
+      "section_type": "true_false",
+      "questions": [
+        {
+          "question_number": 1,
+          "type": "true_false",
+          "has_image": false,
+          "stem": "Một hộp có chứa 5 viên bị màu xanh và 7 viên bị màu đỏ (các viên bị có cùng kích thước và khối lượng, được đánh số khác nhau). Bạn Nam lấy ngẫu nhiên 1 viên bị từ trong hộp và không hoàn lại, tiếp đó bạn Minh lấy ngẫu nhiên 2 viên bị từ trong hộp.",
+          "options": [],
+          "statements": [
+            {
+              "label": "a",
+              "text": "Xác suất để bạn Nam lấy được 1 viên bị màu đỏ là $\\frac{7}{12}$"
+            },
+            {
+              "label": "b",
+              "text": "Xác suất bạn Minh lấy được 2 viên bị màu đỏ, biết rằng bạn Nam đã lấy được 1 viên bị màu xanh là $\\frac{7}{22}$"
+            },
+            {
+              "label": "c",
+              "text": "Xác suất để bạn Nam lấy được 1 viên bị màu xanh và bạn Minh lấy được 1 viên bi màu xanh và 1 viên bi màu đỏ là $\\frac{5}{22}$"
+            },
+            {
+              "label": "d",
+              "text": "Biết rằng bạn Minh lấy được ít nhất một viên bi màu đỏ, xác suất bạn Nam lấy được một viên bi màu đỏ là $\\frac{9}{16}$"
+            }
+          ],
+          "notes": ""
+        },
+        {
+          "question_number": 2,
+          "type": "true_false",
+          "has_image": false,
+          "stem": "Cho hàm số $y = x^3 -3x^2 -1$.",
+          "options": [],
+          "statements": [
+            {
+              "label": "a",
+              "text": "Hàm số có đạo hàm là $y' = 3x^2-6x+4$."
+            },
+            {
+              "label": "b",
+              "text": "Hàm số đồng biến trên khoảng $(0;2)$."
+            },
+            {
+              "label": "c",
+              "text": "Đồ thị hàm số có tâm đối xứng là điểm $I(1;-1)$."
+            },
+            {
+              "label": "d",
+              "text": "Gọi $A, B$ là hai điểm cực trị của đồ thị hàm số. Diện tích tam giác $OAB$ (với $O$ là gốc tọa độ) bằng 1 đơn vị diện tích."
+            }
+          ],
+          "notes": ""
+        },
+        {
+          "question_number": 3,
+          "type": "true_false",
+          "has_image": false,
+          "stem": "Một người điều khiển xe ô tô với vận tốc 72 km/h thì phát hiện ở phía trước cách vị trí xe một đoạn 100 mét có công trường đang thi công có gắn biển báo giới hạn tốc độ tối đa cho phép là 36 km/h. Hai giây sau đó, tài xế bắt đầu đạp phanh giảm tốc với vận tốc $v_1 (t) = at+b$ (m/s) ($a, b \\in \\mathbb{R}, a < 0$), trong đó $t$ là thời gian tính bằng giây kể từ khi xe bắt đầu giảm tốc độ. Khi ô tô vừa đến vị trí đặt biển báo thì tốc độ đạt đúng 36 km/h. Sau khi đi qua hết đoạn đường công trường dài 200 mét với vận tốc không đổi, xe bắt đầu tăng tốc với vận tốc $v_2 (t_1) = mt_1 + n$ ($m, n \\in \\mathbb{R}, m > 0$), trong đó $t_1$ là thời gian tính bằng giây kể từ khi ô tô vừa ra khỏi công trường. Biết rằng đúng 10 giây sau khi tăng tốc, xe đạt vận tốc 72 km/h.",
+          "options": [],
+          "statements": [
+            {
+              "label": "a",
+              "text": "Quãng đường ô tô đi được từ khi phát hiện biển báo giới hạn tốc độ đến khi bắt đầu giảm tốc độ là 40 m."
+            },
+            {
+              "label": "b",
+              "text": "Hàm số vận tốc trong giai đoạn giảm tốc là $v_1 (t) = -2,5t +40$ (m/s)."
+            },
+            {
+              "label": "c",
+              "text": "Ô tô đến vị trí đặt biển báo tốc độ tối đa cho phép sau 4 giây kể từ khi giảm tốc."
+            },
+            {
+              "label": "d",
+              "text": "Quãng đường ô tô đi được kể từ khi phát hiện có công trường đang thi công đến khi đạt vận tốc 72 km/h là 450 m."
+            }
+          ],
+          "notes": ""
+        },
+        {
+          "question_number": 4,
+          "type": "true_false",
+          "has_image": false,
+          "stem": "Trong không gian $Oxyz$ (đơn vị trên các trục là km), mặt đất được xem là mặt phẳng $(Oxy)$. Một khu vực cấm bay được giới hạn bởi một khối cầu $(S)$ có tâm $I(0;0;4)$ và bán kính $R = 3$. Một thiết bị bay không người lái (drone) cất cánh từ điểm $A(5;5;6)$ và bay theo đường thẳng với vectơ vận tốc $\\vec{v} = (-2;-1;-2)$. Cho biết $\\Delta$ là đường thẳng chứa quỹ đạo bay của drone.",
+          "options": [],
+          "statements": [
+            {
+              "label": "a",
+              "text": "Đường bay $\\Delta$ của drone có một véc-tơ chỉ phương là $\\vec{u} = (2;-1; 2)$ ."
+            },
+            {
+              "label": "b",
+              "text": "Khoảng cách từ tâm $I$ của khu vực cấm bay $(S)$ đến mặt đất bằng 4 km."
+            },
+            {
+              "label": "c",
+              "text": "Đường bay $\\Delta$ của drone đi xuyên qua khu vực cấm bay $(S)$."
+            },
+            {
+              "label": "d",
+              "text": "Người ta muốn đặt một trạm thu phát sóng tại điểm $K$ trên mặt đất sao cho tổng khoảng cách $KA + KI$ đạt giá trị nhỏ nhất. Khi đó toạ độ của trạm $K$ là $(2;2;0)$."
+            }
+          ],
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "section_number": 3,
+      "section_type": "short_answer",
+      "questions": [
+        {
+          "question_number": 1,
+          "type": "short_answer",
+          "has_image": false,
+          "stem": "Để hưởng ứng chiến dịch “Giao thông xanh”, một đơn vị vận tải tại Quảng Ninh dự định lắp đặt hai loại trụ sạc cho đội xe điện: Trụ sạc nhanh (Loại X) và Trụ sạc siêu cấp (Loại Y). Diện tích bãi đỗ xe dành cho việc lắp đặt này là 18 m² và tổng nguồn điện khả dụng là 24 kW. Mỗi trụ loại X cần 2 m² diện tích và tiêu thụ 3 kW điện. Mỗi trụ loại Y cần 3 m² diện tích và tiêu thụ 3 kW điện. Do yêu cầu kỹ thuật, số lượng trụ sạc nhanh (Loại X) không được vượt quá 8 trụ. Biết rằng mỗi trụ loại X mang lại lợi nhuận 4 triệu đồng/tháng và mỗi trụ loại Y mang lại lợi nhuận 5 triệu đồng/tháng. Hỏi tổng lợi nhuận lớn nhất có thể đạt được trong mỗi tháng là bao nhiêu triệu đồng?",
+          "options": [],
+          "statements": [],
+          "notes": ""
+        },
+        {
+          "question_number": 2,
+          "type": "short_answer",
+          "has_image": false,
+          "stem": "Để quảng bá hình ảnh du lịch Quảng Ninh trong mùa cao điểm, một nhóm bạn trẻ dự định thực hiện chiến dịch nội dung trên hai nền tảng: TikTok (Kênh A) và YouTube Short (Kênh B) trong đúng 10 ngày. Do đặc thù sản xuất video, mỗi ngày nhóm chỉ tập trung đăng tải và tương tác trên một nền tảng duy nhất. Nếu dành $x$ ngày cho Kênh A, số lượt tiếp cận thu về là: $P_A = x^2 +2x$ (nghìn lượt). Nếu dành $y$ ngày cho Kênh B, số lượt tiếp cận thu về là: $P_B = 326y-27y^2$ (nghìn lượt).\nBiết rằng do thuật toán của nền tảng, nhóm quyết định dành cho Kênh B không quá 6 ngày. Hỏi nhóm bạn trẻ nên phân bổ bao nhiêu ngày cho Kênh A để tổng số lượt tiếp cận trên cả hai nền tảng là lớn nhất?",
+          "options": [],
+          "statements": [],
+          "notes": ""
+        },
+        {
+          "question_number": 3,
+          "type": "short_answer",
+          "has_image": true,
+          "stem": "Bánh Taco là một món ăn đặc trưng của Mexico, bánh Taco được tạo thành từ một chiếc bánh Tortilla (bánh ngô) cuộn quanh thức ăn. Cụ thể, để làm một chiếc bánh Taco ta lấy bánh Tortilla tròn có đường kính 20 cm đặt vào mặt trong của hình trụ có bán kính $R = 4$ cm, dọc theo đường kính của Tortilla và gấp bánh lại quanh hình trụ. Sau đó ta sẽ đổ đầy thịt, phô mai, và rau củ đến tận mép bánh. Gọi $x$ là khoảng cách từ tâm bánh Tortilla đến một điểm $P$ trên đường kính (tham khảo hình vẽ).\nTính thể tích của bánh Taco theo đơn vị cm³ (kết quả làm tròn đến hàng đơn vị).",
+          "options": [],
+          "statements": [],
+          "notes": ""
+        },
+        {
+          "question_number": 4,
+          "type": "short_answer",
+          "has_image": false,
+          "stem": "Một chiếc lều hình chóp tứ giác đều $S.ABCD$ có cạnh đáy và cạnh bên đều bằng 5,6 mét. Người ta định trang trí lều bằng dây led nối thẳng từ đỉnh $B$ đến mặt bên $SCD$. Xác định khoảng cách ngắn nhất của dây led để đảm bảo yêu cầu trên biết rằng kết quả chỉ được lấy đến chữ số thứ nhất của hàng thập phân và tính theo đơn vị mét.",
+          "options": [],
+          "statements": [],
+          "notes": ""
+        },
+        {
+          "question_number": 5,
+          "type": "short_answer",
+          "has_image": false,
+          "stem": "Công ty X giao cho hai xí nghiệp I và II sản xuất 20000 sản phẩm. Xí nghiệp I sản xuất 15000 sản phẩm và có tỷ lệ phế phẩm là 4%, xí nghiệp II có tỉ lệ phế phẩm là 6%. Công ty có một hệ thống dùng để phát hiện phế phẩm cho các sản phẩm của hai xí nghiệp trên. Biết rằng nếu một phế phẩm đi qua hệ thống thì nó chỉ phát hiện được 95% và hệ thống dự đoán đúng được 92% nếu một sản phẩm không là phế phẩm. Chọn ngẫu nhiên một sản phẩm rồi cho đi qua hệ thống. Tính xác suất để sản phẩm được chọn của xí nghiệp I biết rằng sản phẩm đó bị hệ thống báo là phế phẩm (làm tròn kết quả đến hàng phần trăm).",
+          "options": [],
+          "statements": [],
+          "notes": ""
+        },
+        {
+          "question_number": 6,
+          "type": "short_answer",
+          "has_image": false,
+          "stem": "Trong không gian $Oxyz$, (đơn vị dài trên trục tính bằng mét), một con châu chấu đang ở vị trí $O(0;0;0)$ và dự định nhảy đến $C(6;5;5)$. Con châu chấu chỉ có thể nhảy theo ba hướng $\\vec{i}=(1;0;0)$, $\\vec{j}=(0;1;0)$, $\\vec{k} = (0;0;1)$ và điều đặc biệt là nó sẽ không thể nhảy hai lần liên tiếp theo hướng $\\vec{k} = (0;0;1)$. Mỗi lần nhảy của con châu chấu chỉ nhảy được quãng đường bằng 1m. Gọi $T$ là số cách con châu chấu di chuyển từ $O$ đến $C$. Bốn chữ số đầu tiên của $T$ là bao nhiêu?",
+          "options": [],
+          "statements": [],
+          "notes": ""
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "exam_slug": "thpt-van-lang-ha-noi-2025",
+  "display_name": "THPT Van Lang - Ha Noi",
+  "subject": "Toan",
+  "year": 2025,
+  "asset_root": "obsidian_vault/assets/Toan/thpt-van-lang-ha-noi-2025",
+  "naming_notes": {
+    "question_block_pattern": "TN_CauXX.png",
+    "figure_pattern": "TN_CauXX_hinh*.png"
+  },
+  "assets": [
+    {
+      "question_number": 2,
+      "part": "multiple_choice",
+      "question_block": "TN_Cau02.png",
+      "figures": [
+        "TN_Cau02_hinh2.png"
+      ]
+    },
+    {
+      "question_number": 6,
+      "part": "multiple_choice",
+      "question_block": "TN_Cau06.png",
+      "figures": [
+        "TN_Cau06_hinh6.png"
+      ]
+    },
+    {
+      "question_number": 8,
+      "part": "multiple_choice",
+      "question_block": "TN_Cau08.png",
+      "figures": [
+        "TN_Cau08_hinh8.png"
+      ]
+    },
+    {
+      "question_number": 9,
+      "part": "multiple_choice",
+      "question_block": "TN_Cau09.png",
+      "figures": [
+        "TN_Cau09_hinh9.png"
+      ]
+    },
+    {
+      "question_number": 12,
+      "part": "multiple_choice",
+      "question_block": "TN_Cau12.png",
+      "figures": [
+        "TN_Cau12_hinh12.png"
+      ]
+    }
+  ]
+}
