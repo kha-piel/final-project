@@ -24,6 +24,7 @@ export type AdminExamDraft = {
   year: number
   durationMinutes: number
   variantCode: string
+  variantId?: string | null
   pdfStoragePath: string
   pdfUrl: string
 }
@@ -56,6 +57,7 @@ export type AdminImportChange = {
 export type AdminImportQuestion = {
   questionNumber: number
   questionType: AdminQuestionType
+  topic: string
   questionText: string
   options: AdminImportOption[]
   statements: AdminImportStatement[]
@@ -75,9 +77,63 @@ export type AdminImportValidationResponse = {
   rawModelResponse?: string | null
 }
 
+export type ManagedImportedExam = {
+  examId: string
+  title: string
+  schoolName: string
+  city: string
+  subjectCode: SubjectCode
+  subjectName: string
+  year: number
+  durationMinutes: number
+  pdfUrl: string
+  sourcePath: string | null
+  isActive: boolean
+  createdAt: string
+  variantId: string | null
+  variantCode: string
+}
+
 type SaveAdminImportedExamInput = {
   pdfFile: File
   draft: AdminImportValidationResponse
+}
+
+type UpdateManagedImportedExamInput = {
+  examId: string
+  title: string
+  schoolName: string
+  city: string
+  subjectCode: SubjectCode
+  year: number
+  durationMinutes: number
+  variantId: string | null
+  variantCode: string
+  isActive: boolean
+}
+
+type ManagedExamQuestionRow = {
+  question_id: string
+  exam_id: string
+  question_number: number
+  difficulty_level: number | null
+  question_type: AdminQuestionType
+  question_text: string
+  statement_json: Array<{ label: string; text: string }> | null
+  topic: string | null
+  obsidian_source_path: string | null
+  has_image: boolean
+  metadata: Record<string, unknown> | null
+  options: Array<{
+    option_label: 'A' | 'B' | 'C' | 'D'
+    option_text: string
+    display_order: number
+  }> | null
+  assets: Array<{
+    asset_type: AdminImportAsset['assetType']
+    asset_path: string
+    display_order: number
+  }> | null
 }
 
 type SectionPart = AdminQuestionType
@@ -89,20 +145,63 @@ export const subjectOptions: Array<{
   name: string
   durationMinutes: string
 }> = [
-  { code: 'TOAN', name: 'Toan hoc', durationMinutes: '50' },
-  { code: 'VAT_LY', name: 'Vat ly', durationMinutes: '50' },
-  { code: 'HOA_HOC', name: 'Hoa hoc', durationMinutes: '50' },
+  { code: 'TOAN', name: 'Toán học', durationMinutes: '90' },
+  { code: 'VAT_LY', name: 'Vật lý', durationMinutes: '50' },
+  { code: 'HOA_HOC', name: 'Hóa học', durationMinutes: '50' },
 ]
 
+export const topicOptionsBySubjectCode: Record<SubjectCode, string[]> = {
+  TOAN: [
+    'Hinh hoc khong gian va Oxyz',
+    'Nguyen ham va tich phan',
+    'Khao sat ham so, cuc tri va GTLN/GTNN',
+    'Mu va logarit',
+    'Xac suat, to hop va thong ke',
+    'Quan he vuong goc va khoi da dien',
+  ],
+  VAT_LY: [
+    'Dao dong co',
+    'Song co',
+    'Dien xoay chieu',
+    'Dao dong va song dien tu',
+    'Song anh sang',
+    'Luong tu anh sang',
+    'Hat nhan nguyen tu',
+    'Dien tich va dien truong',
+    'Dong dien khong doi',
+    'Tu truong',
+    'Cam ung dien tu',
+    'Quang hoc',
+  ],
+  HOA_HOC: [
+    'Cau tao nguyen tu, bang tuan hoan va lien ket hoa hoc',
+    'Phan ung oxi hoa khu',
+    'Toc do phan ung va can bang hoa hoc',
+    'Dung dich, pH va chuan do',
+    'Este va lipit',
+    'Cacbohidrat',
+    'Amin, amino axit va protein',
+    'Polime',
+    'Dai cuong kim loai',
+    'Kim loai kiem, kiem tho va nhom',
+    'Sat va hop chat cua sat',
+    'Dien phan',
+    'Tong hop hoa vo co',
+    'Tong hop hoa huu co',
+    'Hoa hoc voi thuc tien',
+  ],
+}
+
 export function createEmptyMetadata(): AdminImportMetadata {
+  const defaultSubject = subjectOptions[0]
   return {
     schoolName: '',
     city: '',
-    subjectCode: 'TOAN',
-    subjectName: 'Toan hoc',
+    subjectCode: defaultSubject.code,
+    subjectName: defaultSubject.name,
     year: String(new Date().getFullYear()),
     variantCode: '101',
-    durationMinutes: '50',
+    durationMinutes: defaultSubject.durationMinutes,
   }
 }
 
@@ -346,7 +445,7 @@ export async function saveAdminImportedExam(input: SaveAdminImportedExamInput) {
           }))
         : [],
     explanation: null,
-    topic: null,
+    topic: question.topic.trim() || null,
     obsidian_source_path: null,
     has_image: question.assets.length > 0,
     metadata: {
@@ -447,6 +546,407 @@ export async function saveAdminImportedExam(input: SaveAdminImportedExamInput) {
   }
 }
 
+export async function fetchManagedImportedExams() {
+  const supabase = getSupabaseBrowserClient()
+  const { data, error } = await supabase
+    .from('school_exams')
+    .select(
+      'exam_id, title, school_name, city, subject_code, subject_name, year, duration_minutes, pdf_url, source_path, is_active, created_at, variants:school_exam_variants(variant_id, variant_code, display_order)',
+    )
+    .order('created_at', { ascending: false })
+    .limit(24)
+
+  if (error) {
+    throw new Error(`Khong the tai danh sach de da nhap: ${error.message}`)
+  }
+
+  return (data ?? []).map((row) => {
+    const variants = Array.isArray(row.variants) ? row.variants : []
+    const primaryVariant = [...variants].sort((left, right) => left.display_order - right.display_order)[0]
+
+    return {
+      examId: row.exam_id,
+      title: row.title,
+      schoolName: row.school_name,
+      city: row.city,
+      subjectCode: row.subject_code as SubjectCode,
+      subjectName: row.subject_name,
+      year: row.year,
+      durationMinutes: row.duration_minutes,
+      pdfUrl: row.pdf_url,
+      sourcePath: row.source_path ?? null,
+      isActive: row.is_active,
+      createdAt: row.created_at,
+      variantId: primaryVariant?.variant_id ?? null,
+      variantCode: primaryVariant?.variant_code ?? '',
+    } satisfies ManagedImportedExam
+  })
+}
+
+export async function updateManagedImportedExam(input: UpdateManagedImportedExamInput) {
+  const supabase = getSupabaseBrowserClient()
+  const subject = subjectOptions.find((item) => item.code === input.subjectCode)
+
+  if (!subject) {
+    throw new Error('Mon hoc khong hop le.')
+  }
+
+  const payload = {
+    title: input.title.trim(),
+    school_name: input.schoolName.trim(),
+    city: input.city.trim(),
+    subject_code: input.subjectCode,
+    subject_name: subject.name,
+    year: input.year,
+    duration_minutes: input.durationMinutes,
+    is_active: input.isActive,
+  }
+
+  const { error: examError } = await supabase
+    .from('school_exams')
+    .update(payload)
+    .eq('exam_id', input.examId)
+
+  if (examError) {
+    throw new Error(`Khong the cap nhat thong tin de thi: ${examError.message}`)
+  }
+
+  if (input.variantId) {
+    const { error: variantError } = await supabase
+      .from('school_exam_variants')
+      .update({
+        variant_code: input.variantCode.trim(),
+      })
+      .eq('variant_id', input.variantId)
+
+    if (variantError) {
+      throw new Error(`Khong the cap nhat ma de: ${variantError.message}`)
+    }
+  }
+}
+
+export async function fetchManagedImportedExamDraft(examId: string) {
+  const supabase = getSupabaseBrowserClient()
+  const { data: examRow, error: examError } = await supabase
+    .from('school_exams')
+    .select(
+      'exam_id, title, school_name, city, subject_code, subject_name, year, duration_minutes, pdf_url, variants:school_exam_variants(variant_id, variant_code, display_order)',
+    )
+    .eq('exam_id', examId)
+    .maybeSingle<{
+      exam_id: string
+      title: string
+      school_name: string
+      city: string
+      subject_code: SubjectCode
+      subject_name: string
+      year: number
+      duration_minutes: number
+      pdf_url: string
+      variants: Array<{
+        variant_id: string
+        variant_code: string
+        display_order: number
+      }> | null
+    }>()
+
+  if (examError) {
+    throw new Error(`Khong the tai thong tin de thi: ${examError.message}`)
+  }
+
+  if (!examRow) {
+    throw new Error('Khong tim thay de thi can chinh sua.')
+  }
+
+  const primaryVariant = [...(examRow.variants ?? [])].sort(
+    (left, right) => left.display_order - right.display_order,
+  )[0]
+
+  const { data: answerRows, error: answerError } = primaryVariant
+    ? await supabase
+        .from('school_exam_answer_keys')
+        .select('question_number, answer_value')
+        .eq('variant_id', primaryVariant.variant_id)
+        .returns<Array<{ question_number: number; answer_value: string }>>()
+    : { data: [], error: null }
+
+  if (answerError) {
+    throw new Error(`Khong the tai dap an de thi: ${answerError.message}`)
+  }
+
+  const answerMap = new Map(
+    (answerRows ?? []).map((row) => [row.question_number, row.answer_value]),
+  )
+
+  const { data: questionRows, error: questionError } = await supabase
+    .from('school_exam_questions')
+    .select(
+      'question_id, exam_id, question_number, difficulty_level, question_type, question_text, statement_json, topic, obsidian_source_path, has_image, metadata, options:school_exam_question_options(option_label, option_text, display_order), assets:school_exam_question_assets(asset_type, asset_path, display_order)',
+    )
+    .eq('exam_id', examId)
+    .order('question_number', { ascending: true })
+    .returns<ManagedExamQuestionRow[]>()
+
+  if (questionError) {
+    throw new Error(`Khong the tai cau hoi cua de thi: ${questionError.message}`)
+  }
+
+  return {
+    isValid: true,
+    warnings: [],
+    examDraft: {
+      examId: examRow.exam_id,
+      title: examRow.title,
+      schoolName: examRow.school_name,
+      city: examRow.city,
+      subjectCode: examRow.subject_code,
+      subjectName: examRow.subject_name,
+      year: examRow.year,
+      durationMinutes: examRow.duration_minutes,
+      variantCode: primaryVariant?.variant_code ?? '101',
+      variantId: primaryVariant?.variant_id ?? null,
+      pdfStoragePath: '',
+      pdfUrl: examRow.pdf_url,
+    },
+    questions: (questionRows ?? []).map((question) =>
+      normalizeQuestion(
+        {
+          questionNumber: question.question_number,
+          questionType: question.question_type,
+          topic: question.topic ?? '',
+          questionText: question.question_text,
+          options: (question.options ?? []).map((option) => ({
+            label: option.option_label,
+            text: option.option_text,
+          })),
+          statements: (question.statement_json ?? []).map((statement) => ({
+            label: statement.label as AdminImportStatement['label'],
+            text: statement.text,
+          })),
+          correctAnswer: answerMap.get(question.question_number) ?? '',
+          isValid: true,
+          warnings: [],
+          changes: [],
+          assets: (question.assets ?? []).map((asset) => ({
+            assetType: asset.asset_type,
+            assetPath: asset.asset_path,
+            publicUrl: asset.asset_path,
+          })),
+          rawExcerpt: null,
+        },
+        question.question_number,
+      ),
+    ),
+    rawModelResponse: null,
+  } satisfies AdminImportValidationResponse
+}
+
+export async function saveManagedImportedExamDraft(input: {
+  draft: AdminImportValidationResponse
+}) {
+  const supabase = getSupabaseBrowserClient()
+  const draft = input.draft
+  const examId = draft.examDraft.examId
+  const variantId =
+    draft.examDraft.variantId ?? `${examId}-${slugify(draft.examDraft.variantCode || '101')}`
+
+  const issues = getDraftValidationIssues({
+    draft,
+    pdfFile: new File(['managed-exam'], 'managed-exam.pdf', { type: 'application/pdf' }),
+  }).filter((issue) => issue !== 'Chua co file PDF.')
+
+  if (issues.length > 0) {
+    throw new Error(issues[0] ?? 'Du lieu de thi chua hop le de cap nhat.')
+  }
+
+  const questionsWithUploadedAssets = await uploadQuestionAssets(draft.examDraft, draft.questions)
+  const sectionRows = buildSectionRows(examId, questionsWithUploadedAssets)
+  const sectionIdByType = new Map(sectionRows.map((section) => [section.part_code, section.section_id]))
+
+  const questionRows = questionsWithUploadedAssets.map((question) => ({
+    question_id: buildQuestionId(examId, question.questionNumber),
+    exam_id: examId,
+    section_id: sectionIdByType.get(question.questionType) ?? null,
+    question_number: question.questionNumber,
+    difficulty_level: null,
+    question_type: question.questionType,
+    question_text: question.questionText.trim(),
+    statement_json:
+      question.questionType === 'true_false'
+        ? question.statements.map((statement) => ({
+            label: statement.label,
+            text: statement.text.trim(),
+          }))
+        : [],
+    explanation: null,
+    topic: question.topic.trim() || null,
+    obsidian_source_path: null,
+    has_image: question.assets.length > 0,
+    metadata: {
+      source_question_number: question.questionNumber,
+      import_source: 'admin_pdf_dashboard',
+      review_status: 'edited_after_import',
+    },
+  }))
+
+  const optionRows = questionsWithUploadedAssets.flatMap((question) => {
+    if (question.questionType !== 'multiple_choice') {
+      return []
+    }
+
+    const questionId = buildQuestionId(examId, question.questionNumber)
+    return question.options.map((option, index) => ({
+      option_id: `${questionId}-option-${option.label.toLowerCase()}`,
+      question_id: questionId,
+      option_label: option.label,
+      option_text: option.text.trim(),
+      display_order: index + 1,
+    }))
+  })
+
+  const assetRows = questionsWithUploadedAssets.flatMap((question) => {
+    const questionId = buildQuestionId(examId, question.questionNumber)
+    return question.assets
+      .filter((asset) => asset.publicUrl || asset.assetPath)
+      .map((asset, index) => ({
+        asset_id: `${questionId}-asset-${index + 1}`,
+        question_id: questionId,
+        asset_type: asset.assetType,
+        asset_path: asset.publicUrl ?? asset.assetPath,
+        caption: asset.pageNumber ? `Trang ${asset.pageNumber}` : null,
+        display_order: index + 1,
+      }))
+  })
+
+  const answerKeyRows = questionsWithUploadedAssets.map((question) => ({
+    variant_id: variantId,
+    question_number: question.questionNumber,
+    answer_value: question.correctAnswer.trim().toUpperCase(),
+  }))
+
+  const { error: examUpdateError } = await supabase
+    .from('school_exams')
+    .update({
+      title: draft.examDraft.title,
+      school_name: draft.examDraft.schoolName,
+      city: draft.examDraft.city,
+      subject_code: draft.examDraft.subjectCode,
+      subject_name: draft.examDraft.subjectName,
+      year: draft.examDraft.year,
+      duration_minutes: draft.examDraft.durationMinutes,
+      answer_key_provided: questionsWithUploadedAssets.every((question) =>
+        Boolean(question.correctAnswer.trim()),
+      ),
+    })
+    .eq('exam_id', examId)
+
+  if (examUpdateError) {
+    throw new Error(`Khong the cap nhat thong tin tong cua de: ${examUpdateError.message}`)
+  }
+
+  const { error: variantUpsertError } = await supabase.from('school_exam_variants').upsert(
+    {
+      variant_id: variantId,
+      exam_id: examId,
+      variant_code: draft.examDraft.variantCode,
+      display_order: 1,
+    },
+    { onConflict: 'variant_id' },
+  )
+
+  if (variantUpsertError) {
+    throw new Error(`Khong the cap nhat ma de: ${variantUpsertError.message}`)
+  }
+
+  const { error: answerDeleteError } = await supabase
+    .from('school_exam_answer_keys')
+    .delete()
+    .eq('variant_id', variantId)
+
+  if (answerDeleteError) {
+    throw new Error(`Khong the lam moi dap an cu: ${answerDeleteError.message}`)
+  }
+
+  const { error: questionDeleteError } = await supabase
+    .from('school_exam_questions')
+    .delete()
+    .eq('exam_id', examId)
+
+  if (questionDeleteError) {
+    throw new Error(`Khong the lam moi cau hoi cu: ${questionDeleteError.message}`)
+  }
+
+  const { error: sectionDeleteError } = await supabase
+    .from('school_exam_sections')
+    .delete()
+    .eq('exam_id', examId)
+
+  if (sectionDeleteError) {
+    throw new Error(`Khong the lam moi phan de thi cu: ${sectionDeleteError.message}`)
+  }
+
+  if (sectionRows.length > 0) {
+    const { error: sectionInsertError } = await supabase.from('school_exam_sections').insert(sectionRows)
+    if (sectionInsertError) {
+      throw new Error(`Khong the luu lai cac phan de thi: ${sectionInsertError.message}`)
+    }
+  }
+
+  const { error: answerInsertError } = await supabase
+    .from('school_exam_answer_keys')
+    .insert(answerKeyRows)
+
+  if (answerInsertError) {
+    throw new Error(`Khong the luu dap an moi: ${answerInsertError.message}`)
+  }
+
+  const { error: questionInsertError } = await supabase
+    .from('school_exam_questions')
+    .insert(questionRows)
+
+  if (questionInsertError) {
+    throw new Error(`Khong the luu cau hoi moi: ${questionInsertError.message}`)
+  }
+
+  if (optionRows.length > 0) {
+    const { error: optionInsertError } = await supabase
+      .from('school_exam_question_options')
+      .insert(optionRows)
+    if (optionInsertError) {
+      throw new Error(`Khong the luu dap an lua chon: ${optionInsertError.message}`)
+    }
+  }
+
+  if (assetRows.length > 0) {
+    const { error: assetInsertError } = await supabase
+      .from('school_exam_question_assets')
+      .insert(assetRows)
+    if (assetInsertError) {
+      throw new Error(`Khong the luu hinh anh cau hoi: ${assetInsertError.message}`)
+    }
+  }
+}
+
+export async function deleteManagedImportedExam(input: {
+  examId: string
+  subjectCode: SubjectCode
+  year: number
+}) {
+  const supabase = getSupabaseBrowserClient()
+  const storagePrefix = `${input.subjectCode}/${input.year}/${input.examId}`
+
+  try {
+    await removeStoragePrefix(storagePrefix)
+  } catch {
+    // Keep delete resilient even if some orphaned files cannot be removed from Storage.
+  }
+
+  const { error } = await supabase.from('school_exams').delete().eq('exam_id', input.examId)
+  if (error) {
+    throw new Error(`Khong the xoa de thi: ${error.message}`)
+  }
+}
+
 function normalizeValidationResponse(payload: AdminImportValidationResponse): AdminImportValidationResponse {
   return {
     ...payload,
@@ -455,6 +955,43 @@ function normalizeValidationResponse(payload: AdminImportValidationResponse): Ad
       normalizeQuestion(question, index + 1),
     ),
   }
+}
+
+async function removeStoragePrefix(prefix: string) {
+  const supabase = getSupabaseBrowserClient()
+  const directFiles = await listStoragePaths(prefix)
+  const assetFiles = await listStoragePaths(`${prefix}/assets`)
+  const allPaths = Array.from(new Set([...directFiles, ...assetFiles]))
+
+  if (allPaths.length === 0) {
+    return
+  }
+
+  const { error } = await supabase.storage.from(STORAGE_BUCKET).remove(allPaths)
+  if (error) {
+    throw new Error(`Khong the xoa file Storage cua de thi: ${error.message}`)
+  }
+}
+
+async function listStoragePaths(prefix: string) {
+  const supabase = getSupabaseBrowserClient()
+  const normalizedPrefix = prefix.replace(/^\/+/, '').replace(/\/+$/, '')
+  const segments = normalizedPrefix.split('/')
+  const path = segments.slice(0, -1).join('/')
+  const search = segments[segments.length - 1]
+
+  const { data, error } = await supabase.storage.from(STORAGE_BUCKET).list(path, {
+    limit: 100,
+    search,
+  })
+
+  if (error) {
+    throw new Error(`Khong the doc file Storage cua de thi: ${error.message}`)
+  }
+
+  return (data ?? [])
+    .filter((item) => item.name && !item.id?.endsWith('/'))
+    .map((item) => (path ? `${path}/${item.name}` : item.name))
 }
 
 function normalizeQuestion(question: AdminImportQuestion, fallbackNumber: number): AdminImportQuestion {
@@ -480,6 +1017,7 @@ function normalizeQuestion(question: AdminImportQuestion, fallbackNumber: number
   return {
     questionNumber: Number(question.questionNumber) || fallbackNumber,
     questionType,
+    topic: String(question.topic ?? '').trim(),
     questionText: String(question.questionText ?? '').trim(),
     options:
       questionType === 'multiple_choice'

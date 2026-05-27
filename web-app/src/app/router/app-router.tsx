@@ -4,6 +4,7 @@ import { createBrowserRouter, Navigate } from 'react-router-dom'
 import { RootLayout } from '../../components/layout/RootLayout'
 import { ProtectedRoute } from '../../features/auth/components/ProtectedRoute'
 import { PublicOnlyRoute } from '../../features/auth/components/PublicOnlyRoute'
+import { ExamPage } from '../../pages/exam/ExamPage'
 
 const LoginPage = lazy(() =>
   import('../../pages/auth/LoginPage').then((module) => ({ default: module.LoginPage })),
@@ -34,9 +35,6 @@ const StudentProfilePage = lazy(() =>
   import('../../pages/profile/StudentProfilePage').then((module) => ({
     default: module.StudentProfilePage,
   })),
-)
-const ExamPage = lazy(() =>
-  import('../../pages/exam/ExamPage').then((module) => ({ default: module.ExamPage })),
 )
 const ReviewPage = lazy(() =>
   import('../../pages/review/ReviewPage').then((module) => ({ default: module.ReviewPage })),

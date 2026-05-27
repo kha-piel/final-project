@@ -35,6 +35,7 @@ Yeu cau:
 
 Schema:
 - apply [schema.sql](/abs/path/c:/Users/ADMIIN/VScode/final-project/supabase/schema.sql) hoac migration tuong duong len Supabase truoc khi test
+- neu muon luu lich su lam bai de truong, can chay them `web-app/supabase/setup_student_learning_history.sql` trong Supabase SQL Editor
 - neu dang dung SQLite local cua repo nay, co the migrate content len Supabase bang:
 
 ```bash

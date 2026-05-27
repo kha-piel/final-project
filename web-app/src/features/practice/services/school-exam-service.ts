@@ -1,23 +1,10 @@
 import { getSupabaseBrowserClient } from '../../../lib/supabase/client'
 import { hasSupabaseEnv } from '../../../lib/config/env'
-import { mockSchoolExams } from '../data/mock-school-exams'
-import { supplementalDuongTiemCanReviewedQuestions } from '../data/supplemental-duong-tiem-can-reviewed'
-import { supplementalGioiHanDaySoReviewedQuestions } from '../data/supplemental-gioi-han-day-so-reviewed'
-import { supplementalGTLNGTNNReviewedQuestions } from '../data/supplemental-gtln-gtnn-reviewed'
-import { supplementalHinhHocVectoReviewedQuestions } from '../data/supplemental-hinh-hoc-vecto-reviewed'
-import { supplementalKhaoSatDoThiReviewedQuestions } from '../data/supplemental-khao-sat-do-thi-reviewed'
-import { supplementalKnowledgeReviewQuestions } from '../data/supplemental-knowledge-review-questions'
-import { supplementalMatPhangOxyzReviewedQuestions } from '../data/supplemental-mat-phang-oxyz-reviewed'
-import { supplementalMuLogaritReviewedQuestions } from '../data/supplemental-mu-logarit-reviewed'
-import { supplementalNguyenHamReviewedQuestions } from '../data/supplemental-nguyen-ham-reviewed'
-import { supplementalPhysicsTopicQuestions } from '../data/supplemental-physics-topic-questions'
-import { supplementalOxyzReviewedQuestions } from '../data/supplemental-oxyz-reviewed'
-import { supplementalQuyHoachTuyenTinhReviewedQuestions } from '../data/supplemental-quy-hoach-tuyen-tinh-reviewed'
-import { supplementalTichPhanDienTichReviewedQuestions } from '../data/supplemental-tich-phan-dien-tich-reviewed'
-import { supplementalToHopXacSuatDemReviewedQuestions } from '../data/supplemental-to-hop-xac-suat-dem-reviewed'
-import { supplementalTuPhanViSoLieuReviewedQuestions } from '../data/supplemental-tu-phan-vi-so-lieu-reviewed'
-import { supplementalXacSuatDocLapReviewedQuestions } from '../data/supplemental-xac-suat-doc-lap-reviewed'
 import type { PracticeExamCatalogItem } from '../types/practice-types'
+import {
+  formatSchoolExamDisplaySchoolName,
+  formatSchoolExamDisplayTitle,
+} from '../utils/school-exam-display'
 import type {
   SchoolExamAnswerKeyEntry,
   SchoolExamQuestionAssetRecord,
@@ -132,7 +119,45 @@ type SchoolExamQuestionBankRow = SchoolExamQuestionRow & {
   } | null
 }
 
+const schoolExamCatalogCache = new Map<string, Promise<PracticeExamCatalogItem[]>>()
+const schoolExamDetailCache = new Map<string, Promise<SchoolExamPaperRecord | null>>()
+const schoolExamAnswerKeyCache = new Map<string, Promise<SchoolExamAnswerKeyEntry[]>>()
+const schoolExamQuestionCache = new Map<string, Promise<SchoolExamQuestionRecord[]>>()
+const schoolExamQuestionBankCache = new Map<string, Promise<SchoolExamQuestionRecord[]>>()
+const schoolExamQuestionSummaryCache = new Map<string, Promise<SchoolExamQuestionSummary[]>>()
+
+type SchoolExamQuestionSummary = {
+  questionType: SchoolExamSectionPart
+  difficultyLevel: 1 | 2 | 3 | 4
+  topic: string
+  schoolName: string
+}
+
+type SchoolExamQuestionSummaryRow = {
+  question_type: SchoolExamSectionPart
+  difficulty_level?: number | null
+  topic: string | null
+  metadata: SchoolExamQuestionMetadataRow | null
+  exam: {
+    school_name: string
+    subject_code: string
+    is_active: boolean
+  } | null
+}
+
 export async function fetchSchoolExamCatalog(): Promise<PracticeExamCatalogItem[]> {
+  const cacheKey = hasSupabaseEnv() ? 'remote' : 'fallback'
+  const cached = schoolExamCatalogCache.get(cacheKey)
+  if (cached) {
+    return cached
+  }
+
+  const nextPromise = fetchSchoolExamCatalogUncached()
+  schoolExamCatalogCache.set(cacheKey, nextPromise)
+  return withCacheInvalidation(schoolExamCatalogCache, cacheKey, nextPromise)
+}
+
+async function fetchSchoolExamCatalogUncached(): Promise<PracticeExamCatalogItem[]> {
   if (!hasSupabaseEnv()) {
     return buildFallbackCatalog()
   }
@@ -163,8 +188,12 @@ export async function fetchSchoolExamCatalog(): Promise<PracticeExamCatalogItem[
   return data.map((item) => ({
     examId: item.exam_id,
     schoolExamPageId: item.exam_id,
-    examTitle: item.title,
-    schoolName: item.school_name,
+    examTitle: formatSchoolExamDisplayTitle({
+      examId: item.exam_id,
+      title: item.title,
+      schoolName: item.school_name,
+    }),
+    schoolName: formatSchoolExamDisplaySchoolName(item.exam_id, item.school_name),
     city: item.city,
     subjectId: item.subject_code,
     subjectName: item.subject_name,
@@ -176,6 +205,18 @@ export async function fetchSchoolExamCatalog(): Promise<PracticeExamCatalogItem[
 }
 
 export async function fetchSchoolExamById(examId: string): Promise<SchoolExamPaperRecord | null> {
+  const cacheKey = `${hasSupabaseEnv() ? 'remote' : 'fallback'}:${examId}`
+  const cached = schoolExamDetailCache.get(cacheKey)
+  if (cached) {
+    return cached
+  }
+
+  const nextPromise = fetchSchoolExamByIdUncached(examId)
+  schoolExamDetailCache.set(cacheKey, nextPromise)
+  return withCacheInvalidation(schoolExamDetailCache, cacheKey, nextPromise)
+}
+
+async function fetchSchoolExamByIdUncached(examId: string): Promise<SchoolExamPaperRecord | null> {
   if (!hasSupabaseEnv()) {
     return buildFallbackExam(examId)
   }
@@ -204,8 +245,12 @@ export async function fetchSchoolExamById(examId: string): Promise<SchoolExamPap
 
   return {
     examId: data.exam_id,
-    examTitle: data.title,
-    schoolName: data.school_name,
+    examTitle: formatSchoolExamDisplayTitle({
+      examId: data.exam_id,
+      title: data.title,
+      schoolName: data.school_name,
+    }),
+    schoolName: formatSchoolExamDisplaySchoolName(data.exam_id, data.school_name),
     city: data.city,
     subjectId: data.subject_code,
     subjectName: data.subject_name,
@@ -239,6 +284,18 @@ export async function fetchSchoolExamById(examId: string): Promise<SchoolExamPap
 }
 
 export async function fetchSchoolExamAnswerKey(variantId: string): Promise<SchoolExamAnswerKeyEntry[]> {
+  const cacheKey = `${hasSupabaseEnv() ? 'remote' : 'fallback'}:${variantId}`
+  const cached = schoolExamAnswerKeyCache.get(cacheKey)
+  if (cached) {
+    return cached
+  }
+
+  const nextPromise = fetchSchoolExamAnswerKeyUncached(variantId)
+  schoolExamAnswerKeyCache.set(cacheKey, nextPromise)
+  return withCacheInvalidation(schoolExamAnswerKeyCache, cacheKey, nextPromise)
+}
+
+async function fetchSchoolExamAnswerKeyUncached(variantId: string): Promise<SchoolExamAnswerKeyEntry[]> {
   if (!hasSupabaseEnv()) {
     return buildFallbackAnswerKeyEntries(variantId)
   }
@@ -270,6 +327,18 @@ export async function fetchSchoolExamAnswerKey(variantId: string): Promise<Schoo
 }
 
 export async function fetchSchoolExamQuestions(examId: string): Promise<SchoolExamQuestionRecord[]> {
+  const cacheKey = `${hasSupabaseEnv() ? 'remote' : 'fallback'}:${examId}`
+  const cached = schoolExamQuestionCache.get(cacheKey)
+  if (cached) {
+    return cached
+  }
+
+  const nextPromise = fetchSchoolExamQuestionsUncached(examId)
+  schoolExamQuestionCache.set(cacheKey, nextPromise)
+  return withCacheInvalidation(schoolExamQuestionCache, cacheKey, nextPromise)
+}
+
+async function fetchSchoolExamQuestionsUncached(examId: string): Promise<SchoolExamQuestionRecord[]> {
   if (!hasSupabaseEnv()) {
     return buildFallbackQuestionRecords(examId)
   }
@@ -320,6 +389,78 @@ export async function fetchSchoolExamQuestions(examId: string): Promise<SchoolEx
 }
 
 export async function fetchSchoolExamQuestionBank(subjectId: string): Promise<SchoolExamQuestionRecord[]> {
+  const cacheKey = subjectId.trim().toUpperCase()
+  const cached = schoolExamQuestionBankCache.get(cacheKey)
+  if (cached) {
+    return cached
+  }
+
+  const nextPromise = fetchSchoolExamQuestionBankUncached(cacheKey)
+  schoolExamQuestionBankCache.set(cacheKey, nextPromise)
+  return withCacheInvalidation(schoolExamQuestionBankCache, cacheKey, nextPromise)
+}
+
+export async function fetchSchoolExamQuestionSummary(subjectId: string): Promise<SchoolExamQuestionSummary[]> {
+  const cacheKey = subjectId.trim().toUpperCase()
+  const cached = schoolExamQuestionSummaryCache.get(cacheKey)
+  if (cached) {
+    return cached
+  }
+
+  const nextPromise = fetchSchoolExamQuestionSummaryUncached(cacheKey)
+  schoolExamQuestionSummaryCache.set(cacheKey, nextPromise)
+  return withCacheInvalidation(schoolExamQuestionSummaryCache, cacheKey, nextPromise)
+}
+
+async function fetchSchoolExamQuestionSummaryUncached(subjectId: string): Promise<SchoolExamQuestionSummary[]> {
+  if (!hasSupabaseEnv()) {
+    return (await getSupplementalQuestionBank(subjectId)).map((question) => ({
+      questionType: question.questionType,
+      difficultyLevel: question.difficultyLevel,
+      topic: question.topic ?? '',
+      schoolName: question.schoolName ?? '',
+    }))
+  }
+
+  const supabase = getSupabaseBrowserClient()
+  const { data, error } = await supabase
+    .from('school_exam_questions')
+    .select(
+      'question_type, difficulty_level, topic, metadata, exam:school_exams!inner(school_name, subject_code, is_active)',
+    )
+    .eq('exam.subject_code', subjectId)
+    .eq('exam.is_active', true)
+    .returns<SchoolExamQuestionSummaryRow[]>()
+
+  if (error) {
+    if (shouldFallbackToLocalMock(error.message)) {
+      return (await getSupplementalQuestionBank(subjectId)).map((question) => ({
+        questionType: question.questionType,
+        difficultyLevel: question.difficultyLevel,
+        topic: question.topic ?? '',
+        schoolName: question.schoolName ?? '',
+      }))
+    }
+
+    throw new Error(`KhÃ´ng thá»ƒ táº£i tá»•ng quan kho cÃ¢u há»i Ä‘á» trÆ°á»ng: ${error.message}`)
+  }
+
+  return data
+    .filter((item) => item.exam?.is_active)
+    .map((item) => ({
+      questionType: item.question_type,
+      difficultyLevel: normalizeDifficultyLevel(
+        item.difficulty_level ?? null,
+        item.metadata,
+        item.question_type,
+        Number(item.metadata?.source_question_number ?? 0),
+      ),
+      topic: item.topic ?? '',
+      schoolName: item.exam?.school_name ?? '',
+    }))
+}
+
+async function fetchSchoolExamQuestionBankUncached(subjectId: string): Promise<SchoolExamQuestionRecord[]> {
   if (!hasSupabaseEnv()) {
     return getSupplementalQuestionBank(subjectId)
   }
@@ -415,18 +556,37 @@ export async function fetchSchoolExamQuestionBank(subjectId: string): Promise<Sc
       answerValue: answerKeyByExamAndQuestion.get(`${item.exam_id}:${item.question_number}`) ?? '',
       sourceQuestionNumber: item.metadata?.source_question_number,
       sourceSectionNumber: item.metadata?.section_number,
-      examTitle: item.exam?.title ?? '',
-      schoolName: item.exam?.school_name ?? '',
+      examTitle: formatSchoolExamDisplayTitle({
+        examId: item.exam?.exam_id ?? item.exam_id,
+        title: item.exam?.title ?? '',
+        schoolName: item.exam?.school_name ?? '',
+      }),
+      schoolName: formatSchoolExamDisplaySchoolName(item.exam?.exam_id ?? item.exam_id, item.exam?.school_name ?? ''),
       year: item.exam?.year ?? 0,
       pdfUrl: item.exam?.pdf_url ?? '',
       tags: item.exam?.tags ?? [],
     }))
 
-  return [...remoteQuestions, ...getSupplementalQuestionBank(subjectId)]
+  return [...remoteQuestions, ...await getSupplementalQuestionBank(subjectId)]
 }
 
 export function normalizeAnswer(input: string) {
   return input.trim().replace(/\s+/g, ' ').toLowerCase()
+}
+
+async function withCacheInvalidation<T>(
+  cache: Map<string, Promise<T>>,
+  cacheKey: string,
+  promise: Promise<T>,
+) {
+  try {
+    return await promise
+  } catch (error) {
+    if (cache.get(cacheKey) === promise) {
+      cache.delete(cacheKey)
+    }
+    throw error
+  }
 }
 
 function shouldFallbackToLocalMock(message: string) {
@@ -492,8 +652,9 @@ function normalizeDifficultyLevel(
   return 4
 }
 
-function buildFallbackCatalog(): PracticeExamCatalogItem[] {
-  return mockSchoolExams.map((exam) => ({
+async function buildFallbackCatalog(): Promise<PracticeExamCatalogItem[]> {
+  const exams = await loadMockSchoolExams()
+  return exams.map((exam) => ({
     examId: exam.examId,
     schoolExamPageId: exam.examId,
     examTitle: exam.examTitle,
@@ -507,8 +668,9 @@ function buildFallbackCatalog(): PracticeExamCatalogItem[] {
   }))
 }
 
-function buildFallbackExam(examId: string): SchoolExamPaperRecord | null {
-  const exam = mockSchoolExams.find((item) => item.examId === examId)
+async function buildFallbackExam(examId: string): Promise<SchoolExamPaperRecord | null> {
+  const exams = await loadMockSchoolExams()
+  const exam = exams.find((item) => item.examId === examId)
   if (!exam) {
     return null
   }
@@ -578,9 +740,10 @@ function buildFallbackSections(exam: SchoolExamPaper) {
   ].filter((section) => section.startQuestionNumber > 0 && section.endQuestionNumber > 0)
 }
 
-function buildFallbackAnswerKeyEntries(variantId: string): SchoolExamAnswerKeyEntry[] {
+async function buildFallbackAnswerKeyEntries(variantId: string): Promise<SchoolExamAnswerKeyEntry[]> {
   const examId = variantId.replace(/-default$/, '')
-  const exam = mockSchoolExams.find((item) => item.examId === examId)
+  const exams = await loadMockSchoolExams()
+  const exam = exams.find((item) => item.examId === examId)
   if (!exam) {
     return []
   }
@@ -601,8 +764,9 @@ function buildFallbackAnswerKeyEntries(variantId: string): SchoolExamAnswerKeyEn
   ].sort((left, right) => left.questionNumber - right.questionNumber)
 }
 
-function buildFallbackQuestionRecords(examId: string): SchoolExamQuestionRecord[] {
-  const exam = mockSchoolExams.find((item) => item.examId === examId)
+async function buildFallbackQuestionRecords(examId: string): Promise<SchoolExamQuestionRecord[]> {
+  const exams = await loadMockSchoolExams()
+  const exam = exams.find((item) => item.examId === examId)
   if (!exam) {
     return []
   }
@@ -679,14 +843,48 @@ function mapAssetPaths(assets: SchoolExamQuestionAssetRow[] | null | undefined) 
   return mapQuestionAssets(assets).map((asset) => asset.assetPath)
 }
 
-function getSupplementalQuestionBank(subjectId: string) {
+async function getSupplementalQuestionBank(subjectId: string) {
   if (subjectId === 'VAT_LY') {
-    return supplementalPhysicsTopicQuestions
+    return (await import('../data/supplemental-physics-topic-questions')).supplementalPhysicsTopicQuestions
   }
 
   if (subjectId !== 'TOAN') {
     return []
   }
+
+  const [
+    { supplementalKnowledgeReviewQuestions },
+    { supplementalGTLNGTNNReviewedQuestions },
+    { supplementalKhaoSatDoThiReviewedQuestions },
+    { supplementalGioiHanDaySoReviewedQuestions },
+    { supplementalMuLogaritReviewedQuestions },
+    { supplementalNguyenHamReviewedQuestions },
+    { supplementalTichPhanDienTichReviewedQuestions },
+    { supplementalHinhHocVectoReviewedQuestions },
+    { supplementalMatPhangOxyzReviewedQuestions },
+    { supplementalOxyzReviewedQuestions },
+    { supplementalDuongTiemCanReviewedQuestions },
+    { supplementalQuyHoachTuyenTinhReviewedQuestions },
+    { supplementalToHopXacSuatDemReviewedQuestions },
+    { supplementalXacSuatDocLapReviewedQuestions },
+    { supplementalTuPhanViSoLieuReviewedQuestions },
+  ] = await Promise.all([
+    import('../data/supplemental-knowledge-review-questions'),
+    import('../data/supplemental-gtln-gtnn-reviewed'),
+    import('../data/supplemental-khao-sat-do-thi-reviewed'),
+    import('../data/supplemental-gioi-han-day-so-reviewed'),
+    import('../data/supplemental-mu-logarit-reviewed'),
+    import('../data/supplemental-nguyen-ham-reviewed'),
+    import('../data/supplemental-tich-phan-dien-tich-reviewed'),
+    import('../data/supplemental-hinh-hoc-vecto-reviewed'),
+    import('../data/supplemental-mat-phang-oxyz-reviewed'),
+    import('../data/supplemental-oxyz-reviewed'),
+    import('../data/supplemental-duong-tiem-can-reviewed'),
+    import('../data/supplemental-quy-hoach-tuyen-tinh-reviewed'),
+    import('../data/supplemental-to-hop-xac-suat-dem-reviewed'),
+    import('../data/supplemental-xac-suat-doc-lap-reviewed'),
+    import('../data/supplemental-tu-phan-vi-so-lieu-reviewed'),
+  ])
 
   return [
     ...supplementalKnowledgeReviewQuestions,
@@ -705,4 +903,8 @@ function getSupplementalQuestionBank(subjectId: string) {
     ...supplementalXacSuatDocLapReviewedQuestions,
     ...supplementalTuPhanViSoLieuReviewedQuestions,
   ]
+}
+
+async function loadMockSchoolExams() {
+  return (await import('../data/mock-school-exams')).mockSchoolExams
 }

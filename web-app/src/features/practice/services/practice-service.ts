@@ -1,6 +1,5 @@
-import { mockQuestionBank } from '../data/mock-question-bank'
 import { practiceBlueprints } from '../data/practice-blueprints'
-import { fetchSchoolExamQuestionBank } from './school-exam-service'
+import { fetchSchoolExamQuestionBank, fetchSchoolExamQuestionSummary } from './school-exam-service'
 import { normalizeSchoolExamMarkdown } from '../utils/school-exam-content'
 import type {
   PracticeBlueprint,
@@ -56,23 +55,23 @@ export function getPracticeBlueprints(): PracticeBlueprint[] {
 }
 
 export async function getPracticeQuestionBankOverview(subjectId = 'TOAN'): Promise<QuestionBankOverview> {
-  const questionBank = await loadPracticeQuestionBank(subjectId)
+  const questionBankSummary = await fetchSchoolExamQuestionSummary(SUBJECT_ID_TO_CODE[subjectId] ?? subjectId)
 
-  const typeCounts = questionBank.reduce<Record<string, number>>((acc, question) => {
+  const typeCounts = questionBankSummary.reduce<Record<string, number>>((acc, question) => {
     acc[question.questionType] = (acc[question.questionType] ?? 0) + 1
     return acc
   }, {})
 
-  const levelCounts = questionBank.reduce<Record<number, number>>((acc, question) => {
-    acc[question.level] = (acc[question.level] ?? 0) + 1
+  const levelCounts = questionBankSummary.reduce<Record<number, number>>((acc, question) => {
+    acc[question.difficultyLevel] = (acc[question.difficultyLevel] ?? 0) + 1
     return acc
   }, {})
 
   return {
-    totalQuestions: questionBank.length,
+    totalQuestions: questionBankSummary.length,
     typeCounts,
     levelCounts,
-    schools: Array.from(new Set(questionBank.map((question) => question.schoolName))).length,
+    schools: Array.from(new Set(questionBankSummary.map((question) => question.schoolName))).length,
   }
 }
 
@@ -127,8 +126,12 @@ async function loadPracticeQuestionBank(subjectId: string): Promise<PracticeQues
     return filterQuestionBankBySubject(questionBankCache, subjectId)
   }
 
-  questionBankCache = mockQuestionBank
+  questionBankCache = await loadMockQuestionBank()
   return filterQuestionBankBySubject(questionBankCache, subjectId)
+}
+
+async function loadMockQuestionBank() {
+  return (await import('../data/mock-question-bank')).mockQuestionBank
 }
 
 function filterQuestionBankBySubject(questionBank: PracticeQuestion[], subjectId: string) {

@@ -1,5 +1,9 @@
 ﻿import { getSupabaseBrowserClient } from '../../../lib/supabase/client'
-import { fetchSchoolExamCatalog, fetchSchoolExamQuestionBank } from '../../practice/services/school-exam-service'
+import {
+  fetchSchoolExamCatalog,
+  fetchSchoolExamQuestionBank,
+  fetchSchoolExamQuestionSummary,
+} from '../../practice/services/school-exam-service'
 import { normalizeSchoolExamMarkdown } from '../../practice/utils/school-exam-content'
 import type {
   AttemptHistoryItem,
@@ -196,8 +200,8 @@ export async function fetchTopicsBySubjectId(subjectId: string): Promise<TopicOp
   const topicMap = new Map<string, TopicOption>()
 
   try {
-    const questionBank = await loadSchoolExamQuestionBank(subjectId)
-    const schoolExamTopics = buildTopicOptionsFromQuestionBank(questionBank, subjectId)
+    const questionSummary = await fetchSchoolExamQuestionSummary(subjectId)
+    const schoolExamTopics = buildTopicOptionsFromQuestionSummary(questionSummary, subjectId)
     for (const topic of schoolExamTopics) {
       topicMap.set(topic.topicId, topic)
     }
@@ -376,11 +380,11 @@ async function loadSchoolExamQuestionBank(subjectId: string) {
   return nextPromise
 }
 
-function buildTopicOptionsFromQuestionBank(
-  questionBank: Awaited<ReturnType<typeof fetchSchoolExamQuestionBank>>,
+function buildTopicOptionsFromQuestionSummary(
+  questionSummary: Awaited<ReturnType<typeof fetchSchoolExamQuestionSummary>>,
   subjectId: string,
 ): TopicOption[] {
-  const topics = questionBank.reduce((acc, question) => {
+  const topics = questionSummary.reduce((acc, question) => {
     const topicName = normalizeTopicLabel(question.topic)
     if (!topicName) {
       return acc

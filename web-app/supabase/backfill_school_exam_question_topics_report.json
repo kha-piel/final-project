@@ -1,0 +1,842 @@
+{
+  "generatedAt": "2026-05-27T02:11:29.066Z",
+  "totalMissing": 119,
+  "updatedCount": 119,
+  "unresolvedCount": 0,
+  "updates": [
+    {
+      "questionId": "chuyen-le-khiet-quang-2025-q07",
+      "examId": "chuyen-le-khiet-quang-2025",
+      "questionNumber": 7,
+      "subjectCode": "TOAN",
+      "topic": "Quan he vuong goc va khoi da dien"
+    },
+    {
+      "questionId": "chuyen-le-khiet-quang-2025-q09",
+      "examId": "chuyen-le-khiet-quang-2025",
+      "questionNumber": 9,
+      "subjectCode": "TOAN",
+      "topic": "Khao sat ham so, cuc tri va GTLN/GTNN"
+    },
+    {
+      "questionId": "chuyen-le-khiet-quang-2025-q13",
+      "examId": "chuyen-le-khiet-quang-2025",
+      "questionNumber": 13,
+      "subjectCode": "TOAN",
+      "topic": "Khao sat ham so, cuc tri va GTLN/GTNN"
+    },
+    {
+      "questionId": "so-gddt-gialai-toan-2026-0101-q01",
+      "examId": "so-gddt-gialai-toan-2026-0101",
+      "questionNumber": 1,
+      "subjectCode": "TOAN",
+      "topic": "Hinh hoc khong gian va Oxyz"
+    },
+    {
+      "questionId": "so-gddt-gialai-toan-2026-0101-q02",
+      "examId": "so-gddt-gialai-toan-2026-0101",
+      "questionNumber": 2,
+      "subjectCode": "TOAN",
+      "topic": "Xac suat, to hop va thong ke"
+    },
+    {
+      "questionId": "so-gddt-gialai-toan-2026-0101-q03",
+      "examId": "so-gddt-gialai-toan-2026-0101",
+      "questionNumber": 3,
+      "subjectCode": "TOAN",
+      "topic": "Khao sat ham so, cuc tri va GTLN/GTNN"
+    },
+    {
+      "questionId": "so-gddt-gialai-toan-2026-0101-q04",
+      "examId": "so-gddt-gialai-toan-2026-0101",
+      "questionNumber": 4,
+      "subjectCode": "TOAN",
+      "topic": "Khao sat ham so, cuc tri va GTLN/GTNN"
+    },
+    {
+      "questionId": "so-gddt-gialai-toan-2026-0101-q05",
+      "examId": "so-gddt-gialai-toan-2026-0101",
+      "questionNumber": 5,
+      "subjectCode": "TOAN",
+      "topic": "Quan he vuong goc va khoi da dien"
+    },
+    {
+      "questionId": "so-gddt-gialai-toan-2026-0101-q06",
+      "examId": "so-gddt-gialai-toan-2026-0101",
+      "questionNumber": 6,
+      "subjectCode": "TOAN",
+      "topic": "Hinh hoc khong gian va Oxyz"
+    },
+    {
+      "questionId": "so-gddt-gialai-toan-2026-0101-q07",
+      "examId": "so-gddt-gialai-toan-2026-0101",
+      "questionNumber": 7,
+      "subjectCode": "TOAN",
+      "topic": "Cap so cong va cap so nhan"
+    },
+    {
+      "questionId": "so-gddt-gialai-toan-2026-0101-q08",
+      "examId": "so-gddt-gialai-toan-2026-0101",
+      "questionNumber": 8,
+      "subjectCode": "TOAN",
+      "topic": "Nguyen ham va tich phan"
+    },
+    {
+      "questionId": "so-gddt-gialai-toan-2026-0101-q09",
+      "examId": "so-gddt-gialai-toan-2026-0101",
+      "questionNumber": 9,
+      "subjectCode": "TOAN",
+      "topic": "Mu va logarit"
+    },
+    {
+      "questionId": "so-gddt-gialai-toan-2026-0101-q10",
+      "examId": "so-gddt-gialai-toan-2026-0101",
+      "questionNumber": 10,
+      "subjectCode": "TOAN",
+      "topic": "Quan he vuong goc va khoi da dien"
+    },
+    {
+      "questionId": "so-gddt-gialai-toan-2026-0101-q11",
+      "examId": "so-gddt-gialai-toan-2026-0101",
+      "questionNumber": 11,
+      "subjectCode": "TOAN",
+      "topic": "Mu va logarit"
+    },
+    {
+      "questionId": "so-gddt-gialai-toan-2026-0101-q12",
+      "examId": "so-gddt-gialai-toan-2026-0101",
+      "questionNumber": 12,
+      "subjectCode": "TOAN",
+      "topic": "Nguyen ham va tich phan"
+    },
+    {
+      "questionId": "so-gddt-gialai-toan-2026-0101-q13",
+      "examId": "so-gddt-gialai-toan-2026-0101",
+      "questionNumber": 13,
+      "subjectCode": "TOAN",
+      "topic": "Khao sat ham so, cuc tri va GTLN/GTNN"
+    },
+    {
+      "questionId": "so-gddt-gialai-toan-2026-0101-q14",
+      "examId": "so-gddt-gialai-toan-2026-0101",
+      "questionNumber": 14,
+      "subjectCode": "TOAN",
+      "topic": "Nguyen ham va tich phan"
+    },
+    {
+      "questionId": "so-gddt-gialai-toan-2026-0101-q15",
+      "examId": "so-gddt-gialai-toan-2026-0101",
+      "questionNumber": 15,
+      "subjectCode": "TOAN",
+      "topic": "Xac suat, to hop va thong ke"
+    },
+    {
+      "questionId": "so-gddt-gialai-toan-2026-0101-q16",
+      "examId": "so-gddt-gialai-toan-2026-0101",
+      "questionNumber": 16,
+      "subjectCode": "TOAN",
+      "topic": "Hinh hoc khong gian va Oxyz"
+    },
+    {
+      "questionId": "so-gddt-gialai-toan-2026-0101-q17",
+      "examId": "so-gddt-gialai-toan-2026-0101",
+      "questionNumber": 17,
+      "subjectCode": "TOAN",
+      "topic": "Quan he vuong goc va khoi da dien"
+    },
+    {
+      "questionId": "so-gddt-gialai-toan-2026-0101-q18",
+      "examId": "so-gddt-gialai-toan-2026-0101",
+      "questionNumber": 18,
+      "subjectCode": "TOAN",
+      "topic": "Quy hoach tuyen tinh va bai toan toi uu"
+    },
+    {
+      "questionId": "so-gddt-gialai-toan-2026-0101-q19",
+      "examId": "so-gddt-gialai-toan-2026-0101",
+      "questionNumber": 19,
+      "subjectCode": "TOAN",
+      "topic": "Khao sat ham so, cuc tri va GTLN/GTNN"
+    },
+    {
+      "questionId": "so-gddt-gialai-toan-2026-0101-q20",
+      "examId": "so-gddt-gialai-toan-2026-0101",
+      "questionNumber": 20,
+      "subjectCode": "TOAN",
+      "topic": "Khao sat ham so, cuc tri va GTLN/GTNN"
+    },
+    {
+      "questionId": "so-gddt-gialai-toan-2026-0101-q21",
+      "examId": "so-gddt-gialai-toan-2026-0101",
+      "questionNumber": 21,
+      "subjectCode": "TOAN",
+      "topic": "Khao sat ham so, cuc tri va GTLN/GTNN"
+    },
+    {
+      "questionId": "so-gddt-gialai-toan-2026-0101-q22",
+      "examId": "so-gddt-gialai-toan-2026-0101",
+      "questionNumber": 22,
+      "subjectCode": "TOAN",
+      "topic": "Xac suat, to hop va thong ke"
+    },
+    {
+      "questionId": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026-q01",
+      "examId": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026",
+      "questionNumber": 1,
+      "subjectCode": "VAT_LY",
+      "topic": "Hat nhan nguyen tu"
+    },
+    {
+      "questionId": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026-q02",
+      "examId": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026",
+      "questionNumber": 2,
+      "subjectCode": "VAT_LY",
+      "topic": "Nhiet hoc va chat khi"
+    },
+    {
+      "questionId": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026-q03",
+      "examId": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026",
+      "questionNumber": 3,
+      "subjectCode": "VAT_LY",
+      "topic": "Dao dong va song dien tu"
+    },
+    {
+      "questionId": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026-q04",
+      "examId": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026",
+      "questionNumber": 4,
+      "subjectCode": "VAT_LY",
+      "topic": "Nhiet hoc va chat khi"
+    },
+    {
+      "questionId": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026-q05",
+      "examId": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026",
+      "questionNumber": 5,
+      "subjectCode": "VAT_LY",
+      "topic": "Hat nhan nguyen tu"
+    },
+    {
+      "questionId": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026-q06",
+      "examId": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026",
+      "questionNumber": 6,
+      "subjectCode": "VAT_LY",
+      "topic": "Nhiet hoc va chat khi"
+    },
+    {
+      "questionId": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026-q07",
+      "examId": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026",
+      "questionNumber": 7,
+      "subjectCode": "VAT_LY",
+      "topic": "Nhiet hoc va chat khi"
+    },
+    {
+      "questionId": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026-q08",
+      "examId": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026",
+      "questionNumber": 8,
+      "subjectCode": "VAT_LY",
+      "topic": "Tu truong"
+    },
+    {
+      "questionId": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026-q09",
+      "examId": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026",
+      "questionNumber": 9,
+      "subjectCode": "VAT_LY",
+      "topic": "Nhiet hoc va chat khi"
+    },
+    {
+      "questionId": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026-q10",
+      "examId": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026",
+      "questionNumber": 10,
+      "subjectCode": "VAT_LY",
+      "topic": "Nhiet hoc va chat khi"
+    },
+    {
+      "questionId": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026-q11",
+      "examId": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026",
+      "questionNumber": 11,
+      "subjectCode": "VAT_LY",
+      "topic": "Tu truong"
+    },
+    {
+      "questionId": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026-q12",
+      "examId": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026",
+      "questionNumber": 12,
+      "subjectCode": "VAT_LY",
+      "topic": "Tu truong"
+    },
+    {
+      "questionId": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026-q13",
+      "examId": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026",
+      "questionNumber": 13,
+      "subjectCode": "VAT_LY",
+      "topic": "Tu truong"
+    },
+    {
+      "questionId": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026-q14",
+      "examId": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026",
+      "questionNumber": 14,
+      "subjectCode": "VAT_LY",
+      "topic": "Hat nhan nguyen tu"
+    },
+    {
+      "questionId": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026-q15",
+      "examId": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026",
+      "questionNumber": 15,
+      "subjectCode": "VAT_LY",
+      "topic": "Nhiet hoc va chat khi"
+    },
+    {
+      "questionId": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026-q16",
+      "examId": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026",
+      "questionNumber": 16,
+      "subjectCode": "VAT_LY",
+      "topic": "Nhiet hoc va chat khi"
+    },
+    {
+      "questionId": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026-q17",
+      "examId": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026",
+      "questionNumber": 17,
+      "subjectCode": "VAT_LY",
+      "topic": "Nhiet hoc va chat khi"
+    },
+    {
+      "questionId": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026-q18",
+      "examId": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026",
+      "questionNumber": 18,
+      "subjectCode": "VAT_LY",
+      "topic": "Cam ung dien tu"
+    },
+    {
+      "questionId": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026-q19",
+      "examId": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026",
+      "questionNumber": 19,
+      "subjectCode": "VAT_LY",
+      "topic": "Nhiet hoc va chat khi"
+    },
+    {
+      "questionId": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026-q20",
+      "examId": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026",
+      "questionNumber": 20,
+      "subjectCode": "VAT_LY",
+      "topic": "Tu truong"
+    },
+    {
+      "questionId": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026-q21",
+      "examId": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026",
+      "questionNumber": 21,
+      "subjectCode": "VAT_LY",
+      "topic": "Hat nhan nguyen tu"
+    },
+    {
+      "questionId": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026-q22",
+      "examId": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026",
+      "questionNumber": 22,
+      "subjectCode": "VAT_LY",
+      "topic": "Nhiet hoc va chat khi"
+    },
+    {
+      "questionId": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026-q23",
+      "examId": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026",
+      "questionNumber": 23,
+      "subjectCode": "VAT_LY",
+      "topic": "Nhiet hoc va chat khi"
+    },
+    {
+      "questionId": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026-q24",
+      "examId": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026",
+      "questionNumber": 24,
+      "subjectCode": "VAT_LY",
+      "topic": "Nhiet hoc va chat khi"
+    },
+    {
+      "questionId": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026-q25",
+      "examId": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026",
+      "questionNumber": 25,
+      "subjectCode": "VAT_LY",
+      "topic": "Hat nhan nguyen tu"
+    },
+    {
+      "questionId": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026-q26",
+      "examId": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026",
+      "questionNumber": 26,
+      "subjectCode": "VAT_LY",
+      "topic": "Hat nhan nguyen tu"
+    },
+    {
+      "questionId": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026-q27",
+      "examId": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026",
+      "questionNumber": 27,
+      "subjectCode": "VAT_LY",
+      "topic": "Cam ung dien tu"
+    },
+    {
+      "questionId": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026-q28",
+      "examId": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026",
+      "questionNumber": 28,
+      "subjectCode": "VAT_LY",
+      "topic": "Cam ung dien tu"
+    },
+    {
+      "questionId": "thpt-nguyen-du-toan-2026-1201-q01",
+      "examId": "thpt-nguyen-du-toan-2026-1201",
+      "questionNumber": 1,
+      "subjectCode": "TOAN",
+      "topic": "Xac suat, to hop va thong ke"
+    },
+    {
+      "questionId": "thpt-nguyen-du-toan-2026-1201-q02",
+      "examId": "thpt-nguyen-du-toan-2026-1201",
+      "questionNumber": 2,
+      "subjectCode": "TOAN",
+      "topic": "Hinh hoc khong gian va Oxyz"
+    },
+    {
+      "questionId": "thpt-nguyen-du-toan-2026-1201-q03",
+      "examId": "thpt-nguyen-du-toan-2026-1201",
+      "questionNumber": 3,
+      "subjectCode": "TOAN",
+      "topic": "Nguyen ham va tich phan"
+    },
+    {
+      "questionId": "thpt-nguyen-du-toan-2026-1201-q04",
+      "examId": "thpt-nguyen-du-toan-2026-1201",
+      "questionNumber": 4,
+      "subjectCode": "TOAN",
+      "topic": "Hinh hoc khong gian va Oxyz"
+    },
+    {
+      "questionId": "thpt-nguyen-du-toan-2026-1201-q05",
+      "examId": "thpt-nguyen-du-toan-2026-1201",
+      "questionNumber": 5,
+      "subjectCode": "TOAN",
+      "topic": "Khao sat ham so, cuc tri va GTLN/GTNN"
+    },
+    {
+      "questionId": "thpt-nguyen-du-toan-2026-1201-q06",
+      "examId": "thpt-nguyen-du-toan-2026-1201",
+      "questionNumber": 6,
+      "subjectCode": "TOAN",
+      "topic": "Hinh hoc khong gian va Oxyz"
+    },
+    {
+      "questionId": "thpt-nguyen-du-toan-2026-1201-q07",
+      "examId": "thpt-nguyen-du-toan-2026-1201",
+      "questionNumber": 7,
+      "subjectCode": "TOAN",
+      "topic": "Hinh hoc khong gian va Oxyz"
+    },
+    {
+      "questionId": "thpt-nguyen-du-toan-2026-1201-q08",
+      "examId": "thpt-nguyen-du-toan-2026-1201",
+      "questionNumber": 8,
+      "subjectCode": "TOAN",
+      "topic": "Quan he vuong goc va khoi da dien"
+    },
+    {
+      "questionId": "thpt-nguyen-du-toan-2026-1201-q09",
+      "examId": "thpt-nguyen-du-toan-2026-1201",
+      "questionNumber": 9,
+      "subjectCode": "TOAN",
+      "topic": "Cap so cong va cap so nhan"
+    },
+    {
+      "questionId": "thpt-nguyen-du-toan-2026-1201-q10",
+      "examId": "thpt-nguyen-du-toan-2026-1201",
+      "questionNumber": 10,
+      "subjectCode": "TOAN",
+      "topic": "Khao sat ham so, cuc tri va GTLN/GTNN"
+    },
+    {
+      "questionId": "thpt-nguyen-du-toan-2026-1201-q11",
+      "examId": "thpt-nguyen-du-toan-2026-1201",
+      "questionNumber": 11,
+      "subjectCode": "TOAN",
+      "topic": "Khao sat ham so, cuc tri va GTLN/GTNN"
+    },
+    {
+      "questionId": "thpt-nguyen-du-toan-2026-1201-q12",
+      "examId": "thpt-nguyen-du-toan-2026-1201",
+      "questionNumber": 12,
+      "subjectCode": "TOAN",
+      "topic": "Mu va logarit"
+    },
+    {
+      "questionId": "thpt-nguyen-du-toan-2026-1201-q13",
+      "examId": "thpt-nguyen-du-toan-2026-1201",
+      "questionNumber": 13,
+      "subjectCode": "TOAN",
+      "topic": "Mu va logarit"
+    },
+    {
+      "questionId": "thpt-nguyen-du-toan-2026-1201-q14",
+      "examId": "thpt-nguyen-du-toan-2026-1201",
+      "questionNumber": 14,
+      "subjectCode": "TOAN",
+      "topic": "Hinh hoc khong gian va Oxyz"
+    },
+    {
+      "questionId": "thpt-nguyen-du-toan-2026-1201-q15",
+      "examId": "thpt-nguyen-du-toan-2026-1201",
+      "questionNumber": 15,
+      "subjectCode": "TOAN",
+      "topic": "Xac suat, to hop va thong ke"
+    },
+    {
+      "questionId": "thpt-nguyen-du-toan-2026-1201-q16",
+      "examId": "thpt-nguyen-du-toan-2026-1201",
+      "questionNumber": 16,
+      "subjectCode": "TOAN",
+      "topic": "Khao sat ham so, cuc tri va GTLN/GTNN"
+    },
+    {
+      "questionId": "thpt-nguyen-du-toan-2026-1201-q17",
+      "examId": "thpt-nguyen-du-toan-2026-1201",
+      "questionNumber": 17,
+      "subjectCode": "TOAN",
+      "topic": "Khao sat ham so, cuc tri va GTLN/GTNN"
+    },
+    {
+      "questionId": "thpt-nguyen-du-toan-2026-1201-q18",
+      "examId": "thpt-nguyen-du-toan-2026-1201",
+      "questionNumber": 18,
+      "subjectCode": "TOAN",
+      "topic": "Nguyen ham va tich phan"
+    },
+    {
+      "questionId": "thpt-nguyen-du-toan-2026-1201-q19",
+      "examId": "thpt-nguyen-du-toan-2026-1201",
+      "questionNumber": 19,
+      "subjectCode": "TOAN",
+      "topic": "Hinh hoc khong gian va Oxyz"
+    },
+    {
+      "questionId": "thpt-nguyen-du-toan-2026-1201-q20",
+      "examId": "thpt-nguyen-du-toan-2026-1201",
+      "questionNumber": 20,
+      "subjectCode": "TOAN",
+      "topic": "Mu va logarit"
+    },
+    {
+      "questionId": "thpt-nguyen-du-toan-2026-1201-q21",
+      "examId": "thpt-nguyen-du-toan-2026-1201",
+      "questionNumber": 21,
+      "subjectCode": "TOAN",
+      "topic": "Khao sat ham so, cuc tri va GTLN/GTNN"
+    },
+    {
+      "questionId": "thpt-nguyen-du-toan-2026-1201-q22",
+      "examId": "thpt-nguyen-du-toan-2026-1201",
+      "questionNumber": 22,
+      "subjectCode": "TOAN",
+      "topic": "Quan he vuong goc va khoi da dien"
+    },
+    {
+      "questionId": "thpt-nguyen-trai-toan-2026-1201-q01",
+      "examId": "thpt-nguyen-trai-toan-2026-1201",
+      "questionNumber": 1,
+      "subjectCode": "TOAN",
+      "topic": "Khao sat ham so, cuc tri va GTLN/GTNN"
+    },
+    {
+      "questionId": "thpt-nguyen-trai-toan-2026-1201-q02",
+      "examId": "thpt-nguyen-trai-toan-2026-1201",
+      "questionNumber": 2,
+      "subjectCode": "TOAN",
+      "topic": "Mu va logarit"
+    },
+    {
+      "questionId": "thpt-nguyen-trai-toan-2026-1201-q03",
+      "examId": "thpt-nguyen-trai-toan-2026-1201",
+      "questionNumber": 3,
+      "subjectCode": "TOAN",
+      "topic": "Xac suat, to hop va thong ke"
+    },
+    {
+      "questionId": "thpt-nguyen-trai-toan-2026-1201-q04",
+      "examId": "thpt-nguyen-trai-toan-2026-1201",
+      "questionNumber": 4,
+      "subjectCode": "TOAN",
+      "topic": "Quan he vuong goc va khoi da dien"
+    },
+    {
+      "questionId": "thpt-nguyen-trai-toan-2026-1201-q05",
+      "examId": "thpt-nguyen-trai-toan-2026-1201",
+      "questionNumber": 5,
+      "subjectCode": "TOAN",
+      "topic": "Quan he vuong goc va khoi da dien"
+    },
+    {
+      "questionId": "thpt-nguyen-trai-toan-2026-1201-q06",
+      "examId": "thpt-nguyen-trai-toan-2026-1201",
+      "questionNumber": 6,
+      "subjectCode": "TOAN",
+      "topic": "Nguyen ham va tich phan"
+    },
+    {
+      "questionId": "thpt-nguyen-trai-toan-2026-1201-q07",
+      "examId": "thpt-nguyen-trai-toan-2026-1201",
+      "questionNumber": 7,
+      "subjectCode": "TOAN",
+      "topic": "Hinh hoc khong gian va Oxyz"
+    },
+    {
+      "questionId": "thpt-nguyen-trai-toan-2026-1201-q08",
+      "examId": "thpt-nguyen-trai-toan-2026-1201",
+      "questionNumber": 8,
+      "subjectCode": "TOAN",
+      "topic": "Nguyen ham va tich phan"
+    },
+    {
+      "questionId": "thpt-nguyen-trai-toan-2026-1201-q09",
+      "examId": "thpt-nguyen-trai-toan-2026-1201",
+      "questionNumber": 9,
+      "subjectCode": "TOAN",
+      "topic": "Khao sat ham so, cuc tri va GTLN/GTNN"
+    },
+    {
+      "questionId": "thpt-nguyen-trai-toan-2026-1201-q10",
+      "examId": "thpt-nguyen-trai-toan-2026-1201",
+      "questionNumber": 10,
+      "subjectCode": "TOAN",
+      "topic": "Hinh hoc khong gian va Oxyz"
+    },
+    {
+      "questionId": "thpt-nguyen-trai-toan-2026-1201-q11",
+      "examId": "thpt-nguyen-trai-toan-2026-1201",
+      "questionNumber": 11,
+      "subjectCode": "TOAN",
+      "topic": "Quan he vuong goc va khoi da dien"
+    },
+    {
+      "questionId": "thpt-nguyen-trai-toan-2026-1201-q12",
+      "examId": "thpt-nguyen-trai-toan-2026-1201",
+      "questionNumber": 12,
+      "subjectCode": "TOAN",
+      "topic": "Cap so cong va cap so nhan"
+    },
+    {
+      "questionId": "thpt-nguyen-trai-toan-2026-1201-q13",
+      "examId": "thpt-nguyen-trai-toan-2026-1201",
+      "questionNumber": 13,
+      "subjectCode": "TOAN",
+      "topic": "Khao sat ham so, cuc tri va GTLN/GTNN"
+    },
+    {
+      "questionId": "thpt-nguyen-trai-toan-2026-1201-q14",
+      "examId": "thpt-nguyen-trai-toan-2026-1201",
+      "questionNumber": 14,
+      "subjectCode": "TOAN",
+      "topic": "Nguyen ham va tich phan"
+    },
+    {
+      "questionId": "thpt-nguyen-trai-toan-2026-1201-q15",
+      "examId": "thpt-nguyen-trai-toan-2026-1201",
+      "questionNumber": 15,
+      "subjectCode": "TOAN",
+      "topic": "Hinh hoc khong gian va Oxyz"
+    },
+    {
+      "questionId": "thpt-nguyen-trai-toan-2026-1201-q16",
+      "examId": "thpt-nguyen-trai-toan-2026-1201",
+      "questionNumber": 16,
+      "subjectCode": "TOAN",
+      "topic": "Xac suat, to hop va thong ke"
+    },
+    {
+      "questionId": "thpt-nguyen-trai-toan-2026-1201-q17",
+      "examId": "thpt-nguyen-trai-toan-2026-1201",
+      "questionNumber": 17,
+      "subjectCode": "TOAN",
+      "topic": "Quy hoach tuyen tinh va bai toan toi uu"
+    },
+    {
+      "questionId": "thpt-nguyen-trai-toan-2026-1201-q18",
+      "examId": "thpt-nguyen-trai-toan-2026-1201",
+      "questionNumber": 18,
+      "subjectCode": "TOAN",
+      "topic": "Xac suat, to hop va thong ke"
+    },
+    {
+      "questionId": "thpt-nguyen-trai-toan-2026-1201-q19",
+      "examId": "thpt-nguyen-trai-toan-2026-1201",
+      "questionNumber": 19,
+      "subjectCode": "TOAN",
+      "topic": "Quan he vuong goc va khoi da dien"
+    },
+    {
+      "questionId": "thpt-nguyen-trai-toan-2026-1201-q20",
+      "examId": "thpt-nguyen-trai-toan-2026-1201",
+      "questionNumber": 20,
+      "subjectCode": "TOAN",
+      "topic": "Quan he vuong goc va khoi da dien"
+    },
+    {
+      "questionId": "thpt-nguyen-trai-toan-2026-1201-q21",
+      "examId": "thpt-nguyen-trai-toan-2026-1201",
+      "questionNumber": 21,
+      "subjectCode": "TOAN",
+      "topic": "Khao sat ham so, cuc tri va GTLN/GTNN"
+    },
+    {
+      "questionId": "thpt-nguyen-trai-toan-2026-1201-q22",
+      "examId": "thpt-nguyen-trai-toan-2026-1201",
+      "questionNumber": 22,
+      "subjectCode": "TOAN",
+      "topic": "Xac suat, to hop va thong ke"
+    },
+    {
+      "questionId": "thpt-yen-lac-toan-2026-101-q01",
+      "examId": "thpt-yen-lac-toan-2026-101",
+      "questionNumber": 1,
+      "subjectCode": "TOAN",
+      "topic": "Khao sat ham so, cuc tri va GTLN/GTNN"
+    },
+    {
+      "questionId": "thpt-yen-lac-toan-2026-101-q02",
+      "examId": "thpt-yen-lac-toan-2026-101",
+      "questionNumber": 2,
+      "subjectCode": "TOAN",
+      "topic": "Hinh hoc khong gian va Oxyz"
+    },
+    {
+      "questionId": "thpt-yen-lac-toan-2026-101-q03",
+      "examId": "thpt-yen-lac-toan-2026-101",
+      "questionNumber": 3,
+      "subjectCode": "TOAN",
+      "topic": "Xac suat, to hop va thong ke"
+    },
+    {
+      "questionId": "thpt-yen-lac-toan-2026-101-q04",
+      "examId": "thpt-yen-lac-toan-2026-101",
+      "questionNumber": 4,
+      "subjectCode": "TOAN",
+      "topic": "Khao sat ham so, cuc tri va GTLN/GTNN"
+    },
+    {
+      "questionId": "thpt-yen-lac-toan-2026-101-q05",
+      "examId": "thpt-yen-lac-toan-2026-101",
+      "questionNumber": 5,
+      "subjectCode": "TOAN",
+      "topic": "Hinh hoc khong gian va Oxyz"
+    },
+    {
+      "questionId": "thpt-yen-lac-toan-2026-101-q06",
+      "examId": "thpt-yen-lac-toan-2026-101",
+      "questionNumber": 6,
+      "subjectCode": "TOAN",
+      "topic": "Khao sat ham so, cuc tri va GTLN/GTNN"
+    },
+    {
+      "questionId": "thpt-yen-lac-toan-2026-101-q07",
+      "examId": "thpt-yen-lac-toan-2026-101",
+      "questionNumber": 7,
+      "subjectCode": "TOAN",
+      "topic": "Hinh hoc khong gian va Oxyz"
+    },
+    {
+      "questionId": "thpt-yen-lac-toan-2026-101-q08",
+      "examId": "thpt-yen-lac-toan-2026-101",
+      "questionNumber": 8,
+      "subjectCode": "TOAN",
+      "topic": "Khao sat ham so, cuc tri va GTLN/GTNN"
+    },
+    {
+      "questionId": "thpt-yen-lac-toan-2026-101-q09",
+      "examId": "thpt-yen-lac-toan-2026-101",
+      "questionNumber": 9,
+      "subjectCode": "TOAN",
+      "topic": "Hinh hoc khong gian va Oxyz"
+    },
+    {
+      "questionId": "thpt-yen-lac-toan-2026-101-q10",
+      "examId": "thpt-yen-lac-toan-2026-101",
+      "questionNumber": 10,
+      "subjectCode": "TOAN",
+      "topic": "Nguyen ham va tich phan"
+    },
+    {
+      "questionId": "thpt-yen-lac-toan-2026-101-q11",
+      "examId": "thpt-yen-lac-toan-2026-101",
+      "questionNumber": 11,
+      "subjectCode": "TOAN",
+      "topic": "Nguyen ham va tich phan"
+    },
+    {
+      "questionId": "thpt-yen-lac-toan-2026-101-q12",
+      "examId": "thpt-yen-lac-toan-2026-101",
+      "questionNumber": 12,
+      "subjectCode": "TOAN",
+      "topic": "Mu va logarit"
+    },
+    {
+      "questionId": "thpt-yen-lac-toan-2026-101-q13",
+      "examId": "thpt-yen-lac-toan-2026-101",
+      "questionNumber": 13,
+      "subjectCode": "TOAN",
+      "topic": "Xac suat, to hop va thong ke"
+    },
+    {
+      "questionId": "thpt-yen-lac-toan-2026-101-q14",
+      "examId": "thpt-yen-lac-toan-2026-101",
+      "questionNumber": 14,
+      "subjectCode": "TOAN",
+      "topic": "Khao sat ham so, cuc tri va GTLN/GTNN"
+    },
+    {
+      "questionId": "thpt-yen-lac-toan-2026-101-q15",
+      "examId": "thpt-yen-lac-toan-2026-101",
+      "questionNumber": 15,
+      "subjectCode": "TOAN",
+      "topic": "Hinh hoc khong gian va Oxyz"
+    },
+    {
+      "questionId": "thpt-yen-lac-toan-2026-101-q16",
+      "examId": "thpt-yen-lac-toan-2026-101",
+      "questionNumber": 16,
+      "subjectCode": "TOAN",
+      "topic": "Nguyen ham va tich phan"
+    },
+    {
+      "questionId": "thpt-yen-lac-toan-2026-101-q17",
+      "examId": "thpt-yen-lac-toan-2026-101",
+      "questionNumber": 17,
+      "subjectCode": "TOAN",
+      "topic": "Quan he vuong goc va khoi da dien"
+    },
+    {
+      "questionId": "thpt-yen-lac-toan-2026-101-q18",
+      "examId": "thpt-yen-lac-toan-2026-101",
+      "questionNumber": 18,
+      "subjectCode": "TOAN",
+      "topic": "Quy hoach tuyen tinh va bai toan toi uu"
+    },
+    {
+      "questionId": "thpt-yen-lac-toan-2026-101-q19",
+      "examId": "thpt-yen-lac-toan-2026-101",
+      "questionNumber": 19,
+      "subjectCode": "TOAN",
+      "topic": "Nguyen ham va tich phan"
+    },
+    {
+      "questionId": "thpt-yen-lac-toan-2026-101-q20",
+      "examId": "thpt-yen-lac-toan-2026-101",
+      "questionNumber": 20,
+      "subjectCode": "TOAN",
+      "topic": "Hinh hoc khong gian va Oxyz"
+    },
+    {
+      "questionId": "thpt-yen-lac-toan-2026-101-q21",
+      "examId": "thpt-yen-lac-toan-2026-101",
+      "questionNumber": 21,
+      "subjectCode": "TOAN",
+      "topic": "Xac suat, to hop va thong ke"
+    },
+    {
+      "questionId": "thpt-yen-lac-toan-2026-101-q22",
+      "examId": "thpt-yen-lac-toan-2026-101",
+      "questionNumber": 22,
+      "subjectCode": "TOAN",
+      "topic": "Khao sat ham so, cuc tri va GTLN/GTNN"
+    }
+  ],
+  "unresolved": []
+}

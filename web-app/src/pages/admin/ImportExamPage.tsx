@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState, type ChangeEvent, type DragEvent, type ReactNode } from 'react'
+import { useEffect, useMemo, useRef, useState, type ChangeEvent, type DragEvent, type ReactNode } from 'react'
 import {
   AlertTriangle,
   FileText,
@@ -14,36 +14,68 @@ import { toast } from 'sonner'
 import { useAuthSessionStore } from '../../features/auth/store/auth-session-store'
 import {
   createEmptyMetadata,
-  estimateExamId,
+  deleteManagedImportedExam,
+  fetchManagedImportedExamDraft,
+  fetchManagedImportedExams,
   getDraftValidationIssues,
   getQuestionValidationIssues,
   requestExamPdfValidation,
   saveAdminImportedExam,
+  saveManagedImportedExamDraft,
   subjectOptions,
+  topicOptionsBySubjectCode,
   type AdminImportMetadata,
   type AdminImportAsset,
   type AdminImportQuestion,
   type AdminImportStatement,
   type AdminImportValidationResponse,
+  type ManagedImportedExam,
   type SubjectCode,
+  updateManagedImportedExam,
 } from '../../features/admin-import/services/admin-import-service'
+
+type AnswerChoice = 'A' | 'B' | 'C' | 'D'
+type AnswerKeyByNumber = Record<number, string>
+type ManagedExamFormState = {
+  examId: string
+  title: string
+  schoolName: string
+  city: string
+  subjectCode: SubjectCode
+  year: string
+  durationMinutes: string
+  variantId: string | null
+  variantCode: string
+  isActive: boolean
+}
 
 export function ImportExamPage() {
   const user = useAuthSessionStore((state) => state.user)
   const fileInputRef = useRef<HTMLInputElement | null>(null)
   const [metadata, setMetadata] = useState<AdminImportMetadata>(createEmptyMetadata())
   const [pdfFile, setPdfFile] = useState<File | null>(null)
-  const [answerKeyText, setAnswerKeyText] = useState('')
+  const [partOneAnswers, setPartOneAnswers] = useState<Record<number, AnswerChoice | ''>>(
+    () => createAnswerChoiceState(12),
+  )
+  const [partTwoAnswers, setPartTwoAnswers] = useState<AnswerKeyByNumber>(() => createAnswerTextState(4))
+  const [partThreeAnswers, setPartThreeAnswers] = useState<AnswerKeyByNumber>(() => createAnswerTextState(6))
   const [dragActive, setDragActive] = useState(false)
   const [isValidating, setIsValidating] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
   const [validationStatus, setValidationStatus] = useState('')
   const [apiError, setApiError] = useState('')
   const [result, setResult] = useState<AdminImportValidationResponse | null>(null)
-
-  const previewExamId = useMemo(() => {
-    return result?.examDraft.examId || estimateExamId(metadata) || 'se-tu-sinh-sau-khi-nhap-du'
-  }, [metadata, result])
+  const [managedExams, setManagedExams] = useState<ManagedImportedExam[]>([])
+  const [isLoadingManagedExams, setIsLoadingManagedExams] = useState(true)
+  const [managerError, setManagerError] = useState('')
+  const [editingExamId, setEditingExamId] = useState<string | null>(null)
+  const [managedForm, setManagedForm] = useState<ManagedExamFormState | null>(null)
+  const [isUpdatingManagedExam, setIsUpdatingManagedExam] = useState(false)
+  const [deletingExamId, setDeletingExamId] = useState<string | null>(null)
+  const [editingQuestionExamId, setEditingQuestionExamId] = useState<string | null>(null)
+  const [managedDraft, setManagedDraft] = useState<AdminImportValidationResponse | null>(null)
+  const [isLoadingManagedDraft, setIsLoadingManagedDraft] = useState(false)
+  const [isSavingManagedDraft, setIsSavingManagedDraft] = useState(false)
 
   const draftIssues = useMemo(() => {
     return getDraftValidationIssues({
@@ -51,6 +83,39 @@ export function ImportExamPage() {
       pdfFile,
     })
   }, [pdfFile, result])
+
+  const answerKeyText = useMemo(
+    () =>
+      buildAnswerKeyText({
+        partOneAnswers,
+        partTwoAnswers,
+        partThreeAnswers,
+      }),
+    [partOneAnswers, partThreeAnswers, partTwoAnswers],
+  )
+  const topicSuggestions = useMemo(
+    () => topicOptionsBySubjectCode[metadata.subjectCode] ?? [],
+    [metadata.subjectCode],
+  )
+
+  useEffect(() => {
+    void loadManagedExams()
+  }, [])
+
+  async function loadManagedExams() {
+    try {
+      setIsLoadingManagedExams(true)
+      setManagerError('')
+      const exams = await fetchManagedImportedExams()
+      setManagedExams(exams)
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : 'Khong the tai danh sach de da nhap.'
+      setManagerError(message)
+    } finally {
+      setIsLoadingManagedExams(false)
+    }
+  }
 
   function updateMetadataField<Key extends keyof AdminImportMetadata>(
     key: Key,
@@ -168,6 +233,7 @@ export function ImportExamPage() {
         draft: result,
       })
       toast.success(`Da luu ${saved.questionCount} cau vao exam ${saved.examId}.`)
+      void loadManagedExams()
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Khong the luu vao Supabase.'
       toast.error(message)
@@ -307,8 +373,297 @@ export function ImportExamPage() {
     })
   }
 
+  function startEditingManagedExam(exam: ManagedImportedExam) {
+    setEditingExamId(exam.examId)
+    setManagedForm({
+      examId: exam.examId,
+      title: exam.title,
+      schoolName: exam.schoolName,
+      city: exam.city,
+      subjectCode: exam.subjectCode,
+      year: String(exam.year),
+      durationMinutes: String(exam.durationMinutes),
+      variantId: exam.variantId,
+      variantCode: exam.variantCode,
+      isActive: exam.isActive,
+    })
+  }
+
+  function stopEditingManagedExam() {
+    setEditingExamId(null)
+    setManagedForm(null)
+  }
+
+  async function openManagedQuestionEditor(exam: ManagedImportedExam) {
+    try {
+      setEditingQuestionExamId(exam.examId)
+      setIsLoadingManagedDraft(true)
+      const draft = await fetchManagedImportedExamDraft(exam.examId)
+      setManagedDraft(draft)
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : 'Khong the mo editor cau hoi cua de thi.'
+      toast.error(message)
+      setEditingQuestionExamId(null)
+      setManagedDraft(null)
+    } finally {
+      setIsLoadingManagedDraft(false)
+    }
+  }
+
+  function closeManagedQuestionEditor() {
+    setEditingQuestionExamId(null)
+    setManagedDraft(null)
+  }
+
+  function updateManagedFormField<Key extends keyof ManagedExamFormState>(
+    key: Key,
+    value: ManagedExamFormState[Key],
+  ) {
+    setManagedForm((current) => (current ? { ...current, [key]: value } : current))
+  }
+
+  async function handleSaveManagedExam() {
+    if (!managedForm) {
+      return
+    }
+
+    if (
+      !managedForm.title.trim() ||
+      !managedForm.schoolName.trim() ||
+      !managedForm.city.trim() ||
+      !managedForm.year.trim() ||
+      !managedForm.durationMinutes.trim()
+    ) {
+      toast.error('Hay dien du thong tin truoc khi cap nhat de thi.')
+      return
+    }
+
+    try {
+      setIsUpdatingManagedExam(true)
+      await updateManagedImportedExam({
+        examId: managedForm.examId,
+        title: managedForm.title,
+        schoolName: managedForm.schoolName,
+        city: managedForm.city,
+        subjectCode: managedForm.subjectCode,
+        year: Number(managedForm.year) || new Date().getFullYear(),
+        durationMinutes: Number(managedForm.durationMinutes) || 0,
+        variantId: managedForm.variantId,
+        variantCode: managedForm.variantCode,
+        isActive: managedForm.isActive,
+      })
+      toast.success('Da cap nhat thong tin de thi.')
+      stopEditingManagedExam()
+      await loadManagedExams()
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : 'Khong the cap nhat de thi luc nay.'
+      toast.error(message)
+    } finally {
+      setIsUpdatingManagedExam(false)
+    }
+  }
+
+  async function handleDeleteManagedExam(exam: ManagedImportedExam) {
+    const confirmed = window.confirm(
+      `Ban co chac muon xoa de "${exam.title}"? Thao tac nay se xoa de, cau hoi va dap an lien quan.`,
+    )
+    if (!confirmed) {
+      return
+    }
+
+    try {
+      setDeletingExamId(exam.examId)
+      await deleteManagedImportedExam({
+        examId: exam.examId,
+        subjectCode: exam.subjectCode,
+        year: exam.year,
+      })
+      toast.success('Da xoa de thi khoi he thong.')
+      if (editingExamId === exam.examId) {
+        stopEditingManagedExam()
+      }
+      await loadManagedExams()
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Khong the xoa de thi luc nay.'
+      toast.error(message)
+    } finally {
+      setDeletingExamId(null)
+    }
+  }
+
+  function updateManagedDraftQuestionField(index: number, patch: Partial<AdminImportQuestion>) {
+    setManagedDraft((current) => {
+      if (!current) {
+        return current
+      }
+
+      return {
+        ...current,
+        questions: current.questions.map((question, questionIndex) =>
+          questionIndex === index
+            ? {
+                ...question,
+                ...patch,
+              }
+            : question,
+        ),
+      }
+    })
+  }
+
+  function updateManagedDraftOption(index: number, label: 'A' | 'B' | 'C' | 'D', text: string) {
+    setManagedDraft((current) => {
+      if (!current) {
+        return current
+      }
+
+      return {
+        ...current,
+        questions: current.questions.map((question, questionIndex) =>
+          questionIndex === index
+            ? {
+                ...question,
+                options: question.options.map((option) =>
+                  option.label === label ? { ...option, text } : option,
+                ),
+              }
+            : question,
+        ),
+      }
+    })
+  }
+
+  function updateManagedDraftStatement(
+    index: number,
+    label: AdminImportStatement['label'],
+    text: string,
+  ) {
+    setManagedDraft((current) => {
+      if (!current) {
+        return current
+      }
+
+      return {
+        ...current,
+        questions: current.questions.map((question, questionIndex) =>
+          questionIndex === index
+            ? {
+                ...question,
+                statements: question.statements.map((statement) =>
+                  statement.label === label ? { ...statement, text } : statement,
+                ),
+              }
+            : question,
+        ),
+      }
+    })
+  }
+
+  async function addManagedDraftQuestionAsset(index: number, file: File) {
+    if (!file.type.startsWith('image/')) {
+      toast.error('Chi ho tro file anh PNG/JPG/WebP cho asset cau hoi.')
+      return
+    }
+
+    try {
+      const dataUrl = await readFileAsDataUrl(file)
+      setManagedDraft((current) => {
+        if (!current) {
+          return current
+        }
+
+        return {
+          ...current,
+          questions: current.questions.map((question, questionIndex) => {
+            if (questionIndex !== index) {
+              return question
+            }
+
+            const nextAssetIndex = question.assets.length + 1
+            const normalizedName = file.name
+              .toLowerCase()
+              .replace(/[^a-z0-9.]+/g, '-')
+              .replace(/-+/g, '-')
+              .replace(/^-|-$/g, '')
+            const extension = normalizedName.split('.').pop() || 'png'
+
+            return {
+              ...question,
+              assets: [
+                ...question.assets,
+                {
+                  assetType: 'figure',
+                  assetPath: `assets/q${String(question.questionNumber).padStart(2, '0')}-manual-${nextAssetIndex}.${extension}`,
+                  pageNumber: null,
+                  assetDataUrl: dataUrl,
+                },
+              ],
+            }
+          }),
+        }
+      })
+      toast.success('Da them anh vao editor de thi da luu.')
+    } catch {
+      toast.error('Khong doc duoc file anh vua chon.')
+    }
+  }
+
+  function removeManagedDraftQuestionAsset(index: number, assetIndex: number) {
+    setManagedDraft((current) => {
+      if (!current) {
+        return current
+      }
+
+      return {
+        ...current,
+        questions: current.questions.map((question, questionIndex) =>
+          questionIndex === index
+            ? {
+                ...question,
+                assets: question.assets.filter((_, currentAssetIndex) => currentAssetIndex !== assetIndex),
+              }
+            : question,
+        ),
+      }
+    })
+  }
+
+  async function handleSaveManagedDraft() {
+    if (!managedDraft) {
+      return
+    }
+
+    const issues = getDraftValidationIssues({
+      draft: managedDraft,
+      pdfFile: new File(['managed-exam'], 'managed-exam.pdf', { type: 'application/pdf' }),
+    }).filter((issue) => issue !== 'Chua co file PDF.')
+
+    if (issues.length > 0) {
+      toast.error(issues[0] ?? 'Du lieu de thi chua hop le de cap nhat.')
+      return
+    }
+
+    try {
+      setIsSavingManagedDraft(true)
+      await saveManagedImportedExamDraft({
+        draft: managedDraft,
+      })
+      toast.success('Da cap nhat noi dung cau hoi va dap an cua de thi.')
+      await loadManagedExams()
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : 'Khong the luu noi dung de thi da sua.'
+      toast.error(message)
+    } finally {
+      setIsSavingManagedDraft(false)
+    }
+  }
+
   return (
     <section className="space-y-6">
+      <TopicSuggestionList subjectCode={metadata.subjectCode} topics={topicSuggestions} />
       <div className="overflow-hidden rounded-[34px] border border-slate-200 bg-white shadow-[0_26px_80px_rgba(15,23,42,0.08)]">
         <div className="border-b border-slate-200 bg-[linear-gradient(135deg,#0f172a_0%,#1f2937_52%,#111827_100%)] px-6 py-7 text-white md:px-8">
           <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-100/90">
@@ -321,13 +676,13 @@ export function ImportExamPage() {
                 Nap de bang PDF, con lai de AI xu ly.
               </h1>
               <p className="mt-4 max-w-3xl text-sm leading-7 text-slate-300">
-                Giao vien chi can upload PDF, chon mon, nhap truong/thanh pho/nam/ma de va paste dap an tho. He thong se trich xuat cau hoi, map dap an, tao preview va luu vao Supabase.
+                Giao vien chi can upload PDF, chon mon, nhap truong/thanh pho/nam/ma de va dien dap an theo 3 phan. He thong se tu gan thoi luong theo mon, trich xuat cau hoi, map dap an, tao preview va luu vao Supabase.
               </p>
             </div>
             <div className="grid gap-3 rounded-[28px] border border-white/10 bg-white/5 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
               <StatusPill label="Nguoi thao tac" value={user?.fullName || user?.email || 'Teacher'} />
               <StatusPill label="Role" value={user?.role || 'teacher'} />
-              <StatusPill label="Exam ID" value={previewExamId} />
+              <StatusPill label="Thoi luong mac dinh" value={`${metadata.durationMinutes} phut`} />
             </div>
           </div>
         </div>
@@ -336,28 +691,21 @@ export function ImportExamPage() {
           <section className="space-y-5">
             <SectionHeading
               title="Thong tin toi thieu"
-              description="Exam ID se duoc sinh tu truong, mon, nam thi va ma de."
+              description="Thoi luong duoc tu dong gan theo mon hoc. Exam ID van duoc sinh noi bo tu truong, mon, nam thi va ma de."
             />
 
             <div className="grid gap-4 md:grid-cols-2">
               <SubjectField value={metadata.subjectCode} onChange={updateSubject} />
               <InputField
-                label="Thoi luong"
-                onChange={(value) => updateMetadataField('durationMinutes', value)}
-                placeholder="50"
-                type="number"
-                value={metadata.durationMinutes}
-              />
-              <InputField
                 label="Ten truong"
                 onChange={(value) => updateMetadataField('schoolName', value)}
-                placeholder="THPT Van Lang"
+                placeholder="THPT Văn Lang"
                 value={metadata.schoolName}
               />
               <InputField
                 label="Thanh pho"
                 onChange={(value) => updateMetadataField('city', value)}
-                placeholder="Ha Noi"
+                placeholder="Hà Nội"
                 value={metadata.city}
               />
               <InputField
@@ -375,31 +723,82 @@ export function ImportExamPage() {
               />
             </div>
 
-            <div className="rounded-[24px] border border-slate-200 bg-slate-50 px-4 py-4">
-              <div className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">
-                Exam ID tu dong
-              </div>
-              <div className="mt-2 break-all text-sm font-semibold text-slate-900">{previewExamId}</div>
-            </div>
-
             <div className="rounded-[26px] border border-slate-200 bg-white p-4 shadow-[0_14px_42px_rgba(15,23,42,0.04)]">
-              <label className="mb-2 block text-sm font-semibold text-slate-900">
+              <div className="mb-2 block text-sm font-semibold text-slate-900">
                 Dap an giao vien nhap
-              </label>
-              <textarea
-                autoCapitalize="off"
-                autoCorrect="off"
-                className="min-h-[190px] w-full resize-y rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-4 text-sm leading-7 text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-emerald-300 focus:bg-white"
-                onChange={(event) => {
-                  setAnswerKeyText(event.target.value)
-                  setResult(null)
-                }}
-                placeholder="Vi du: 1.A, 2.C, 3.D ... 12.B, 13.DDSS, 14.SDDS, 17: 68"
-                spellCheck={false}
-                value={answerKeyText}
-              />
+              </div>
+              <div className="space-y-4">
+                <AnswerKeySection
+                  description="Phan I. Trac nghiem nhieu lua chon"
+                  title="Phan I"
+                >
+                  <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 lg:grid-cols-6">
+                    {buildNumberRange(1, 12).map((questionNumber) => (
+                      <AnswerChoiceField
+                        key={questionNumber}
+                        questionNumber={questionNumber}
+                        value={partOneAnswers[questionNumber] ?? ''}
+                        onChange={(value) => {
+                          setPartOneAnswers((current) => ({
+                            ...current,
+                            [questionNumber]: value,
+                          }))
+                          setResult(null)
+                        }}
+                      />
+                    ))}
+                  </div>
+                </AnswerKeySection>
+
+                <AnswerKeySection
+                  description="Phan II. Dung / Sai"
+                  title="Phan II"
+                >
+                  <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
+                    {buildNumberRange(1, 4).map((questionNumber) => (
+                      <AnswerTextField
+                        key={questionNumber}
+                        maxLength={4}
+                        onChange={(value) => {
+                          setPartTwoAnswers((current) => ({
+                            ...current,
+                            [questionNumber]: value.toUpperCase().replace(/[^DS]/g, '').slice(0, 4),
+                          }))
+                          setResult(null)
+                        }}
+                        placeholder="DDSS"
+                        questionNumber={questionNumber}
+                        value={partTwoAnswers[questionNumber] ?? ''}
+                      />
+                    ))}
+                  </div>
+                </AnswerKeySection>
+
+                <AnswerKeySection
+                  description="Phan III. Tra loi ngan"
+                  title="Phan III"
+                >
+                  <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
+                    {buildNumberRange(1, 6).map((questionNumber) => (
+                      <AnswerTextField
+                        key={questionNumber}
+                        onChange={(value) => {
+                          setPartThreeAnswers((current) => ({
+                            ...current,
+                            [questionNumber]: value,
+                          }))
+                          setResult(null)
+                        }}
+                        placeholder="68"
+                        questionNumber={questionNumber}
+                        value={partThreeAnswers[questionNumber] ?? ''}
+                      />
+                    ))}
+                  </div>
+                </AnswerKeySection>
+              </div>
               <p className="mt-2 text-xs leading-5 text-slate-500">
-                Ho tro dang 1.A, 1: A, 1 A, 13 DDSS, 17: 68. Neu thieu dap an, preview se canh bao de giao vien sua.
+                He thong tu map thanh chuoi dap an noi bo theo so cau 1-12, 13-16 va 17-22. Neu thieu dap an, preview se canh bao de giao vien sua.
               </p>
             </div>
           </section>
@@ -529,9 +928,84 @@ export function ImportExamPage() {
             ) : null}
 
             {apiError ? <InlineAlert message={apiError} title="Khong the phan tich PDF" /> : null}
+
+            <ManagedExamPanel
+              deletingExamId={deletingExamId}
+              editingExamId={editingExamId}
+              exams={managedExams}
+              form={managedForm}
+              isLoading={isLoadingManagedExams}
+              isSaving={isUpdatingManagedExam}
+              onDelete={handleDeleteManagedExam}
+              onEdit={startEditingManagedExam}
+              onEditQuestions={openManagedQuestionEditor}
+              onFormChange={updateManagedFormField}
+              onRefresh={() => void loadManagedExams()}
+              onSave={() => void handleSaveManagedExam()}
+              onStopEditing={stopEditingManagedExam}
+              panelError={managerError}
+            />
           </section>
         </div>
       </div>
+
+      {editingQuestionExamId ? (
+        <section className="rounded-[32px] border border-slate-200 bg-white p-6 shadow-[0_22px_60px_rgba(15,23,42,0.06)]">
+          <div className="flex flex-col gap-3 border-b border-slate-200 pb-5 md:flex-row md:items-end md:justify-between">
+            <div>
+              <div className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+                Managed Exam Editor
+              </div>
+              <h2 className="mt-2 text-3xl font-extrabold tracking-[-0.04em] text-slate-950">
+                Sua de da luu trong he thong
+              </h2>
+              <p className="mt-2 max-w-3xl text-sm leading-7 text-slate-600">
+                Editor nay mo toan bo cau hoi cua de thi da luu, cho phep sua noi dung, dap an, topic va hinh anh giong preview sau khi AI phan tich.
+              </p>
+            </div>
+
+            <div className="flex flex-wrap gap-3">
+              <button
+                className="inline-flex items-center justify-center rounded-2xl bg-slate-950 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-400"
+                disabled={isSavingManagedDraft || isLoadingManagedDraft || !managedDraft}
+                onClick={() => void handleSaveManagedDraft()}
+                type="button"
+              >
+                {isSavingManagedDraft ? 'Dang luu...' : 'Luu noi dung de'}
+              </button>
+              <button
+                className="inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100"
+                onClick={closeManagedQuestionEditor}
+                type="button"
+              >
+                Dong editor
+              </button>
+            </div>
+          </div>
+
+          <div className="mt-6">
+            {isLoadingManagedDraft ? <PreviewSkeleton /> : null}
+            {!isLoadingManagedDraft && !managedDraft ? <EmptyPreviewState /> : null}
+            {!isLoadingManagedDraft && managedDraft ? (
+              <PreviewEditor
+                addQuestionAsset={addManagedDraftQuestionAsset}
+                draftIssues={getDraftValidationIssues({
+                  draft: managedDraft,
+                  pdfFile: new File(['managed-exam'], 'managed-exam.pdf', {
+                    type: 'application/pdf',
+                  }),
+                }).filter((issue) => issue !== 'Chua co file PDF.')}
+                removeQuestionAsset={removeManagedDraftQuestionAsset}
+                result={managedDraft}
+                subjectCode={managedDraft.examDraft.subjectCode}
+                updateOption={updateManagedDraftOption}
+                updateQuestionField={updateManagedDraftQuestionField}
+                updateStatement={updateManagedDraftStatement}
+              />
+            ) : null}
+          </div>
+        </section>
+      ) : null}
 
       <section className="rounded-[32px] border border-slate-200 bg-white p-6 shadow-[0_22px_60px_rgba(15,23,42,0.06)]">
         <div className="flex flex-col gap-3 border-b border-slate-200 pb-5 md:flex-row md:items-end md:justify-between">
@@ -562,6 +1036,7 @@ export function ImportExamPage() {
             <PreviewEditor
               draftIssues={draftIssues}
               result={result}
+              subjectCode={metadata.subjectCode}
               updateOption={updateOption}
               updateQuestionField={updateQuestionField}
               updateStatement={updateStatement}
@@ -578,6 +1053,7 @@ export function ImportExamPage() {
 function PreviewEditor({
   result,
   draftIssues,
+  subjectCode,
   updateQuestionField,
   updateOption,
   updateStatement,
@@ -586,6 +1062,7 @@ function PreviewEditor({
 }: {
   result: AdminImportValidationResponse
   draftIssues: string[]
+  subjectCode: SubjectCode
   updateQuestionField: (index: number, patch: Partial<AdminImportQuestion>) => void
   updateOption: (index: number, label: 'A' | 'B' | 'C' | 'D', text: string) => void
   updateStatement: (index: number, label: AdminImportStatement['label'], text: string) => void
@@ -605,6 +1082,8 @@ function PreviewEditor({
       {result.questions.map((question, index) => {
         const clientIssues = getQuestionValidationIssues(question)
         const isQuestionReady = clientIssues.length === 0
+        const localizedQuestionNumber = toLocalizedQuestionNumber(question.questionType, question.questionNumber)
+        const questionSectionLabel = formatQuestionSectionLabel(question.questionType)
 
         return (
           <article
@@ -614,7 +1093,7 @@ function PreviewEditor({
             <div className="flex flex-col gap-4 border-b border-slate-200 pb-4 lg:flex-row lg:items-start lg:justify-between">
               <div>
                 <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">
-                  Cau {question.questionNumber}
+                  {questionSectionLabel} - Cau {localizedQuestionNumber}
                 </div>
                 <div className="mt-3 flex flex-wrap gap-2">
                   <Badge tone={isQuestionReady ? 'success' : 'danger'}>
@@ -631,14 +1110,17 @@ function PreviewEditor({
               <div className="grid gap-3 sm:grid-cols-2">
                 <InputField
                   compact
-                  label="So cau"
+                  label="So cau trong phan"
                   onChange={(value) =>
                     updateQuestionField(index, {
-                      questionNumber: Number(value) || 0,
+                      questionNumber: toGlobalQuestionNumber(
+                        question.questionType,
+                        Number(value) || 0,
+                      ),
                     })
                   }
                   type="number"
-                  value={String(question.questionNumber)}
+                  value={String(localizedQuestionNumber)}
                 />
                 <AnswerField
                   onChange={(value) =>
@@ -649,6 +1131,25 @@ function PreviewEditor({
                   question={question}
                 />
               </div>
+
+              <label className="mt-3 block">
+                <div className="mb-2 text-sm font-semibold text-slate-900">Topic / Chuyen de</div>
+                <input
+                  autoCapitalize="off"
+                  autoCorrect="off"
+                  className="h-12 w-full rounded-[20px] border border-slate-200 bg-white px-4 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-emerald-300"
+                  list={`topic-suggestions-${subjectCode}`}
+                  onChange={(event) =>
+                    updateQuestionField(index, {
+                      topic: event.target.value,
+                    })
+                  }
+                  placeholder="AI se goi y topic, giao vien co the sua tay"
+                  spellCheck={false}
+                  type="text"
+                  value={question.topic}
+                />
+              </label>
             </div>
 
             <div className="mt-5 grid gap-5 xl:grid-cols-[1.05fr_0.95fr]">
@@ -735,7 +1236,8 @@ function PreviewEditor({
                   assets={question.assets}
                   onAddAsset={(file) => addQuestionAsset(index, file)}
                   onRemoveAsset={(assetIndex) => removeQuestionAsset(index, assetIndex)}
-                  questionNumber={question.questionNumber}
+                  questionNumber={localizedQuestionNumber}
+                  questionSectionLabel={questionSectionLabel}
                 />
 
                 {question.changes.length > 0 ? (
@@ -776,12 +1278,332 @@ function PreviewEditor({
   )
 }
 
+function ManagedExamPanel({
+  exams,
+  isLoading,
+  panelError,
+  editingExamId,
+  form,
+  isSaving,
+  deletingExamId,
+  onRefresh,
+  onEdit,
+  onEditQuestions,
+  onStopEditing,
+  onFormChange,
+  onSave,
+  onDelete,
+}: {
+  exams: ManagedImportedExam[]
+  isLoading: boolean
+  panelError: string
+  editingExamId: string | null
+  form: ManagedExamFormState | null
+  isSaving: boolean
+  deletingExamId: string | null
+  onRefresh: () => void
+  onEdit: (exam: ManagedImportedExam) => void
+  onEditQuestions: (exam: ManagedImportedExam) => void
+  onStopEditing: () => void
+  onFormChange: <Key extends keyof ManagedExamFormState>(
+    key: Key,
+    value: ManagedExamFormState[Key],
+  ) => void
+  onSave: () => void
+  onDelete: (exam: ManagedImportedExam) => void
+}) {
+  return (
+    <div className="rounded-[28px] border border-slate-200 bg-white p-5 shadow-[0_14px_42px_rgba(15,23,42,0.04)]">
+      <div className="flex flex-col gap-3 border-b border-slate-200 pb-4 md:flex-row md:items-end md:justify-between">
+        <div>
+          <div className="text-sm font-semibold text-slate-900">Quan ly de da nhap</div>
+          <div className="mt-1 text-sm leading-6 text-slate-500">
+            Sua metadata co ban, bat/tat hien thi va xoa de thi ngay tai man nay.
+          </div>
+        </div>
+        <button
+          className="inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-white"
+          onClick={onRefresh}
+          type="button"
+        >
+          Tai lai danh sach
+        </button>
+      </div>
+
+      {panelError ? <InlineAlert message={panelError} title="Khong the tai danh sach de" /> : null}
+
+      {isLoading ? (
+        <div className="mt-4 space-y-3">
+          {[0, 1, 2].map((item) => (
+            <div className="rounded-[22px] border border-slate-200 bg-slate-50 p-4" key={item}>
+              <div className="h-4 w-40 animate-pulse rounded-full bg-slate-200" />
+              <div className="mt-3 h-3 w-full animate-pulse rounded-full bg-slate-200" />
+              <div className="mt-2 h-3 w-3/4 animate-pulse rounded-full bg-slate-200" />
+            </div>
+          ))}
+        </div>
+      ) : null}
+
+      {!isLoading && exams.length === 0 ? (
+        <div className="mt-4 rounded-[22px] border border-dashed border-slate-300 bg-slate-50 px-4 py-5 text-sm leading-6 text-slate-500">
+          Chua co de nao duoc luu tu man import nay.
+        </div>
+      ) : null}
+
+      {!isLoading && exams.length > 0 ? (
+        <div className="mt-4 space-y-4">
+          {exams.map((exam) => {
+            const isEditing = editingExamId === exam.examId && form?.examId === exam.examId
+
+            return (
+              <div
+                className="rounded-[24px] border border-slate-200 bg-slate-50/80 p-4"
+                key={exam.examId}
+              >
+                <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+                  <div className="min-w-0">
+                    <div className="text-base font-semibold text-slate-950">{exam.title}</div>
+                    <div className="mt-1 text-sm leading-6 text-slate-600">
+                      {exam.schoolName} | {exam.subjectName} | {exam.year} | Ma {exam.variantCode || '--'}
+                    </div>
+                    <div className="mt-2 flex flex-wrap gap-2">
+                      <Badge tone={exam.isActive ? 'success' : 'warning'}>
+                        {exam.isActive ? 'Dang hien' : 'Dang an'}
+                      </Badge>
+                      <Badge tone="neutral">{exam.examId}</Badge>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-wrap gap-2">
+                    <a
+                      className="inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100"
+                      href={exam.pdfUrl}
+                      rel="noreferrer"
+                      target="_blank"
+                    >
+                      Mo PDF
+                    </a>
+                    <button
+                      className="inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100"
+                      onClick={() => onEdit(exam)}
+                      type="button"
+                    >
+                      Sua thong tin
+                    </button>
+                    <button
+                      className="inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100"
+                      onClick={() => void onEditQuestions(exam)}
+                      type="button"
+                    >
+                      Sua cau hoi
+                    </button>
+                    <button
+                      className="inline-flex items-center justify-center rounded-2xl border border-rose-200 bg-rose-50 px-4 py-2 text-sm font-semibold text-rose-700 transition hover:bg-rose-100 disabled:cursor-not-allowed disabled:opacity-60"
+                      disabled={deletingExamId === exam.examId}
+                      onClick={() => void onDelete(exam)}
+                      type="button"
+                    >
+                      {deletingExamId === exam.examId ? 'Dang xoa...' : 'Xoa de thi'}
+                    </button>
+                  </div>
+                </div>
+
+                {isEditing && form ? (
+                  <div className="mt-4 rounded-[22px] border border-slate-200 bg-white p-4">
+                    <div className="grid gap-4 md:grid-cols-2">
+                      <InputField
+                        compact
+                        label="Tieu de de thi"
+                        onChange={(value) => onFormChange('title', value)}
+                        value={form.title}
+                      />
+                      <SubjectField
+                        compact
+                        value={form.subjectCode}
+                        onChange={(value) => onFormChange('subjectCode', value)}
+                      />
+                      <InputField
+                        compact
+                        label="Ten truong"
+                        onChange={(value) => onFormChange('schoolName', value)}
+                        value={form.schoolName}
+                      />
+                      <InputField
+                        compact
+                        label="Thanh pho"
+                        onChange={(value) => onFormChange('city', value)}
+                        value={form.city}
+                      />
+                      <InputField
+                        compact
+                        label="Nam thi"
+                        onChange={(value) => onFormChange('year', value)}
+                        type="number"
+                        value={form.year}
+                      />
+                      <InputField
+                        compact
+                        label="Thoi luong"
+                        onChange={(value) => onFormChange('durationMinutes', value)}
+                        type="number"
+                        value={form.durationMinutes}
+                      />
+                      <InputField
+                        compact
+                        label="Ma de"
+                        onChange={(value) => onFormChange('variantCode', value)}
+                        value={form.variantCode}
+                      />
+                      <label className="block">
+                        <div className="mb-2 text-sm font-semibold text-slate-900">Trang thai</div>
+                        <button
+                          className={[
+                            'h-12 w-full rounded-[20px] border px-4 text-sm font-semibold transition',
+                            form.isActive
+                              ? 'border-emerald-200 bg-emerald-50 text-emerald-700'
+                              : 'border-amber-200 bg-amber-50 text-amber-700',
+                          ].join(' ')}
+                          onClick={() => onFormChange('isActive', !form.isActive)}
+                          type="button"
+                        >
+                          {form.isActive ? 'Dang hien cho hoc sinh' : 'Dang an khoi hoc sinh'}
+                        </button>
+                      </label>
+                    </div>
+
+                    <div className="mt-4 flex flex-wrap gap-3">
+                      <button
+                        className="inline-flex items-center justify-center rounded-2xl bg-slate-950 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-400"
+                        disabled={isSaving}
+                        onClick={onSave}
+                        type="button"
+                      >
+                        {isSaving ? 'Dang luu...' : 'Luu thay doi'}
+                      </button>
+                      <button
+                        className="inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100"
+                        onClick={onStopEditing}
+                        type="button"
+                      >
+                        Huy
+                      </button>
+                    </div>
+                  </div>
+                ) : null}
+
+              </div>
+            )
+          })}
+        </div>
+      ) : null}
+    </div>
+  )
+}
+
 function SectionHeading({ title, description }: { title: string; description: string }) {
   return (
     <div>
       <h2 className="text-lg font-semibold text-slate-950">{title}</h2>
       <p className="mt-1 text-sm leading-6 text-slate-500">{description}</p>
     </div>
+  )
+}
+
+function TopicSuggestionList({
+  subjectCode,
+  topics,
+}: {
+  subjectCode: SubjectCode
+  topics: string[]
+}) {
+  return (
+    <datalist id={`topic-suggestions-${subjectCode}`}>
+      {topics.map((topic) => (
+        <option key={topic} value={topic} />
+      ))}
+    </datalist>
+  )
+}
+
+function AnswerKeySection({
+  title,
+  description,
+  children,
+}: {
+  title: string
+  description: string
+  children: ReactNode
+}) {
+  return (
+    <section className="rounded-[22px] border border-slate-200 bg-slate-50 px-3 py-3">
+      <div className="mb-3">
+        <div className="text-sm font-semibold text-slate-900">{title}</div>
+        <div className="text-xs leading-5 text-slate-500">{description}</div>
+      </div>
+      {children}
+    </section>
+  )
+}
+
+function AnswerChoiceField({
+  questionNumber,
+  value,
+  onChange,
+}: {
+  questionNumber: number
+  value: AnswerChoice | ''
+  onChange: (value: AnswerChoice | '') => void
+}) {
+  return (
+    <label className="rounded-[18px] border border-slate-200 bg-white px-3 py-3">
+      <div className="mb-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-500">
+        Cau {questionNumber}
+      </div>
+      <select
+        className="h-9 w-full rounded-xl border border-slate-200 bg-slate-50 px-2 text-sm font-semibold text-slate-800 outline-none transition focus:border-emerald-300 focus:bg-white"
+        onChange={(event) => onChange(event.target.value as AnswerChoice | '')}
+        value={value}
+      >
+        <option value="">--</option>
+        <option value="A">A</option>
+        <option value="B">B</option>
+        <option value="C">C</option>
+        <option value="D">D</option>
+      </select>
+    </label>
+  )
+}
+
+function AnswerTextField({
+  questionNumber,
+  value,
+  onChange,
+  placeholder,
+  maxLength,
+}: {
+  questionNumber: number
+  value: string
+  onChange: (value: string) => void
+  placeholder: string
+  maxLength?: number
+}) {
+  return (
+    <label className="rounded-[18px] border border-slate-200 bg-white px-3 py-3">
+      <div className="mb-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-500">
+        Cau {questionNumber}
+      </div>
+      <input
+        autoCapitalize="off"
+        autoCorrect="off"
+        className="h-9 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-emerald-300 focus:bg-white"
+        maxLength={maxLength}
+        onChange={(event) => onChange(event.target.value)}
+        placeholder={placeholder}
+        spellCheck={false}
+        type="text"
+        value={value}
+      />
+    </label>
   )
 }
 
@@ -823,15 +1645,20 @@ function InputField({
 function SubjectField({
   value,
   onChange,
+  compact = false,
 }: {
   value: SubjectCode
   onChange: (value: SubjectCode) => void
+  compact?: boolean
 }) {
   return (
     <label className="block">
       <div className="mb-2 text-sm font-semibold text-slate-900">Mon hoc</div>
       <select
-        className="h-14 w-full rounded-[20px] border border-slate-200 bg-white px-4 text-sm text-slate-800 outline-none transition focus:border-emerald-300"
+        className={[
+          'w-full rounded-[20px] border border-slate-200 bg-white px-4 text-sm text-slate-800 outline-none transition focus:border-emerald-300',
+          compact ? 'h-12' : 'h-14',
+        ].join(' ')}
         onChange={(event) => onChange(event.target.value as SubjectCode)}
         value={value}
       >
@@ -843,6 +1670,55 @@ function SubjectField({
       </select>
     </label>
   )
+}
+
+function createAnswerChoiceState(total: number): Record<number, AnswerChoice | ''> {
+  return buildNumberRange(1, total).reduce<Record<number, AnswerChoice | ''>>((acc, questionNumber) => {
+    acc[questionNumber] = ''
+    return acc
+  }, {})
+}
+
+function createAnswerTextState(total: number): AnswerKeyByNumber {
+  return buildNumberRange(1, total).reduce<AnswerKeyByNumber>((acc, questionNumber) => {
+    acc[questionNumber] = ''
+    return acc
+  }, {})
+}
+
+function buildNumberRange(start: number, end: number) {
+  return Array.from({ length: end - start + 1 }, (_, index) => start + index)
+}
+
+function buildAnswerKeyText(input: {
+  partOneAnswers: Record<number, AnswerChoice | ''>
+  partTwoAnswers: AnswerKeyByNumber
+  partThreeAnswers: AnswerKeyByNumber
+}) {
+  const entries: string[] = []
+
+  for (const questionNumber of buildNumberRange(1, 12)) {
+    const value = input.partOneAnswers[questionNumber]?.trim()
+    if (value) {
+      entries.push(`${questionNumber}.${value}`)
+    }
+  }
+
+  for (const localNumber of buildNumberRange(1, 4)) {
+    const value = input.partTwoAnswers[localNumber]?.trim().toUpperCase()
+    if (value) {
+      entries.push(`${localNumber + 12}.${value}`)
+    }
+  }
+
+  for (const localNumber of buildNumberRange(1, 6)) {
+    const value = input.partThreeAnswers[localNumber]?.trim()
+    if (value) {
+      entries.push(`${localNumber + 16}: ${value}`)
+    }
+  }
+
+  return entries.join(', ')
 }
 
 function AnswerField({
@@ -885,11 +1761,13 @@ function AnswerField({
 function QuestionAssetEditor({
   assets,
   questionNumber,
+  questionSectionLabel,
   onAddAsset,
   onRemoveAsset,
 }: {
   assets: AdminImportAsset[]
   questionNumber: number
+  questionSectionLabel: string
   onAddAsset: (file: File) => void
   onRemoveAsset: (assetIndex: number) => void
 }) {
@@ -902,7 +1780,7 @@ function QuestionAssetEditor({
             Anh cua cau hoi
           </div>
           <p className="mt-1 text-xs leading-5 text-slate-500">
-            Neu cau co hinh, crop anh tu PDF roi tai len tai day. Anh se duoc luu vao Storage va gan voi cau {questionNumber}.
+            Neu cau co hinh, crop anh tu PDF roi tai len tai day. Anh se duoc luu vao Storage va gan voi {questionSectionLabel.toLowerCase()} cau {questionNumber}.
           </p>
         </div>
 
@@ -933,7 +1811,7 @@ function QuestionAssetEditor({
             >
               {asset.assetDataUrl || asset.publicUrl ? (
                 <img
-                  alt={`Cau ${questionNumber} asset ${assetIndex + 1}`}
+                  alt={`${questionSectionLabel} cau ${questionNumber} asset ${assetIndex + 1}`}
                   className="max-h-80 w-full rounded-[16px] object-contain"
                   src={asset.assetDataUrl || asset.publicUrl}
                 />
@@ -1086,6 +1964,45 @@ function formatQuestionType(questionType: AdminImportQuestion['questionType']) {
     return 'Dung sai'
   }
   return 'Tra loi ngan'
+}
+
+function formatQuestionSectionLabel(questionType: AdminImportQuestion['questionType']) {
+  if (questionType === 'multiple_choice') {
+    return 'Phan I'
+  }
+  if (questionType === 'true_false') {
+    return 'Phan II'
+  }
+  return 'Phan III'
+}
+
+function toLocalizedQuestionNumber(
+  questionType: AdminImportQuestion['questionType'],
+  questionNumber: number,
+) {
+  if (questionType === 'multiple_choice') {
+    return questionNumber
+  }
+  if (questionType === 'true_false') {
+    return Math.max(1, questionNumber - 12)
+  }
+  return Math.max(1, questionNumber - 16)
+}
+
+function toGlobalQuestionNumber(
+  questionType: AdminImportQuestion['questionType'],
+  localizedQuestionNumber: number,
+) {
+  if (localizedQuestionNumber <= 0) {
+    return 0
+  }
+  if (questionType === 'multiple_choice') {
+    return localizedQuestionNumber
+  }
+  if (questionType === 'true_false') {
+    return localizedQuestionNumber + 12
+  }
+  return localizedQuestionNumber + 16
 }
 
 function readFileAsDataUrl(file: File) {

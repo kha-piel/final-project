@@ -1,0 +1,1549 @@
+[
+  {
+    "question_id": "chuyen-le-khiet-quang-2025-q07",
+    "exam_id": "chuyen-le-khiet-quang-2025",
+    "question_number": 7,
+    "question_type": "multiple_choice",
+    "question_text": "Cho tứ diện $ABCD$. Gọi $G$ là trọng tâm của tam giác $BCD$. Khẳng định nào sau đây là sai?",
+    "topic": null,
+    "exam": {
+      "title": "De Toan Chuyen Le Khiet Quang nam hoc 2025-2026",
+      "school_name": "Chuyen Le Khiet Quang",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "chuyen-le-khiet-quang-2025-q09",
+    "exam_id": "chuyen-le-khiet-quang-2025",
+    "question_number": 9,
+    "question_type": "multiple_choice",
+    "question_text": "Chọn mệnh đề sai trong các mệnh đề sau?",
+    "topic": null,
+    "exam": {
+      "title": "De Toan Chuyen Le Khiet Quang nam hoc 2025-2026",
+      "school_name": "Chuyen Le Khiet Quang",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "chuyen-le-khiet-quang-2025-q13",
+    "exam_id": "chuyen-le-khiet-quang-2025",
+    "question_number": 13,
+    "question_type": "true_false",
+    "question_text": "Cho hàm số $f(x) = \\sqrt{x} + \\sqrt{32 - x}$.",
+    "topic": null,
+    "exam": {
+      "title": "De Toan Chuyen Le Khiet Quang nam hoc 2025-2026",
+      "school_name": "Chuyen Le Khiet Quang",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "so-gddt-gialai-toan-2026-0101-q01",
+    "exam_id": "so-gddt-gialai-toan-2026-0101",
+    "question_number": 1,
+    "question_type": "multiple_choice",
+    "question_text": "Trong không gian với hệ tọa độ $Oxyz$, cho đường thẳng $\\Delta: \\frac{x+1}{-2} = \\frac{y-3}{3} = \\frac{z-2}{-2}$. Vectơ nào dưới đây là một vectơ chỉ phương của đường thẳng $\\Delta$?",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toan hoc so gddt gialai 2026 - Ma 0101",
+      "school_name": "so gddt gialai",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "so-gddt-gialai-toan-2026-0101-q02",
+    "exam_id": "so-gddt-gialai-toan-2026-0101",
+    "question_number": 2,
+    "question_type": "multiple_choice",
+    "question_text": "Cho bảng biểu diễn mẫu số liệu ghép nhóm về số tiền (đơn vị: nghìn đồng) mà 60 khách hàng mua sữa ở một cửa hàng trong một ngày như sau:\n\n| Nhóm | [40;50) | [50;60) | [60;70) | [70;80) | [80;90) |\n|---|---|---|---|---|---|\n| Tần số | 3 | 6 | 19 | 23 | 9 | $n = 60$ |\n| Tần số tích lũy | 3 | 9 | 28 | 51 | 60 | \n\nKhoảng tứ phân vị của mẫu số liệu ghép nhóm trên (làm tròn kết quả đến hàng phần trăm) là",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toan hoc so gddt gialai 2026 - Ma 0101",
+      "school_name": "so gddt gialai",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "so-gddt-gialai-toan-2026-0101-q03",
+    "exam_id": "so-gddt-gialai-toan-2026-0101",
+    "question_number": 3,
+    "question_type": "multiple_choice",
+    "question_text": "Cho hàm số $y = f(x)$ có đồ thị như hình vẽ\n\nGiá trị cực đại của hàm số đã cho bằng",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toan hoc so gddt gialai 2026 - Ma 0101",
+      "school_name": "so gddt gialai",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "so-gddt-gialai-toan-2026-0101-q04",
+    "exam_id": "so-gddt-gialai-toan-2026-0101",
+    "question_number": 4,
+    "question_type": "multiple_choice",
+    "question_text": "Tiệm cận ngang của đồ thị hàm số $y = \\frac{6x-4}{1-2x}$ là đường thẳng có phương trình",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toan hoc so gddt gialai 2026 - Ma 0101",
+      "school_name": "so gddt gialai",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "so-gddt-gialai-toan-2026-0101-q05",
+    "exam_id": "so-gddt-gialai-toan-2026-0101",
+    "question_number": 5,
+    "question_type": "multiple_choice",
+    "question_text": "Cho tứ diện $ABCD$ có trọng tâm $G$ và $M$ là một điểm bất kì. Phát biểu nào dưới đây sai?",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toan hoc so gddt gialai 2026 - Ma 0101",
+      "school_name": "so gddt gialai",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "so-gddt-gialai-toan-2026-0101-q06",
+    "exam_id": "so-gddt-gialai-toan-2026-0101",
+    "question_number": 6,
+    "question_type": "multiple_choice",
+    "question_text": "Trong không gian với hệ tọa độ $Oxyz$, cho điểm $M$ thỏa mãn $\\vec{OM} = -2\\vec{i}+\\vec{j} + 3\\vec{k}$. Tọa độ của điểm $M$ là",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toan hoc so gddt gialai 2026 - Ma 0101",
+      "school_name": "so gddt gialai",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "so-gddt-gialai-toan-2026-0101-q07",
+    "exam_id": "so-gddt-gialai-toan-2026-0101",
+    "question_number": 7,
+    "question_type": "multiple_choice",
+    "question_text": "Cho cấp số nhân $(u_n)$ có $u_1 = -2$ và $u_3 = -4$. Giá trị $u_6$ bằng",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toan hoc so gddt gialai 2026 - Ma 0101",
+      "school_name": "so gddt gialai",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "so-gddt-gialai-toan-2026-0101-q08",
+    "exam_id": "so-gddt-gialai-toan-2026-0101",
+    "question_number": 8,
+    "question_type": "multiple_choice",
+    "question_text": "Biết rằng $F(x)$ là một nguyên hàm của hàm số $f(x) = \\sin x$ trên $\\mathbb{R}$ và thỏa mãn $F(0) = 6$. Phát biểu nào dưới đây đúng?",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toan hoc so gddt gialai 2026 - Ma 0101",
+      "school_name": "so gddt gialai",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "so-gddt-gialai-toan-2026-0101-q09",
+    "exam_id": "so-gddt-gialai-toan-2026-0101",
+    "question_number": 9,
+    "question_type": "multiple_choice",
+    "question_text": "Nghiệm của phương trình $3^{x-1} = 8$ là",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toan hoc so gddt gialai 2026 - Ma 0101",
+      "school_name": "so gddt gialai",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "so-gddt-gialai-toan-2026-0101-q10",
+    "exam_id": "so-gddt-gialai-toan-2026-0101",
+    "question_number": 10,
+    "question_type": "multiple_choice",
+    "question_text": "Cho hình chóp $S.ABC$ có đáy $ABC$ là tam giác vuông tại $B$ và $SA \\perp (ABC)$. Gọi $I$ là trung điểm của $BC$. Mặt phẳng nào dưới đây vuông góc với đường thẳng $BC$?",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toan hoc so gddt gialai 2026 - Ma 0101",
+      "school_name": "so gddt gialai",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "so-gddt-gialai-toan-2026-0101-q11",
+    "exam_id": "so-gddt-gialai-toan-2026-0101",
+    "question_number": 11,
+    "question_type": "multiple_choice",
+    "question_text": "Tập nghiệm của bất phương trình $\\log_{0,5} x > 0$ là",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toan hoc so gddt gialai 2026 - Ma 0101",
+      "school_name": "so gddt gialai",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "so-gddt-gialai-toan-2026-0101-q12",
+    "exam_id": "so-gddt-gialai-toan-2026-0101",
+    "question_number": 12,
+    "question_type": "multiple_choice",
+    "question_text": "Họ tất cả các nguyên hàm của hàm số $f(x) = x^{2026}$ trên $\\mathbb{R}$ là",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toan hoc so gddt gialai 2026 - Ma 0101",
+      "school_name": "so gddt gialai",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "so-gddt-gialai-toan-2026-0101-q13",
+    "exam_id": "so-gddt-gialai-toan-2026-0101",
+    "question_number": 13,
+    "question_type": "true_false",
+    "question_text": "Xét hàm số $y = \\frac{bx-c}{x-a}$ ($ab \\neq 0$) có đồ thị như hình dưới.",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toan hoc so gddt gialai 2026 - Ma 0101",
+      "school_name": "so gddt gialai",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "so-gddt-gialai-toan-2026-0101-q14",
+    "exam_id": "so-gddt-gialai-toan-2026-0101",
+    "question_number": 14,
+    "question_type": "true_false",
+    "question_text": "Một quần thể vi khuẩn ban đầu gồm 500 vi khuẩn, sau đó bắt đầu tăng trưởng. Sau 1 ngày, số lượng vi khuẩn của quần thể đó đã tăng lên thành 600 vi khuẩn. Gọi $P(t)$ là số lượng vi khuẩn của quần thể đó tại thời điểm $t$, trong đó $t$ tính theo ngày ($0 \\le t \\le 17$). Biết tốc độ tăng trưởng của quần thể vi khuẩn đó là đạo hàm $P'(t) = k\\sqrt{t}$, trong đó $k$ là hằng số.",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toan hoc so gddt gialai 2026 - Ma 0101",
+      "school_name": "so gddt gialai",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "so-gddt-gialai-toan-2026-0101-q15",
+    "exam_id": "so-gddt-gialai-toan-2026-0101",
+    "question_number": 15,
+    "question_type": "true_false",
+    "question_text": "Nhân dịp đầu năm mới, giáo viên chủ nhiệm lì xì cho học sinh lớp 12 chuyên toán (biết lớp có 35 học sinh) với phương thức: Giáo viên đưa ra 35 phong bì, trong đó 5 phong bì có tiền lì xì và 30 phong bì rỗng, rồi giáo viên gọi lần lượt các học sinh lên tự chọn cho mình 1 phong bì.",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toan hoc so gddt gialai 2026 - Ma 0101",
+      "school_name": "so gddt gialai",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "so-gddt-gialai-toan-2026-0101-q16",
+    "exam_id": "so-gddt-gialai-toan-2026-0101",
+    "question_number": 16,
+    "question_type": "true_false",
+    "question_text": "Trong không gian với hệ tọa độ $Oxyz$, một cabin trong hệ thống cáp treo ở Vinpearl Nha Trang xuất phát từ điểm $A(-1;2; 6)$ chuyển động thẳng đều theo hướng vectơ $\\vec{u} = (0; -3; 4)$ với tốc độ 5 m/s (đơn vị trên mỗi trục tọa độ là mét). Sau 6 giây kể từ lúc xuất phát, cabin đến điểm $T(a; b; c)$.",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toan hoc so gddt gialai 2026 - Ma 0101",
+      "school_name": "so gddt gialai",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "so-gddt-gialai-toan-2026-0101-q17",
+    "exam_id": "so-gddt-gialai-toan-2026-0101",
+    "question_number": 17,
+    "question_type": "short_answer",
+    "question_text": "Cho hình hộp chữ nhật $ABCD.A'B'C'D'$ có $AB = 2, BC = 3$ và $CC' = 6$. Gọi $I$ là trung điểm của $AA'$ và $G$ là trọng tâm tam giác $BCD$. Khoảng cách giữa hai đường thẳng $B'D'$ và $IG$ bằng bao nhiêu (không làm tròn kết quả các phép tính trung gian, chỉ làm tròn kết quả cuối cùng đến hàng phần trăm)?",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toan hoc so gddt gialai 2026 - Ma 0101",
+      "school_name": "so gddt gialai",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "so-gddt-gialai-toan-2026-0101-q18",
+    "exam_id": "so-gddt-gialai-toan-2026-0101",
+    "question_number": 18,
+    "question_type": "short_answer",
+    "question_text": "Một hợp tác xã chăn nuôi dự định trộn hai loại thức ăn gia súc $X$ và $Y$ để tạo thành thức ăn hỗn hợp cho gia súc. Giá một bao loại $X$ là 260 nghìn đồng, giá một bao loại $Y$ là 210 nghìn đồng. Mỗi bao loại $X$ chứa 2 đơn vị chất dinh dưỡng $A$, 2 đơn vị chất dinh dưỡng $B$ và 2 đơn vị chất dinh dưỡng $C$. Mỗi bao loại $Y$ chứa 1 đơn vị chất dinh dưỡng $A$, 9 đơn vị chất dinh dưỡng $B$ và 3 đơn vị chất dinh dưỡng $C$. Hỏi chi phí nhỏ nhất để mua hai loại thức ăn gia súc $X$ và $Y$ sao cho hỗn hợp thu được chứa tối thiểu 12 đơn vị chất dinh dưỡng $A$, 36 đơn vị chất dinh dưỡng $B$ và 24 đơn vị chất dinh dưỡng $C$ là bao nhiêu nghìn đồng?",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toan hoc so gddt gialai 2026 - Ma 0101",
+      "school_name": "so gddt gialai",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "so-gddt-gialai-toan-2026-0101-q19",
+    "exam_id": "so-gddt-gialai-toan-2026-0101",
+    "question_number": 19,
+    "question_type": "short_answer",
+    "question_text": "Một hộ kinh doanh mỗi ngày sản xuất được $x$ kg sản phẩm ($0 < x < 14$) với tổng chi phí sản xuất được tính bởi hàm chi phí $C(x) = x^3 - 3x^2 - 19x + 200$ (đơn vị: nghìn đồng). Giả sử hộ này bán hết sản phẩm mỗi ngày với giá 170 nghìn đồng/kg. Hỏi hộ đó thu được lợi nhuận tối đa trong một ngày là bao nhiêu nghìn đồng?",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toan hoc so gddt gialai 2026 - Ma 0101",
+      "school_name": "so gddt gialai",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "so-gddt-gialai-toan-2026-0101-q20",
+    "exam_id": "so-gddt-gialai-toan-2026-0101",
+    "question_number": 20,
+    "question_type": "short_answer",
+    "question_text": "Trong mặt phẳng với hệ tọa độ $Oxy$, lấy 3 điểm $A, B, C$ thuộc parabol $(P): y = x^2$ có hoành độ tương ứng là 3 số nguyên liên tiếp nhau và đều lớn hơn 2026. Hỏi diện tích của tam giác $ABC$ bằng bao nhiêu?",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toan hoc so gddt gialai 2026 - Ma 0101",
+      "school_name": "so gddt gialai",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "so-gddt-gialai-toan-2026-0101-q21",
+    "exam_id": "so-gddt-gialai-toan-2026-0101",
+    "question_number": 21,
+    "question_type": "short_answer",
+    "question_text": "Trong mặt phẳng với hệ tọa độ $Oxy$, cho ngũ giác đều $ABCDE$ có tâm $I$, $A(-2;-4)$, $B(2;-4)$ và năm parabol $(P_1), (P_2), (P_3), (P_4), (P_5)$ giống nhau như hình dưới. Biết $(P_1)$ có đỉnh là gốc tọa độ $O$, hỏi diện tích hình phẳng giới hạn bởi năm parabol đã cho bằng bao nhiêu (không làm tròn kết quả các phép tính trung gian, chỉ làm tròn kết quả cuối cùng đến hàng phần trăm)?",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toan hoc so gddt gialai 2026 - Ma 0101",
+      "school_name": "so gddt gialai",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "so-gddt-gialai-toan-2026-0101-q22",
+    "exam_id": "so-gddt-gialai-toan-2026-0101",
+    "question_number": 22,
+    "question_type": "short_answer",
+    "question_text": "Trước mặt bạn có sáu cánh cửa. Trong số đó, có năm cánh cửa mà ở đằng sau mỗi cánh cửa có gắn 120 USD và một cánh cửa mà ở đằng sau là “người thu hồi”. Bạn có thể chọn bất kỳ sự kết hợp nào của các cánh cửa mà bạn thích và sau đó mở tất cả chúng ra. Nếu tất cả các cánh cửa bạn mở đều có tiền thì bạn sẽ giữ được tất cả số tiền đó. Tuy nhiên, nếu một trong những cánh cửa bạn mở ra có người thu hồi thì họ sẽ lấy hết số tiền ở các cánh cửa kia (nếu có) và bạn không nhận được gì. Tất nhiên là bạn muốn tối đa hóa số tiền thắng được kỳ vọng rồi. Nếu bạn chọn số lượng cửa tối ưu thì số tiền thắng được kỳ vọng của bạn là bao nhiêu USD?",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toan hoc so gddt gialai 2026 - Ma 0101",
+      "school_name": "so gddt gialai",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026-q01",
+    "exam_id": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026",
+    "question_number": 1,
+    "question_type": "multiple_choice",
+    "question_text": "H?t nh?n $^{13}_{6}C$ v? h?t nh?n $^{14}_{7}N$ c? c?ng",
+    "topic": null,
+    "exam": {
+      "title": "De thi thu tot nghiep THPT mon Vat ly nam 2026 - SSStudy",
+      "school_name": "He thong giao duc SSStudy",
+      "subject_code": "VAT_LY"
+    }
+  },
+  {
+    "question_id": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026-q02",
+    "exam_id": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026",
+    "question_number": 2,
+    "question_type": "multiple_choice",
+    "question_text": "Trong các hệ thức sau đây, hệ thức nào phù hợp với định luật Boyle?",
+    "topic": null,
+    "exam": {
+      "title": "De thi thu tot nghiep THPT mon Vat ly nam 2026 - SSStudy",
+      "school_name": "He thong giao duc SSStudy",
+      "subject_code": "VAT_LY"
+    }
+  },
+  {
+    "question_id": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026-q03",
+    "exam_id": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026",
+    "question_number": 3,
+    "question_type": "multiple_choice",
+    "question_text": "Sóng nào sau đây không phải là sự lan truyền của điện từ trường trong không gian?",
+    "topic": null,
+    "exam": {
+      "title": "De thi thu tot nghiep THPT mon Vat ly nam 2026 - SSStudy",
+      "school_name": "He thong giao duc SSStudy",
+      "subject_code": "VAT_LY"
+    }
+  },
+  {
+    "question_id": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026-q04",
+    "exam_id": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026",
+    "question_number": 4,
+    "question_type": "multiple_choice",
+    "question_text": "Quá trình chuyển hóa nào sau đây là quá trình ngưng tụ?",
+    "topic": null,
+    "exam": {
+      "title": "De thi thu tot nghiep THPT mon Vat ly nam 2026 - SSStudy",
+      "school_name": "He thong giao duc SSStudy",
+      "subject_code": "VAT_LY"
+    }
+  },
+  {
+    "question_id": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026-q05",
+    "exam_id": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026",
+    "question_number": 5,
+    "question_type": "multiple_choice",
+    "question_text": "Hiện tượng phóng xạ không có ứng dụng nào sau đây?",
+    "topic": null,
+    "exam": {
+      "title": "De thi thu tot nghiep THPT mon Vat ly nam 2026 - SSStudy",
+      "school_name": "He thong giao duc SSStudy",
+      "subject_code": "VAT_LY"
+    }
+  },
+  {
+    "question_id": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026-q06",
+    "exam_id": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026",
+    "question_number": 6,
+    "question_type": "multiple_choice",
+    "question_text": "Phát biểu nào sau đây nói về lực tương tác phân tử là không đúng?",
+    "topic": null,
+    "exam": {
+      "title": "De thi thu tot nghiep THPT mon Vat ly nam 2026 - SSStudy",
+      "school_name": "He thong giao duc SSStudy",
+      "subject_code": "VAT_LY"
+    }
+  },
+  {
+    "question_id": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026-q07",
+    "exam_id": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026",
+    "question_number": 7,
+    "question_type": "multiple_choice",
+    "question_text": "Nếu không có trao đổi nhiệt giữa hai vật khi chúng tiếp xúc với nhau thì hai vật phải có cùng",
+    "topic": null,
+    "exam": {
+      "title": "De thi thu tot nghiep THPT mon Vat ly nam 2026 - SSStudy",
+      "school_name": "He thong giao duc SSStudy",
+      "subject_code": "VAT_LY"
+    }
+  },
+  {
+    "question_id": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026-q08",
+    "exam_id": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026",
+    "question_number": 8,
+    "question_type": "multiple_choice",
+    "question_text": "Gi? s? c? m?t d?y d?n th?ng d?i v? h?n c? d?ng ?i?n ch?y qua theo ph??ng vu?ng g?c v?i m?t ph?ng trang gi?y v? c? chi?u t? trong ra ngo?i nh? h?nh v?. H?nh n?o d??i ??y m? t? ??ng ???ng s?c t? tr?n m?t ph?ng trang gi?y c?a d?y d?n ?ang x?t?",
+    "topic": null,
+    "exam": {
+      "title": "De thi thu tot nghiep THPT mon Vat ly nam 2026 - SSStudy",
+      "school_name": "He thong giao duc SSStudy",
+      "subject_code": "VAT_LY"
+    }
+  },
+  {
+    "question_id": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026-q09",
+    "exam_id": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026",
+    "question_number": 9,
+    "question_type": "multiple_choice",
+    "question_text": "Không thể dùng nhiệt kế rượu để đo nhiệt độ của hơi nước đang sôi vì rượu",
+    "topic": null,
+    "exam": {
+      "title": "De thi thu tot nghiep THPT mon Vat ly nam 2026 - SSStudy",
+      "school_name": "He thong giao duc SSStudy",
+      "subject_code": "VAT_LY"
+    }
+  },
+  {
+    "question_id": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026-q10",
+    "exam_id": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026",
+    "question_number": 10,
+    "question_type": "multiple_choice",
+    "question_text": "Các phát biểu nào sau đây đúng khi nói về quá trình biến đổi trạng thái của khí lí tưởng?",
+    "topic": null,
+    "exam": {
+      "title": "De thi thu tot nghiep THPT mon Vat ly nam 2026 - SSStudy",
+      "school_name": "He thong giao duc SSStudy",
+      "subject_code": "VAT_LY"
+    }
+  },
+  {
+    "question_id": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026-q11",
+    "exam_id": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026",
+    "question_number": 11,
+    "question_type": "multiple_choice",
+    "question_text": "Phát biểu nào sau đây là sai?",
+    "topic": null,
+    "exam": {
+      "title": "De thi thu tot nghiep THPT mon Vat ly nam 2026 - SSStudy",
+      "school_name": "He thong giao duc SSStudy",
+      "subject_code": "VAT_LY"
+    }
+  },
+  {
+    "question_id": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026-q12",
+    "exam_id": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026",
+    "question_number": 12,
+    "question_type": "multiple_choice",
+    "question_text": "Trong hình dưới đây, mũi tên chỉ hướng của cảm ứng từ\r\ntại điểm Z do ống dây điện từ mang dòng điện tạo ra. Hướng của\r\ndòng điện chạy qua cuộn dây solenoid và cực từ bắc của cuộn dây\r\nsolenoid là hướng của dòng điện từ",
+    "topic": null,
+    "exam": {
+      "title": "De thi thu tot nghiep THPT mon Vat ly nam 2026 - SSStudy",
+      "school_name": "He thong giao duc SSStudy",
+      "subject_code": "VAT_LY"
+    }
+  },
+  {
+    "question_id": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026-q13",
+    "exam_id": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026",
+    "question_number": 13,
+    "question_type": "multiple_choice",
+    "question_text": "Một sợi dây thẳng nằm ngang dài 40 mm theo hướng đông - tây như hình. Một từ trường đều có\r\nđộ lớn cảm ứng từ là 50 mT hướng vào mặt phẳng hình vẽ.\r\nKhi dòng điện 5 A chạy qua dây dẫn theo chiều từ tây sang đông thì xuất hiện lực từ nằm ngang tác dụng\r\nlên dây dẫn. Độ lớn và hướng của lực từ này là",
+    "topic": null,
+    "exam": {
+      "title": "De thi thu tot nghiep THPT mon Vat ly nam 2026 - SSStudy",
+      "school_name": "He thong giao duc SSStudy",
+      "subject_code": "VAT_LY"
+    }
+  },
+  {
+    "question_id": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026-q14",
+    "exam_id": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026",
+    "question_number": 14,
+    "question_type": "multiple_choice",
+    "question_text": "Cho ph?n ?ng ph?n h?ch c? ph??ng tr?nh $^{1}_{0}n + ^{239}_{94}Pu \\to ^{134}_{54}Xe + ^{103}_{40}Zr + x^{1}_{0}n$. Gi? tr? c?a $x$ l?",
+    "topic": null,
+    "exam": {
+      "title": "De thi thu tot nghiep THPT mon Vat ly nam 2026 - SSStudy",
+      "school_name": "He thong giao duc SSStudy",
+      "subject_code": "VAT_LY"
+    }
+  },
+  {
+    "question_id": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026-q15",
+    "exam_id": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026",
+    "question_number": 15,
+    "question_type": "multiple_choice",
+    "question_text": "Trong công nghệ in 3D, vật liệu in được gia nhiệt để chuyển\r\nsang thể lỏng và đùn qua đầu phun để tạo thành từng lớp. Ngay sau khi\r\nra khỏi đầu phun và tiếp xúc với không khí, vật liệu nhanh chóng\r\nchuyển từ thể lỏng sang thể rắn để định hình sản phẩm. Các quá trình\r\nchuyển thể nào liên quan trực tiếp đến công đoạn sản xuất mô hình theo\r\ncông nghệ này?",
+    "topic": null,
+    "exam": {
+      "title": "De thi thu tot nghiep THPT mon Vat ly nam 2026 - SSStudy",
+      "school_name": "He thong giao duc SSStudy",
+      "subject_code": "VAT_LY"
+    }
+  },
+  {
+    "question_id": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026-q16",
+    "exam_id": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026",
+    "question_number": 16,
+    "question_type": "multiple_choice",
+    "question_text": "Khi m?y l?nh ho?t ??ng, d?ng kh? gas tr??c khi v?o m?y n?n c? ?p su?t 8,65 PSI v? nhi?t ?? $a^\\circ C$. Sau khi ?i qua m?y n?n ?? v?o d?n n?ng, ?p su?t kh? gas l? 80 PSI, nhi?t ?? 60?C. T? s? n?n v? th? t?ch c?a c?ng m?t l??ng ch?t tr??c v? sau khi kh? gas khi qua m?y n?n l? 8:1. Nhi?t ?? trong d?n l?nh $a$ x?p x? l?",
+    "topic": null,
+    "exam": {
+      "title": "De thi thu tot nghiep THPT mon Vat ly nam 2026 - SSStudy",
+      "school_name": "He thong giao duc SSStudy",
+      "subject_code": "VAT_LY"
+    }
+  },
+  {
+    "question_id": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026-q17",
+    "exam_id": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026",
+    "question_number": 17,
+    "question_type": "multiple_choice",
+    "question_text": "Trong hoạt động của máy lạnh, để tải nhiệt từ nơi có nhiệt độ thấp (phòng lạnh) đến nơi có nhiệt\r\nđộ cao (môi trường). Năng lượng để làm công việc này là",
+    "topic": null,
+    "exam": {
+      "title": "De thi thu tot nghiep THPT mon Vat ly nam 2026 - SSStudy",
+      "school_name": "He thong giao duc SSStudy",
+      "subject_code": "VAT_LY"
+    }
+  },
+  {
+    "question_id": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026-q18",
+    "exam_id": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026",
+    "question_number": 18,
+    "question_type": "multiple_choice",
+    "question_text": "C? nhi?u lo?i thi?t b? ???c d?ng ?? ?o t? tr??ng c?a Tr?i ??t. M?t trong s? ?? l? ?cu?n d?y l?t?. Cu?n d?y n?y g?m 100 v?ng, m?i v?ng c? di?n t?ch $0,010\\ m^2$. ??u ti?n, cu?n d?y ???c ??t sao cho m?t ph?ng c?a n? vu?ng g?c v?i t? tr??ng c?a Tr?i ??t, sau ?? quay 180? ?? t? tr??ng ?i qua cu?n d?y theo h??ng ng??c l?i. T? tr??ng c?a Tr?i ??t l? 0,050 mT v? cu?n d?y quay trong 0,50 s. ?? l?n su?t ?i?n ??ng sinh ra trong cu?n d?y khi l?t l?",
+    "topic": null,
+    "exam": {
+      "title": "De thi thu tot nghiep THPT mon Vat ly nam 2026 - SSStudy",
+      "school_name": "He thong giao duc SSStudy",
+      "subject_code": "VAT_LY"
+    }
+  },
+  {
+    "question_id": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026-q19",
+    "exam_id": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026",
+    "question_number": 19,
+    "question_type": "true_false",
+    "question_text": "S? h?nh th?nh n??c ng?ng t? (g?i l? c?c gi?t m? h?i) tr?n m?t c?c n??c ?? l?m cho n??c ?? tan nhanh h?n so v?i c?ch kh?c. Bi?t nhi?t h?a h?i ri?ng c?a h?i n??c trong kh?ng kh? l? $L = 2256\\ kJ/kg$ v? nhi?t n?ng ch?y ri?ng c?a n??c ?? l? $\\lambda = 334\\ kJ/kg$. X?t t?nh ??ng, sai c?a c?c ph?t bi?u sau:",
+    "topic": null,
+    "exam": {
+      "title": "De thi thu tot nghiep THPT mon Vat ly nam 2026 - SSStudy",
+      "school_name": "He thong giao duc SSStudy",
+      "subject_code": "VAT_LY"
+    }
+  },
+  {
+    "question_id": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026-q20",
+    "exam_id": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026",
+    "question_number": 20,
+    "question_type": "true_false",
+    "question_text": "Loa ?i?n ??ng ho?t ??ng d?a tr?n t?c d?ng t? gi?a nam ch?m v?nh c?u v? cu?n d?y d?n. C?u t?o ch?nh g?m m?t cu?n d?y nh? g?n ch?t v?i m?ng loa, ???c ??t trong khe h? t? c?a nam ch?m v?nh c?u, n?i c? c?c ???ng s?c t? h??ng xuy?n t?m. X?t m?t m?u loa c? ?ng d?y g?m $N=100$ v?ng, qu?n s?t nhau t?o th?nh ?ng d?y c? chi?u d?i ?ng $L=2\\ cm$. X?t t?nh ??ng, sai c?a c?c ph?t bi?u sau:",
+    "topic": null,
+    "exam": {
+      "title": "De thi thu tot nghiep THPT mon Vat ly nam 2026 - SSStudy",
+      "school_name": "He thong giao duc SSStudy",
+      "subject_code": "VAT_LY"
+    }
+  },
+  {
+    "question_id": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026-q21",
+    "exam_id": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026",
+    "question_number": 21,
+    "question_type": "true_false",
+    "question_text": "Tu?i c?a m?t chi?c thuy?n c? c? th? ???c x?c ??nh b?ng c?ch so s?nh s? ph?n r? ph?ng x? c?a $^{14}_{6}C$ t? g? t??i v?i g? l?y t? chi?c thuy?n c?. M?t m?u g? g?m $3.10^{23}$ nguy?n t? carbon ???c l?y ra t? m?t kh?i g? t??i ?? nghi?n c?u. Trong g? t??i, c? $10^{12}$ nguy?n t? carbon th? c? 1 nguy?n t? l? ??ng v? ph?ng x? $^{14}_{6}C$ c? h?ng s? ph?ng x? l? $3,84.10^{-12}\\ s^{-1}$. L?y 1 n?m c? 365 ng?y. Ng??i ta l?y t? chi?c thuy?n c? n?y m?t m?u g? c? (b?ng kh?i l??ng c?a m?u g? t??i) v? x?c ??nh ???c ?? ph?ng x? c?a c?c ??ng v? ph?ng x? $^{14}_{6}C$ trong m?u n?y l? 0,65 Bq.",
+    "topic": null,
+    "exam": {
+      "title": "De thi thu tot nghiep THPT mon Vat ly nam 2026 - SSStudy",
+      "school_name": "He thong giao duc SSStudy",
+      "subject_code": "VAT_LY"
+    }
+  },
+  {
+    "question_id": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026-q22",
+    "exam_id": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026",
+    "question_number": 22,
+    "question_type": "true_false",
+    "question_text": "M?t nh?m h?c sinh th?c hi?n th? nghi?m kh?o s?t qu? tr?nh l?m ngu?i c?a n??c. Nh?m s? d?ng hai ch?u gi?ng nhau, m?i ch?u ch?a 2 kg n??c n?ng c? nhi?t ?? ban ??u l? 50?C. Th? nghi?m ???c ti?n h?nh trong ph?ng c? nhi?t ?? 25?C. Ch?u 1 ?? ngu?i t? nhi?n v? ch?u 2 d?ng qu?t th?i gi? qua m?t tho?ng. Trong qu? tr?nh ?o, h?c sinh li?n t?c khu?y nh? n??c v? ph?ng l?ng gi?. K?t qu? ?o nhi?t ?? n??c sau m?i ph?t ???c ghi l?i b?ng b?n d??i.\r\n\r\n| Th?i gian (ph?t) | 1 | 2 | 3 | 4 | 5 |\r\n|---|---:|---:|---:|---:|---:|\r\n| Nhi?t ?? khi kh?ng c? gi? (?C) | 46 | 43,5 | 41,5 | 40 | 39 |\r\n| Nhi?t ?? khi c? gi? (?C) | 43 | 39 | 36 | 34 | 32,3 |\r\n\r\nX?t t?nh ??ng, sai c?a c?c ph?t bi?u sau:",
+    "topic": null,
+    "exam": {
+      "title": "De thi thu tot nghiep THPT mon Vat ly nam 2026 - SSStudy",
+      "school_name": "He thong giao duc SSStudy",
+      "subject_code": "VAT_LY"
+    }
+  },
+  {
+    "question_id": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026-q23",
+    "exam_id": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026",
+    "question_number": 23,
+    "question_type": "short_answer",
+    "question_text": "S? d?ng c?c th?ng tin sau cho c?u 1 v? c?u 2. ?o phao ???c th?i ph?ng b?ng kh? tho?t ra t? m?t ?ng xilanh nh? ch?a carbon dioxide. S? s?p x?p ???c th? hi?n trong h?nh sau. Ban ??u, xilanh ch?a $7.10^{22}$ ph?n t? carbon dioxide ? nhi?t ?? 12?C v? chi?m th? t?ch l? $3.10^{-4}\\ m^3$.\r\n\r\nC?u 1: ?p su?t trong b?nh nh? ch?a carbon dioxide l? $x.10^5\\ Pa$. T?m $x$ (k?t qu? ???c l?m tr?n ??n ch? s? h?ng ph?n m??i).",
+    "topic": null,
+    "exam": {
+      "title": "De thi thu tot nghiep THPT mon Vat ly nam 2026 - SSStudy",
+      "school_name": "He thong giao duc SSStudy",
+      "subject_code": "VAT_LY"
+    }
+  },
+  {
+    "question_id": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026-q24",
+    "exam_id": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026",
+    "question_number": 24,
+    "question_type": "short_answer",
+    "question_text": "S? d?ng c?c th?ng tin sau cho c?u 1 v? c?u 2. ?o phao ???c th?i ph?ng b?ng kh? tho?t ra t? m?t ?ng xilanh nh? ch?a carbon dioxide. S? s?p x?p ???c th? hi?n trong h?nh sau. Ban ??u, xilanh ch?a $7.10^{22}$ ph?n t? carbon dioxide ? nhi?t ?? 12?C v? chi?m th? t?ch l? $3.10^{-4}\\ m^3$.\r\n\r\nC?u 2: Khi ?o phao ph?ng l?n, ?p su?t gi?m xu?ng c?n $1,9.10^5\\ Pa$ v? nhi?t ?? kh?ng ??i. Th? t?ch c?a kh? trong ?o phao khi ?? l? bao nhi?u l?t? (k?t qu? ???c l?m tr?n ??n ch? s? h?ng ph?n tr?m).",
+    "topic": null,
+    "exam": {
+      "title": "De thi thu tot nghiep THPT mon Vat ly nam 2026 - SSStudy",
+      "school_name": "He thong giao duc SSStudy",
+      "subject_code": "VAT_LY"
+    }
+  },
+  {
+    "question_id": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026-q25",
+    "exam_id": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026",
+    "question_number": 25,
+    "question_type": "short_answer",
+    "question_text": "S? d?ng c?c th?ng tin sau cho c?u 3 v? c?u 4. Trong k? thu?t ch?p PET/CT hi?n ??i ?? t?m so?t ung th?, c?c b?c s? s? d?ng ??ng v? ph?ng x? Fluorine $^{18}F$ t?ch h?p v?i ph?n t? ???ng. Khi ti?m v?o c? th?, t? b?o ung th? s? h?p th? m?nh h?p ch?t n?y, t? ?? ph?t s?ng tr?n m?n h?nh m?y qu?t. Bi?t ??ng v? $^{18}F$ c? chu k? b?n r? l? 110 ph?t. T?i m?t trung t?m y h?c h?t nh?n m?t li?u thu?c ph?ng x? v?a ???c ?i?u ch? xong c? ?? ph?ng x? ban ??u l? $H_0 = 250\\ MBq$.\r\n\r\nC?u 3: Sau kho?ng th?i gian 5 ti?ng k? t? l?c ?i?u ch?, do s? ch?m tr? trong kh?u v?n chuy?n, li?u thu?c m?i ??n ???c ph?ng ti?m. L?c n?y, ?? ph?ng x? c?a li?u thu?c c?n l?i l? bao nhi?u MBq? (l?m tr?n k?t qu? ??n ch? s? h?ng ph?n m??i).",
+    "topic": null,
+    "exam": {
+      "title": "De thi thu tot nghiep THPT mon Vat ly nam 2026 - SSStudy",
+      "school_name": "He thong giao duc SSStudy",
+      "subject_code": "VAT_LY"
+    }
+  },
+  {
+    "question_id": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026-q26",
+    "exam_id": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026",
+    "question_number": 26,
+    "question_type": "short_answer",
+    "question_text": "S? d?ng c?c th?ng tin sau cho c?u 3 v? c?u 4. Trong k? thu?t ch?p PET/CT hi?n ??i ?? t?m so?t ung th?, c?c b?c s? s? d?ng ??ng v? ph?ng x? Fluorine $^{18}F$ t?ch h?p v?i ph?n t? ???ng. Khi ti?m v?o c? th?, t? b?o ung th? s? h?p th? m?nh h?p ch?t n?y, t? ?? ph?t s?ng tr?n m?n h?nh m?y qu?t. Bi?t ??ng v? $^{18}F$ c? chu k? b?n r? l? 110 ph?t. T?i m?t trung t?m y h?c h?t nh?n m?t li?u thu?c ph?ng x? v?a ???c ?i?u ch? xong c? ?? ph?ng x? ban ??u l? $H_0 = 250\\ MBq$.\r\n\r\nC?u 4: Theo quy chu?n an to?n b?c x? c?a b?nh vi?n (gi? s? b? qua s? ??o th?i sinh h?c), b?nh nh?n sau khi ch?p xong ph?i ? l?i ph?ng c?ch ly v? ch? ???c ra v? khi ?? ph?ng x? trong c? th? gi?m xu?ng c?n b?ng 3,125% so v?i ?? ph?ng x? l?c v?a ti?m. N?u b?nh nh?n ???c ti?m ngay khi thu?c c? ?? ph?ng x? $H_0$ n?i tr?n th? th?i gian c?ch ly t?i thi?u bao nhi?u ph?t?",
+    "topic": null,
+    "exam": {
+      "title": "De thi thu tot nghiep THPT mon Vat ly nam 2026 - SSStudy",
+      "school_name": "He thong giao duc SSStudy",
+      "subject_code": "VAT_LY"
+    }
+  },
+  {
+    "question_id": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026-q27",
+    "exam_id": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026",
+    "question_number": 27,
+    "question_type": "short_answer",
+    "question_text": "S? d?ng c?c th?ng tin sau cho c?u 5 v? c?u 6. M?t khung d?y d?n ph?ng c? di?n t?ch $S = 0,005\\ m^2$ g?m $N = 250$ v?ng d?y, ?ang quay ??u v?i t?c ?? g?c $\\omega = 50\\pi\\ rad/s$ quanh m?t tr?c ??i x?ng n?m trong m?t ph?ng khung d?y, trong m?t t? tr??ng t? ??u v?i c?m ?ng t? $B = 0,5\\ T$. Bi?t tr?c quay vu?ng g?c v?i c?c ???ng s?c c?a t? tr??ng t?. Hai ??u khung d?y ???c n?i v?o hai v?nh khuy?n, sau ?? ???c d?n ra ngo?i qua hai thanh qu?t (1) v? (2) nh? m? t? tr?n h?nh v?. N?i hai ??u khung d?y v?i ?i?n tr? $R = 15\\ \\Omega$ t?o th?nh m?t m?ch k?n.\r\n\r\nC?u 5: D?ng ?i?n trong khung d?y ??i chi?u bao nhi?u l?n trong 1 gi?y?",
+    "topic": null,
+    "exam": {
+      "title": "De thi thu tot nghiep THPT mon Vat ly nam 2026 - SSStudy",
+      "school_name": "He thong giao duc SSStudy",
+      "subject_code": "VAT_LY"
+    }
+  },
+  {
+    "question_id": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026-q28",
+    "exam_id": "ssstudy-vat-ly-thi-thu-tot-nghiep-2026",
+    "question_number": 28,
+    "question_type": "short_answer",
+    "question_text": "S? d?ng c?c th?ng tin sau cho c?u 5 v? c?u 6. M?t khung d?y d?n ph?ng c? di?n t?ch $S = 0,005\\ m^2$ g?m $N = 250$ v?ng d?y, ?ang quay ??u v?i t?c ?? g?c $\\omega = 50\\pi\\ rad/s$ quanh m?t tr?c ??i x?ng n?m trong m?t ph?ng khung d?y, trong m?t t? tr??ng t? ??u v?i c?m ?ng t? $B = 0,5\\ T$. Bi?t tr?c quay vu?ng g?c v?i c?c ???ng s?c c?a t? tr??ng t?. Hai ??u khung d?y ???c n?i v?o hai v?nh khuy?n, sau ?? ???c d?n ra ngo?i qua hai thanh qu?t (1) v? (2) nh? m? t? tr?n h?nh v?. N?i hai ??u khung d?y v?i ?i?n tr? $R = 15\\ \\Omega$ t?o th?nh m?t m?ch k?n.\r\n\r\nC?u 6: T?nh nhi?t l??ng t?a ra tr?n ?i?n tr? $R$ trong th?i gian 30 ph?t theo ??n v? kJ. (l?m tr?n k?t qu? ??n ch? s? h?ng ??n v?).",
+    "topic": null,
+    "exam": {
+      "title": "De thi thu tot nghiep THPT mon Vat ly nam 2026 - SSStudy",
+      "school_name": "He thong giao duc SSStudy",
+      "subject_code": "VAT_LY"
+    }
+  },
+  {
+    "question_id": "thpt-nguyen-du-toan-2026-1201-q01",
+    "exam_id": "thpt-nguyen-du-toan-2026-1201",
+    "question_number": 1,
+    "question_type": "multiple_choice",
+    "question_text": "Cân nặng của các học sinh lớp 10A và 10B, trường Trung học phổthông M như sau.\nCân nặng (kg)\n[30; 36)\n[36; 42)\n[42; 48)\n[48; 54)\n[54; 60)\n[60; 66)\nSốhọc sinh lớp 10A\n1\n2\n5\n15\n9\n6\nSốhọc sinh lớp 10B\n2\n7\n12\n13\n7\n5\nGọi sA và sB lần lượt là độlệch chuẩn vềnhóm cân nặng của học sinh lớp 10A, lớp 10B. Khẳng định nào sau\nđây là đúng?",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toan hoc THPT nguyen du 2026 - Ma 1201",
+      "school_name": "THPT nguyen du",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "thpt-nguyen-du-toan-2026-1201-q02",
+    "exam_id": "thpt-nguyen-du-toan-2026-1201",
+    "question_number": 2,
+    "question_type": "multiple_choice",
+    "question_text": "Trong không gian Oxyz, cho điểm M(1; 2; 3) và mặt phẳng (P): $x + 3y −4z + 9 = 0$. Mặt phẳng\nđi qua M và song song với (P) có phương trình là",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toan hoc THPT nguyen du 2026 - Ma 1201",
+      "school_name": "THPT nguyen du",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "thpt-nguyen-du-toan-2026-1201-q03",
+    "exam_id": "thpt-nguyen-du-toan-2026-1201",
+    "question_number": 3,
+    "question_type": "multiple_choice",
+    "question_text": "Biết $F(x) = (ax^2 + bx + c)e^x$ là một nguyên hàm của hàm số$f(x) = (x^2 + 5x + 5)e^x$ (với a, b, c\nlà các sốthực). Giá trịcủa $2a −3b + c$ bằng",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toan hoc THPT nguyen du 2026 - Ma 1201",
+      "school_name": "THPT nguyen du",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "thpt-nguyen-du-toan-2026-1201-q04",
+    "exam_id": "thpt-nguyen-du-toan-2026-1201",
+    "question_number": 4,
+    "question_type": "multiple_choice",
+    "question_text": "Trong không gian với hệtoạđộOxyz cho $\\vec{MO} = 3\\vec{i} + 4\\vec{j} −2\\vec{k} +5\\vec{j}$. Toạđộcủa điểm M là",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toan hoc THPT nguyen du 2026 - Ma 1201",
+      "school_name": "THPT nguyen du",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "thpt-nguyen-du-toan-2026-1201-q05",
+    "exam_id": "thpt-nguyen-du-toan-2026-1201",
+    "question_number": 5,
+    "question_type": "multiple_choice",
+    "question_text": "Đường cong trong hình vẽbên là đồthịcủa hàm sốnào sau đây?",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toan hoc THPT nguyen du 2026 - Ma 1201",
+      "school_name": "THPT nguyen du",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "thpt-nguyen-du-toan-2026-1201-q06",
+    "exam_id": "thpt-nguyen-du-toan-2026-1201",
+    "question_number": 6,
+    "question_type": "multiple_choice",
+    "question_text": "Trong không gian Oxyz, mặt cầu (S) có tâm I(1; 2; −1) và tiếp xúc với mặt phẳng (P): $2x −2y −z −8 = 0$ có phương trình là",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toan hoc THPT nguyen du 2026 - Ma 1201",
+      "school_name": "THPT nguyen du",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "thpt-nguyen-du-toan-2026-1201-q07",
+    "exam_id": "thpt-nguyen-du-toan-2026-1201",
+    "question_number": 7,
+    "question_type": "multiple_choice",
+    "question_text": "Trong không gian với hệtrục tọa độOxyz, phương trình của đường thẳng đi qua điểm M(2; 0; −1)\nvà có một véc-tơ chỉphương $\\vec{a} = (4; −6; 2)$ là",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toan hoc THPT nguyen du 2026 - Ma 1201",
+      "school_name": "THPT nguyen du",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "thpt-nguyen-du-toan-2026-1201-q08",
+    "exam_id": "thpt-nguyen-du-toan-2026-1201",
+    "question_number": 8,
+    "question_type": "multiple_choice",
+    "question_text": "Cho hình lăng trụđứng ABC.A′B′C′ có tất cảcác cạnh bằng nhau và\nbằng 4 (tham khảo hình bên). Giá trịcủa $\\vec{AA'} \\cdot \\vec{BC'}$ bằng.",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toan hoc THPT nguyen du 2026 - Ma 1201",
+      "school_name": "THPT nguyen du",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "thpt-nguyen-du-toan-2026-1201-q09",
+    "exam_id": "thpt-nguyen-du-toan-2026-1201",
+    "question_number": 9,
+    "question_type": "multiple_choice",
+    "question_text": "Cho cấp sốnhân (un), biết $u_1 = 1$; $u_4 = 64$. Công bội q của cấp sốnhân bằng",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toan hoc THPT nguyen du 2026 - Ma 1201",
+      "school_name": "THPT nguyen du",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "thpt-nguyen-du-toan-2026-1201-q10",
+    "exam_id": "thpt-nguyen-du-toan-2026-1201",
+    "question_number": 10,
+    "question_type": "multiple_choice",
+    "question_text": "Đồthịhàm số$y = \\frac{2x^2 + 7x −5}{4x −2}$ có đường tiệm cận xiên là",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toan hoc THPT nguyen du 2026 - Ma 1201",
+      "school_name": "THPT nguyen du",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "thpt-nguyen-du-toan-2026-1201-q11",
+    "exam_id": "thpt-nguyen-du-toan-2026-1201",
+    "question_number": 11,
+    "question_type": "multiple_choice",
+    "question_text": "Cho hàm sốf(x) liên tục trên mỗi khoảng $(−∞; −\\frac{1}{2})$ và $(−\\frac{1}{2}; +∞)$ và có bảng biến thiên như\nhình vẽsau:\nTiệm cận ngang của đồthịhàm sốlà đường thẳng có phương trình",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toan hoc THPT nguyen du 2026 - Ma 1201",
+      "school_name": "THPT nguyen du",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "thpt-nguyen-du-toan-2026-1201-q12",
+    "exam_id": "thpt-nguyen-du-toan-2026-1201",
+    "question_number": 12,
+    "question_type": "multiple_choice",
+    "question_text": "Tập nghiệm của bất phương trình $\\log_{0,5}(x −1) > 1$ là khoảng (a; b). Khi đó $a −2b$ bằng",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toan hoc THPT nguyen du 2026 - Ma 1201",
+      "school_name": "THPT nguyen du",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "thpt-nguyen-du-toan-2026-1201-q13",
+    "exam_id": "thpt-nguyen-du-toan-2026-1201",
+    "question_number": 13,
+    "question_type": "true_false",
+    "question_text": "Cho hàm số$y = f(x) = \\log(x^3 −3x + 8)$.",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toan hoc THPT nguyen du 2026 - Ma 1201",
+      "school_name": "THPT nguyen du",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "thpt-nguyen-du-toan-2026-1201-q14",
+    "exam_id": "thpt-nguyen-du-toan-2026-1201",
+    "question_number": 14,
+    "question_type": "true_false",
+    "question_text": "Trong LễTri ân và Trưởng thành\ncủa học sinh khối 12 trường THPT Nguyễn\nDu. Đoàn trường có thiết kếmột không gian\nchụp ảnh kỷyếu trên sân trường. Chọn hệ\ntrục tọa độOxyz (đơn vịlà mét), mặt phẳng\n(Oxy) trùng với mặt sân. Đoàn trường dựng\nmột khung backdrop phẳng nằm dọc theo mặt\nphẳng (P): $2x −y + 2z −15 = 0$. Phía trước\nkhung backdrop, một quảcầu trang trí bằng\nnhựa trong suốt mô phỏng Trái Đất được treo\nlơ lửng, quảcầu có tâm I(1; 2; 3) và bán kính\nR = 3. Đểlấy bối cảnh quay phim toàn cảnh,\nmột học sinh điều khiển flycam xuất phát từ\nđiểm A(13; −16; 9) và bay theo đường thẳng\n$\\Delta$ có vectơ chỉphương $\\vec{u} = (−2; 3; −1)$.",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toan hoc THPT nguyen du 2026 - Ma 1201",
+      "school_name": "THPT nguyen du",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "thpt-nguyen-du-toan-2026-1201-q15",
+    "exam_id": "thpt-nguyen-du-toan-2026-1201",
+    "question_number": 15,
+    "question_type": "true_false",
+    "question_text": "Tại một địa phương, tỷlệngười mắc một căn bệnh truyền nhiễm X là 5%. Đểphát\nhiện bệnh, người ta sửdụng một loại xét nghiệm nhanh có đặc tính sau: Nếu một người thực\nsựmắc bệnh, xác suất xét nghiệm cho kết quảdương tính là 90%. Tuy nhiên, nếu một người\nkhông mắc bệnh, vẫn có 10% xác suất xét nghiệm cho kết quảdương tính (dương tính giả).\nChọn ngẫu nhiên một người tại địa phương đó đểlàm xét nghiệm.",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toan hoc THPT nguyen du 2026 - Ma 1201",
+      "school_name": "THPT nguyen du",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "thpt-nguyen-du-toan-2026-1201-q16",
+    "exam_id": "thpt-nguyen-du-toan-2026-1201",
+    "question_number": 16,
+    "question_type": "true_false",
+    "question_text": "Một nhóm học sinh trường THPT Nguyễn Du thực hiện dựán nghiên cứu xửlý nước thải. Trong\nquá trình thửnghiệm hệthống lọc, các bạn theo dõi nồng độmột loại tạp chất tồn dư trong nước. Kết quả\ncho thấy nồng độtạp chất $y(t)$ (đơn vị: mg/lít) tồn dư trong nước tại thời điểm t (giờ) ($t ≥0$) kểtừlúc bắt\nđầu lọc thỏa mãn $y(t) > 0$ và $y′(t) = k\\sqrt{y(t)}$ ($t ≥0$), trong đó k là một hằng số. Đo nồng độtạp chất tại các\nthời điểm $t = 0$ (giờ) và $t = 8$ (giờ) nhận được kết quảlần lượt là 100 mg/lít và 36 mg/lít.",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toan hoc THPT nguyen du 2026 - Ma 1201",
+      "school_name": "THPT nguyen du",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "thpt-nguyen-du-toan-2026-1201-q17",
+    "exam_id": "thpt-nguyen-du-toan-2026-1201",
+    "question_number": 17,
+    "question_type": "short_answer",
+    "question_text": "Một tháp làm nguội của một nhà máy có mặt cắt\nđi qua trục của tháp là hình hypebol có phương trình $\\frac{x^2}{60^2} − \\frac{y^2}{30^2} = 1$ (đơn vịtrên các trục tọa độlà mét). Biết chiều cao\ncủa tháp là 120 m và khoảng cách từnóc tháp đến tâm đối\nxứng của hypebol bằng một nửa khoảng cách từtâm đối xứng\ntới đáy. Tính bán kính nóc của tháp (kết quảtính theo đơn vị\nmét).",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toan hoc THPT nguyen du 2026 - Ma 1201",
+      "school_name": "THPT nguyen du",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "thpt-nguyen-du-toan-2026-1201-q18",
+    "exam_id": "thpt-nguyen-du-toan-2026-1201",
+    "question_number": 18,
+    "question_type": "short_answer",
+    "question_text": "Cho hàm sốf(x) thoảmãn $f(0) = 4$ và $f′(x) = 6 \\sin^2 x + 2$, $\\forall x ∈R$. Tính tích phân $\\int_{0}^{\\frac{\\pi}{4}} f(x) dx$.\n(kết quảlàm tròn đến hàng phần trăm)",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toan hoc THPT nguyen du 2026 - Ma 1201",
+      "school_name": "THPT nguyen du",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "thpt-nguyen-du-toan-2026-1201-q19",
+    "exam_id": "thpt-nguyen-du-toan-2026-1201",
+    "question_number": 19,
+    "question_type": "short_answer",
+    "question_text": "Tại một sân bay, hai vệtinh A và B được đặt cốđịnh đểgiám sát một sốkhu vực cốđịnh. Một\nthiết bịtựđộng X di chuyển trên mặt đất và được điều khiển bởi đài Radar trung tâm đểđảm bảo tín hiệu\nliên lạc được truyền thẳng tới cảhai vệtinh A và B, đồng thời các đường thẳng phát tín hiệu từthiết bịX\nđến hai vệtinh A và B luôn tạo với mặt đất các góc phụnhau. Xét trong không gian Oxyz, xem mặt đất là\nmặt phẳng (Oxy), Radar được đặt tại gốc tọa độO, hai vệtinh A và B được đặt tại các điểm có tọa độlần\nlượt là A(2; 10; 4) và B(6; 30; 6). Khoảng cách lớn nhất mà Radar có thểliên lạc đến thiết bịtựđộng X bằng\nbao nhiêu (kết quảlàm tròn đến hàng phần chục).",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toan hoc THPT nguyen du 2026 - Ma 1201",
+      "school_name": "THPT nguyen du",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "thpt-nguyen-du-toan-2026-1201-q20",
+    "exam_id": "thpt-nguyen-du-toan-2026-1201",
+    "question_number": 20,
+    "question_type": "short_answer",
+    "question_text": "Cúm A (Influenza A) là bệnh nhiễm trùng đường hô\nhấp cấp tính do các virus cúm mùa gây nên. Virut cúm A có thể\nlây truyền trực tiếp trong không khí thông qua đường hô hấp.\nGiảsửVirut cúm A có khảnăng lây nhiễm đối với người ngồi\ntrong vòng bán kính 1,8 m là 80% và đối với người ngồi cách hơn\n1,8 m là 5%. An là một học sinh bịnhiễm cúm A nhưng bản thân\nkhông hay biết. An đi dựthi cuối kỳ. Phòng thi của An có 24 bạn\nđược xếp vào 24 chỗngồi của một phòng thi có 4 dãy, mỗi dãy\n6 chỗngồi như hình vẽ. Khoảng cách giữa hai người theo hàng\nngang là 1,4 m, theo hàng dọc là 1 m. Do không biết trước An bị\ncúm A nên các thí sinh được xếp ngẫu nhiên vào phòng thi. Một\nbạn cùng phòng của An sau khi dựthi đi kiểm tra không thấy bị\nnhiễm cúm A. Xác suất đểthí sinh đó ngồi gần An trong vòng\n1,8 m là phân sốtối giản có dạng $\\frac{a}{b}$ (với $a, b ∈N^*$). Tính tổng\n$S = a + 2b$.",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toan hoc THPT nguyen du 2026 - Ma 1201",
+      "school_name": "THPT nguyen du",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "thpt-nguyen-du-toan-2026-1201-q21",
+    "exam_id": "thpt-nguyen-du-toan-2026-1201",
+    "question_number": 21,
+    "question_type": "short_answer",
+    "question_text": "Một cửa hàng chuyên bán khăn tắm với giá 50 nghìn đồng mỗi chiếc. Với mức giá này, mỗi tháng\ncửa hàng bán được 1 000 chiếc. Đểtăng doanh số, cửa hàng dựđịnh thực hiện chương trình giảm giá. Nghiên\ncứu thịtrường cho thấy, nếu cứgiảm giá bán đi 1 nghìn đồng cho mỗi chiếc khăn tắm thì sốlượng bán ra\ntrong một tháng sẽtăng thêm 100 chiếc. Biết giá nhập kho của mỗi chiếc khăn tắm là 30 nghìn đồng. Hỏi\ncửa hàng phải định giá bán mỗi chiếc khăn tắm là bao nhiêu nghìn đồng đểthu được lợi nhuận trong tháng\nlà lớn nhất?",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toan hoc THPT nguyen du 2026 - Ma 1201",
+      "school_name": "THPT nguyen du",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "thpt-nguyen-du-toan-2026-1201-q22",
+    "exam_id": "thpt-nguyen-du-toan-2026-1201",
+    "question_number": 22,
+    "question_type": "short_answer",
+    "question_text": "Cho hình lăng trụđứng ABC.A′B′C′ có đáy ABC là tam giác với $AC = 5$, $BC = 8$ và $\\widehat{ACB} = 60^\\circ$.\nTính khoảng cách từđiểm C đến mặt phẳng (AA′B′B) (làm tròn kết quảđến hàng phần trăm).",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toan hoc THPT nguyen du 2026 - Ma 1201",
+      "school_name": "THPT nguyen du",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "thpt-nguyen-trai-toan-2026-1201-q01",
+    "exam_id": "thpt-nguyen-trai-toan-2026-1201",
+    "question_number": 1,
+    "question_type": "multiple_choice",
+    "question_text": "Cho đồ thị hàm số $y = \\frac{2x - 5}{x + 2}$. Đường tiệm cận đứng của đồ thị hàm số đã cho có phương trình là:",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toan hoc thpt nguyen trai 2026 - Ma 1201",
+      "school_name": "thpt nguyen trai",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "thpt-nguyen-trai-toan-2026-1201-q02",
+    "exam_id": "thpt-nguyen-trai-toan-2026-1201",
+    "question_number": 2,
+    "question_type": "multiple_choice",
+    "question_text": "Nghiệm của phương trình $\\log_2 (x - 1) = 3$ là:",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toan hoc thpt nguyen trai 2026 - Ma 1201",
+      "school_name": "thpt nguyen trai",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "thpt-nguyen-trai-toan-2026-1201-q03",
+    "exam_id": "thpt-nguyen-trai-toan-2026-1201",
+    "question_number": 3,
+    "question_type": "multiple_choice",
+    "question_text": "Thời lượng gọi điện thoại (đơn vị: phút) của một số khách hàng được thống kê trong bảng dữ liệu ghép nhóm sau:\nThời gian (phút)\n[0;5)\n[5;10)\n[10;15)\n[15;20)\nSố khách hàng\n10\n20\n15\n5\nTứ phân vị thứ ba ($Q_3$) của mẫu số liệu ghép nhóm trên bằng bao nhiêu?",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toan hoc thpt nguyen trai 2026 - Ma 1201",
+      "school_name": "thpt nguyen trai",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "thpt-nguyen-trai-toan-2026-1201-q04",
+    "exam_id": "thpt-nguyen-trai-toan-2026-1201",
+    "question_number": 4,
+    "question_type": "multiple_choice",
+    "question_text": "Cho hình hộp chữ nhật $ABCD.A'B'C'D'$. Đường thẳng AB song song với mặt phẳng nào dưới đây?",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toan hoc thpt nguyen trai 2026 - Ma 1201",
+      "school_name": "thpt nguyen trai",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "thpt-nguyen-trai-toan-2026-1201-q05",
+    "exam_id": "thpt-nguyen-trai-toan-2026-1201",
+    "question_number": 5,
+    "question_type": "multiple_choice",
+    "question_text": "Cho khối chóp $S.ABC$ có đáy $ABC$ là tam giác vuông tại $B$. Cạnh bên $SA$ vuông góc với mặt phẳng đáy. Biết $SA = 2a$, $AB = a$ và $BC = 3a$. Thể tích của khối chóp $S.ABC$ bằng:",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toan hoc thpt nguyen trai 2026 - Ma 1201",
+      "school_name": "thpt nguyen trai",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "thpt-nguyen-trai-toan-2026-1201-q06",
+    "exam_id": "thpt-nguyen-trai-toan-2026-1201",
+    "question_number": 6,
+    "question_type": "multiple_choice",
+    "question_text": "Tìm họ nguyên hàm của hàm số $f(x) = 3x^2 + 2x - 1$.",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toan hoc thpt nguyen trai 2026 - Ma 1201",
+      "school_name": "thpt nguyen trai",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "thpt-nguyen-trai-toan-2026-1201-q07",
+    "exam_id": "thpt-nguyen-trai-toan-2026-1201",
+    "question_number": 7,
+    "question_type": "multiple_choice",
+    "question_text": "Trong không gian $Oxyz$, phương trình tổng quát của mặt phẳng đi qua điểm $I(-1;2;3)$ và có một vectơ pháp tuyến $\\vec{n} = (2;1;-2)$ là:",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toan hoc thpt nguyen trai 2026 - Ma 1201",
+      "school_name": "thpt nguyen trai",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "thpt-nguyen-trai-toan-2026-1201-q08",
+    "exam_id": "thpt-nguyen-trai-toan-2026-1201",
+    "question_number": 8,
+    "question_type": "multiple_choice",
+    "question_text": "Cho hàm số $y = f(x)$ liên tục trên đoạn $[a; b]$. Diện tích hình phẳng giới hạn bởi đồ thị hàm số $y = f(x)$, trục hoành và hai đường thẳng $x = a, x = b$ (với $a < b$) được tính bởi công thức:",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toan hoc thpt nguyen trai 2026 - Ma 1201",
+      "school_name": "thpt nguyen trai",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "thpt-nguyen-trai-toan-2026-1201-q09",
+    "exam_id": "thpt-nguyen-trai-toan-2026-1201",
+    "question_number": 9,
+    "question_type": "multiple_choice",
+    "question_text": "Tập nghiệm $S$ của phương trình $\\sin x = 1$ là:",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toan hoc thpt nguyen trai 2026 - Ma 1201",
+      "school_name": "thpt nguyen trai",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "thpt-nguyen-trai-toan-2026-1201-q10",
+    "exam_id": "thpt-nguyen-trai-toan-2026-1201",
+    "question_number": 10,
+    "question_type": "multiple_choice",
+    "question_text": "Trong không gian với hệ tọa độ $Oxyz$, cho đường thẳng $d$ có phương trình chính tắc là: $\\frac{x - 1}{2} = \\frac{y + 2}{-1} = \\frac{z - 3}{4}$. Vectơ nào dưới đây là một vectơ chỉ phương của đường thẳng $d$?",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toan hoc thpt nguyen trai 2026 - Ma 1201",
+      "school_name": "thpt nguyen trai",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "thpt-nguyen-trai-toan-2026-1201-q11",
+    "exam_id": "thpt-nguyen-trai-toan-2026-1201",
+    "question_number": 11,
+    "question_type": "multiple_choice",
+    "question_text": "Cho hình lăng trụ tam giác $ABC.A'B'C'$. Khẳng định nào sau đây là đúng về tổng của các vectơ $\\vec{AB} + \\vec{BC} + \\vec{AA'}$?",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toan hoc thpt nguyen trai 2026 - Ma 1201",
+      "school_name": "thpt nguyen trai",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "thpt-nguyen-trai-toan-2026-1201-q12",
+    "exam_id": "thpt-nguyen-trai-toan-2026-1201",
+    "question_number": 12,
+    "question_type": "multiple_choice",
+    "question_text": "Cho cấp số cộng $(u_n)$ có số hạng đầu $u_1 = 3$ và công sai $d = 2$. Giá trị của số hạng $u_5$ là:",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toan hoc thpt nguyen trai 2026 - Ma 1201",
+      "school_name": "thpt nguyen trai",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "thpt-nguyen-trai-toan-2026-1201-q13",
+    "exam_id": "thpt-nguyen-trai-toan-2026-1201",
+    "question_number": 13,
+    "question_type": "true_false",
+    "question_text": "Khảo sát hàm số $f(x) = x^3 - 12x - 8$.",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toan hoc thpt nguyen trai 2026 - Ma 1201",
+      "school_name": "thpt nguyen trai",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "thpt-nguyen-trai-toan-2026-1201-q14",
+    "exam_id": "thpt-nguyen-trai-toan-2026-1201",
+    "question_number": 14,
+    "question_type": "true_false",
+    "question_text": "Một quần thể vi khuẩn ban đầu có 1000 con. Gọi $P(t)$ là số lượng vi khuẩn của quần thể đó tại thời điểm $t$, trong đó $t$ tính theo giờ ($t \\ge 0$). Sự gia tăng của quần thể vi khuẩn tuân theo mô hình tốc độ sinh trưởng tỷ lệ thuận với số lượng hiện có, được mô hình hóa bởi phương trình $P'(t) = k \\cdot P(t)$ (trong đó $k$ là hằng số tăng trưởng). Điều này dẫn đến công thức tính số lượng vi khuẩn tại thời điểm $t$ là $P(t) = P_0 \\cdot e^{kt}$. Biết rằng sau 2 giờ, số lượng vi khuẩn của quần thể tăng lên thành 4000 con.",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toan hoc thpt nguyen trai 2026 - Ma 1201",
+      "school_name": "thpt nguyen trai",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "thpt-nguyen-trai-toan-2026-1201-q15",
+    "exam_id": "thpt-nguyen-trai-toan-2026-1201",
+    "question_number": 15,
+    "question_type": "true_false",
+    "question_text": "Trong một không gian với hệ trục tọa độ $Oxyz$ (đơn vị đo lấy theo mét, mặt phẳng $(Oxy)$ biểu diễn mặt đất). Một chiếc flycam bắt đầu di chuyển thẳng đều từ vị trí $A(0;0;20)$ theo hướng của véctơ $\\vec{v} = (2;2;1)$ với tốc độ 15 m/s. Một trạm quan sát được đặt tại điểm $K(36;48;0)$ trên mặt đất. Giả sử $t$ (giây) là thời gian tính từ lúc flycam bắt đầu di chuyển ($t \\ge 0$).",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toan hoc thpt nguyen trai 2026 - Ma 1201",
+      "school_name": "thpt nguyen trai",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "thpt-nguyen-trai-toan-2026-1201-q16",
+    "exam_id": "thpt-nguyen-trai-toan-2026-1201",
+    "question_number": 16,
+    "question_type": "true_false",
+    "question_text": "Một hệ thống AI được sử dụng để tự động kiểm tra và phân loại linh kiện điện tử trong một nhà máy bằng cách \"đánh dấu\" các linh kiện nghi ngờ bị lỗi để loại bỏ. Qua một thời gian dài theo dõi, người ta thống kê được: trong số tất cả linh kiện đi qua hệ thống, có 20% số linh kiện bị đánh dấu. Trong số các linh kiện bị đánh dấu, có 5% số linh kiện thực chất là đạt chuẩn (không lỗi). Trong số các linh kiện không bị đánh dấu, có 10% số linh kiện thực chất bị lỗi. Chọn ngẫu nhiên một linh kiện điện tử đã qua kiểm tra.",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toan hoc thpt nguyen trai 2026 - Ma 1201",
+      "school_name": "thpt nguyen trai",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "thpt-nguyen-trai-toan-2026-1201-q17",
+    "exam_id": "thpt-nguyen-trai-toan-2026-1201",
+    "question_number": 17,
+    "question_type": "short_answer",
+    "question_text": "Một cửa hàng hoa quả sạch dự định đóng gói hai loại giỏ quà Tết: Giỏ Lộc Phát và Giỏ Bình An\n- Mỗi Giỏ Lộc Phát cần 3 kg táo, 1 kg cam và 1 kg nho. Lãi thu được là 400 nghìn đồng.\n- Mỗi Giỏ Bình An cần 1 kg táo, 3 kg cam và 1 kg nho. Lãi thu được là 500 nghìn đồng.\nHiện tại, trong kho của cửa hàng đang có sẵn tối đa 18 kg táo, 18 kg cam và 8 kg nho. Hỏi tổng tiền lãi lớn nhất mà cửa hàng có thể thu được khi bán hai loại giỏ quà Tết trên ? (đơn vị nghìn đồng)",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toan hoc thpt nguyen trai 2026 - Ma 1201",
+      "school_name": "thpt nguyen trai",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "thpt-nguyen-trai-toan-2026-1201-q18",
+    "exam_id": "thpt-nguyen-trai-toan-2026-1201",
+    "question_number": 18,
+    "question_type": "short_answer",
+    "question_text": "Một kho vật tư y tế đang có sẵn 8 thùng thuốc loại A và 6 thùng thuốc loại B. Một hệ thống phần mềm tự động tiếp nhận các đơn đặt hàng từ các bệnh viện và tiến hành xét duyệt lần lượt theo thứ tự thời gian. Giả sử luôn có sẵn các đơn hàng xếp hàng chờ được hệ thống xử lý để quá trình xét duyệt không bao giờ bị gián đoạn do thiếu đơn. Dữ liệu thống kê cho thấy, mỗi đơn hàng khi gửi đến sẽ rơi vào một trong ba trường hợp (các đơn hàng hoàn toàn độc lập với nhau):\n$\\bullet$ Loại 1 (có xác suất 1/2): Yêu cầu xuất 2 thùng loại A.\n$\\bullet$ Loại 2 (có xác suất 1/3): Yêu cầu xuất 1 thùng loại A và 1 thùng loại B.\n$\\bullet$ Loại 3 (có xác suất 1/6): Yêu cầu xuất 2 thùng loại B.\nQuy trình xuất kho được lập trình như sau:\n$\\bullet$ Hệ thống sẽ chấp nhận xuất kho nếu số lượng thuốc hiện tại đủ để đáp ứng trọn vẹn đơn hàng đang xét.\n$\\bullet$ Ngay khi xét duyệt đến một đơn hàng mà kho không đủ khả năng đáp ứng (dù chỉ thiếu 1 thùng), hệ thống sẽ báo lỗi từ chối đơn hàng đó và dừng hoạt động vĩnh viễn. Các đơn hàng xếp sau cũng sẽ bị hủy bỏ.\nGọi $E$ là biến cố: “Ngay trước khi hệ thống báo lỗi và dừng hoạt động, kho vật tư đã được xuất hết cả hai loại thuốc A và B (còn đúng 0 thùng A và 0 thùng B)”. Hãy tính xác suất của biến cố $E$. (Làm tròn kết quả đến hàng phần chục).",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toan hoc thpt nguyen trai 2026 - Ma 1201",
+      "school_name": "thpt nguyen trai",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "thpt-nguyen-trai-toan-2026-1201-q19",
+    "exam_id": "thpt-nguyen-trai-toan-2026-1201",
+    "question_number": 19,
+    "question_type": "short_answer",
+    "question_text": "Cho hình chóp $S.ABCD$ có đáy là hình chữ nhật $ABCD$, $SA$ vuông góc với mặt phẳng $(ABCD)$, $AB = 1$, $AD = 2$, $SA = 3$. Tính số đo góc nhị diện $[B, SC, D]$ theo đơn vị độ (Kết quả làm tròn đến hàng đơn vị).",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toan hoc thpt nguyen trai 2026 - Ma 1201",
+      "school_name": "thpt nguyen trai",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "thpt-nguyen-trai-toan-2026-1201-q20",
+    "exam_id": "thpt-nguyen-trai-toan-2026-1201",
+    "question_number": 20,
+    "question_type": "short_answer",
+    "question_text": "Tại một trung tâm thử nghiệm, các kỹ sư sử dụng một bồn chứa nhiên liệu dạng lăng trụ đứng có đáy là hình vuông. Các kích thước của bồn như sau: cạnh đáy bằng $50\\pi$ cm và chiều cao bằng 112 cm. Bên trong bồn chứa có lắp đặt cố định một bình nén khí. Bình nén khí này được coi là một khối cầu đặc có bán kính bằng 30 cm, tiếp xúc với mặt đáy của bồn và có tâm nằm trên trục của lăng trụ. Ban đầu, bồn chứa hoàn toàn không có nhiên liệu. Người ta bắt đầu bơm nhiên liệu lỏng vào bồn với lưu lượng (thể tích bơm được trong mỗi phút) không đổi. Quá trình bơm diễn ra liên tục, và sau đúng 90 phút, mực nhiên liệu dâng lên vừa chạm tới mặt phẳng miệng bồn. Để thiết lập hệ thống tự động, các kỹ sư cần khoan gắn một cảm biến đo mức trên vách bồn. Cảm biến này phải được đặt ở vị trí có cùng độ cao với mực nhiên liệu tại thời điểm máy bơm đã hoạt động được đúng 15 phút. Hỏi cảm biến này phải được gắn ở độ cao bao nhiêu cm (tính từ mặt đáy bồn theo phương thẳng đứng)? (Bỏ qua sự bay hơi hay giãn nở của nhiên liệu; bồn chứa không bị biến dạng và có độ dày không đáng kể. Giả sử nhiên liệu lấp đầy hoàn toàn các khoảng trống và bề mặt chất lỏng luôn là mặt phẳng nằm ngang. Làm tròn kết quả đến hàng đơn vị nếu là số thập phân).",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toan hoc thpt nguyen trai 2026 - Ma 1201",
+      "school_name": "thpt nguyen trai",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "thpt-nguyen-trai-toan-2026-1201-q21",
+    "exam_id": "thpt-nguyen-trai-toan-2026-1201",
+    "question_number": 21,
+    "question_type": "short_answer",
+    "question_text": "Một xưởng công nghệ chuyên sản xuất máy tính bảng giáo dục cung cấp cho các trường học. Xưởng thỏa thuận cung cấp số lượng sản phẩm hàng tháng theo đơn đặt hàng, nhưng tối đa không vượt quá 100 lô hàng. Nếu số lượng đặt hàng là $x$ (lô) thì giá bán của mỗi lô sản phẩm được xác định bởi hàm số $P(x) = 140 - 0,01x^2$ (triệu đồng). Biết rằng chi phí để xưởng sản xuất $x$ lô sản phẩm trong một tháng là $C(x) = 200 + 32x$ (triệu đồng) (bao gồm 200 triệu đồng chi phí cố định vận hành máy móc và 32 triệu đồng chi phí sản xuất cho mỗi lô). Hỏi lợi nhuận lớn nhất mà xưởng có thể thu được mỗi tháng là bao nhiêu triệu đồng?",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toan hoc thpt nguyen trai 2026 - Ma 1201",
+      "school_name": "thpt nguyen trai",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "thpt-nguyen-trai-toan-2026-1201-q22",
+    "exam_id": "thpt-nguyen-trai-toan-2026-1201",
+    "question_number": 22,
+    "question_type": "short_answer",
+    "question_text": "Có 3 hộp đựng bi: hộp I có 6 bi đỏ và 4 bi trắng; hộp II có 4 bi đỏ và 6 bi trắng; hộp III có 5 bi đỏ và 5 bi trắng. Lấy ra ngẫu nhiên 1 viên bi từ hộp I và 1 viên bi từ hộp II rồi bỏ 2 viên bi này vào hộp III. Sau đó từ hộp III lấy ra ngẫu nhiên 2 viên bi. Biết rằng 2 viên bi lấy ra từ hộp III có đủ cả hai màu, xác suất để các viên bi đó là viên bi được chuyển từ hộp I và hộp II sang hộp III là $\\frac{p}{q}$ với $p, q$ là các số nguyên dương và nguyên tố cùng nhau. Tìm $p + q$.",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toan hoc thpt nguyen trai 2026 - Ma 1201",
+      "school_name": "thpt nguyen trai",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "thpt-yen-lac-toan-2026-101-q01",
+    "exam_id": "thpt-yen-lac-toan-2026-101",
+    "question_number": 1,
+    "question_type": "multiple_choice",
+    "question_text": "Cho hàm số $y = f(x)$ có đồ thị như hình vẽ:\nĐiểm cực đại của đồ thị hàm số là:",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toán học THPT Yên Lạc 2026 - Ma 101",
+      "school_name": "THPT Yên Lạc",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "thpt-yen-lac-toan-2026-101-q02",
+    "exam_id": "thpt-yen-lac-toan-2026-101",
+    "question_number": 2,
+    "question_type": "multiple_choice",
+    "question_text": "Trong không gian Oxyz cho mặt phẳng $(P): 3x - y + 2z - 1 = 0$. Véc tơ nào dưới đây không phải là 1 véc tơ pháp tuyến của mặt phẳng $(P)$?",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toán học THPT Yên Lạc 2026 - Ma 101",
+      "school_name": "THPT Yên Lạc",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "thpt-yen-lac-toan-2026-101-q03",
+    "exam_id": "thpt-yen-lac-toan-2026-101",
+    "question_number": 3,
+    "question_type": "multiple_choice",
+    "question_text": "Kết quả thi khảo sát cuối khóa môn Toán của các thí sinh tại 1 trung tâm luyện thi được cho bởi bảng sau:\nĐiểm số\n[5;6)\n[6;7)\n[7;8)\n[8;9)\n[9;10)\nSố thí sinh\n5\n13\n35\n20\n7\nTìm khoảng tứ phân vị của mẫu số liệu ghép nhóm trên (Kết quả làm tròn đến hàng phần trăm)",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toán học THPT Yên Lạc 2026 - Ma 101",
+      "school_name": "THPT Yên Lạc",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "thpt-yen-lac-toan-2026-101-q04",
+    "exam_id": "thpt-yen-lac-toan-2026-101",
+    "question_number": 4,
+    "question_type": "multiple_choice",
+    "question_text": "Cho hàm số $y = f(x)$ có bảng biến thiên như sau:\nTổng số tiệm cận ngang và tiệm cận đứng của đồ thị hàm số là",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toán học THPT Yên Lạc 2026 - Ma 101",
+      "school_name": "THPT Yên Lạc",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "thpt-yen-lac-toan-2026-101-q05",
+    "exam_id": "thpt-yen-lac-toan-2026-101",
+    "question_number": 5,
+    "question_type": "multiple_choice",
+    "question_text": "Trong không gian Oxyz cho 3 điểm $A(1;-1;2)$, $B(2;0;1)$, $C(0;-1;3)$. Giá trị của $\\vec{AB} \\cdot \\vec{AC}$ là:",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toán học THPT Yên Lạc 2026 - Ma 101",
+      "school_name": "THPT Yên Lạc",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "thpt-yen-lac-toan-2026-101-q06",
+    "exam_id": "thpt-yen-lac-toan-2026-101",
+    "question_number": 6,
+    "question_type": "multiple_choice",
+    "question_text": "Gọi $a, b, c$ là độ dài các cạnh tương ứng với các góc $A, B, C$ của $\\triangle ABC$. Trong các khẳng định sau khẳng định nào đúng.",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toán học THPT Yên Lạc 2026 - Ma 101",
+      "school_name": "THPT Yên Lạc",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "thpt-yen-lac-toan-2026-101-q07",
+    "exam_id": "thpt-yen-lac-toan-2026-101",
+    "question_number": 7,
+    "question_type": "multiple_choice",
+    "question_text": "Trong không gian Oxyz cho mặt phẳng $(\\alpha): x - 2y + 2z - 7 = 0$. Khoảng cách từ điểm $M(1;2;-6)$ đến mặt phẳng $(\\alpha)$ là:",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toán học THPT Yên Lạc 2026 - Ma 101",
+      "school_name": "THPT Yên Lạc",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "thpt-yen-lac-toan-2026-101-q08",
+    "exam_id": "thpt-yen-lac-toan-2026-101",
+    "question_number": 8,
+    "question_type": "multiple_choice",
+    "question_text": "Tiệm cận xiên của đồ thị hàm số $y = \\frac{x^2 - 2x - 5}{x + 2}$ là:",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toán học THPT Yên Lạc 2026 - Ma 101",
+      "school_name": "THPT Yên Lạc",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "thpt-yen-lac-toan-2026-101-q09",
+    "exam_id": "thpt-yen-lac-toan-2026-101",
+    "question_number": 9,
+    "question_type": "multiple_choice",
+    "question_text": "Trong không gian Oxyz. Đường thẳng đi qua điểm $A(1;2;-1)$ và vuông góc với mặt phẳng $(P): x - 3y + 2z - 5 = 0$ có phương trình tham số là:",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toán học THPT Yên Lạc 2026 - Ma 101",
+      "school_name": "THPT Yên Lạc",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "thpt-yen-lac-toan-2026-101-q10",
+    "exam_id": "thpt-yen-lac-toan-2026-101",
+    "question_number": 10,
+    "question_type": "multiple_choice",
+    "question_text": "Hình phẳng D giới hạn bởi đồ thị hàm số $y = e^x$, trục hoành và 2 đường thẳng $x = 1; x = 2$. Thể tích khối tròn xoay sinh ra khi cho hình phẳng D quay quanh trục hoành là:",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toán học THPT Yên Lạc 2026 - Ma 101",
+      "school_name": "THPT Yên Lạc",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "thpt-yen-lac-toan-2026-101-q11",
+    "exam_id": "thpt-yen-lac-toan-2026-101",
+    "question_number": 11,
+    "question_type": "multiple_choice",
+    "question_text": "Cho hàm số $f(x) = 3^x + \\sin x$. Họ nguyên hàm của hàm số $f(x)$ trên R là:",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toán học THPT Yên Lạc 2026 - Ma 101",
+      "school_name": "THPT Yên Lạc",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "thpt-yen-lac-toan-2026-101-q12",
+    "exam_id": "thpt-yen-lac-toan-2026-101",
+    "question_number": 12,
+    "question_type": "multiple_choice",
+    "question_text": "Tập nghiệm của bất phương trình $(\\frac{1}{2})^{x^2 + 4x} > \\frac{1}{32}$ là:",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toán học THPT Yên Lạc 2026 - Ma 101",
+      "school_name": "THPT Yên Lạc",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "thpt-yen-lac-toan-2026-101-q13",
+    "exam_id": "thpt-yen-lac-toan-2026-101",
+    "question_number": 13,
+    "question_type": "true_false",
+    "question_text": "Một hệ thống AI được sử dụng để kiểm tra đạo văn trong các bài viết học sinh nộp. Theo thống kê có 1% bài viết là đạo văn; 99% bài viết là chính chủ (không đạo văn). Phần mềm kiểm tra có độ chính xác như sau: Nếu bài viết là đạo văn, phần mềm phát hiện đúng với xác suất 98%; Nếu bài viết là chính chủ, phần mềm cảnh báo nhầm là đạo văn với xác suất là 3%.",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toán học THPT Yên Lạc 2026 - Ma 101",
+      "school_name": "THPT Yên Lạc",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "thpt-yen-lac-toan-2026-101-q14",
+    "exam_id": "thpt-yen-lac-toan-2026-101",
+    "question_number": 14,
+    "question_type": "true_false",
+    "question_text": "Cho hàm số $y = \\frac{x^2 - 3x + 6}{x - 1}$.",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toán học THPT Yên Lạc 2026 - Ma 101",
+      "school_name": "THPT Yên Lạc",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "thpt-yen-lac-toan-2026-101-q15",
+    "exam_id": "thpt-yen-lac-toan-2026-101",
+    "question_number": 15,
+    "question_type": "true_false",
+    "question_text": "Trong không gian Oxyz cho trước, đơn vị trên mỗi trục là 1 mét, có hai chiếc chiến đấu cơ từ hai vị trí $A(40;-15;15)$, $B(55;-10;65)$ cần đáp xuống hai vị trí thuộc tàu sân bay hải quân để nạp nhiên liệu. Bề mặt chứa các đường băng trên tàu là mặt phẳng $(P): 3x - y + 2z - 25 = 0$.",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toán học THPT Yên Lạc 2026 - Ma 101",
+      "school_name": "THPT Yên Lạc",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "thpt-yen-lac-toan-2026-101-q16",
+    "exam_id": "thpt-yen-lac-toan-2026-101",
+    "question_number": 16,
+    "question_type": "true_false",
+    "question_text": "Một cái chậu đựng nước có dạng hình chóp cụt đều có đáy là các tam giác đều cạnh bằng 1dm và 3dm, chiều cao của chậu là 4dm. Người ta bơm nước vào chậu với lưu lượng không đổi 0,5 lít/phút.",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toán học THPT Yên Lạc 2026 - Ma 101",
+      "school_name": "THPT Yên Lạc",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "thpt-yen-lac-toan-2026-101-q17",
+    "exam_id": "thpt-yen-lac-toan-2026-101",
+    "question_number": 17,
+    "question_type": "short_answer",
+    "question_text": "Cho khối lăng trụ $ABC.A'B'C'$ có đáy là tam giác đều cạnh bằng 5. Hình chiếu vuông góc của điểm $A'$ lên mặt phẳng $(ABC)$ trùng với trọng tâm G của tam giác ABC. Biết khoảng cách giữa hai đường thẳng $AA'$ và BC bằng $\\frac{15}{4}$. Tính thể tích khối chóp $A'.ABC$. (Kết quả làm tròn đến hàng đơn vị).",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toán học THPT Yên Lạc 2026 - Ma 101",
+      "school_name": "THPT Yên Lạc",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "thpt-yen-lac-toan-2026-101-q18",
+    "exam_id": "thpt-yen-lac-toan-2026-101",
+    "question_number": 18,
+    "question_type": "short_answer",
+    "question_text": "Một doanh nghiệp phân bổ ngân sách quảng cáo trên Facebook và YouTube với tổng số tiền không vượt quá 80 triệu đồng. Chi phí cho Facebook nằm trong khoảng từ 20 đến 50 triệu đồng. Chi phí cho YouTube tối thiểu là 15 triệu đồng. Số tiền chi cho chạy quảng cáo trên YouTube không được vượt qua chi phí cho quảng cáo trên Facebook. Biết rằng số khách tiếp cận là 4 nghìn khách cho mỗi triệu tiền chi quảng cáo trên Facebook và 6 nghìn khách cho mỗi triệu quảng cáo trên YouTube. Hỏi lượng khách tiếp cận lớn nhất là bao nhiêu nghìn người.",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toán học THPT Yên Lạc 2026 - Ma 101",
+      "school_name": "THPT Yên Lạc",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "thpt-yen-lac-toan-2026-101-q19",
+    "exam_id": "thpt-yen-lac-toan-2026-101",
+    "question_number": 19,
+    "question_type": "short_answer",
+    "question_text": "Tốc độ giải ngân 2 tỷ tiền trợ cấp $M'(t)$ dành cho 1 vùng A bị thiệt hại về lũ lụt tỉ lệ thuận với bình phương của $(100 - t)$, trong đó $t$ là thời gian tính bằng ngày ($0 \\le t \\le 100$) và $M(t)$ là số tiền còn lại chưa giải ngân sau $t$ ngày. Hỏi số tiền còn lại chưa giải ngân sau 40 ngày là bao nhiêu triệu đồng, biết rằng toàn bộ số tiền sẽ được giải ngân trong 100 ngày.",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toán học THPT Yên Lạc 2026 - Ma 101",
+      "school_name": "THPT Yên Lạc",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "thpt-yen-lac-toan-2026-101-q20",
+    "exam_id": "thpt-yen-lac-toan-2026-101",
+    "question_number": 20,
+    "question_type": "short_answer",
+    "question_text": "Trong không gian Oxyz (đơn vị trên mỗi trục là 1 km), coi mặt đất là mặt phẳng $(Oxy)$. Một máy bay phản lực xuất phát từ vị trí $B(2;-1;0)$ và bay thẳng với vận tốc $v(t) = (t^2 - t + 1) \\cdot 10 / 1200 \\cdot 2 m/s$ theo hướng véc tơ $\\vec{u} = (2;2;1)$. Một trạm ra đa đặt tại điểm $A(1;2;0)$ với bán kính quét tối đa là 100 km. Khi máy bay đến vị trí C có độ cao 6 km so với mặt đất thì máy bay sẽ chuyển động thẳng đều theo hướng thoát ra khỏi vùng giám sát của ra đa nhanh nhất (giữ nguyên vận tốc tại thời điểm ở vị trí C). Tính thời gian máy bay di chuyển từ lúc xuất phát cho đến khi thoát ra khỏi vùng giám sát của ra đa. (Theo đơn vị phút, làm tròn đến hàng phần chục).",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toán học THPT Yên Lạc 2026 - Ma 101",
+      "school_name": "THPT Yên Lạc",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "thpt-yen-lac-toan-2026-101-q21",
+    "exam_id": "thpt-yen-lac-toan-2026-101",
+    "question_number": 21,
+    "question_type": "short_answer",
+    "question_text": "Một con mã đang được đặt ở vị trí chính giữa tâm ô vuông d4 trong bàn cờ vua. Thầy Nghĩa di chuyển con mã 4 bước để sau 4 bước đó quân mã quay trở lại vị trí ban đầu với điều kiện 4 bước đi không trùng nhau. Mỗi bước di chuyển thầy Nghĩa đều đặt con mã ở các điểm chính giữa tâm ô vuông đó. (4 điểm đặt mã sau 4 bước được xem là 4 điểm ở tâm ô vuông con mã đi đến). Xác suất đường đi của con mã có 4 điểm đặt đó là 4 đỉnh của một hình vuông có dạng $\\frac{a}{b}$ (là phân số tối giản, $a, b \\in \\mathbb{N}^*$). Tính $a + 2b$. (Cách di chuyển của quân mã: Mã di chuyển theo đường chéo của hình chữ nhật $2 \\times 3$ ô vuông hoặc $3 \\times 2$ ô vuông).",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toán học THPT Yên Lạc 2026 - Ma 101",
+      "school_name": "THPT Yên Lạc",
+      "subject_code": "TOAN"
+    }
+  },
+  {
+    "question_id": "thpt-yen-lac-toan-2026-101-q22",
+    "exam_id": "thpt-yen-lac-toan-2026-101",
+    "question_number": 22,
+    "question_type": "short_answer",
+    "question_text": "Lô gô gắn tại các Showroom của hãng ô tô VINFAST là một hình tròn. Phần tô đậm (nằm giữa parabol đỉnh I và đường gấp khúc AJB) được dát bạc với chi phí 10 triệu đồng/$m^2$. Phần còn lại của hình tròn được phủ sơn với chi phí 2 triệu đồng/$m^2$. Biết $AB = 2m$, $IA = IB = 5m$ và $JA = JB = \\frac{13}{2}m$. Tính tổng số tiền (đơn vị: triệu đồng) để dát bạc và phủ sơn toàn bộ lô gô nói trên (Kết quả làm tròn đến hàng phần chục).",
+    "topic": null,
+    "exam": {
+      "title": "De thi Toán học THPT Yên Lạc 2026 - Ma 101",
+      "school_name": "THPT Yên Lạc",
+      "subject_code": "TOAN"
+    }
+  }
+]

@@ -47,7 +47,13 @@ export function ExamPage() {
   const [chatInput, setChatInput] = useState('')
   const [chatStatus, setChatStatus] = useState('')
   const [isAiBusy, setIsAiBusy] = useState(false)
+  const hasCheckedRestoreStateRef = useRef(false)
   const hasShownRestoreNoticeRef = useRef(false)
+
+  useEffect(() => {
+    hasCheckedRestoreStateRef.current = false
+    hasShownRestoreNoticeRef.current = false
+  }, [sessionId])
 
   useEffect(() => {
     if (!session) {
@@ -60,6 +66,12 @@ export function ExamPage() {
     if (!session || !runtime) {
       return
     }
+
+    if (hasCheckedRestoreStateRef.current) {
+      return
+    }
+
+    hasCheckedRestoreStateRef.current = true
 
     const hasProgress =
       runtime.currentIndex > 0 ||

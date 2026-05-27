@@ -51,6 +51,48 @@ BASE_VAULT_PATH = Path(__file__).resolve().parent.parent / "docs" / "knowledge-b
 PDF_TEXT_EXTRACTION_MIN_CHARS = 120
 logger = logging.getLogger("ai_service.admin_import")
 
+IMPORT_TOPIC_OPTIONS_BY_SUBJECT: dict[str, list[str]] = {
+    "TOAN": [
+        "Hinh hoc khong gian va Oxyz",
+        "Nguyen ham va tich phan",
+        "Khao sat ham so, cuc tri va GTLN/GTNN",
+        "Mu va logarit",
+        "Xac suat, to hop va thong ke",
+        "Quan he vuong goc va khoi da dien",
+    ],
+    "VAT_LY": [
+        "Dao dong co",
+        "Song co",
+        "Dien xoay chieu",
+        "Dao dong va song dien tu",
+        "Song anh sang",
+        "Luong tu anh sang",
+        "Hat nhan nguyen tu",
+        "Dien tich va dien truong",
+        "Dong dien khong doi",
+        "Tu truong",
+        "Cam ung dien tu",
+        "Quang hoc",
+    ],
+    "HOA_HOC": [
+        "Cau tao nguyen tu, bang tuan hoan va lien ket hoa hoc",
+        "Phan ung oxi hoa khu",
+        "Toc do phan ung va can bang hoa hoc",
+        "Dung dich, pH va chuan do",
+        "Este va lipit",
+        "Cacbohidrat",
+        "Amin, amino axit va protein",
+        "Polime",
+        "Dai cuong kim loai",
+        "Kim loai kiem, kiem tho va nhom",
+        "Sat va hop chat cua sat",
+        "Dien phan",
+        "Tong hop hoa vo co",
+        "Tong hop hoa huu co",
+        "Hoa hoc voi thuc tien",
+    ],
+}
+
 
 class QuestionRequest(BaseModel):
     question_content: str
@@ -163,6 +205,7 @@ class PdfExamQuestion(BaseModel):
     question_number: int = Field(alias="questionNumber")
     question_type: str = Field(alias="questionType")
     question_text: str = Field(default="", alias="questionText")
+    topic: str = Field(default="")
     options: list[ValidatedExamOption] = Field(default_factory=list)
     statements: list[PdfExamStatement] = Field(default_factory=list)
     correct_answer: str = Field(default="", alias="correctAnswer")
@@ -183,6 +226,46 @@ class PdfExamValidateResponse(BaseModel):
     exam_draft: PdfExamDraft = Field(alias="examDraft")
     questions: list[PdfExamQuestion] = Field(default_factory=list)
     raw_model_response: str | None = Field(default=None, alias="rawModelResponse")
+
+    model_config = {
+        "populate_by_name": True,
+    }
+
+
+class TopicBackfillQuestion(BaseModel):
+    question_id: str = Field(alias="questionId")
+    question_number: int = Field(alias="questionNumber")
+    question_type: str = Field(alias="questionType")
+    question_text: str = Field(alias="questionText")
+    exam_title: str = Field(default="", alias="examTitle")
+    school_name: str = Field(default="", alias="schoolName")
+
+    model_config = {
+        "populate_by_name": True,
+    }
+
+
+class TopicBackfillRequest(BaseModel):
+    subject_code: str = Field(alias="subjectCode")
+    questions: list[TopicBackfillQuestion]
+
+    model_config = {
+        "populate_by_name": True,
+    }
+
+
+class TopicBackfillResult(BaseModel):
+    question_id: str = Field(alias="questionId")
+    topic: str = ""
+
+    model_config = {
+        "populate_by_name": True,
+    }
+
+
+class TopicBackfillResponse(BaseModel):
+    results: list[TopicBackfillResult] = Field(default_factory=list)
+    warnings: list[str] = Field(default_factory=list)
 
     model_config = {
         "populate_by_name": True,
@@ -384,18 +467,143 @@ def parse_answer_key_text(answer_key_text: str) -> dict[int, str]:
     return answers
 
 
+def canonicalize_import_topic(topic: str, subject_code: str) -> str:
+    cleaned_topic = (topic or "").strip()
+    if not cleaned_topic:
+        return ""
+
+    topic_options = IMPORT_TOPIC_OPTIONS_BY_SUBJECT.get(subject_code, [])
+    if not topic_options:
+        return cleaned_topic
+
+    normalized_topic = slugify_ascii(cleaned_topic)
+    exact_match = next(
+        (
+            option
+            for option in topic_options
+            if slugify_ascii(option) == normalized_topic
+        ),
+        None,
+    )
+    if exact_match:
+        return exact_match
+
+    contains_match = next(
+        (
+            option
+            for option in topic_options
+            if normalized_topic in slugify_ascii(option)
+            or slugify_ascii(option) in normalized_topic
+        ),
+        None,
+    )
+    return contains_match or cleaned_topic
+
+
+def build_topic_backfill_prompt(subject_code: str, questions: list[TopicBackfillQuestion]) -> str:
+    topic_options = IMPORT_TOPIC_OPTIONS_BY_SUBJECT.get(subject_code, [])
+    response_template = {
+        "results": [
+            {
+                "questionId": "string",
+                "topic": "string",
+            }
+        ],
+        "warnings": ["string"],
+    }
+
+    question_payload = [
+        {
+            "questionId": question.question_id,
+            "questionNumber": question.question_number,
+            "questionType": question.question_type,
+            "questionText": question.question_text,
+            "examTitle": question.exam_title,
+            "schoolName": question.school_name,
+        }
+        for question in questions
+    ]
+
+    return f"""
+Ban la AI phan loai topic cho ngan hang cau hoi de thi THPT.
+Mon hoc: {subject_code}
+
+NHIEM VU:
+- Doc tung cau hoi va gan DUNG 1 topic phu hop nhat.
+- Bat buoc uu tien chon TU CHINH XAC trong danh muc topic hop le ben duoi.
+- Neu cau hoi qua mo ho, OCR hong nang, hoac khong the xep chac chan, de topic = "" va ghi warning neu can.
+
+DANH MUC TOPIC HOP LE:
+{json.dumps(topic_options, ensure_ascii=False, indent=2)}
+
+DU LIEU CAN PHAN LOAI:
+{json.dumps(question_payload, ensure_ascii=False, indent=2)}
+
+CHI TRA VE JSON HOP LE THEO MAU:
+{json.dumps(response_template, ensure_ascii=False, indent=2)}
+""".strip()
+
+
+def classify_topics_for_questions(
+    subject_code: str,
+    questions: list[TopicBackfillQuestion],
+) -> TopicBackfillResponse:
+    if not questions:
+        return TopicBackfillResponse(results=[], warnings=[])
+
+    prompt = build_topic_backfill_prompt(subject_code, questions)
+    raw_model_response = generate_pdf_text_json(prompt)
+    payload = parse_model_json_payload(raw_model_response)
+    raw_results = payload.get("results", [])
+    question_ids = {question.question_id for question in questions}
+
+    normalized_results: list[TopicBackfillResult] = []
+    if isinstance(raw_results, list):
+        for item in raw_results:
+            if not isinstance(item, dict):
+                continue
+            question_id = str(item.get("questionId", "")).strip()
+            if not question_id or question_id not in question_ids:
+                continue
+            topic = canonicalize_import_topic(
+                str(item.get("topic", "")).strip(),
+                subject_code,
+            )
+            normalized_results.append(
+                TopicBackfillResult(
+                    question_id=question_id,
+                    topic=topic,
+                )
+            )
+
+    results_by_id = {result.question_id: result for result in normalized_results}
+    for question in questions:
+        if question.question_id not in results_by_id:
+            normalized_results.append(
+                TopicBackfillResult(
+                    question_id=question.question_id,
+                    topic="",
+                )
+            )
+
+    warnings = normalize_warning_list(payload.get("warnings", []))
+    return TopicBackfillResponse(results=normalized_results, warnings=warnings)
+
+
 def build_pdf_exam_prompt(
     pdf_name: str,
     subject_code: str,
     subject_name: str,
     answer_key_map: dict[int, str],
 ) -> str:
+    topic_options = IMPORT_TOPIC_OPTIONS_BY_SUBJECT.get(subject_code, [])
     response_template = {
         "warnings": ["string"],
         "questions": [
             {
                 "questionNumber": 1,
                 "questionType": "multiple_choice | true_false | short_answer",
+                "topic": "string",
                 "questionText": "string",
                 "options": [
                     {"label": "A", "text": "string"},
@@ -448,6 +656,10 @@ QUY TAC BAT BUOC:
 6. Moi cong thuc Toan/Ly/Hoa viet bang LaTeX boc trong dau $.
 7. Giu tieng Viet UTF-8 chuan.
 8. Cau nao thieu de bai, thieu option/statement, hoac kho doc thi van tra ve nhung them warning.
+9. topic phai la TEN CHUYEN DE GAN NHAT voi cau hoi va uu tien chon CHINH XAC mot gia tri trong danh muc topic duoi day. Neu that su khong xep duoc, de topic = "".
+
+DANH MUC TOPIC HOP LE CHO MON NAY:
+{json.dumps(topic_options, ensure_ascii=False, indent=2)}
 
 ANSWER KEY DA PARSE TU GIAO VIEN:
 {json.dumps(answer_key_map, ensure_ascii=False, indent=2)}
@@ -527,6 +739,7 @@ def normalize_pdf_question(
     answer_key_map: dict[int, str],
     pdf_path: Path,
     asset_root_path: str,
+    subject_code: str,
 ) -> PdfExamQuestion:
     warnings = normalize_warning_list(item.get("warnings", []))
     question_number_raw = item.get("questionNumber", item.get("question_number", fallback_number))
@@ -589,6 +802,10 @@ def normalize_pdf_question(
             )
 
     question_text = str(item.get("questionText", item.get("question_text", "")) or "").strip()
+    topic = canonicalize_import_topic(
+        str(item.get("topic", "") or "").strip(),
+        subject_code,
+    )
 
     is_valid = True
     if not question_text:
@@ -621,6 +838,7 @@ def normalize_pdf_question(
         question_number=question_number,
         question_type=question_type,
         question_text=question_text,
+        topic=topic,
         options=options if question_type == "multiple_choice" else [],
         statements=statements if question_type == "true_false" else [],
         correct_answer=correct_answer,
@@ -670,7 +888,14 @@ def normalize_pdf_exam_response(
         for index, item in enumerate(raw_questions, start=1):
             if isinstance(item, dict):
                 questions.append(
-                    normalize_pdf_question(item, index, answer_key_map, pdf_path, asset_root_path)
+                    normalize_pdf_question(
+                        item,
+                        index,
+                        answer_key_map,
+                        pdf_path,
+                        asset_root_path,
+                        subject_code,
+                    )
                 )
 
     warnings = normalize_warning_list(payload.get("warnings", []))
@@ -1168,6 +1393,16 @@ async def validate_exam_pdf(
     finally:
         if tmp_path and tmp_path.exists():
             tmp_path.unlink(missing_ok=True)
+
+
+@app.post("/api/admin/backfill-school-exam-topics")
+async def backfill_school_exam_topics(request: TopicBackfillRequest):
+    subject_code = request.subject_code.strip().upper()
+    if subject_code not in IMPORT_TOPIC_OPTIONS_BY_SUBJECT:
+        raise HTTPException(status_code=400, detail="Subject code khong hop le cho backfill topic.")
+
+    response = classify_topics_for_questions(subject_code, request.questions)
+    return response.model_dump(by_alias=True)
 
 
 if __name__ == "__main__":

@@ -1,4 +1,8 @@
 import { getSupabaseBrowserClient } from '../../../lib/supabase/client'
+import {
+  formatSchoolExamDisplaySchoolName,
+  formatSchoolExamDisplayTitle,
+} from '../utils/school-exam-display'
 import type { SchoolExamSectionPart } from '../types/school-exam-types'
 
 export type SchoolExamAttemptAnswerInput = {
@@ -188,7 +192,7 @@ export async function persistCompletedSchoolExamAttempt(input: PersistSchoolExam
     .single<CreatedAttemptRow>()
 
   if (attemptError || !createdAttempt) {
-    throw new Error(`Khong the luu lich su de thi truong: ${attemptError?.message ?? 'Unknown error'}`)
+    throw new Error(formatStudentLearningHistoryError(attemptError?.message, 'luu lich su de thi truong'))
   }
 
   if (input.answers.length > 0) {
@@ -207,7 +211,7 @@ export async function persistCompletedSchoolExamAttempt(input: PersistSchoolExam
     )
 
     if (answersError) {
-      throw new Error(`Khong the luu chi tiet dap an de truong: ${answersError.message}`)
+      throw new Error(formatStudentLearningHistoryError(answersError.message, 'luu chi tiet dap an de truong'))
     }
   }
 
@@ -240,7 +244,7 @@ export async function saveSchoolExamAiMessages(
   )
 
   if (error) {
-    throw new Error(`Khong the luu lich su AI de truong: ${error.message}`)
+    throw new Error(formatStudentLearningHistoryError(error.message, 'luu lich su AI de truong'))
   }
 }
 
@@ -256,7 +260,7 @@ export async function fetchSchoolExamAttemptHistory(
     .returns<SchoolExamAttemptRow[]>()
 
   if (error) {
-    throw new Error(`Khong the tai lich su de thi truong: ${error.message}`)
+    throw new Error(formatStudentLearningHistoryError(error.message, 'tai lich su de thi truong'))
   }
 
   return data.map(mapAttemptHistoryRow)
@@ -273,7 +277,7 @@ export async function fetchSchoolExamAttemptDetail(
     .maybeSingle<SchoolExamAttemptDetailRow>()
 
   if (error) {
-    throw new Error(`Khong the tai chi tiet de thi truong: ${error.message}`)
+    throw new Error(formatStudentLearningHistoryError(error.message, 'tai chi tiet de thi truong'))
   }
 
   if (!data) {
@@ -321,7 +325,7 @@ export async function fetchSchoolExamAiHistory(
     .returns<SchoolExamAiMessageRow[]>()
 
   if (error) {
-    throw new Error(`Khong the tai lich su AI de truong: ${error.message}`)
+    throw new Error(formatStudentLearningHistoryError(error.message, 'tai lich su AI de truong'))
   }
 
   return data.map((message) => {
@@ -330,8 +334,14 @@ export async function fetchSchoolExamAiHistory(
     return {
       messageId: message.message_id,
       attemptId: message.attempt_id,
-      examTitle: exam?.title ?? 'De thi truong',
-      schoolName: exam?.school_name ?? '--',
+      examTitle: exam
+        ? formatSchoolExamDisplayTitle({
+            examId: '',
+            title: exam.title,
+            schoolName: exam.school_name,
+          })
+        : 'De thi truong',
+      schoolName: exam ? formatSchoolExamDisplaySchoolName('', exam.school_name) : '--',
       questionNumber: message.question_number,
       role: message.role,
       content: message.content,
@@ -345,8 +355,14 @@ function mapAttemptHistoryRow(row: SchoolExamAttemptRow): SchoolExamAttemptHisto
   return {
     attemptId: row.attempt_id,
     schoolExamId: row.school_exam_id,
-    examTitle: exam?.title ?? 'De thi truong',
-    schoolName: exam?.school_name ?? '--',
+    examTitle: exam
+      ? formatSchoolExamDisplayTitle({
+          examId: row.school_exam_id,
+          title: exam.title,
+          schoolName: exam.school_name,
+        })
+      : 'De thi truong',
+    schoolName: exam ? formatSchoolExamDisplaySchoolName(row.school_exam_id, exam.school_name) : '--',
     subjectName: exam?.subject_name ?? '--',
     year: exam?.year ?? null,
     variantCode: row.variant_code ?? '--',
@@ -365,4 +381,24 @@ function unwrapSingle<T>(value: T | T[] | null | undefined) {
   }
 
   return value ?? null
+}
+
+function formatStudentLearningHistoryError(rawMessage: string | undefined, action: string) {
+  const message = rawMessage?.trim() || 'Unknown error'
+
+  if (
+    message.includes('student_school_exam_attempts')
+    && (message.includes('schema cache') || message.toLowerCase().includes('could not find the table'))
+  ) {
+    return `Khong the ${action}: Supabase chua co bang student_school_exam_attempts. Hay chay file web-app/supabase/setup_student_learning_history.sql trong SQL Editor roi thu lai.`
+  }
+
+  if (
+    (message.includes('student_school_exam_answers') || message.includes('student_school_exam_ai_messages'))
+    && (message.includes('schema cache') || message.toLowerCase().includes('could not find the table'))
+  ) {
+    return `Khong the ${action}: Supabase chua co bang lich su hoc tap de truong. Hay chay file web-app/supabase/setup_student_learning_history.sql trong SQL Editor roi thu lai.`
+  }
+
+  return `Khong the ${action}: ${message}`
 }

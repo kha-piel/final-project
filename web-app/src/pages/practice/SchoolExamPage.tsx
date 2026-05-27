@@ -463,6 +463,15 @@ export function SchoolExamPage() {
     [reviewItems],
   )
 
+  const reviewItemsByPart = useMemo(
+    () => ({
+      multipleChoice: reviewItems.filter((item) => item.partCode === 'multiple_choice'),
+      trueFalse: reviewItems.filter((item) => item.partCode === 'true_false'),
+      shortAnswer: reviewItems.filter((item) => item.partCode === 'short_answer'),
+    }),
+    [reviewItems],
+  )
+
   const selectedReviewItem = useMemo(() => {
     if (selectedReviewQuestionNumber === null) {
       return null
@@ -806,26 +815,25 @@ export function SchoolExamPage() {
               va khung tro chuyen voi AI.
             </p>
 
-            <div className="mt-5 flex flex-wrap gap-3">
-              {reviewItems.map((item) => (
-                <button
-                  key={`${item.partCode}-${item.questionNumber}`}
-                  className={`rounded-2xl border px-4 py-3 text-left transition ${
-                    selectedReviewItem?.questionNumber === item.questionNumber
-                      ? 'border-slate-950 bg-slate-950 text-white'
-                      : item.correct
-                        ? 'border-emerald-200 bg-emerald-50 text-emerald-800 hover:border-emerald-300'
-                        : 'border-rose-200 bg-rose-50 text-rose-800 hover:border-rose-300'
-                  }`}
-                  onClick={() => setSelectedReviewQuestionNumber(item.questionNumber)}
-                  type="button"
-                >
-                  <div className="text-sm font-bold">{item.displayQuestionLabel}</div>
-                  <div className="mt-1 text-xs font-semibold uppercase tracking-[0.12em] opacity-80">
-                    {item.correct ? 'Đúng' : 'Sai'} | {formatPartLabel(item.partCode)}
-                  </div>
-                </button>
-              ))}
+            <div className="mt-5 space-y-5">
+              <ReviewItemSection
+                items={reviewItemsByPart.multipleChoice}
+                selectedQuestionNumber={selectedReviewItem?.questionNumber ?? null}
+                title="Phần I. Trắc nghiệm"
+                onSelect={setSelectedReviewQuestionNumber}
+              />
+              <ReviewItemSection
+                items={reviewItemsByPart.trueFalse}
+                selectedQuestionNumber={selectedReviewItem?.questionNumber ?? null}
+                title="Phần II. Đúng / Sai"
+                onSelect={setSelectedReviewQuestionNumber}
+              />
+              <ReviewItemSection
+                items={reviewItemsByPart.shortAnswer}
+                selectedQuestionNumber={selectedReviewItem?.questionNumber ?? null}
+                title="Phần III. Trả lời ngắn"
+                onSelect={setSelectedReviewQuestionNumber}
+              />
             </div>
           </section>
         </div>
@@ -1482,6 +1490,53 @@ function QuestionSection({
         <p className="mt-1 text-sm leading-6 text-slate-600">{description}</p>
       </div>
       {children}
+    </section>
+  )
+}
+
+function ReviewItemSection({
+  title,
+  items,
+  selectedQuestionNumber,
+  onSelect,
+}: {
+  title: string
+  items: ReviewItem[]
+  selectedQuestionNumber: number | null
+  onSelect: (questionNumber: number) => void
+}) {
+  if (items.length === 0) {
+    return null
+  }
+
+  return (
+    <section className="rounded-[24px] border border-slate-200 bg-slate-50 p-4">
+      <div className="mb-3 flex items-center justify-between gap-3">
+        <h3 className="text-sm font-bold uppercase tracking-[0.12em] text-slate-700">{title}</h3>
+        <div className="text-xs font-semibold text-slate-500">{items.length} câu</div>
+      </div>
+
+      <div className="flex flex-wrap gap-3">
+        {items.map((item) => (
+          <button
+            key={`${item.partCode}-${item.questionNumber}`}
+            className={`rounded-2xl border px-4 py-3 text-left transition ${
+              selectedQuestionNumber === item.questionNumber
+                ? 'border-slate-950 bg-slate-950 text-white'
+                : item.correct
+                  ? 'border-emerald-200 bg-emerald-50 text-emerald-800 hover:border-emerald-300'
+                  : 'border-rose-200 bg-rose-50 text-rose-800 hover:border-rose-300'
+            }`}
+            onClick={() => onSelect(item.questionNumber)}
+            type="button"
+          >
+            <div className="text-sm font-bold">{item.displayQuestionLabel}</div>
+            <div className="mt-1 text-xs font-semibold uppercase tracking-[0.12em] opacity-80">
+              {item.correct ? 'Đúng' : 'Sai'} | {formatPartLabel(item.partCode)}
+            </div>
+          </button>
+        ))}
+      </div>
     </section>
   )
 }

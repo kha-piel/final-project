@@ -2,6 +2,7 @@ import { useEffect, useRef, type ReactElement } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import { useAuthSessionStore } from '../store/auth-session-store'
+import { AuthRouteLoading } from './AuthRouteLoading'
 
 type ProtectedRouteProps = {
   children: ReactElement
@@ -13,7 +14,7 @@ export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) 
   const user = useAuthSessionStore((state) => state.user)
 
   if (status === 'booting') {
-    return <RouteLoadingCard message="Dang khoi phuc auth session..." />
+    return <AuthRouteLoading message="Dang khoi phuc auth session..." />
   }
 
   if (status !== 'authenticated') {
@@ -55,7 +56,7 @@ function MissingRoleRedirect({ email, message }: { email: string; message: strin
     navigate('/home', { replace: true })
   }, [email, message, navigate])
 
-  return <RouteLoadingCard message="Khong doc duoc quyen truy cap, dang dieu huong ve trang chu..." />
+  return <AuthRouteLoading delayMs={0} message="Khong doc duoc quyen truy cap, dang dieu huong ve trang chu..." />
 }
 
 function UnauthorizedRedirect() {
@@ -72,21 +73,5 @@ function UnauthorizedRedirect() {
     navigate('/home', { replace: true })
   }, [navigate])
 
-  return <RouteLoadingCard message="Dang dieu huong ve trang duoc phep truy cap..." />
-}
-
-function RouteLoadingCard({ message }: { message: string }) {
-  return (
-    <div
-      style={{
-        borderRadius: '24px',
-        padding: '24px',
-        backgroundColor: '#ffffff',
-        border: '1px solid #d8e3ef',
-        color: '#49627f',
-      }}
-    >
-      {message}
-    </div>
-  )
+  return <AuthRouteLoading delayMs={0} message="Dang dieu huong ve trang duoc phep truy cap..." />
 }
