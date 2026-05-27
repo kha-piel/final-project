@@ -1,0 +1,431 @@
+{
+  "warnings": [],
+  "questions": [
+    {
+      "questionNumber": 1,
+      "questionType": "multiple_choice",
+      "questionText": "Cho hàm số y = f(x) liên tục trên R và có một nguyên hàm là F(x). Biết rằng F(1) = 9, F(2) = 5. Giá trị của biểu thức ∫_1^2 f(x) dx bằng",
+      "options": [
+        {
+          "label": "A",
+          "text": "14."
+        },
+        {
+          "label": "B",
+          "text": "-4."
+        },
+        {
+          "label": "C",
+          "text": "45."
+        },
+        {
+          "label": "D",
+          "text": "4."
+        }
+      ],
+      "correctAnswer": null
+    },
+    {
+      "questionNumber": 2,
+      "questionType": "multiple_choice",
+      "questionText": "Tập nghiệm của bất phương trình 2^(2+x²) > 16 là",
+      "options": [
+        {
+          "label": "A",
+          "text": "(-∞; -√2) ∪ (√2; +∞)."
+        },
+        {
+          "label": "B",
+          "text": "(-∞; -√2] ∪ [√2; +∞)."
+        },
+        {
+          "label": "C",
+          "text": "(-∞; -2) ∪ (2; +∞)."
+        },
+        {
+          "label": "D",
+          "text": "(-∞; -2) ∪ [2; +∞)."
+        }
+      ],
+      "correctAnswer": null
+    },
+    {
+      "questionNumber": 3,
+      "questionType": "multiple_choice",
+      "questionText": "Cho hàm số y = f(x) xác định trên R và có bảng biến thiên như bảng dưới đây. Khẳng định nào sau đây đúng?\nX\t\t-∞\t\t1\t\t2\t\t+∞\nf'(x)\t\t+\t\t0\t\t-\t\t0\t\t+\nf(x)\t\t-∞\t\t5\t\t\t\t+∞\n\t\t\t\t\t\t\t\t4",
+      "options": [
+        {
+          "label": "A",
+          "text": "Hàm số đồng biến trên khoảng (1; 2)."
+        },
+        {
+          "label": "B",
+          "text": "Hàm số đồng biến trên khoảng (-5; 4)."
+        },
+        {
+          "label": "C",
+          "text": "Hàm số nghịch biến trên khoảng (1; 2)."
+        },
+        {
+          "label": "D",
+          "text": "Hàm số nghịch biến trên khoảng (-5; 4)."
+        }
+      ],
+      "correctAnswer": null
+    },
+    {
+      "questionNumber": 4,
+      "questionType": "multiple_choice",
+      "questionText": "Họ nguyên hàm của hàm số f(x) = sin x là",
+      "options": [
+        {
+          "label": "A",
+          "text": "sin x + C."
+        },
+        {
+          "label": "B",
+          "text": "-cos x + C."
+        },
+        {
+          "label": "C",
+          "text": "-sin x + C."
+        },
+        {
+          "label": "D",
+          "text": "cos x + C."
+        }
+      ],
+      "correctAnswer": null
+    },
+    {
+      "questionNumber": 5,
+      "questionType": "multiple_choice",
+      "questionText": "Mỗi ngày bác Mạnh đều đi bộ rèn luyện sức khoẻ. Quãng đường đi bộ mỗi ngày của bác trong 20 ngày được thống kê lại ở bảng sau\nQuãng đường (km) [2,7; 3,0) [3,0; 3,3) [3,3; 3,6) [3,6; 3,9) [3,9; 4,2)\nSố ngày\t\t3\t\t\t6\t\t\t5\t\t\t4\t\t\t2\nPhương sai của mẫu số liệu ghép nhóm là",
+      "options": [
+        {
+          "label": "A",
+          "text": "1,26."
+        },
+        {
+          "label": "B",
+          "text": "0,26."
+        },
+        {
+          "label": "C",
+          "text": "0,19."
+        },
+        {
+          "label": "D",
+          "text": "0,13."
+        }
+      ],
+      "correctAnswer": null
+    },
+    {
+      "questionNumber": 6,
+      "questionType": "multiple_choice",
+      "questionText": "Cho hình chóp S.ABCD có đáy ABCD là hình bình hành tâm O. Gọi E, I, K lần lượt là trung điểm của các cạnh SB, BC, CD. Mặt phẳng nào sau đây song song với (SAD)?",
+      "options": [
+        {
+          "label": "A",
+          "text": "(BEK)."
+        },
+        {
+          "label": "B",
+          "text": "(EIK)."
+        },
+        {
+          "label": "C",
+          "text": "(OEI)."
+        },
+        {
+          "label": "D",
+          "text": "(KOE)."
+        }
+      ],
+      "correctAnswer": null
+    },
+    {
+      "questionNumber": 7,
+      "questionType": "multiple_choice",
+      "questionText": "Cho tứ diện ABCD. Gọi G là trọng tâm của tam giác BCD. Khẳng định nào sau đây là sai?",
+      "options": [
+        {
+          "label": "A",
+          "text": "BC + BD = 3BG."
+        },
+        {
+          "label": "B",
+          "text": "AB + AC + AD = 3AG."
+        },
+        {
+          "label": "C",
+          "text": "BG + CG + DG = 0."
+        },
+        {
+          "label": "D",
+          "text": "GA + GB + GD = 0."
+        }
+      ],
+      "correctAnswer": null
+    },
+    {
+      "questionNumber": 8,
+      "questionType": "multiple_choice",
+      "questionText": "Dãy số nào trong các dãy số được cho dưới đây là một cấp số nhân?",
+      "options": [
+        {
+          "label": "A",
+          "text": "1; 2; 3."
+        },
+        {
+          "label": "B",
+          "text": "3; 6; 9."
+        },
+        {
+          "label": "C",
+          "text": "2; 4; 8."
+        },
+        {
+          "label": "D",
+          "text": "2; 4; 6."
+        }
+      ],
+      "correctAnswer": null
+    },
+    {
+      "questionNumber": 9,
+      "questionType": "multiple_choice",
+      "questionText": "Chọn mệnh đề sai trong các mệnh đề sau?",
+      "options": [
+        {
+          "label": "A",
+          "text": "Hàm số y = sin x là hàm số lẻ."
+        },
+        {
+          "label": "B",
+          "text": "Hàm số y = tan x là hàm số lẻ."
+        },
+        {
+          "label": "C",
+          "text": "Hàm số y = cos x là hàm số chẵn."
+        },
+        {
+          "label": "D",
+          "text": "Hàm số y = cot x là hàm số chẵn."
+        }
+      ],
+      "correctAnswer": null
+    },
+    {
+      "questionNumber": 10,
+      "questionType": "multiple_choice",
+      "questionText": "Cho hình chóp S.ABCD có đáy là hình vuông và SA ⊥ (ABCD). Mặt phẳng nào sau đây vuông góc với mặt phẳng (SCD)?",
+      "options": [
+        {
+          "label": "A",
+          "text": "(SAC)."
+        },
+        {
+          "label": "B",
+          "text": "(SBD)."
+        },
+        {
+          "label": "C",
+          "text": "(SAD)."
+        },
+        {
+          "label": "D",
+          "text": "(SAB)."
+        }
+      ],
+      "correctAnswer": null
+    },
+    {
+      "questionNumber": 11,
+      "questionType": "multiple_choice",
+      "questionText": "Trong không gian với hệ tọa độ Oxyz, véc-tơ nào sau đây là véc-tơ pháp tuyến của mặt phẳng (P): 2x - y + z + 3 = 0?",
+      "options": [
+        {
+          "label": "A",
+          "text": "n2 = (2; 1; 1)."
+        },
+        {
+          "label": "B",
+          "text": "n4 = (-1; 1; 3)."
+        },
+        {
+          "label": "C",
+          "text": "n3 = (2; -1; 3)."
+        },
+        {
+          "label": "D",
+          "text": "n1 = (2; -1; 1)."
+        }
+      ],
+      "correctAnswer": null
+    },
+    {
+      "questionNumber": 12,
+      "questionType": "multiple_choice",
+      "questionText": "Trong không gian với hệ tọa độ Oxyz, phương trình nào sau đây là phương trình mặt cầu?",
+      "options": [
+        {
+          "label": "A",
+          "text": "(x² - 8)² + (y − 12)² + (z − 24)² = 9²."
+        },
+        {
+          "label": "B",
+          "text": "(x − 9)² + (y² – 10)² + (z – 11)² = 12²."
+        },
+        {
+          "label": "C",
+          "text": "(x – 13)² + (y - 24)² - (z - 36)² = 7²."
+        },
+        {
+          "label": "D",
+          "text": "(x − 1)² + (y − 2)² + (z − 3)² = 5²."
+        }
+      ],
+      "correctAnswer": null
+    },
+    {
+      "questionNumber": 1,
+      "questionType": "true_false",
+      "questionText": "Cho hàm số f(x) = √x + √32 - x.",
+      "options": [
+        {
+          "label": "a",
+          "text": "Hàm số có tập xác định là (0; 32)."
+        },
+        {
+          "label": "b",
+          "text": "f'(x) = 1/(2√x) + 1/(2√(32-x))."
+        },
+        {
+          "label": "c",
+          "text": "Phương trình f'(x) = 0 có hai nghiệm phân biệt."
+        },
+        {
+          "label": "d",
+          "text": "Hàm số đạt giá trị lớn nhất là M và giá trị nhỏ nhất là m thì M/m = √2/2."
+        }
+      ],
+      "correctAnswer": null
+    },
+    {
+      "questionNumber": 2,
+      "questionType": "true_false",
+      "questionText": "Trong một trò chơi điện tử, với hệ trục tọa độ Oxyz cho trước, đơn vị giả định trên mỗi trục là mét, người chơi điều khiển nhân vật chính như một chất điểm di động trên mặt đất (là mặt phẳng Oxy). Sau khi chiến đấu để vượt qua thử thách, nhân vật chính muốn qua màn thì phải đến vị trí gần với một phi thuyền để được bay vào trong phi thuyền đi đến một màn khác, gặp những thử thách mới. Giả sử nhân vật chính sau khi chiến đấu xong màn một thì đứng ở vị trí A có tọa độ (1; 2; 0), khi ấy trên bầu trời xuất hiện một chiếc phi thuyền ở vị trí (-8; −3; 4), nhân vật chính nếu cách phi thuyền không quá 5 mét thì được phép bay vào phi thuyền.",
+      "options": [
+        {
+          "label": "a",
+          "text": "Vùng được phép bay được giới hạn bởi mặt cầu có phương trình (x+8)²+(y+3)²+(z−4)² = 25."
+        },
+        {
+          "label": "b",
+          "text": "Khi nhân vật chính vừa chiến đấu xong thì khoảng cách ngắn nhất từ nhân vật chính đến vùng được phép bay bằng 6,05 m (làm tròn đến hàng phần trăm)."
+        },
+        {
+          "label": "c",
+          "text": "Nhân vật chính chạy trên một đường thẳng d để đến được vị trí gần vùng được phép bay nhất, phương trình tham số đường thẳng d là {x = 1+9t, y = 2+5t, z = 0}."
+        },
+        {
+          "label": "d",
+          "text": "Nhân vật chính xuất phát từ A, chạy trên đường thẳng d với gia tốc 1 m/s², ngay khi được phép thì bay lên phi thuyền với tốc độ 6 m/s. Tổng thời gian của quá trình nói trên bằng 4,7 giây (làm tròn đến hàng phần chục)."
+        }
+      ],
+      "correctAnswer": null
+    },
+    {
+      "questionNumber": 3,
+      "questionType": "true_false",
+      "questionText": "Tháp giải nhiệt tại một nhà máy điện hạt nhân có hình dạng là một phần của khối tròn xoay khi cho hypebol (H) quay quanh một trục đối xứng của (H). Tháp có chiều cao là 120 mét, bán kính đáy dưới bằng 40 mét. Thiết lập hệ trục tọa độ Oxy như hình vẽ sao cho mặt cắt dạng hypebol của tháp nhận Oy làm trục đối xứng; lấy đơn vị trên mỗi trục là mét. gốc O ở vị trí có độ cao 80 mét so với mặt đất và đoạn giao nhau giữa trục Ox với tháp bằng 30 mét.",
+      "options": [
+        {
+          "label": "a",
+          "text": "Diện tích đáy dưới của tháp bằng 5027 m² (làm tròn đến hàng đơn vị)."
+        },
+        {
+          "label": "b",
+          "text": "Các điểm (-20; 0), (20; 0) thuộc hypebol (H)."
+        },
+        {
+          "label": "c",
+          "text": "Phương trình (H) là x²/15² - y²/11520 = 1."
+        },
+        {
+          "label": "d",
+          "text": "Thể tích của tháp giải nhiệt này bằng 214414 m³ (làm tròn đến hàng đơn vị)."
+        }
+      ],
+      "correctAnswer": null
+    },
+    {
+      "questionNumber": 4,
+      "questionType": "true_false",
+      "questionText": "Bạn Bắc chuẩn bị đi dã ngoại tại Bùi Hui trong hai ngày thứ Bảy và Chủ nhật. Biết rằng ở Bùi Hui, mỗi ngày chỉ có nắng hoặc mưa, nếu một ngày là nắng thì khả năng ngày hôm sau vẫn nắng là 80%, còn nếu một ngày là mưa thì khả năng ngày hôm sau vẫn mưa là 30%. Theo dự báo thời tiết, xác suất trời sẽ nắng vào thứ Bảy là 70%.",
+      "options": [
+        {
+          "label": "a",
+          "text": "Xác suất để cả hai ngày nắng là 0,56."
+        },
+        {
+          "label": "b",
+          "text": "Xác suất để có ít nhất một ngày nắng là 0,9."
+        },
+        {
+          "label": "c",
+          "text": "Xác suất để Chủ nhật nắng là 0,77."
+        },
+        {
+          "label": "d",
+          "text": "Biết Chủ nhật là ngày nắng, xác suất để thứ Bảy là ngày nắng là 0,7."
+        }
+      ],
+      "correctAnswer": null
+    },
+    {
+      "questionNumber": 1,
+      "questionType": "short_answer",
+      "questionText": "Hai đội tuyển A và B tham gia giải bóng bàn. Mỗi đội có 7 người đã được sắp xếp theo một thứ tự nhất định. Đầu tiên, người thứ nhất của đội A, đấu với người thứ nhất của đội B và người thua sẽ bị loại. Sau đó, người chiến thắng đấu tiếp với người thứ hai của đội kia, các trận thi đấu tiếp theo diễn ra tương tự. Cuộc thi đấu kết thúc cho đến khi tất cả người chơi của 1 đội đều bị loại và đội còn lại là chiến thắng. Hỏi có bao nhiêu cách diễn ra cuộc thi đấu?",
+      "options": [],
+      "correctAnswer": null
+    },
+    {
+      "questionNumber": 2,
+      "questionType": "short_answer",
+      "questionText": "Hàm lượng các chất vitamin A, vitamin B và vitamin K chứa trong 100 g mỗi loại thực phẩm X và Y được cho bảng sau:\nvitamin A(mg) vitamin B (mg) vitamin K(mg)\nX\t\t200\t\t\t600\t\t\t8\nY\t\t500\t\t\t300\t\t\t6\nTừ hai loại thực phẩm X và Y, người ta muốn tạo ra một lượng thực phẩm hỗn hợp chứa ít nhất 2 000 mg vitamin A, 3000 mg vitamin B, 48 mg vitamin K. Lượng thực phẩm hỗn hợp có khối lượng nhỏ nhất thỏa mãn yêu cầu trên là bao nhiêu? (đơn vị: kilogam; làm tròn đến hàng phần trăm)",
+      "options": [],
+      "correctAnswer": null
+    },
+    {
+      "questionNumber": 3,
+      "questionType": "short_answer",
+      "questionText": "Một công ty du lịch thông báo giá tiền cho chuyến đi tham quan của một nhóm khách du lịch như sau: 20 khách đầu tiên có giá là 30 USD/người; nếu có nhiều hơn 20 người đăng kí thì cứ có thêm 1 người, giá vé sẽ giảm 1 USD/người cho toàn bộ hành khách. Hỏi công ty nên giới hạn số lượng khách tối đa là bao nhiêu để công ty không bị lỗ? Biết rằng chi phí của chuyến đi là 400 USD.",
+      "options": [],
+      "correctAnswer": null
+    },
+    {
+      "questionNumber": 4,
+      "questionType": "short_answer",
+      "questionText": "Một viên gạch hình vuông ABCD có cạnh 60. Người ta trang trí viên gạch bằng các đường cong (L1), (L2). (L1) là tập hợp các điểm M thỏa MC = MA + 50 hoặc MA = MC + 50. Khi quay đường cong (L1) quanh tâm viên gạch hình vuông đó một góc 90° ta được đường cong (L2). Tính diện tích hình phẳng giới hạn bởi các đường cong (L1), (L2) và các cạnh viên gạch (phần màu trắng, kết quả làm tròn đến hàng đơn vị).",
+      "options": [],
+      "correctAnswer": null
+    },
+    {
+      "questionNumber": 5,
+      "questionType": "short_answer",
+      "questionText": "Cho hình lăng trụ tam giác đều ABC.A'B'C' có tất cả các cạnh bằng 2 cm. Gọi M và N lần lượt là trung điểm B'C và A'B'. Gọi α là góc tạo bởi MN và (BCC'B'). Tính tan² α.",
+      "options": [],
+      "correctAnswer": null
+    },
+    {
+      "questionNumber": 6,
+      "questionType": "short_answer",
+      "questionText": "Bốn tay vợt Tennis An, Bình, Công và Duy tham gia vào một giải đấu có tổng cộng ba trận đấu. Đầu tiên, hai người chơi được chọn ngẫu nhiên để chơi với nhau; hai người chơi còn lại cũng chơi với nhau. Những người chiến thắng trong hai trận đấu đó sẽ thi đấu với nhau để quyết định nhà vô địch giải đấu. An, Bình và Công ngang sức nhau (nghĩa là, khi một trận đấu được chơi giữa hai người trong ba người An, Bình, Công, xác suất mỗi người chơi thắng là 1/2). Khi Duy đấu với An, Bình hoặc Công, xác suất Duy thắng là 0,7. Xác định xác suất Bình vô địch giải đấu.",
+      "options": [],
+      "correctAnswer": null
+    }
+  ]
+}
