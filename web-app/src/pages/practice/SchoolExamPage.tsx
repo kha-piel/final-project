@@ -21,6 +21,7 @@ import type {
   SchoolExamQuestionRecord,
   SchoolExamQuestionStatementRecord,
 } from '../../features/practice/types/school-exam-types'
+
 import { RecommendedReviewLinks } from '../../features/review/components/RecommendedReviewLinks'
 import {
   inferKnowledgeReviewTopics,
@@ -78,11 +79,13 @@ export function SchoolExamPage() {
   const [weaknessAnalysis, setWeaknessAnalysis] = useState('')
   const [recommendedTopics, setRecommendedTopics] = useState<KnowledgeReviewTopic[]>([])
   const [weaknessAnalysisError, setWeaknessAnalysisError] = useState('')
+
   const [selectedReviewQuestionNumber, setSelectedReviewQuestionNumber] = useState<number | null>(null)
   const [selectedReviewChatInput, setSelectedReviewChatInput] = useState('')
   const [aiChatHistoryByQuestion, setAiChatHistoryByQuestion] = useState<Record<number, ReviewChatMessage[]>>({})
   const [isSavingAttempt, setIsSavingAttempt] = useState(false)
   const [schoolAttemptId, setSchoolAttemptId] = useState('')
+  const [isConfirmSubmitOpen, setIsConfirmSubmitOpen] = useState(false)
   const startedAtRef = useRef(Date.now())
 
   useEffect(() => {
@@ -663,6 +666,8 @@ export function SchoolExamPage() {
     )
   }
 
+
+
   async function handleAnalyzeWeaknesses() {
     if (wrongReviewItems.length === 0) {
       setWeaknessAnalysis('Bạn không có câu sai nào trong bài này.')
@@ -761,8 +766,7 @@ export function SchoolExamPage() {
                 Ghi chú AI
               </h3>
               <p className="mt-3 text-sm leading-7 text-slate-600">
-                AI có thể giải thích từng câu sai và phân tích tổng quan điểm yếu dựa trên nội dung câu hỏi,
-                topic va obsidian source path da lưu trong database.
+                AI sẽ giúp bạn phân tích chi tiết các lỗi sai, đánh giá tổng quan điểm yếu và đưa ra định hướng ôn tập hiệu quả dựa trên kết quả bài làm của bạn.
               </p>
             </div>
 
@@ -788,7 +792,7 @@ export function SchoolExamPage() {
 
             <div className="mt-6 flex flex-wrap gap-3">
               <Link
-                className="rounded-2xl bg-slate-950 px-5 py-3 text-sm font-bold text-white transition hover:bg-slate-800"
+                className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-bold text-slate-700 transition hover:bg-slate-50"
                 to="/practice"
               >
                 Quay lại thư viện đề
@@ -819,19 +823,19 @@ export function SchoolExamPage() {
               <ReviewItemSection
                 items={reviewItemsByPart.multipleChoice}
                 selectedQuestionNumber={selectedReviewItem?.questionNumber ?? null}
-                title="Phần I. Trắc nghiệm"
+                title="Phần I. Trắc nghiệm 4 lựa chọn"
                 onSelect={setSelectedReviewQuestionNumber}
               />
               <ReviewItemSection
                 items={reviewItemsByPart.trueFalse}
                 selectedQuestionNumber={selectedReviewItem?.questionNumber ?? null}
-                title="Phần II. Đúng / Sai"
+                title="Phần II. Trắc nghiệm đúng sai"
                 onSelect={setSelectedReviewQuestionNumber}
               />
               <ReviewItemSection
                 items={reviewItemsByPart.shortAnswer}
                 selectedQuestionNumber={selectedReviewItem?.questionNumber ?? null}
-                title="Phần III. Trả lời ngắn"
+                title="Phần III. Trắc nghiệm trả lời ngắn"
                 onSelect={setSelectedReviewQuestionNumber}
               />
             </div>
@@ -1131,7 +1135,7 @@ export function SchoolExamPage() {
                 <button
                   className="rounded-2xl bg-slate-950 px-5 py-3 text-sm font-bold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-300"
                   disabled={!selectedVariantId || isLoadingAnswerKey || answerKeyEntries.length === 0 || isSavingAttempt}
-                  onClick={() => void handleSubmitSchoolExam()}
+                  onClick={() => setIsConfirmSubmitOpen(true)}
                   type="button"
                 >
                   {isLoadingAnswerKey ? 'Đang tải đáp án...' : isSavingAttempt ? 'Đang lưu...' : 'Nộp bài'}
@@ -1322,6 +1326,36 @@ export function SchoolExamPage() {
           </div>
         </section>
       </div>
+
+      {isConfirmSubmitOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/40 p-4 backdrop-blur-sm">
+          <div className="w-full max-w-md rounded-3xl bg-white p-6 shadow-2xl">
+            <h3 className="mb-2 text-xl font-bold text-slate-900">Xác nhận nộp bài</h3>
+            <p className="mb-8 text-slate-600">
+              Bạn có chắc chắn muốn nộp bài? Sau khi nộp, bạn sẽ không thể thay đổi đáp án được nữa.
+            </p>
+            <div className="flex justify-end gap-3">
+              <button
+                className="rounded-xl px-5 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-100"
+                onClick={() => setIsConfirmSubmitOpen(false)}
+                type="button"
+              >
+                Hủy
+              </button>
+              <button
+                className="rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-slate-800"
+                onClick={() => {
+                  setIsConfirmSubmitOpen(false)
+                  void handleSubmitSchoolExam()
+                }}
+                type="button"
+              >
+                Nộp bài ngay
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   )
 }
