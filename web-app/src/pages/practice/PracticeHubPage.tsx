@@ -25,6 +25,8 @@ export function PracticeHubPage() {
   const [catalogErrorMessage, setCatalogErrorMessage] = useState('')
   const [isLoadingCatalog, setIsLoadingCatalog] = useState(true)
 
+  const [activeTab, setActiveTab] = useState<'school' | 'random'>('school')
+
   /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     let isMounted = true
@@ -100,17 +102,46 @@ export function PracticeHubPage() {
   }
 
   return (
-    <section className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
-      <section className="rounded-[28px] border border-slate-200 bg-white p-6 shadow-[0_20px_60px_rgba(15,23,42,0.06)]">
-        <div className="flex flex-wrap items-center justify-between gap-3">
+    <div className="mx-auto max-w-5xl">
+      <div className="mb-8 flex justify-center">
+        <div className="inline-flex rounded-full border border-slate-200 bg-slate-50 p-1">
+          <button
+            className={`rounded-full px-6 py-2.5 text-sm font-semibold transition ${
+              activeTab === 'school'
+                ? 'bg-white text-blue-700 shadow-sm ring-1 ring-slate-200'
+                : 'text-slate-500 hover:text-slate-700'
+            }`}
+            onClick={() => setActiveTab('school')}
+            type="button"
+          >
+            Làm đề theo trường
+          </button>
+          <button
+            className={`rounded-full px-6 py-2.5 text-sm font-semibold transition ${
+              activeTab === 'random'
+                ? 'bg-white text-blue-700 shadow-sm ring-1 ring-slate-200'
+                : 'text-slate-500 hover:text-slate-700'
+            }`}
+            onClick={() => setActiveTab('random')}
+            type="button"
+          >
+            Tạo đề thi thử ngẫu nhiên
+          </button>
+        </div>
+      </div>
+
+      <div className="transition-all duration-300">
+        {activeTab === 'school' ? (
+          <section className="rounded-[28px] border border-slate-200 bg-white p-6 md:p-8 shadow-sm">
+            <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <div className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
-              Thu vien de truong
+              Thư viện đề trường
             </div>
-            <h2 className="mt-2 text-2xl font-bold text-slate-950">Tim kiem de theo truong</h2>
+            <h2 className="mt-2 text-2xl font-bold text-slate-950">Tìm kiếm đề theo trường</h2>
           </div>
           <div className="rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-medium text-slate-600">
-            {catalogItems.length} de tim thay
+            {catalogItems.length} đề tìm thấy
           </div>
         </div>
 
@@ -118,7 +149,7 @@ export function PracticeHubPage() {
           <input
             className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-sky-400 focus:bg-white"
             onChange={(event) => setKeyword(event.target.value)}
-            placeholder="Tim theo ten truong, ten de, tag..."
+            placeholder="Tìm theo tên trường, tên đề, tag..."
             value={keyword}
           />
           <select
@@ -128,7 +159,7 @@ export function PracticeHubPage() {
             }
             value={yearFilter}
           >
-            <option value="all">Tat ca nam</option>
+            <option value="all">Tất cả năm</option>
             {years.map((year) => (
               <option key={year} value={year}>
                 {year}
@@ -146,46 +177,48 @@ export function PracticeHubPage() {
 
           {isLoadingCatalog ? (
             <div className="rounded-[24px] border border-slate-200 bg-slate-50 px-5 py-4 text-sm text-slate-600">
-              Dang tai danh sach de truong...
+              Đang tải danh sách đề trường...
             </div>
           ) : catalogItems.length === 0 ? (
             <div className="rounded-[24px] border border-slate-200 bg-slate-50 px-5 py-4 text-sm text-slate-600">
-              Chua co de truong nao trong Supabase.
+              Chưa có đề trường nào.
             </div>
           ) : (
             catalogItems.map((item) => (
               <article
                 key={item.examId}
-                className="rounded-[24px] border border-slate-200 bg-slate-50 p-5 transition hover:border-sky-300 hover:bg-white"
+                className="rounded-[24px] border border-slate-200 bg-white p-5 shadow-sm transition hover:shadow-md"
               >
-                <div className="flex flex-wrap items-start justify-between gap-3">
-                  <div>
-                    <h3 className="text-lg font-bold text-slate-900">{item.examTitle}</h3>
-                    <p className="mt-1 text-sm text-slate-600">
-                      {item.schoolName} | {item.city} | {item.year}
+                <div className="flex flex-wrap items-start justify-between gap-4">
+                  <div className="flex-1">
+                    <h3 className="text-lg font-bold text-slate-900 leading-snug">{item.examTitle}</h3>
+                    <p className="mt-1.5 text-sm text-slate-500 font-medium">
+                      {item.schoolName} &bull; {item.city} &bull; {item.year}
                     </p>
                   </div>
-                  <button
-                    className="rounded-2xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-sky-300 hover:text-sky-700"
-                    onClick={() => setSelectedSchoolName(item.schoolName)}
-                    type="button"
-                  >
-                    Uu tien truong nay
-                  </button>
-                  {item.schoolExamPageId ? (
-                    <Link
-                      className="rounded-2xl bg-slate-950 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800"
-                      to={`/practice/school-exams/${item.schoolExamPageId}`}
+                  <div className="flex shrink-0 flex-wrap gap-2">
+                    <button
+                      className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 hover:text-slate-900"
+                      onClick={() => setSelectedSchoolName(item.schoolName)}
+                      type="button"
                     >
-                      Lam de truong
-                    </Link>
-                  ) : null}
+                      Ưu tiên trường này
+                    </button>
+                    {item.schoolExamPageId ? (
+                      <Link
+                        className="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 hover:shadow"
+                        to={`/practice/school-exams/${item.schoolExamPageId}`}
+                      >
+                        Làm đề trường
+                      </Link>
+                    ) : null}
+                  </div>
                 </div>
-                <div className="mt-4 flex flex-wrap gap-2">
+                <div className="mt-5 flex flex-wrap gap-2">
                   {item.tags.map((tag) => (
                     <span
                       key={tag}
-                      className="rounded-full bg-white px-3 py-1 text-xs font-medium text-slate-600"
+                      className="rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-semibold text-slate-600 shadow-sm"
                     >
                       {tag}
                     </span>
@@ -195,24 +228,24 @@ export function PracticeHubPage() {
             ))
           )}
         </div>
-      </section>
+          </section>
+        ) : (
+          <section className="mx-auto max-w-2xl">
+            <div className="rounded-[28px] border border-slate-200 bg-white p-6 md:p-8 shadow-sm">
+              <div className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+                Tạo đề thi thử
+              </div>
+              <h2 className="mt-2 text-2xl font-bold text-slate-950">Sinh đề ngẫu nhiên theo blueprint</h2>
+              <p className="mt-3 text-sm leading-7 text-slate-600">
+                Đề sẽ được bốc ngẫu nhiên từ kho câu hỏi đề trường trên Supabase, ưu tiên câu của trường
+                bạn chọn, sau đó lấy thêm từ nhiều trường nếu kho không đủ.
+              </p>
 
-      <section className="space-y-6">
-        <div className="rounded-[28px] border border-slate-200 bg-slate-950 p-6 text-white shadow-[0_20px_60px_rgba(15,23,42,0.14)]">
-          <div className="text-xs font-semibold uppercase tracking-[0.18em] text-sky-200">
-            Tao de thi thu
-          </div>
-          <h2 className="mt-3 text-2xl font-bold">Sinh de ngau nhien theo blueprint</h2>
-          <p className="mt-3 text-sm leading-7 text-slate-300">
-            De se duoc boc ngau nhien tu kho cau hoi de truong tren Supabase, uu tien cau cua truong
-            ban chon, sau do fallback sang nhieu truong neu kho khong du.
-          </p>
-
-          <div className="mt-5 grid gap-4">
+          <div className="mt-6 grid gap-4">
             <label className="grid gap-2 text-sm">
-              <span className="font-medium text-slate-200">Blueprint dang dung</span>
+              <span className="font-medium text-slate-700">Blueprint đang dùng</span>
               <select
-                className="rounded-2xl border border-slate-700 bg-slate-900 px-4 py-3 text-slate-100 outline-none transition focus:border-sky-400"
+                className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition focus:border-sky-400 focus:bg-white"
                 onChange={(event) => setSelectedBlueprintId(event.target.value)}
                 value={selectedBlueprintId}
               >
@@ -225,13 +258,13 @@ export function PracticeHubPage() {
             </label>
 
             <label className="grid gap-2 text-sm">
-              <span className="font-medium text-slate-200">Uu tien cau hoi cua truong</span>
+              <span className="font-medium text-slate-700">Ưu tiên câu hỏi của trường</span>
               <select
-                className="rounded-2xl border border-slate-700 bg-slate-900 px-4 py-3 text-slate-100 outline-none transition focus:border-sky-400"
+                className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition focus:border-sky-400 focus:bg-white"
                 onChange={(event) => setSelectedSchoolName(event.target.value)}
                 value={selectedSchoolName}
               >
-                <option value="">Tong hop nhieu truong</option>
+                <option value="">Tổng hợp nhiều trường</option>
                 {schoolOptions.map((schoolName) => (
                   <option key={schoolName} value={schoolName}>
                     {schoolName}
@@ -242,20 +275,20 @@ export function PracticeHubPage() {
           </div>
 
           {selectedBlueprint ? (
-            <div className="mt-5 rounded-[24px] border border-slate-800 bg-slate-900/70 p-5">
-              <h3 className="text-lg font-semibold">{selectedBlueprint.name}</h3>
-              <p className="mt-2 text-sm leading-6 text-slate-300">{selectedBlueprint.description}</p>
+            <div className="mt-6 rounded-[24px] border border-slate-200 bg-slate-50/50 p-5">
+              <h3 className="text-lg font-semibold text-slate-900">{selectedBlueprint.name}</h3>
+              <p className="mt-2 text-sm leading-6 text-slate-600">{selectedBlueprint.description}</p>
               <div className="mt-4 grid gap-3">
                 {selectedBlueprint.sections.map((section) => (
                   <div
                     key={section.id}
-                    className="rounded-2xl border border-slate-800 bg-slate-950/70 px-4 py-3"
+                    className="rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm"
                   >
-                    <div className="flex items-center justify-between gap-3 text-sm font-semibold">
+                    <div className="flex items-center justify-between gap-3 text-sm font-semibold text-slate-900">
                       <span>{section.title}</span>
-                      <span>{section.count} cau</span>
+                      <span className="text-slate-500">{section.count} câu</span>
                     </div>
-                    <p className="mt-2 text-xs text-slate-400">
+                    <p className="mt-2 text-xs text-slate-500">
                       NB {section.levelCounts[1]} | TH {section.levelCounts[2]} | VD {section.levelCounts[3]} | VDC {section.levelCounts[4]}
                     </p>
                   </div>
@@ -264,17 +297,19 @@ export function PracticeHubPage() {
             </div>
           ) : null}
 
-          {errorMessage ? <p className="mt-4 text-sm font-medium text-rose-300">{errorMessage}</p> : null}
+          {errorMessage ? <p className="mt-4 text-sm font-medium text-rose-600">{errorMessage}</p> : null}
 
           <button
-            className="mt-5 w-full rounded-[22px] bg-sky-400 px-5 py-4 text-sm font-bold text-slate-950 transition hover:bg-sky-300"
+            className="mt-6 w-full rounded-[22px] bg-blue-600 px-6 py-4 text-sm font-bold text-white shadow-sm transition hover:bg-blue-700 hover:shadow active:scale-[0.98]"
             onClick={handleGenerateExam}
             type="button"
           >
-            Tao de va vao bai ngay
+            Tạo đề và vào bài ngay
           </button>
-        </div>
-      </section>
-    </section>
+            </div>
+          </section>
+        )}
+      </div>
+    </div>
   )
 }

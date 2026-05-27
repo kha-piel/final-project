@@ -66,24 +66,29 @@ export function DashboardLayout() {
     }
   }
 
+  const isFullScreenMode = location.pathname.includes('/school-exams/') || location.pathname.includes('/exam/')
+
   return (
-    <div className="min-h-[100dvh] bg-slate-100 text-slate-950">
+    <div className="min-h-[100dvh] bg-slate-50 text-slate-950">
       <div className="flex min-h-[100dvh]">
-        <aside className="hidden h-screen w-64 shrink-0 border-r border-slate-200 bg-white md:flex md:flex-col">
-          <SidebarContent
-            currentPath={location.pathname}
-            logoutError={logoutError}
-            navigationItems={navigationItems}
-            onNavigate={() => setIsMobileMenuOpen(false)}
-            onLogout={handleLogout}
-            userLabel={user?.fullName || user?.username || user?.email || 'Hoc sinh'}
-          />
-        </aside>
+        {!isFullScreenMode && (
+          <aside className="hidden h-screen w-64 shrink-0 border-r border-slate-200 bg-white md:flex md:flex-col">
+            <SidebarContent
+              currentPath={location.pathname}
+              logoutError={logoutError}
+              navigationItems={navigationItems}
+              onNavigate={() => setIsMobileMenuOpen(false)}
+              onLogout={handleLogout}
+              userLabel={user?.fullName || user?.username || user?.email || 'Hoc sinh'}
+            />
+          </aside>
+        )}
 
         <div className="flex min-h-[100dvh] flex-1 flex-col">
-          <header className="sticky top-0 z-20 flex items-center justify-between border-b border-slate-200 bg-white/90 px-4 py-3 backdrop-blur md:hidden">
-            <NavLink
-              className="bg-gradient-to-r from-sky-500 via-blue-600 to-indigo-600 bg-clip-text text-lg font-extrabold tracking-tight text-transparent"
+          {!isFullScreenMode && (
+            <header className="sticky top-0 z-20 flex items-center justify-between border-b border-slate-200 bg-white/90 px-4 py-3 backdrop-blur md:hidden">
+              <NavLink
+              className="bg-gradient-to-r from-indigo-600 to-blue-600 bg-clip-text text-lg font-extrabold tracking-tight text-transparent"
               to="/home"
             >
               THPTQG AI
@@ -99,17 +104,18 @@ export function DashboardLayout() {
                 <X className="h-5 w-5" strokeWidth={1.8} />
               ) : (
                 <Menu className="h-5 w-5" strokeWidth={1.8} />
-              )}
-            </button>
-          </header>
+                )}
+              </button>
+            </header>
+          )}
 
-          {isMobileMenuOpen ? (
+          {!isFullScreenMode && isMobileMenuOpen ? (
             <div
               className="fixed inset-0 z-30 bg-slate-950/30 md:hidden"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               <aside
-                className="h-full w-[86vw] max-w-xs border-r border-slate-200 bg-white px-4 py-5 shadow-[0_24px_64px_rgba(15,23,42,0.16)]"
+                className="h-full w-[80vw] max-w-sm border-r border-slate-200 bg-white shadow-2xl"
                 onClick={(event) => event.stopPropagation()}
               >
                 <SidebarContent
@@ -118,14 +124,14 @@ export function DashboardLayout() {
                   navigationItems={navigationItems}
                   onNavigate={() => setIsMobileMenuOpen(false)}
                   onLogout={handleLogout}
-                  userLabel={user?.fullName || user?.username || user?.email || 'Hoc sinh'}
+                  userLabel={user?.fullName || user?.username || user?.email || 'Học sinh'}
                 />
               </aside>
             </div>
           ) : null}
 
-          <main className="flex-1 bg-slate-100 px-4 py-4 md:px-8 md:py-8">
-            <div className="mx-auto max-w-[1400px]">
+          <main className={isFullScreenMode ? "flex-1 bg-slate-50 px-2 py-4 sm:px-4 sm:py-6" : "flex-1 bg-slate-50 px-4 py-6 md:px-8 md:py-8"}>
+            <div className={isFullScreenMode ? "mx-auto w-full max-w-[1800px]" : "mx-auto max-w-[1400px]"}>
               <Outlet />
             </div>
           </main>
@@ -151,27 +157,19 @@ function SidebarContent({
   userLabel: string
 }) {
   return (
-    <div className="flex h-full flex-col px-4 py-5">
-      <div className="mb-8">
+    <div className="flex h-full flex-col px-4 py-6">
+      {/* Logo */}
+      <div className="mb-10 px-2">
         <NavLink
-          className="inline-block bg-gradient-to-r from-sky-500 via-blue-600 to-indigo-600 bg-clip-text text-2xl font-extrabold tracking-tight text-transparent"
+          className="inline-block bg-gradient-to-r from-indigo-600 to-blue-600 bg-clip-text text-2xl font-black tracking-tight text-transparent"
           to="/home"
         >
           THPTQG AI
         </NavLink>
-        <p className="mt-3 max-w-[22ch] text-sm leading-6 text-slate-500">
-          Luong hoc tap tren web duoc sap xep gon, ro va san sang mo rong len mobile.
-        </p>
       </div>
 
-      <div className="mb-6 rounded-3xl border border-slate-200 bg-slate-50 p-4">
-        <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400">
-          Tai khoan dang dung
-        </div>
-        <div className="mt-2 text-sm font-semibold text-slate-800">{userLabel}</div>
-      </div>
-
-      <nav className="space-y-2">
+      {/* Nav items */}
+      <nav className="space-y-1 flex-1">
         {navigationItems.map((item) => {
           const isActive = item.match.some((prefix) => currentPath.startsWith(prefix))
           const Icon = item.icon
@@ -180,47 +178,48 @@ function SidebarContent({
             <NavLink
               key={item.to}
               className={[
-                'group flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-semibold transition',
-                'active:translate-y-px',
+                'group flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition-colors duration-200',
                 isActive
-                  ? 'bg-blue-100 text-blue-700 shadow-[inset_0_1px_0_rgba(255,255,255,0.7)]'
+                  ? 'bg-indigo-50 text-indigo-600'
                   : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900',
               ].join(' ')}
               onClick={onNavigate}
               to={item.to}
             >
-              <span
-                className={[
-                  'flex h-10 w-10 items-center justify-center rounded-2xl border transition',
-                  isActive
-                    ? 'border-blue-200 bg-white text-blue-700'
-                    : 'border-slate-200 bg-white text-slate-500 group-hover:border-slate-300 group-hover:text-slate-800',
-                ].join(' ')}
-              >
-                <Icon className="h-4.5 w-4.5" strokeWidth={1.8} />
-              </span>
+              <Icon className="h-5 w-5 shrink-0" strokeWidth={2} />
               <span>{item.label}</span>
             </NavLink>
           )
         })}
       </nav>
 
-      <div className="mt-auto border-t border-slate-200 pt-5">
+      {/* Bottom Profile and Logout */}
+      <div className="mt-auto border-t border-slate-200 pt-6">
+        <div className="mb-4 rounded-2xl bg-slate-50 p-4 border border-slate-100">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-indigo-700 font-bold shadow-sm border border-indigo-200/50">
+              {userLabel.charAt(0).toUpperCase()}
+            </div>
+            <div className="overflow-hidden">
+              <p className="truncate text-sm font-bold text-slate-800">{userLabel}</p>
+              <p className="truncate text-xs font-medium text-slate-500">Học sinh</p>
+            </div>
+          </div>
+        </div>
+
         {logoutError ? (
-          <p className="mb-3 rounded-2xl border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-700">
+          <p className="mb-3 rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-sm font-medium text-rose-700">
             {logoutError}
           </p>
         ) : null}
 
         <button
-          className="flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-sm font-semibold text-rose-500 transition hover:bg-rose-50 hover:text-rose-600 active:translate-y-px"
+          className="group flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold text-slate-600 transition-colors duration-200 hover:bg-rose-50 hover:text-rose-600"
           onClick={() => void onLogout()}
           type="button"
         >
-          <span className="flex h-10 w-10 items-center justify-center rounded-2xl border border-rose-100 bg-rose-50/70">
-            <LogOut className="h-4.5 w-4.5" strokeWidth={1.8} />
-          </span>
-          <span>Dang xuat</span>
+          <LogOut className="h-5 w-5 shrink-0 transition-transform group-hover:-translate-x-1" strokeWidth={2} />
+          <span>Đăng xuất</span>
         </button>
       </div>
     </div>
