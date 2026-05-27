@@ -22,7 +22,7 @@ except ImportError:  # pragma: no cover - optional until requirements are instal
     fitz = None
 
 
-load_dotenv()
+load_dotenv(override=True)
 
 app = FastAPI(
     title="RAG Explanation Service",
@@ -48,7 +48,7 @@ if not GEMINI_API_KEY:
 client = genai.Client(api_key=GEMINI_API_KEY)
 MODEL_NAME = "gemini-2.5-flash"
 BASE_VAULT_PATH = Path(__file__).resolve().parent.parent / "docs" / "knowledge-base"
-PDF_TEXT_EXTRACTION_MIN_CHARS = 120
+PDF_TEXT_EXTRACTION_MIN_CHARS = 99999999 # Force Gemini File API for all PDFs to avoid mojibake
 logger = logging.getLogger("ai_service.admin_import")
 
 IMPORT_TOPIC_OPTIONS_BY_SUBJECT: dict[str, list[str]] = {
@@ -552,7 +552,7 @@ def classify_topics_for_questions(
         return TopicBackfillResponse(results=[], warnings=[])
 
     prompt = build_topic_backfill_prompt(subject_code, questions)
-    raw_model_response = generate_pdf_text_json(prompt)
+    raw_model_response = generate_pdf_json(prompt)
     payload = parse_model_json_payload(raw_model_response)
     raw_results = payload.get("results", [])
     question_ids = {question.question_id for question in questions}
@@ -714,11 +714,11 @@ Neu text thieu do co hinh/so do/bang thi giu lai phan text doc duoc, them warnin
 """.strip()
 
 
-def generate_pdf_text_json(prompt: str) -> str:
+def generate_pdf_json(contents: Any) -> str:
     try:
         response = client.models.generate_content(
             model=MODEL_NAME,
-            contents=prompt,
+            contents=contents,
             config=types.GenerateContentConfig(
                 response_mime_type="application/json",
                 temperature=0,
@@ -1348,23 +1348,38 @@ async def validate_exam_pdf(
         logger.info("Extracted PDF text length: %s", len(extracted_text))
 
         if len(extracted_text) < PDF_TEXT_EXTRACTION_MIN_CHARS:
-            raise HTTPException(
-                status_code=422,
-                detail=(
-                    "Khong trich xuat du text tu PDF. Backend hien chi xu ly text, khong quet anh. "
-                    "Hay dung PDF co text layer hoac OCR file truoc khi import."
-                ),
-            )
+            logger.info("PDF has no text, using Gemini File API fallback.")
+            uploaded_file = client.files.upload(file=str(tmp_path), config={"mime_type": "application/pdf"})
+            try:
+                import asyncio
+                while uploaded_file.state.name == "PROCESSING":
+                    await asyncio.sleep(2)
+                    uploaded_file = client.files.get(name=uploaded_file.name)
+                
+                if uploaded_file.state.name == "FAILED":
+                    raise HTTPException(status_code=500, detail="Gemini khong the OCR file PDF nay.")
 
-        logger.info("Using text-only Gemini extraction.")
-        prompt = build_pdf_text_exam_prompt(
-            pdf_name=pdf_file.filename,
-            subject_code=cleaned_subject_code,
-            subject_name=cleaned_subject_name,
-            answer_key_map=answer_key_map,
-            extracted_text=extracted_text,
-        )
-        raw_model_response = generate_pdf_text_json(prompt)
+                base_prompt = build_pdf_exam_prompt(
+                    pdf_name=pdf_file.filename,
+                    subject_code=cleaned_subject_code,
+                    subject_name=cleaned_subject_name,
+                    answer_key_map=answer_key_map,
+                )
+                prompt = base_prompt + "\n\nDay la file PDF ban goc dang anh/scan. Hay tu dong nhan dien chu trong hinh (OCR) va boc tach thanh cac cau hoi dang text, bo qua hinh anh do thi (tuong tu nhu quet text). Tuyet doi khong giai thich gi them, chi tra ve JSON hop le."
+                raw_model_response = generate_pdf_json([uploaded_file, prompt])
+            finally:
+                client.files.delete(name=uploaded_file.name)
+        else:
+            logger.info("Using text-only Gemini extraction.")
+            prompt = build_pdf_text_exam_prompt(
+                pdf_name=pdf_file.filename,
+                subject_code=cleaned_subject_code,
+                subject_name=cleaned_subject_name,
+                answer_key_map=answer_key_map,
+                extracted_text=extracted_text,
+            )
+            raw_model_response = generate_pdf_json(prompt)
+            
         parsed_payload = parse_model_json_payload(raw_model_response)
 
         response = normalize_pdf_exam_response(
