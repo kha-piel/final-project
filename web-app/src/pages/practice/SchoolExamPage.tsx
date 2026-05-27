@@ -746,9 +746,9 @@ export function SchoolExamPage() {
           </div>
         </div>
 
-        <div className="grid gap-6 xl:grid-cols-[0.8fr_1.2fr]">
-          <section className="rounded-[28px] border border-slate-200 bg-white p-6 shadow-[0_20px_60px_rgba(15,23,42,0.06)]">
-            <h2 className="text-xl font-bold text-slate-950">Thong ke nhanh</h2>
+        <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr] items-start">
+          <section className="sticky top-6 rounded-[28px] border border-slate-200 bg-white p-6 shadow-[0_20px_60px_rgba(15,23,42,0.06)]">
+            <h2 className="text-xl font-bold text-slate-950">Thống kê nhanh</h2>
             <div className="mt-5 grid gap-4 sm:grid-cols-2">
               <SummaryTile label="Đúng" value={`${summary.correctCount}`} tone="emerald" />
               <SummaryTile label="Sai" value={`${wrongReviewItems.length}`} tone="rose" />
@@ -758,7 +758,7 @@ export function SchoolExamPage() {
 
             <div className="mt-6 rounded-[24px] border border-slate-200 bg-slate-50 p-5">
               <h3 className="text-sm font-bold uppercase tracking-[0.12em] text-slate-700">
-                Ghi chu AI
+                Ghi chú AI
               </h3>
               <p className="mt-3 text-sm leading-7 text-slate-600">
                 AI có thể giải thích từng câu sai và phân tích tổng quan điểm yếu dựa trên nội dung câu hỏi,
@@ -876,7 +876,7 @@ export function SchoolExamPage() {
                       {selectedReviewItem.correct ? 'Đúng' : 'Sai'}
                     </div>
                     <div className="text-sm leading-7 text-slate-600">
-                      Topic: {selectedReviewItem.topic || 'Chưa gan topic'}
+                      Topic: {selectedReviewItem.topic || 'Chưa gán topic'}
                     </div>
                   </div>
 
@@ -969,7 +969,7 @@ export function SchoolExamPage() {
                     >
                       {isAiBusyByQuestion[selectedReviewItem.questionNumber]
                         ? 'Đang giải thích...'
-                        : 'Giải thích câu nay'}
+                        : 'Giải thích câu này'}
                     </button>
                   </div>
 
@@ -1083,21 +1083,21 @@ export function SchoolExamPage() {
         </div>
       ) : null}
 
-      <div className="grid gap-6 xl:grid-cols-[1.05fr_0.95fr]">
-        <section className="rounded-[28px] border border-slate-200 bg-white p-4 shadow-[0_20px_60px_rgba(15,23,42,0.05)]">
+      <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr] items-start">
+        <section className="sticky top-6 rounded-[28px] border border-slate-200 bg-white p-4 shadow-[0_20px_60px_rgba(15,23,42,0.05)]">
           <div className="mb-3 flex items-center justify-between gap-3">
             <h2 className="text-lg font-bold text-slate-950">Đề gốc PDF</h2>
             <a
-              className="rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-700"
+              className="rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100"
               href={exam.pdfUrl}
               rel="noreferrer"
               target="_blank"
             >
-              Mo PDF rieng
+              Mở PDF riêng
             </a>
           </div>
-          <div className="h-[80vh] overflow-hidden rounded-[20px] border border-slate-200 bg-slate-100">
-            <iframe className="h-full w-full" src={exam.pdfUrl} title={exam.examTitle} />
+          <div className="h-[calc(100vh-140px)] min-h-[600px] overflow-hidden rounded-[20px] border border-slate-200 bg-slate-100">
+            <iframe className="h-full w-full" src={`${exam.pdfUrl}#toolbar=0`} title={exam.examTitle} />
           </div>
         </section>
 
@@ -1163,10 +1163,10 @@ export function SchoolExamPage() {
                             return (
                               <label
                                 key={label}
-                                className={`flex cursor-pointer items-center justify-center gap-2 rounded-2xl border px-3 py-3 text-sm font-bold transition ${
+                                className={`flex cursor-pointer items-center justify-center gap-2 rounded-xl border px-2 py-2 text-sm font-bold transition ${
                                   isSelected
-                                    ? 'border-sky-500 bg-sky-50 text-sky-800'
-                                    : 'border-slate-200 bg-white text-slate-700'
+                                    ? 'border-blue-500 bg-blue-50 text-blue-700'
+                                    : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
                                 }`}
                               >
                                 <input
@@ -1231,7 +1231,7 @@ export function SchoolExamPage() {
                                 <div className="px-4 py-3 text-center font-semibold uppercase tracking-[0.08em] text-slate-700">
                                   {label}
                                 </div>
-                                <label className="flex items-center justify-center border-l border-slate-200">
+                                <label className={`flex cursor-pointer items-center justify-center border-l border-slate-200 transition ${selected === true ? 'bg-blue-50' : 'hover:bg-slate-50'}`}>
                                   <input
                                     checked={selected === true}
                                     disabled={submitted}
@@ -1247,7 +1247,7 @@ export function SchoolExamPage() {
                                     type="radio"
                                   />
                                 </label>
-                                <label className="flex items-center justify-center border-l border-slate-200">
+                                <label className={`flex cursor-pointer items-center justify-center border-l border-slate-200 transition ${selected === false ? 'bg-blue-50' : 'hover:bg-slate-50'}`}>
                                   <input
                                     checked={selected === false}
                                     disabled={submitted}
@@ -1474,6 +1474,33 @@ function MetricPill({ label, value }: { label: string; value: string }) {
   )
 }
 
+function formatSectionTitle(title: string) {
+  const lower = title.toLowerCase()
+  if (lower.includes('phan i') || lower.includes('nhieu lua chon')) {
+    return 'Phần I. Trắc nghiệm nhiều lựa chọn'
+  }
+  if (lower.includes('phan ii') || lower.includes('dung sai')) {
+    return 'Phần II. Trắc nghiệm đúng sai'
+  }
+  if (lower.includes('phan iii') || lower.includes('tra loi ngan')) {
+    return 'Phần III. Trả lời ngắn'
+  }
+  return title
+}
+
+function formatSectionDescription(description: string) {
+  if (description.toLowerCase().includes('moi cau chon 1 trong 4')) {
+    return 'Mỗi câu chọn 1 trong 4 đáp án.'
+  }
+  if (description.toLowerCase().includes('moi y (a), (b), (c), (d)')) {
+    return 'Trong mỗi câu, thí sinh chọn đúng hoặc sai.'
+  }
+  if (description.toLowerCase().includes('thi sinh dien dap an')) {
+    return 'Thí sinh điền đáp án.'
+  }
+  return description
+}
+
 function QuestionSection({
   title,
   description,
@@ -1486,8 +1513,8 @@ function QuestionSection({
   return (
     <section>
       <div className="mb-4">
-        <h3 className="text-lg font-bold text-slate-950">{title}</h3>
-        <p className="mt-1 text-sm leading-6 text-slate-600">{description}</p>
+        <h3 className="text-lg font-bold text-slate-950">{formatSectionTitle(title)}</h3>
+        <p className="mt-1 text-sm leading-6 text-slate-600">{formatSectionDescription(description)}</p>
       </div>
       {children}
     </section>

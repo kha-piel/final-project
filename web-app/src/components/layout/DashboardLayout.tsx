@@ -67,7 +67,7 @@ export function DashboardLayout() {
   }
 
   return (
-    <div className="min-h-[100dvh] bg-slate-100 text-slate-950">
+    <div className="min-h-[100dvh] bg-slate-50 text-slate-950">
       <div className="flex min-h-[100dvh]">
         <aside className="hidden h-screen w-64 shrink-0 border-r border-slate-200 bg-white md:flex md:flex-col">
           <SidebarContent
@@ -124,7 +124,7 @@ export function DashboardLayout() {
             </div>
           ) : null}
 
-          <main className="flex-1 bg-slate-100 px-4 py-4 md:px-8 md:py-8">
+          <main className="flex-1 bg-slate-50 px-4 py-6 md:px-8 md:py-8">
             <div className="mx-auto max-w-[1400px]">
               <Outlet />
             </div>
@@ -180,10 +180,10 @@ function SidebarContent({
             <NavLink
               key={item.to}
               className={[
-                'group flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-semibold transition',
-                'active:translate-y-px',
+                'group flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-semibold transition-all duration-200',
+                'active:scale-[0.98]',
                 isActive
-                  ? 'bg-blue-100 text-blue-700 shadow-[inset_0_1px_0_rgba(255,255,255,0.7)]'
+                  ? 'bg-blue-50 text-blue-700 shadow-sm'
                   : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900',
               ].join(' ')}
               onClick={onNavigate}
@@ -191,9 +191,9 @@ function SidebarContent({
             >
               <span
                 className={[
-                  'flex h-10 w-10 items-center justify-center rounded-2xl border transition',
+                  'flex h-10 w-10 items-center justify-center rounded-[14px] border transition-all duration-200',
                   isActive
-                    ? 'border-blue-200 bg-white text-blue-700'
+                    ? 'border-blue-200 bg-white text-blue-600 shadow-sm'
                     : 'border-slate-200 bg-white text-slate-500 group-hover:border-slate-300 group-hover:text-slate-800',
                 ].join(' ')}
               >

@@ -173,7 +173,7 @@ export function DashboardPage() {
       title="Dashboard Ôn tập"
       description="Chọn môn học, chuyên đề, mức độ và dạng câu hỏi để tạo phiên luyện tập riêng."
     >
-      <section className="rounded-[28px] border border-slate-200 bg-white p-5 shadow-[0_18px_44px_rgba(15,23,42,0.05)]">
+      <section className="rounded-[28px] border border-slate-200 bg-white p-6 md:p-8 shadow-sm">
         <div className="mb-5 flex flex-wrap items-end justify-between gap-4">
           <div>
             <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400">
@@ -185,7 +185,7 @@ export function DashboardPage() {
           </div>
 
           <button
-            className="rounded-2xl bg-slate-950 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 active:translate-y-px disabled:cursor-not-allowed disabled:bg-slate-300"
+            className="rounded-2xl bg-blue-600 px-6 py-3.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 hover:shadow active:scale-[0.98] disabled:cursor-not-allowed disabled:bg-slate-300 disabled:shadow-none"
             disabled={isCreatingExam || isLoadingSubjects || isLoadingTopics}
             onClick={() => void handleCreateExam()}
             type="button"
@@ -292,7 +292,7 @@ function FilterField({ label, children }: { label: string; children: ReactNode }
 
 function StatusBlock({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-[18px] border border-slate-200 bg-white px-4 py-4 shadow-[0_14px_34px_rgba(15,23,42,0.04)]">
+    <div className="rounded-[20px] border border-slate-200 bg-white px-5 py-4 shadow-sm">
       <div className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400">
         {label}
       </div>

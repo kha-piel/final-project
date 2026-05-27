@@ -166,8 +166,8 @@ export function ExamPage() {
   if (!session) {
     return (
       <PageCard title="Exam Session Not Found" description="Session này hiện không tồn tại trong local app state.">
-        <p style={styles.text}>
-          Hãy quay lại <Link to="/practice">practice</Link> hoặc <Link to="/dashboard">dashboard</Link>.
+        <p className="mt-4 text-slate-500">
+          Hãy quay lại <Link to="/practice" className="font-semibold text-blue-600 hover:underline">practice</Link> hoặc <Link to="/dashboard" className="font-semibold text-blue-600 hover:underline">dashboard</Link>.
         </p>
       </PageCard>
     )
@@ -176,7 +176,7 @@ export function ExamPage() {
   if (!runtime || !currentQuestion) {
     return (
       <PageCard title={session.title} description="Đang khởi tạo exam runtime session...">
-        <p style={styles.text}>Vui long doi trong giay lat.</p>
+        <p className="mt-4 text-slate-500">Vui lòng đợi trong giây lát.</p>
       </PageCard>
     )
   }
@@ -360,38 +360,38 @@ export function ExamPage() {
       title={session.title}
       description="Exam engine đã hỗ trợ nhiều lựa chọn, Đúng/Sai và trả lời ngắn trong cùng một luồng thi."
     >
-      <div style={styles.summaryRow}>
+      <div className="mb-6 flex flex-wrap gap-3">
         <SummaryPill label="Tiến độ" value={`Câu ${runtime.currentIndex + 1}/${session.questions.length}`} />
         <SummaryPill label="Đã trả lời" value={`${answeredCount}/${session.questions.length}`} />
-        <SummaryPill label="Do kho" value={session.difficultyLabel} />
-        <SummaryPill label="Côn lại" value={formatDuration(remainingSeconds)} />
+        <SummaryPill label="Độ khó" value={session.difficultyLabel} />
+        <SummaryPill label="Còn lại" value={formatDuration(remainingSeconds)} />
         <SummaryPill label="Sync" value={syncStatus} />
       </div>
 
-      {flashMessage ? <div style={styles.flash}>{flashMessage}</div> : null}
+      {flashMessage ? <div className="mb-5 rounded-2xl border border-orange-200 bg-orange-50 px-4 py-3.5 font-semibold text-orange-900 shadow-sm">{flashMessage}</div> : null}
       {isSubmitted ? (
-        <div style={styles.successFlash}>Bài làm đã được nộp. Bạn có thể xem tổng kết và review chi tiết.</div>
+        <div className="mb-5 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3.5 font-semibold text-emerald-800 shadow-sm">Bài làm đã được nộp. Bạn có thể xem tổng kết và review chi tiết.</div>
       ) : null}
 
-      <div style={styles.grid}>
-        <section style={styles.panel}>
-          <div style={styles.kicker}>Question {runtime.currentIndex + 1}</div>
-          <div style={styles.panelTitleBlock}>
-            <MarkdownContent content={question.content} className="text-base leading-8 text-slate-900" />
+      <div className="grid gap-5 xl:grid-cols-[1.4fr_0.9fr]">
+        <section className="flex min-h-[320px] flex-col rounded-[28px] border border-slate-200 bg-white p-5 shadow-sm md:p-6 lg:p-8">
+          <div className="mb-3 text-sm font-bold uppercase tracking-wider text-slate-400">Câu {runtime.currentIndex + 1}</div>
+          <div className="mb-3">
+            <MarkdownContent content={question.content} className="text-lg leading-8 text-slate-900" />
           </div>
-          <p style={styles.text}>
+          <p className="m-0 text-sm text-slate-500">
             Topic: {session.topicName} | Dạng bài: {formatQuestionType(question)} | Nguồn:{' '}
             {question.sourceMeta?.schoolName ?? 'Tổng hợp'}
           </p>
 
           {question.assetUrls && question.assetUrls.length > 0 ? (
-            <div style={styles.assetGrid}>
+            <div className="mt-5 grid gap-3">
               {question.assetUrls.map((assetUrl, index) => (
-                <div key={`${question.questionId}-${assetUrl}`} style={styles.assetCard}>
+                <div key={`${question.questionId}-${assetUrl}`} className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
                   <img
                     alt={`Question asset ${index + 1}`}
                     src={assetUrl}
-                    style={styles.assetImage}
+                    className="block h-auto w-full object-contain"
                   />
                 </div>
               ))}
@@ -411,67 +411,66 @@ export function ExamPage() {
             onSetShortAnswer={setShortAnswer}
           />
 
-          <div style={styles.buttonRow}>
+          <div className="mt-auto pt-6 flex flex-wrap gap-3">
             <button
               disabled={runtime.currentIndex === 0}
               onClick={handleGoPrevious}
-              style={styles.secondaryButton}
+              className="rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-bold text-slate-700 transition-colors hover:bg-slate-50 disabled:opacity-50"
               type="button"
             >
-              Câu truoc
+              Câu trước
             </button>
             <button
               disabled={runtime.currentIndex === session.questions.length - 1}
               onClick={handleGoNext}
-              style={styles.secondaryButton}
+              className="rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-bold text-slate-700 transition-colors hover:bg-slate-50 disabled:opacity-50"
               type="button"
             >
-              Câu tiep theo
+              Câu tiếp theo
             </button>
             <button
               disabled={remainingSeconds <= 0 || questionLocked || isSubmitted}
               onClick={handleCheckAnswer}
-              style={styles.primaryButton}
+              className="rounded-xl bg-blue-600 px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-blue-700 shadow-sm disabled:opacity-50 disabled:hover:bg-blue-600"
               type="button"
             >
-              Kiem tra đáp án
+              Kiểm tra đáp án
             </button>
-            <button onClick={() => void handleSubmitAttempt()} style={styles.submitButton} type="button">
+            <button onClick={() => void handleSubmitAttempt()} className="rounded-xl bg-emerald-600 px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-emerald-700 shadow-sm disabled:opacity-50" type="button">
               Nộp bài
             </button>
           </div>
         </section>
 
-        <section style={styles.panel}>
-          <h3 style={styles.panelTitle}>AI Chat</h3>
-          <p style={styles.text}>Lịch sử chat được giữ xuyên suốt trong exam session hiện tại.</p>
-          <div style={styles.chatHistory}>
+        <section className="flex min-h-[320px] flex-col rounded-[28px] border border-slate-200 bg-white p-5 shadow-sm md:p-6 lg:p-8">
+          <h3 className="m-0 mb-2 text-xl font-bold text-slate-900">AI Chat</h3>
+          <p className="m-0 text-sm text-slate-500">Lịch sử chat được giữ xuyên suốt trong exam session hiện tại.</p>
+          <div className="my-4 grid max-h-[320px] gap-3 overflow-y-auto pr-1">
             {runtime.chatHistory.length === 0 ? (
-              <div style={styles.emptyChat}>
+              <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-4 text-sm text-slate-500">
                 Chưa có tin nhắn nào. AI sẽ được gọi khi bạn trả lời sai hoặc hỏi thêm.
               </div>
             ) : (
               runtime.chatHistory.map((message) => (
                 <div
                   key={message.id}
-                  style={{
-                    ...styles.chatBubble,
-                    ...(message.role === 'user'
-                      ? styles.userBubble
+                  className={`rounded-2xl border p-3.5 ${
+                    message.role === 'user'
+                      ? 'border-blue-200 bg-blue-50 text-blue-900'
                       : message.role === 'ai'
-                        ? styles.aiBubble
-                        : styles.systemBubble),
-                  }}
+                        ? 'border-emerald-200 bg-emerald-50 text-emerald-900'
+                        : 'border-orange-200 bg-orange-50 text-orange-900'
+                  }`}
                 >
-                  <strong style={styles.chatRole}>
-                    {message.role === 'user' ? 'Học sinh' : message.role === 'ai' ? 'AI gia sư' : 'He thong'}
+                  <strong className="mb-1.5 block text-sm">
+                    {message.role === 'user' ? 'Học sinh' : message.role === 'ai' ? 'AI gia sư' : 'Hệ thống'}
                   </strong>
-                  <div>{message.content}</div>
+                  <div className="text-sm leading-relaxed">{message.content}</div>
                 </div>
               ))
             )}
           </div>
-          <div style={styles.chatComposer}>
+          <div className="mb-3 grid grid-cols-[1fr_auto] gap-3">
             <input
               disabled={isAiBusy || isSubmitted}
               onChange={(event) => setChatInput(event.target.value)}
@@ -482,27 +481,27 @@ export function ExamPage() {
                 }
               }}
               placeholder="Hỏi AI về câu đang làm..."
-              style={styles.chatInput}
+              className="rounded-xl border border-slate-200 bg-white px-4 py-3 outline-none transition focus:border-blue-400 focus:ring-1 focus:ring-blue-400"
               value={chatInput}
             />
             <button
               disabled={isAiBusy || !chatInput.trim() || isSubmitted}
               onClick={() => void handleSendChat()}
-              style={styles.primaryButton}
+              className="rounded-xl bg-blue-600 px-5 py-3 font-bold text-white transition-colors hover:bg-blue-700 shadow-sm disabled:opacity-50"
               type="button"
             >
               Gửi
             </button>
           </div>
-          {chatStatus ? <p style={styles.chatStatus}>{chatStatus}</p> : null}
-          <div style={styles.metaBox}>
-            <strong>Trạng thái câu hiện tại</strong>
-            <p style={styles.metaText}>
+          {chatStatus ? <p className="mb-4 text-sm text-slate-500">{chatStatus}</p> : null}
+          <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-4">
+            <strong className="text-sm text-slate-900">Trạng thái câu hiện tại</strong>
+            <p className="mt-2 text-sm text-slate-600">
               {questionLocked
-                ? `Đã khóa. Dap an cua ban: ${selectedAnswerLabel}`
+                ? `Đã khóa. Đáp án của bạn: ${selectedAnswerLabel}`
                 : 'Chưa khóa, bạn vẫn có thể đổi đáp án trước khi check.'}
             </p>
-            <p style={styles.metaText}>Đáp án đúng: {correctAnswerLabel}</p>
+            <p className="mt-2 text-sm text-slate-600">Đáp án đúng: {correctAnswerLabel}</p>
           </div>
         </section>
       </div>
@@ -540,31 +539,31 @@ function QuestionComposer({
 }) {
   if (question.questionType === 'multiple_choice') {
     return (
-      <div style={styles.answerList}>
+      <div className="my-5 grid gap-3">
         {question.answers.map((answer) => {
           const isSelected = selectedAnswerId === answer.answerId
           return (
             <label
               key={answer.answerId}
-              style={{
-                ...styles.answerCard,
-                ...(isSelected ? styles.answerCardSelected : {}),
-                ...(questionLocked ? styles.answerCardLocked : {}),
-              }}
+              className={`flex cursor-pointer items-start gap-3 rounded-2xl border p-4 transition-all duration-200 ${
+                isSelected
+                  ? 'border-blue-500 bg-blue-50'
+                  : 'border-slate-200 bg-white hover:border-blue-300 hover:bg-slate-50'
+              } ${questionLocked ? 'opacity-80 cursor-default' : ''}`}
             >
               <input
                 checked={isSelected}
                 disabled={questionLocked || isSubmitted}
                 name={`question-${question.questionId}`}
                 onChange={() => onSelectAnswer(sessionId, question.questionId, answer.answerId)}
-                style={styles.radio}
+                className="mt-1 h-4 w-4 shrink-0 accent-blue-600"
                 type="radio"
               />
-              <div>
-                <div style={styles.answerContent}>
-                  <strong>{answer.optionLabel}.</strong>
-                  <div style={styles.answerMarkdown}>
-                    <MarkdownContent content={answer.content} className="text-sm leading-7 text-slate-900" />
+              <div className="flex-1 text-slate-900">
+                <div className="grid grid-cols-[auto_1fr] items-start gap-2">
+                  <strong className="text-lg">{answer.optionLabel}.</strong>
+                  <div className="min-w-0">
+                    <MarkdownContent content={answer.content} className="text-base leading-7 text-slate-900" />
                   </div>
                 </div>
               </div>
@@ -577,31 +576,31 @@ function QuestionComposer({
 
   if (question.questionType === 'true_false') {
     return (
-      <div style={styles.answerList}>
+      <div className="my-5 grid gap-3">
         {(question.statements ?? []).map((statement, index) => {
           const currentValue = selectedTrueFalseMap[statement.statementId]
           return (
             <div
               key={statement.statementId}
-              style={{
-                ...styles.answerCard,
-                ...(questionLocked ? styles.answerCardLocked : {}),
-              }}
+              className={`flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-4 transition-colors hover:border-blue-200 md:flex-row md:items-start ${
+                questionLocked ? 'opacity-80' : ''
+              }`}
             >
-              <div style={styles.statementContent}>
-                <strong>{String.fromCharCode(97 + index)})</strong>
-                <div style={styles.answerMarkdown}>
-                  <MarkdownContent content={statement.content} className="text-sm leading-7 text-slate-900" />
+              <div className="grid flex-1 grid-cols-[auto_1fr] items-start gap-2 leading-relaxed text-slate-900">
+                <strong className="text-lg">{String.fromCharCode(97 + index)})</strong>
+                <div className="min-w-0">
+                  <MarkdownContent content={statement.content} className="text-base leading-7 text-slate-900" />
                 </div>
               </div>
-              <div style={styles.trueFalseActions}>
+              <div className="flex shrink-0 gap-2">
                 <button
                   disabled={questionLocked || isSubmitted}
                   onClick={() => onSelectTrueFalse(sessionId, question.questionId, statement.statementId, true)}
-                  style={{
-                    ...styles.trueFalseButton,
-                    ...(currentValue === true ? styles.trueFalseButtonSelected : {}),
-                  }}
+                  className={`rounded-full border px-4 py-2 font-bold transition-colors disabled:cursor-not-allowed ${
+                    currentValue === true
+                      ? 'border-blue-500 bg-blue-100 text-blue-700'
+                      : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-50'
+                  }`}
                   type="button"
                 >
                   Đúng
@@ -609,10 +608,11 @@ function QuestionComposer({
                 <button
                   disabled={questionLocked || isSubmitted}
                   onClick={() => onSelectTrueFalse(sessionId, question.questionId, statement.statementId, false)}
-                  style={{
-                    ...styles.trueFalseButton,
-                    ...(currentValue === false ? styles.trueFalseButtonSelected : {}),
-                  }}
+                  className={`rounded-full border px-4 py-2 font-bold transition-colors disabled:cursor-not-allowed ${
+                    currentValue === false
+                      ? 'border-blue-500 bg-blue-100 text-blue-700'
+                      : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-50'
+                  }`}
                   type="button"
                 >
                   Sai
@@ -626,15 +626,15 @@ function QuestionComposer({
   }
 
   return (
-    <div style={styles.answerList}>
-      <div style={styles.shortAnswerCard}>
-        <label style={styles.shortAnswerLabel}>
+    <div className="my-5 grid gap-3">
+      <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <label className="grid gap-3 text-lg font-bold text-slate-900">
           Đáp án ngắn
           <input
             disabled={questionLocked || isSubmitted}
             onChange={(event) => onSetShortAnswer(sessionId, question.questionId, event.target.value)}
-            placeholder="Nhap đáp án cua ban..."
-            style={styles.shortAnswerInput}
+            placeholder="Nhập đáp án của bạn..."
+            className="rounded-xl border border-slate-300 bg-white px-4 py-3 text-base font-normal outline-none transition focus:border-blue-500 focus:ring-1 focus:ring-blue-500 disabled:cursor-not-allowed disabled:bg-slate-50"
             type="text"
             value={shortAnswerValue}
           />
@@ -646,8 +646,8 @@ function QuestionComposer({
 
 function SummaryPill({ label, value }: { label: string; value: string }) {
   return (
-    <div style={styles.pill}>
-      <strong>{label}:</strong> {value}
+    <div className="rounded-full border border-blue-100 bg-blue-50/70 px-4 py-2 text-sm text-blue-900 shadow-sm">
+      <strong className="mr-1">{label}:</strong> {value}
     </div>
   )
 }
@@ -684,255 +684,4 @@ function formatQuestionType(question: DraftQuestion) {
   return 'Trả lời ngắn'
 }
 
-const styles = {
-  summaryRow: {
-    display: 'flex',
-    flexWrap: 'wrap' as const,
-    gap: '12px',
-    marginBottom: '20px',
-  },
-  pill: {
-    borderRadius: '999px',
-    padding: '10px 14px',
-    backgroundColor: '#edf5ff',
-    border: '1px solid #d4e4f6',
-    color: '#24415e',
-  },
-  flash: {
-    marginBottom: '18px',
-    borderRadius: '16px',
-    padding: '14px 16px',
-    backgroundColor: '#fff7ed',
-    border: '1px solid #fdba74',
-    color: '#9a3412',
-    fontWeight: 600,
-  },
-  successFlash: {
-    marginBottom: '18px',
-    borderRadius: '16px',
-    padding: '14px 16px',
-    backgroundColor: '#ecfdf5',
-    border: '1px solid #86efac',
-    color: '#166534',
-    fontWeight: 600,
-  },
-  grid: {
-    display: 'grid',
-    gridTemplateColumns: 'minmax(0, 1.4fr) minmax(280px, 0.9fr)',
-    gap: '18px',
-  },
-  panel: {
-    borderRadius: '22px',
-    padding: '22px',
-    border: '1px solid #d7e3ef',
-    backgroundColor: '#f9fbff',
-    minHeight: '320px',
-  },
-  kicker: {
-    color: '#4e6b8d',
-    fontWeight: 700,
-    marginBottom: '12px',
-  },
-  panelTitle: {
-    margin: '0 0 8px',
-    color: '#10233c',
-  },
-  panelTitleBlock: {
-    marginBottom: '8px',
-  },
-  text: {
-    margin: 0,
-    color: '#5d7491',
-  },
-  assetGrid: {
-    display: 'grid',
-    gap: '12px',
-    marginTop: '18px',
-  },
-  assetCard: {
-    borderRadius: '18px',
-    overflow: 'hidden' as const,
-    border: '1px solid #d7e3ef',
-    backgroundColor: '#ffffff',
-  },
-  assetImage: {
-    display: 'block',
-    width: '100%',
-    height: 'auto',
-    objectFit: 'contain' as const,
-  },
-  answerList: {
-    display: 'grid',
-    gap: '12px',
-    marginTop: '18px',
-    marginBottom: '18px',
-  },
-  answerCard: {
-    display: 'flex',
-    alignItems: 'flex-start',
-    gap: '12px',
-    borderRadius: '16px',
-    padding: '14px',
-    backgroundColor: '#ffffff',
-    border: '1px solid #d7e3ef',
-  },
-  answerContent: {
-    display: 'grid',
-    gridTemplateColumns: 'auto 1fr',
-    gap: '8px',
-    alignItems: 'start',
-    color: '#10233c',
-  },
-  answerMarkdown: {
-    minWidth: 0,
-  },
-  answerCardSelected: {
-    borderColor: '#2563eb',
-    backgroundColor: '#eff6ff',
-  },
-  answerCardLocked: {
-    opacity: 0.8,
-  },
-  radio: {
-    marginTop: '2px',
-  },
-  statementContent: {
-    flex: 1,
-    display: 'grid',
-    gridTemplateColumns: 'auto 1fr',
-    gap: '8px',
-    alignItems: 'start',
-    color: '#10233c',
-    lineHeight: 1.6,
-  },
-  trueFalseActions: {
-    display: 'flex',
-    gap: '8px',
-  },
-  trueFalseButton: {
-    borderRadius: '999px',
-    border: '1px solid #c7d7e8',
-    padding: '8px 14px',
-    backgroundColor: '#ffffff',
-    color: '#24415e',
-    fontWeight: 700,
-  },
-  trueFalseButtonSelected: {
-    borderColor: '#2563eb',
-    backgroundColor: '#dbeafe',
-    color: '#1d4ed8',
-  },
-  shortAnswerCard: {
-    borderRadius: '16px',
-    padding: '16px',
-    backgroundColor: '#ffffff',
-    border: '1px solid #d7e3ef',
-  },
-  shortAnswerLabel: {
-    display: 'grid',
-    gap: '10px',
-    color: '#24415e',
-    fontWeight: 700,
-  },
-  shortAnswerInput: {
-    borderRadius: '12px',
-    border: '1px solid #c7d7e8',
-    padding: '12px 14px',
-    backgroundColor: '#ffffff',
-  },
-  buttonRow: {
-    display: 'flex',
-    flexWrap: 'wrap' as const,
-    gap: '12px',
-  },
-  secondaryButton: {
-    borderRadius: '12px',
-    border: '1px solid #c7d7e8',
-    padding: '12px 14px',
-    backgroundColor: '#ffffff',
-    color: '#24415e',
-    fontWeight: 700,
-  },
-  primaryButton: {
-    borderRadius: '12px',
-    border: 0,
-    padding: '12px 14px',
-    backgroundColor: '#2563eb',
-    color: '#ffffff',
-    fontWeight: 700,
-  },
-  submitButton: {
-    borderRadius: '12px',
-    border: 0,
-    padding: '12px 14px',
-    backgroundColor: '#15803d',
-    color: '#ffffff',
-    fontWeight: 700,
-  },
-  chatHistory: {
-    display: 'grid',
-    gap: '10px',
-    margin: '14px 0 16px',
-    maxHeight: '320px',
-    overflowY: 'auto' as const,
-    paddingRight: '4px',
-  },
-  emptyChat: {
-    borderRadius: '14px',
-    padding: '14px',
-    backgroundColor: '#ffffff',
-    border: '1px dashed #c7d7e8',
-    color: '#5d7491',
-  },
-  chatBubble: {
-    borderRadius: '16px',
-    padding: '12px 14px',
-    border: '1px solid transparent',
-  },
-  userBubble: {
-    backgroundColor: '#dbeafe',
-    borderColor: '#93c5fd',
-    color: '#1d4ed8',
-  },
-  aiBubble: {
-    backgroundColor: '#ecfdf5',
-    borderColor: '#86efac',
-    color: '#166534',
-  },
-  systemBubble: {
-    backgroundColor: '#fff7ed',
-    borderColor: '#fdba74',
-    color: '#c2410c',
-  },
-  chatRole: {
-    display: 'block',
-    marginBottom: '6px',
-  },
-  chatComposer: {
-    display: 'grid',
-    gridTemplateColumns: '1fr auto',
-    gap: '10px',
-    marginBottom: '10px',
-  },
-  chatInput: {
-    borderRadius: '12px',
-    border: '1px solid #c7d7e8',
-    padding: '12px 14px',
-    backgroundColor: '#ffffff',
-  },
-  chatStatus: {
-    margin: '0 0 14px',
-    color: '#5d7491',
-    fontSize: '14px',
-  },
-  metaBox: {
-    borderRadius: '16px',
-    padding: '16px',
-    border: '1px dashed #c7d7e8',
-    backgroundColor: '#ffffff',
-  },
-  metaText: {
-    margin: '10px 0 0',
-    color: '#5d7491',
-  },
-}
+
