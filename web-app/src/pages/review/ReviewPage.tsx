@@ -251,7 +251,7 @@ function ReviewSummaryBody({
             </Link>
             <Link
               className="rounded-2xl bg-slate-950 px-5 py-3 text-sm font-bold text-white transition hover:bg-slate-800"
-              to="/home"
+              to="/dashboard"
             >
               Về trang chủ
             </Link>

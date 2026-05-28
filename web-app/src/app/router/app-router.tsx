@@ -12,9 +12,7 @@ const LoginPage = lazy(() =>
 const RegisterPage = lazy(() =>
   import('../../pages/auth/RegisterPage').then((module) => ({ default: module.RegisterPage })),
 )
-const HomePage = lazy(() =>
-  import('../../pages/home/HomePage').then((module) => ({ default: module.HomePage })),
-)
+
 const PracticeHubPage = lazy(() =>
   import('../../pages/practice/PracticeHubPage').then((module) => ({
     default: module.PracticeHubPage,
@@ -89,14 +87,7 @@ export const appRouter = createBrowserRouter([
           </PublicOnlyRoute>
         ),
       },
-      {
-        path: 'home',
-        element: (
-          <ProtectedRoute>
-            {withSuspense(<HomePage />)}
-          </ProtectedRoute>
-        ),
-      },
+
       {
         path: 'practice',
         element: (

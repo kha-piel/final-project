@@ -53,7 +53,7 @@ function MissingRoleRedirect({ email, message }: { email: string; message: strin
 
     hasRedirectedRef.current = true
     toast.error(email ? `${message} Email: ${email}` : message)
-    navigate('/home', { replace: true })
+    navigate('/dashboard', { replace: true })
   }, [email, message, navigate])
 
   return <AuthRouteLoading delayMs={0} message="Khong doc duoc quyen truy cap, dang dieu huong ve trang chu..." />
@@ -70,7 +70,7 @@ function UnauthorizedRedirect() {
 
     hasRedirectedRef.current = true
     toast.error('Ban khong co quyen truy cap khu vuc admin import.')
-    navigate('/home', { replace: true })
+    navigate('/dashboard', { replace: true })
   }, [navigate])
 
   return <AuthRouteLoading delayMs={0} message="Dang dieu huong ve trang duoc phep truy cap..." />

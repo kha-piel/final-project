@@ -15,7 +15,7 @@ export function PublicOnlyRoute({ children }: PublicOnlyRouteProps) {
   }
 
   if (status === 'authenticated') {
-    return <Navigate to="/home" replace />
+    return <Navigate to="/dashboard" replace />
   }
 
   return children
