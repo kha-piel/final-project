@@ -17,7 +17,7 @@ export function LoginPage() {
     setErrorMessage('')
 
     if (!identity.trim() || !password.trim()) {
-      setErrorMessage('Vui long nhap day du email/username va mật khẩu.')
+      setErrorMessage('Vui lòng nhập đầy đủ email/username và mật khẩu.')
       return
     }
 
@@ -36,26 +36,26 @@ export function LoginPage() {
   return (
     <AuthShell
       mode="login"
-      title="Đăng nhập vao hệ thống"
+      title="Đăng nhập vào hệ thống"
       description="Dùng email hoặc username để vào lại luồng ôn tập, làm đề và tiếp tục tiến độ đã đồng bộ."
       form={
         <form className="legacy-auth-form" onSubmit={handleSubmit}>
           <label className="legacy-auth-form-row">
-            <span className="legacy-auth-label">Email hoac username</span>
+            <span className="legacy-auth-label">Email hoặc username</span>
             <input
               autoComplete="username"
               className="legacy-auth-input"
-              placeholder="Nhap email hoac username"
+              placeholder="Nhập email hoặc username"
               value={identity}
               onChange={(event) => setIdentity(event.target.value)}
             />
           </label>
           <label className="legacy-auth-form-row">
-            <span className="legacy-auth-label">Mat khau</span>
+            <span className="legacy-auth-label">Mật khẩu</span>
             <input
               autoComplete="current-password"
               className="legacy-auth-input"
-              placeholder="Nhap mật khẩu"
+              placeholder="Nhập mật khẩu"
               type="password"
               value={password}
               onChange={(event) => setPassword(event.target.value)}

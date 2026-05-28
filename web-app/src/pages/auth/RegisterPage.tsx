@@ -20,7 +20,7 @@ export function RegisterPage() {
     setSuccessMessage('')
 
     if (fullName.trim().length < 2) {
-      setErrorMessage('Ho ten phai co it nhat 2 ky tu.')
+      setErrorMessage('Họ tên phải có ít nhất 2 ký tự.')
       return
     }
 
@@ -35,7 +35,7 @@ export function RegisterPage() {
     }
 
     if (password !== confirmPassword) {
-      setErrorMessage('Xac nhan mật khẩu không khop.')
+      setErrorMessage('Xác nhận mật khẩu không khớp.')
       return
     }
 
@@ -70,11 +70,11 @@ export function RegisterPage() {
       form={
         <form className="legacy-auth-form" onSubmit={handleSubmit}>
           <label className="legacy-auth-form-row">
-            <span className="legacy-auth-label">Ho ten</span>
+            <span className="legacy-auth-label">Họ tên</span>
             <input
               autoComplete="name"
               className="legacy-auth-input"
-              placeholder="Nhap ho ten"
+              placeholder="Nhập họ tên"
               value={fullName}
               onChange={(event) => setFullName(event.target.value)}
             />
@@ -84,28 +84,28 @@ export function RegisterPage() {
             <input
               autoComplete="email"
               className="legacy-auth-input"
-              placeholder="Nhap email"
+              placeholder="Nhập email"
               value={email}
               onChange={(event) => setEmail(event.target.value)}
             />
           </label>
           <label className="legacy-auth-form-row">
-            <span className="legacy-auth-label">Mat khau</span>
+            <span className="legacy-auth-label">Mật khẩu</span>
             <input
               autoComplete="new-password"
               className="legacy-auth-input"
-              placeholder="Nhap mật khẩu"
+              placeholder="Nhập mật khẩu"
               type="password"
               value={password}
               onChange={(event) => setPassword(event.target.value)}
             />
           </label>
           <label className="legacy-auth-form-row">
-            <span className="legacy-auth-label">Xac nhan mật khẩu</span>
+            <span className="legacy-auth-label">Xác nhận mật khẩu</span>
             <input
               autoComplete="new-password"
               className="legacy-auth-input"
-              placeholder="Nhap lai mật khẩu"
+              placeholder="Nhập lại mật khẩu"
               type="password"
               value={confirmPassword}
               onChange={(event) => setConfirmPassword(event.target.value)}
@@ -127,7 +127,7 @@ export function RegisterPage() {
           ) : null}
           {!errorMessage && !successMessage && !globalErrorMessage ? (
             <p className="legacy-auth-status-text">
-              Đã co tài khoản?{' '}
+              Đã có tài khoản?{' '}
               <Link className="legacy-auth-inline-link" to="/login">
                 Về đăng nhập
               </Link>

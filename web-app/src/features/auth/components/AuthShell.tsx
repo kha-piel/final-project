@@ -28,8 +28,7 @@ export function AuthShell({ mode, title, description, form, statusMessage }: Aut
 
         <aside className="legacy-auth-overlay">
           <div className="legacy-auth-overlay-inner">
-            <div className="legacy-auth-overlay-badge">Phiên bản web</div>
-            <h2>{isLogin ? 'Chao mung tro lai' : 'Bat dau ngay'}</h2>
+            <h2>{isLogin ? 'Chào mừng trở lại' : 'Bắt đầu ngay'}</h2>
             <p>
               {isLogin
                 ? 'Đăng nhập để tiếp tục làm bài, xem lịch sử và đồng bộ tiến độ học tập với Supabase.'

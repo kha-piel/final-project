@@ -1,6 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
 import { Suspense, lazy, type ReactNode } from 'react'
-import { createBrowserRouter, Navigate } from 'react-router-dom'
+import { createHashRouter, Navigate } from 'react-router-dom'
 import { RootLayout } from '../../components/layout/RootLayout'
 import { ProtectedRoute } from '../../features/auth/components/ProtectedRoute'
 import { PublicOnlyRoute } from '../../features/auth/components/PublicOnlyRoute'
@@ -62,7 +62,7 @@ function withSuspense(children: ReactNode) {
   return <Suspense fallback={<RouteLoading />}>{children}</Suspense>
 }
 
-export const appRouter = createBrowserRouter([
+export const appRouter = createHashRouter([
   {
     path: '/',
     element: <RootLayout />,
