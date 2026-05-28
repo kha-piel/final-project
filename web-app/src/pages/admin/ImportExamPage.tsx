@@ -984,7 +984,6 @@ export function ImportExamPage() {
                 }).filter((issue) => issue !== 'Chua co file PDF.')}
                 removeQuestionAsset={removeManagedDraftQuestionAsset}
                 result={managedDraft}
-                subjectCode={managedDraft.examDraft.subjectCode}
                 updateOption={updateManagedDraftOption}
                 updateQuestionField={updateManagedDraftQuestionField}
                 updateStatement={updateManagedDraftStatement}
@@ -1023,7 +1022,6 @@ export function ImportExamPage() {
             <PreviewEditor
               draftIssues={draftIssues}
               result={result}
-              subjectCode={metadata.subjectCode}
               updateOption={updateOption}
               updateQuestionField={updateQuestionField}
               updateStatement={updateStatement}
@@ -1040,7 +1038,6 @@ export function ImportExamPage() {
 function PreviewEditor({
   result,
   draftIssues,
-  subjectCode,
   updateQuestionField,
   updateOption,
   updateStatement,
@@ -1049,7 +1046,6 @@ function PreviewEditor({
 }: {
   result: AdminImportValidationResponse
   draftIssues: string[]
-  subjectCode: SubjectCode
   updateQuestionField: (index: number, patch: Partial<AdminImportQuestion>) => void
   updateOption: (index: number, label: 'A' | 'B' | 'C' | 'D', text: string) => void
   updateStatement: (index: number, label: AdminImportStatement['label'], text: string) => void
@@ -1058,10 +1054,6 @@ function PreviewEditor({
 }) {
   return (
     <div className="space-y-5">
-      {result.warnings.length > 0 ? (
-        <WarningBlock items={result.warnings} title="Canh bao tong the" tone="warning" />
-      ) : null}
-
       {draftIssues.length > 0 ? (
         <WarningBlock items={draftIssues} title="Chua san sang luu" tone="danger" />
       ) : null}
@@ -1088,9 +1080,6 @@ function PreviewEditor({
                   </Badge>
                   <Badge tone="neutral">{formatQuestionType(question.questionType)}</Badge>
                   {question.assets.length > 0 ? <Badge tone="neutral">Co hinh</Badge> : null}
-                  {question.warnings.length > 0 ? (
-                    <Badge tone="warning">{question.warnings.length} warning</Badge>
-                  ) : null}
                 </div>
               </div>
 
@@ -1119,24 +1108,6 @@ function PreviewEditor({
                 />
               </div>
 
-              <label className="mt-3 block">
-                <div className="mb-2 text-sm font-semibold text-slate-900">Topic / Chuyen de</div>
-                <input
-                  autoCapitalize="off"
-                  autoCorrect="off"
-                  className="h-12 w-full rounded-[20px] border border-slate-200 bg-white px-4 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-emerald-300"
-                  list={`topic-suggestions-${subjectCode}`}
-                  onChange={(event) =>
-                    updateQuestionField(index, {
-                      topic: event.target.value,
-                    })
-                  }
-                  placeholder="AI se goi y topic, giao vien co the sua tay"
-                  spellCheck={false}
-                  type="text"
-                  value={question.topic}
-                />
-              </label>
             </div>
 
             <div className="mt-5 grid gap-5 xl:grid-cols-[1.05fr_0.95fr]">
@@ -1214,10 +1185,6 @@ function PreviewEditor({
                     Cau nay da hop le de luu.
                   </div>
                 )}
-
-                {question.warnings.length > 0 ? (
-                  <WarningBlock items={question.warnings} title="AI warnings" tone="warning" />
-                ) : null}
 
                 <QuestionAssetEditor
                   assets={question.assets}

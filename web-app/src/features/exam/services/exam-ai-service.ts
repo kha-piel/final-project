@@ -51,7 +51,11 @@ export async function sendExamChatMessage(input: {
   })
 }
 
-export async function requestWeaknessAnalysis(items: WeaknessAnalysisItem[]) {
+export async function requestWeaknessAnalysis(input: {
+  items: WeaknessAnalysisItem[]
+  subjectCode?: string | null
+  subjectName?: string | null
+}) {
   if (!env.aiApiBaseUrl) {
     throw new Error(
       'Missing VITE_AI_API_BASE_URL. Copy web-app/.env.example to web-app/.env.local before using AI chat.',
@@ -59,13 +63,15 @@ export async function requestWeaknessAnalysis(items: WeaknessAnalysisItem[]) {
   }
 
   const response = await callAiEndpoint('/api/analyze-weaknesses', {
-    wrong_questions: items.map((item) => ({
+    wrong_questions: input.items.map((item) => ({
       question_id: Number(item.questionId) || 0,
       question_content: item.questionContent,
       topic: item.topic,
       user_answer: item.userAnswer,
       correct_answer: item.correctAnswer,
     })),
+    subject_code: input.subjectCode ?? '',
+    subject_name: input.subjectName ?? '',
   })
 
   if (!response.ok) {

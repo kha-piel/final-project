@@ -670,8 +670,12 @@ export function getKnowledgeReviewTopic(topicKey: string) {
   return knowledgeReviewTopics.find((topic) => topic.key === topicKey) ?? null
 }
 
-export function inferKnowledgeReviewTopics(inputs: string[], maxCount = 4) {
+export function inferKnowledgeReviewTopics(inputs: string[], maxCount = 4, subjectCode?: string | null) {
   const scores = new Map<string, number>()
+  const normalizedSubjectCode = normalizeSubjectCode(subjectCode)
+  const candidateTopics = normalizedSubjectCode
+    ? knowledgeReviewTopics.filter((topic) => getTopicSubjectCode(topic) === normalizedSubjectCode)
+    : knowledgeReviewTopics
 
   for (const input of inputs) {
     const normalized = normalizeForMatch(input)
@@ -679,7 +683,7 @@ export function inferKnowledgeReviewTopics(inputs: string[], maxCount = 4) {
       continue
     }
 
-    for (const topic of knowledgeReviewTopics) {
+    for (const topic of candidateTopics) {
       const matchedAlias = topic.aliases.some((alias) => normalized.includes(normalizeForMatch(alias)))
       const matchedPath = topic.sourcePaths.some((path) => normalized.includes(normalizeForMatch(path)))
       const matchedTitle = normalized.includes(normalizeForMatch(topic.title))
@@ -690,12 +694,30 @@ export function inferKnowledgeReviewTopics(inputs: string[], maxCount = 4) {
     }
   }
 
-  return knowledgeReviewTopics
+  return candidateTopics
     .map((topic) => ({ topic, score: scores.get(topic.key) ?? 0 }))
     .filter((item) => item.score > 0)
     .sort((left, right) => right.score - left.score)
     .slice(0, maxCount)
     .map((item) => item.topic)
+}
+
+function getTopicSubjectCode(topic: KnowledgeReviewTopic) {
+  const firstPath = topic.sourcePaths[0] ?? ''
+  if (firstPath.startsWith('Toan_Hoc/')) {
+    return 'TOAN'
+  }
+  if (firstPath.startsWith('Vat_Ly/')) {
+    return 'VAT_LY'
+  }
+  if (firstPath.startsWith('Hoa_Hoc/')) {
+    return 'HOA_HOC'
+  }
+  return ''
+}
+
+function normalizeSubjectCode(subjectCode?: string | null) {
+  return (subjectCode ?? '').trim().toUpperCase()
 }
 
 function normalizeForMatch(input: string) {

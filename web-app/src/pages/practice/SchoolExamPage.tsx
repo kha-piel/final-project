@@ -699,15 +699,17 @@ export function SchoolExamPage() {
     setWeaknessAnalysisError('')
 
     try {
-      const result = await requestWeaknessAnalysis(
-        wrongReviewItems.map((item) => ({
+      const result = await requestWeaknessAnalysis({
+        subjectCode: exam?.subjectId,
+        subjectName: exam?.subjectName,
+        items: wrongReviewItems.map((item) => ({
           questionId: String(item.questionNumber),
           questionContent: item.questionContent || item.displayQuestionLabel,
           topic: item.topic || exam?.subjectName || 'Chưa xác định chuyên đề',
           userAnswer: item.selectedAnswer,
           correctAnswer: item.correctAnswer,
         })),
-      )
+      })
       setWeaknessAnalysis(result)
       setRecommendedTopics(
         inferKnowledgeReviewTopics(
@@ -717,6 +719,8 @@ export function SchoolExamPage() {
             item.questionContent,
             result,
           ]),
+          4,
+          exam?.subjectId,
         ),
       )
     } catch (error) {

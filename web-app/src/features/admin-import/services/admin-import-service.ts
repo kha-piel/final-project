@@ -1169,9 +1169,25 @@ export function buildSectionRows(examId: string, questions: AdminImportQuestion[
     .filter((section) => section !== null)
 }
 
+async function normalizePdfFile(file: File): Promise<File> {
+  const bytes = await file.arrayBuffer()
+  const header = new TextDecoder('ascii').decode(bytes.slice(0, 5))
+  const looksLikePdf = header === '%PDF-'
+
+  if (!looksLikePdf && !file.name.toLowerCase().endsWith('.pdf')) {
+    throw new Error('File da chon khong phai PDF hop le.')
+  }
+
+  return new File([bytes], file.name, {
+    type: 'application/pdf',
+    lastModified: file.lastModified,
+  })
+}
+
 async function uploadPdfFile(file: File, storagePath: string) {
   const supabase = getSupabaseBrowserClient()
-  const { error } = await supabase.storage.from(STORAGE_BUCKET).upload(storagePath, file, {
+  const normalizedFile = await normalizePdfFile(file)
+  const { error } = await supabase.storage.from(STORAGE_BUCKET).upload(storagePath, normalizedFile, {
     cacheControl: '3600',
     contentType: 'application/pdf',
     upsert: true,
