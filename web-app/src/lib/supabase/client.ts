@@ -20,7 +20,6 @@ export function getSupabaseBrowserClient() {
       global: {
         headers: {
           Accept: 'application/json; charset=utf-8',
-          'Content-Type': 'application/json; charset=utf-8',
         },
       },
     })

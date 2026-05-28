@@ -59,11 +59,40 @@ if not GEMINI_API_KEY:
         "Hay tao file .env voi noi dung: GEMINI_API_KEY=your_key_here"
     )
 
+
+def mask_secret(value: str, visible_prefix: int = 6, visible_suffix: int = 4) -> str:
+    if len(value) <= visible_prefix + visible_suffix:
+        return "*" * len(value)
+    return f"{value[:visible_prefix]}...{value[-visible_suffix:]}"
+
+
+def read_int_env(name: str, default: int) -> int:
+    raw_value = os.getenv(name)
+    if raw_value is None:
+        return default
+    try:
+        return int(raw_value)
+    except ValueError:
+        logging.getLogger("ai_service.admin_import").warning(
+            "Invalid integer for %s=%r. Falling back to %s.",
+            name,
+            raw_value,
+            default,
+        )
+        return default
+
+
 client = genai.Client(api_key=GEMINI_API_KEY)
 MODEL_NAME = "gemini-2.5-flash"
 BASE_VAULT_PATH = Path(__file__).resolve().parent.parent / "docs" / "knowledge-base"
-PDF_TEXT_EXTRACTION_MIN_CHARS = 99999999 # Force Gemini File API for all PDFs to avoid mojibake
+PDF_TEXT_EXTRACTION_MIN_CHARS = read_int_env("PDF_TEXT_EXTRACTION_MIN_CHARS", 400)
 logger = logging.getLogger("ai_service.admin_import")
+logger.info(
+    "Gemini client initialized: model=%s key=%s pdf_text_threshold=%s",
+    MODEL_NAME,
+    mask_secret(GEMINI_API_KEY),
+    PDF_TEXT_EXTRACTION_MIN_CHARS,
+)
 
 IMPORT_TOPIC_OPTIONS_BY_SUBJECT: dict[str, list[str]] = {
     "TOAN": [
@@ -125,6 +154,8 @@ class WrongQuestionItem(BaseModel):
 
 class WeaknessAnalysisRequest(BaseModel):
     wrong_questions: list[WrongQuestionItem]
+    subject_code: str | None = None
+    subject_name: str | None = None
 
 
 class ParsedStudentPayload(BaseModel):
@@ -1286,8 +1317,19 @@ async def analyze_weaknesses(request: WeaknessAnalysisRequest):
         [item.model_dump() for item in request.wrong_questions],
         ensure_ascii=False,
     )
+    normalized_subject_code = (request.subject_code or "").strip().upper()
+    normalized_subject_name = (request.subject_name or "").strip()
+    subject_topics = IMPORT_TOPIC_OPTIONS_BY_SUBJECT.get(normalized_subject_code, [])
+    subject_scope = normalized_subject_name or normalized_subject_code or "mon hoc hien tai"
+    allowed_topics_text = ", ".join(subject_topics) if subject_topics else "khong co danh sach co dinh"
 
     prompt = (
+        f"Hoc sinh vua lam bai thuoc mon {subject_scope}. "
+        "CHI duoc phan tich diem yeu trong dung mon nay, khong duoc nhac sang mon khac "
+        "va khong duoc goi y chuyen de cua mon khac. "
+        f"Cac chuyen de hop le de tham chieu trong mon nay gom: {allowed_topics_text}. "
+        "Neu du lieu cau sai chua du de xac dinh ten chuyen de chinh xac, hay mo ta theo nhom kien thuc "
+        "trong dung mon hoc hien tai thay vi doan sang mon khac. "
         "Dua tren cac cau hoc sinh lam sai sau day: "
         f"{wrong_questions_json}, "
         "hay phan tich ngan gon trong 3-4 cau xem hoc sinh dang hong kien thuc o chuyen de nao nhat "
