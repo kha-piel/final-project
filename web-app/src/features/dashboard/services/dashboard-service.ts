@@ -110,6 +110,7 @@ const defaultTopicsBySubjectId: Record<string, TopicOption[]> = {
     ['school-exam/song-anh-sang', 'Sóng ánh sáng'],
     ['school-exam/luong-tu-anh-sang', 'Lượng tử ánh sáng'],
     ['school-exam/hat-nhan-nguyen-tu', 'Hạt nhân nguyên tử'],
+    ['school-exam/nhiet-hoc-va-chat-khi', 'Nhiệt học và chất khí'],
     ['school-exam/dien-tich-va-dien-truong', 'Điện tích và điện trường'],
     ['school-exam/dong-dien-khong-doi', 'Dòng điện không đổi'],
     ['school-exam/tu-truong', 'Từ trường'],
@@ -200,7 +201,7 @@ export async function fetchTopicsBySubjectId(subjectId: string): Promise<TopicOp
   const topicMap = new Map<string, TopicOption>()
 
   try {
-    const questionSummary = await fetchSchoolExamQuestionSummary(subjectId)
+    const questionSummary = await fetchSchoolExamQuestionSummary(subjectId, { includeSupplemental: true })
     const schoolExamTopics = buildTopicOptionsFromQuestionSummary(questionSummary, subjectId)
     for (const topic of schoolExamTopics) {
       topicMap.set(topic.topicId, topic)
@@ -211,7 +212,8 @@ export async function fetchTopicsBySubjectId(subjectId: string): Promise<TopicOp
 
   try {
     for (const topic of await fetchLegacyTopicsBySubjectId(subjectId)) {
-      topicMap.set(topic.topicId, topic)
+      const canonicalTopic = canonicalizeTopic(subjectId, topic.topicName, topic.topicOrder)
+      topicMap.set(canonicalTopic.topicId, canonicalTopic)
     }
   } catch {
     // Default topics below cover empty subject banks.
@@ -223,7 +225,7 @@ export async function fetchTopicsBySubjectId(subjectId: string): Promise<TopicOp
     }
   }
 
-  return Array.from(topicMap.values()).sort((left, right) => {
+  return dedupeTopicsByName(Array.from(topicMap.values())).sort((left, right) => {
     if (left.topicOrder !== right.topicOrder) {
       return left.topicOrder - right.topicOrder
     }
@@ -375,7 +377,7 @@ async function loadSchoolExamQuestionBank(subjectId: string) {
     return cached
   }
 
-  const nextPromise = fetchSchoolExamQuestionBank(cacheKey)
+  const nextPromise = fetchSchoolExamQuestionBank(cacheKey, { includeSupplemental: true })
   schoolExamBankCache.set(cacheKey, nextPromise)
   return nextPromise
 }
@@ -385,23 +387,13 @@ function buildTopicOptionsFromQuestionSummary(
   subjectId: string,
 ): TopicOption[] {
   const topics = questionSummary.reduce((acc, question) => {
-    const topicName = normalizeTopicLabel(question.topic)
-    if (!topicName) {
+    const canonicalTopic = canonicalizeTopic(subjectId, question.topic)
+    if (!canonicalTopic.topicName) {
       return acc
     }
 
-    const topicId = buildSchoolExamTopicId(topicName)
-    if (!topicId) {
-      return acc
-    }
-
-    if (!acc.has(topicId)) {
-      acc.set(topicId, {
-        topicId,
-        subjectId,
-        topicName,
-        topicOrder: 999,
-      })
+    if (!acc.has(canonicalTopic.topicId)) {
+      acc.set(canonicalTopic.topicId, canonicalTopic)
     }
 
     return acc
@@ -501,6 +493,44 @@ function buildSchoolExamTopicId(input: string | null | undefined) {
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')}`
+}
+
+function canonicalizeTopic(subjectId: string, rawTopicName: string | null | undefined, topicOrder = 999): TopicOption {
+  const topicName = normalizeTopicLabel(rawTopicName)
+  const topicId = buildSchoolExamTopicId(topicName)
+  const canonicalTopicName = resolveCanonicalTopicName(subjectId, topicId, topicName)
+
+  return {
+    topicId: buildSchoolExamTopicId(canonicalTopicName),
+    subjectId,
+    topicName: canonicalTopicName,
+    topicOrder,
+  }
+}
+
+function resolveCanonicalTopicName(subjectId: string, topicId: string, fallbackName: string) {
+  const canonicalTopics = defaultTopicsBySubjectId[subjectId.trim().toUpperCase()] ?? []
+  const matchedDefaultTopic = canonicalTopics.find((topic) => topic.topicId === topicId)
+  if (matchedDefaultTopic) {
+    return matchedDefaultTopic.topicName
+  }
+
+  return fallbackName
+}
+
+function dedupeTopicsByName(topics: TopicOption[]) {
+  const dedupedTopics = new Map<string, TopicOption>()
+
+  for (const topic of topics) {
+    const normalizedName = normalizeTopicLabel(topic.topicName).toLocaleLowerCase('vi')
+    const existingTopic = dedupedTopics.get(normalizedName)
+
+    if (!existingTopic || topic.topicOrder < existingTopic.topicOrder) {
+      dedupedTopics.set(normalizedName, topic)
+    }
+  }
+
+  return Array.from(dedupedTopics.values())
 }
 
 function isSchoolExamTopicId(topicId: string) {

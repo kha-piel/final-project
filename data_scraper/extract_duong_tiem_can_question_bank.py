@@ -17,7 +17,6 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_PDF = Path(r"c:\Users\User-PC\Downloads\chuyen-de-trac-nghiem-duong-tiem-can-cua-do-thi-ham-so.pdf")
 DEFAULT_OUTPUT_JSON = PROJECT_ROOT / "data_scraper/output/knowledge_focus/duong_tiem_can_ham_so.question_bank.json"
 DEFAULT_OUTPUT_PAYLOAD = PROJECT_ROOT / "data_scraper/output/knowledge_focus/duong_tiem_can_ham_so.seed_payload.json"
-DEFAULT_OUTPUT_TS = PROJECT_ROOT / "web-app/src/features/practice/data/supplemental-duong-tiem-can-extracted.ts"
 
 TOPIC = "Đường tiệm cận"
 OBSIDIAN_SOURCE_PATH = "Toan_Hoc/1_Ham_So/4_duong_tiem_can.md"
@@ -256,47 +255,6 @@ def build_seed_payload(records: list[dict[str, Any]]) -> dict[str, Any]:
     }
 
 
-def build_web_ts(records: list[dict[str, Any]]) -> str:
-    question_records = [
-        {
-            "questionId": record["question_id"],
-            "examId": EXAM_ID,
-            "questionNumber": record["question_number"],
-            "questionType": "multiple_choice",
-            "difficultyLevel": record["difficulty_level"],
-            "questionText": record["question_text"],
-            "statements": [],
-            "options": [
-                {
-                    "optionLabel": label,
-                    "optionText": text,
-                    "displayOrder": index + 1,
-                }
-                for index, (label, text) in enumerate(record["options"].items())
-            ],
-            "assetPaths": [],
-            "assets": [],
-            "topic": TOPIC,
-            "obsidianSourcePath": OBSIDIAN_SOURCE_PATH,
-            "hasImage": False,
-            "answerValue": record["answer_value"],
-            "sourceQuestionNumber": record["source_example_number"],
-            "sourceSectionNumber": record["section_number"],
-            "examTitle": EXAM_TITLE,
-            "schoolName": SCHOOL_NAME,
-            "year": 2026,
-            "pdfUrl": "",
-            "tags": ["supplemental", "knowledge-review", "duong-tiem-can", "extracted"],
-        }
-        for record in records
-    ]
-    payload = json.dumps(question_records, ensure_ascii=False, indent=2)
-    return (
-        "import type { SchoolExamQuestionRecord } from '../types/school-exam-types'\n\n"
-        f"export const supplementalDuongTiemCanExtractedQuestions: SchoolExamQuestionRecord[] = {payload}\n"
-    )
-
-
 def validate_records(records: list[dict[str, Any]]) -> None:
     if not records:
         raise SystemExit("Không trích được câu hỏi trắc nghiệm nào từ PDF đường tiệm cận.")
@@ -319,7 +277,6 @@ def main() -> None:
     validate_records(records)
 
     DEFAULT_OUTPUT_JSON.parent.mkdir(parents=True, exist_ok=True)
-    DEFAULT_OUTPUT_TS.parent.mkdir(parents=True, exist_ok=True)
 
     json_payload = {
         "topic": TOPIC,
@@ -332,7 +289,6 @@ def main() -> None:
         json.dumps(build_seed_payload(records), ensure_ascii=False, indent=2),
         encoding="utf-8",
     )
-    DEFAULT_OUTPUT_TS.write_text(build_web_ts(records), encoding="utf-8")
 
     level_counts: dict[int, int] = {}
     for record in records:
@@ -343,7 +299,7 @@ def main() -> None:
     print(f"PDF            : {DEFAULT_PDF}")
     print(f"Output JSON    : {DEFAULT_OUTPUT_JSON}")
     print(f"Seed payload   : {DEFAULT_OUTPUT_PAYLOAD}")
-    print(f"Web TS         : {DEFAULT_OUTPUT_TS}")
+    print("Runtime source : seed payload -> Supabase, no frontend TS export")
     print(f"Questions      : {len(records)}")
     print(f"Levels         : {level_counts}")
 

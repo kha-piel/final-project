@@ -10,6 +10,7 @@ from typing import Any
 from dotenv import load_dotenv
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from google import genai
 from google.genai import types
 from pydantic import BaseModel, Field
@@ -24,10 +25,23 @@ except ImportError:  # pragma: no cover - optional until requirements are instal
 
 load_dotenv(override=True)
 
+
+class Utf8JSONResponse(JSONResponse):
+    media_type = "application/json; charset=utf-8"
+
+    def render(self, content: Any) -> bytes:
+        return json.dumps(
+            content,
+            ensure_ascii=False,
+            allow_nan=False,
+            separators=(",", ":"),
+        ).encode("utf-8")
+
 app = FastAPI(
     title="RAG Explanation Service",
     description="Microservice tich hop Gemini de giai thich dap an dua tren knowledge base Markdown.",
     version="1.1.0",
+    default_response_class=Utf8JSONResponse,
 )
 
 app.add_middleware(

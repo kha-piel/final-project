@@ -1,0 +1,20 @@
+#!/bin/sh
+
+staged_files=$(git diff --cached --name-only --diff-filter=ACM)
+
+if [ -z "$staged_files" ]; then
+  exit 0
+fi
+
+secret_pattern='service_role|SUPABASE_SERVICE_ROLE_KEY|sb_secret_|postgresql://|postgres://'
+
+matches=$(printf '%s\n' "$staged_files" | xargs -r git diff --cached -- | grep -nE "$secret_pattern" || true)
+
+if [ -n "$matches" ]; then
+  echo "Commit blocked: possible secret detected in staged changes."
+  echo "$matches"
+  echo "Move secrets into .env or .env.local before committing."
+  exit 1
+fi
+
+exit 0

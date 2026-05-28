@@ -292,6 +292,9 @@ export async function requestExamPdfValidation(input: {
 
   const response = await fetch(`${env.aiApiBaseUrl}/api/admin/import-exam-pdf/validate`, {
     method: 'POST',
+    headers: {
+      Accept: 'application/json; charset=utf-8',
+    },
     body: formData,
     signal: controller.signal,
   })

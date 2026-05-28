@@ -27,7 +27,14 @@ if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error('Missing VITE_SUPABASE_URL or VITE_SUPABASE_ANON_KEY in web-app/.env')
 }
 
-const supabase = createClient(supabaseUrl, supabaseAnonKey)
+const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  global: {
+    headers: {
+      Accept: 'application/json; charset=utf-8',
+      'Content-Type': 'application/json; charset=utf-8',
+    },
+  },
+})
 
 const PAGE_SIZE = 500
 

@@ -18,7 +18,6 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_PDF = Path(r"c:\Users\User-PC\Downloads\chuyen-de-trac-nghiem-gia-tri-lon-nhat-va-nho-nhat-cua-ham-so.pdf")
 DEFAULT_OUTPUT_JSON = PROJECT_ROOT / "data_scraper/output/knowledge_focus/gia_tri_lon_nhat_nho_nhat_ham_so.question_bank.json"
 DEFAULT_OUTPUT_PAYLOAD = PROJECT_ROOT / "data_scraper/output/knowledge_focus/gia_tri_lon_nhat_nho_nhat_ham_so.seed_payload.json"
-DEFAULT_OUTPUT_TS = PROJECT_ROOT / "web-app/src/features/practice/data/supplemental-gtln-gtnn-questions.ts"
 
 TOPIC = "Cực trị, GTLN và GTNN"
 OBSIDIAN_SOURCE_PATH = "Toan_Hoc/1_Ham_So/3_gia_tri_lon_nhat_nho_nhat.md"
@@ -40,7 +39,6 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--pdf", type=Path, default=DEFAULT_PDF)
     parser.add_argument("--output-json", type=Path, default=DEFAULT_OUTPUT_JSON)
     parser.add_argument("--output-payload", type=Path, default=DEFAULT_OUTPUT_PAYLOAD)
-    parser.add_argument("--output-ts", type=Path, default=DEFAULT_OUTPUT_TS)
     return parser.parse_args()
 
 
@@ -298,62 +296,9 @@ def build_question_payload(records: list[dict[str, Any]]) -> dict[str, Any]:
     }
 
 
-def render_ts(records: list[dict[str, Any]]) -> str:
-    payload = []
-    for record in records:
-        payload.append(
-            {
-                "questionId": record["question_id"],
-                "examId": EXAM_ID,
-                "questionNumber": record["question_number"],
-                "questionType": "multiple_choice",
-                "difficultyLevel": record["difficulty_level"],
-                "questionText": record["question_text"],
-                "statements": [],
-                "options": [
-                    {
-                        "optionLabel": label,
-                        "optionText": record["options"][label],
-                        "displayOrder": index + 1,
-                    }
-                    for index, label in enumerate(["A", "B", "C", "D"])
-                ],
-                "assetPaths": [],
-                "assets": [],
-                "topic": TOPIC,
-                "obsidianSourcePath": OBSIDIAN_SOURCE_PATH,
-                "hasImage": False,
-                "answerValue": record["answer_value"],
-                "sourceQuestionNumber": record["source_example_number"],
-                "sourceSectionNumber": record["section_number"],
-                "examTitle": EXAM_TITLE,
-                "schoolName": SCHOOL_NAME,
-                "year": 2026,
-                "pdfUrl": "",
-                "tags": ["supplemental", "knowledge-review", "gtln-gtnn"],
-            }
-        )
-
-    json_payload = json.dumps(payload, ensure_ascii=False, indent=2)
-    return "\n".join(
-        [
-            "import type { SchoolExamQuestionRecord } from '../types/school-exam-types'",
-            "",
-            f"export const supplementalGTLNGTNNQuestions: SchoolExamQuestionRecord[] = {json_payload}",
-            "",
-        ]
-    )
-
-
 def write_json(path: Path, payload: Any) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
-
-
-def write_text(path: Path, content: str) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(content, encoding="utf-8")
-
 
 def summarize_levels(records: list[dict[str, Any]]) -> dict[int, int]:
     counts = {1: 0, 2: 0, 3: 0, 4: 0}
@@ -383,17 +328,14 @@ def main() -> int:
         "questions": records,
     }
     seed_payload = build_question_payload(records)
-    ts_content = render_ts(records)
-
     write_json(args.output_json, intermediate_payload)
     write_json(args.output_payload, seed_payload)
-    write_text(args.output_ts, ts_content)
 
     print("=== GTLN/GTNN extraction complete ===")
     print(f"PDF            : {pdf_path}")
     print(f"Output JSON    : {args.output_json}")
     print(f"Seed payload   : {args.output_payload}")
-    print(f"Web TS         : {args.output_ts}")
+    print("Runtime source : seed payload -> Supabase, no frontend TS export")
     print(f"Questions      : {len(records)}")
     print(f"Levels         : {summarize_levels(records)}")
     return 0

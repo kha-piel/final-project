@@ -60,7 +60,7 @@ export function KnowledgeReviewPage() {
     setActionNotice('')
 
     try {
-      const questionBank = await fetchSchoolExamQuestionBank('TOAN')
+      const questionBank = await fetchSchoolExamQuestionBank('TOAN', { includeSupplemental: true })
       const topicQuestions = questionBank
         .filter((question) => isQuestionRelatedToTopic(question, topic))
         .filter((question) => matchesQuestionTypeFilter(question, questionTypeFilter))

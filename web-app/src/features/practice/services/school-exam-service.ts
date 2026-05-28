@@ -129,6 +129,10 @@ const schoolExamQuestionCache = new Map<string, Promise<SchoolExamQuestionRecord
 const schoolExamQuestionBankCache = new Map<string, Promise<SchoolExamQuestionRecord[]>>()
 const schoolExamQuestionSummaryCache = new Map<string, Promise<SchoolExamQuestionSummary[]>>()
 
+type SchoolExamQueryOptions = {
+  includeSupplemental?: boolean
+}
+
 type SchoolExamQuestionSummary = {
   questionType: SchoolExamSectionPart
   difficultyLevel: 1 | 2 | 3 | 4
@@ -181,7 +185,7 @@ async function fetchSchoolExamCatalogUncached(): Promise<PracticeExamCatalogItem
       return buildFallbackCatalog()
     }
 
-    throw new Error(`KhÃ´ng thá»ƒ táº£i danh sÃ¡ch Ä‘á» trÆ°á»ng tá»« Supabase: ${error.message}`)
+    throw new Error(`Không thể tải danh sách đề trường từ Supabase: ${error.message}`)
   }
 
   if (!data.length) {
@@ -207,7 +211,10 @@ async function fetchSchoolExamCatalogUncached(): Promise<PracticeExamCatalogItem
     tags: item.tags ?? [],
   }))
 
-  return mergeCatalogItems(remoteCatalog, await buildFallbackCatalog())
+  return mergeCatalogItems(
+    remoteCatalog.filter((item) => !isSupplementalTags(item.tags)),
+    await buildFallbackCatalog(),
+  )
 }
 
 export async function fetchSchoolExamById(examId: string): Promise<SchoolExamPaperRecord | null> {
@@ -269,7 +276,7 @@ async function fetchSchoolExamByIdUncached(examId: string): Promise<SchoolExamPa
       return buildFallbackExam(examId)
     }
 
-    throw new Error(`KhÃ´ng thá»ƒ táº£i chi tiáº¿t Ä‘á» trÆ°á»ng: ${error.message}`)
+    throw new Error(`Không thể tải chi tiết đề trường: ${error.message}`)
   }
 
   if (!data) {
@@ -367,7 +374,7 @@ async function fetchSchoolExamQuestionsUncached(examId: string): Promise<SchoolE
       return buildFallbackQuestionRecords(examId)
     }
 
-    throw new Error(`KhÃ´ng thá»ƒ táº£i danh sÃ¡ch cÃ¢u há»i Ä‘á» trÆ°á»ng: ${error.message}`)
+    throw new Error(`Không thể tải danh sách câu hỏi đề trường: ${error.message}`)
   }
 
   if (!(data ?? []).length) {
@@ -398,33 +405,42 @@ async function fetchSchoolExamQuestionsUncached(examId: string): Promise<SchoolE
   }))
 }
 
-export async function fetchSchoolExamQuestionBank(subjectId: string): Promise<SchoolExamQuestionRecord[]> {
-  const cacheKey = subjectId.trim().toUpperCase()
+export async function fetchSchoolExamQuestionBank(
+  subjectId: string,
+  options: SchoolExamQueryOptions = {},
+): Promise<SchoolExamQuestionRecord[]> {
+  const cacheKey = `${subjectId.trim().toUpperCase()}:${options.includeSupplemental ? 'with-supplemental' : 'base'}`
   const cached = schoolExamQuestionBankCache.get(cacheKey)
   if (cached) {
     return cached
   }
 
-  const nextPromise = fetchSchoolExamQuestionBankUncached(cacheKey)
+  const nextPromise = fetchSchoolExamQuestionBankUncached(subjectId.trim().toUpperCase(), options)
   schoolExamQuestionBankCache.set(cacheKey, nextPromise)
   return withCacheInvalidation(schoolExamQuestionBankCache, cacheKey, nextPromise)
 }
 
-export async function fetchSchoolExamQuestionSummary(subjectId: string): Promise<SchoolExamQuestionSummary[]> {
-  const cacheKey = subjectId.trim().toUpperCase()
+export async function fetchSchoolExamQuestionSummary(
+  subjectId: string,
+  options: SchoolExamQueryOptions = {},
+): Promise<SchoolExamQuestionSummary[]> {
+  const cacheKey = `${subjectId.trim().toUpperCase()}:${options.includeSupplemental ? 'with-supplemental' : 'base'}`
   const cached = schoolExamQuestionSummaryCache.get(cacheKey)
   if (cached) {
     return cached
   }
 
-  const nextPromise = fetchSchoolExamQuestionSummaryUncached(cacheKey)
+  const nextPromise = fetchSchoolExamQuestionSummaryUncached(subjectId.trim().toUpperCase(), options)
   schoolExamQuestionSummaryCache.set(cacheKey, nextPromise)
   return withCacheInvalidation(schoolExamQuestionSummaryCache, cacheKey, nextPromise)
 }
 
-async function fetchSchoolExamQuestionSummaryUncached(subjectId: string): Promise<SchoolExamQuestionSummary[]> {
+async function fetchSchoolExamQuestionSummaryUncached(
+  subjectId: string,
+  options: SchoolExamQueryOptions = {},
+): Promise<SchoolExamQuestionSummary[]> {
   if (!hasSupabaseEnv()) {
-    return (await getSupplementalQuestionBank(subjectId)).map((question) => ({
+    return (await getMockQuestionBankBySubject(subjectId)).map((question) => ({
       questionType: question.questionType,
       difficultyLevel: question.difficultyLevel,
       topic: question.topic ?? '',
@@ -444,7 +460,7 @@ async function fetchSchoolExamQuestionSummaryUncached(subjectId: string): Promis
 
   if (error) {
     if (shouldFallbackToLocalMock(error.message)) {
-      return (await getSupplementalQuestionBank(subjectId)).map((question) => ({
+      return (await getMockQuestionBankBySubject(subjectId)).map((question) => ({
         questionType: question.questionType,
         difficultyLevel: question.difficultyLevel,
         topic: question.topic ?? '',
@@ -452,11 +468,12 @@ async function fetchSchoolExamQuestionSummaryUncached(subjectId: string): Promis
       }))
     }
 
-    throw new Error(`KhÃƒÂ´ng thÃ¡Â»Æ’ tÃ¡ÂºÂ£i tÃ¡Â»â€¢ng quan kho cÃƒÂ¢u hÃ¡Â»Âi Ã„â€˜Ã¡Â»Â trÃ†Â°Ã¡Â»Âng: ${error.message}`)
+    throw new Error(`Không thể tải tổng quan kho câu hỏi đề trường: ${error.message}`)
   }
 
   return data
     .filter((item) => item.exam?.is_active)
+    .filter((item) => options.includeSupplemental || !isSupplementalSchoolName(item.exam?.school_name))
     .map((item) => ({
       questionType: item.question_type,
       difficultyLevel: normalizeDifficultyLevel(
@@ -470,9 +487,12 @@ async function fetchSchoolExamQuestionSummaryUncached(subjectId: string): Promis
     }))
 }
 
-async function fetchSchoolExamQuestionBankUncached(subjectId: string): Promise<SchoolExamQuestionRecord[]> {
+async function fetchSchoolExamQuestionBankUncached(
+  subjectId: string,
+  options: SchoolExamQueryOptions = {},
+): Promise<SchoolExamQuestionRecord[]> {
   if (!hasSupabaseEnv()) {
-    return getSupplementalQuestionBank(subjectId)
+    return getMockQuestionBankBySubject(subjectId)
   }
 
   const supabase = getSupabaseBrowserClient()
@@ -511,14 +531,15 @@ async function fetchSchoolExamQuestionBankUncached(subjectId: string): Promise<S
 
   if (error) {
     if (shouldFallbackToLocalMock(error.message)) {
-      return getSupplementalQuestionBank(subjectId)
+      return getMockQuestionBankBySubject(subjectId)
     }
 
-    throw new Error(`KhÃ´ng thá»ƒ táº£i kho cÃ¢u há»i Ä‘á» trÆ°á»ng: ${error.message}`)
+    throw new Error(`Không thể tải kho câu hỏi đề trường: ${error.message}`)
   }
 
   const remoteQuestions = (data ?? [])
     .filter((item) => item.exam?.is_active)
+    .filter((item) => options.includeSupplemental || !isSupplementalTags(item.exam?.tags))
     .map((item) => ({
       questionId: item.question_id,
       examId: item.exam_id,
@@ -553,7 +574,7 @@ async function fetchSchoolExamQuestionBankUncached(subjectId: string): Promise<S
       tags: item.exam?.tags ?? [],
     }))
 
-  return [...remoteQuestions, ...await getSupplementalQuestionBank(subjectId)]
+  return remoteQuestions
 }
 
 export function normalizeAnswer(input: string) {
@@ -694,6 +715,20 @@ function inferSubjectIdFromName(subjectName: string) {
   return 'TOAN'
 }
 
+function isSupplementalTags(tags: string[] | null | undefined) {
+  return (tags ?? []).some((tag) => tag.trim().toLowerCase() === 'supplemental')
+}
+
+function isSupplementalSchoolName(schoolName: string | null | undefined) {
+  const normalized = (schoolName ?? '')
+    .trim()
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+
+  return normalized === 'noi bo he thong'
+}
+
 function mergeCatalogItems(
   primary: PracticeExamCatalogItem[],
   secondary: PracticeExamCatalogItem[],
@@ -755,8 +790,8 @@ function buildFallbackSections(exam: SchoolExamPaper) {
     {
       sectionId: `${exam.examId}-section-1`,
       partCode: 'multiple_choice' as const,
-      title: 'Pháº§n I. Tráº¯c nghiá»‡m nhiá»u lá»±a chá»n',
-      instructions: 'Má»—i cÃ¢u chá»n 1 trong 4 Ä‘Ã¡p Ã¡n.',
+      title: 'Phần I. Trắc nghiệm nhiều lựa chọn',
+      instructions: 'Mỗi câu chọn 1 trong 4 đáp án.',
       startQuestionNumber: exam.multipleChoiceQuestions[0]?.questionNumber ?? 1,
       endQuestionNumber:
         exam.multipleChoiceQuestions[exam.multipleChoiceQuestions.length - 1]?.questionNumber ?? 0,
@@ -767,8 +802,8 @@ function buildFallbackSections(exam: SchoolExamPaper) {
     {
       sectionId: `${exam.examId}-section-2`,
       partCode: 'true_false' as const,
-      title: 'Pháº§n II. ÄÃºng / Sai',
-      instructions: 'Má»—i cÃ¢u gá»“m cÃ¡c Ã½ a, b, c, d.',
+      title: 'Phần II. Đúng / Sai',
+      instructions: 'Mỗi câu gồm các ý a, b, c, d.',
       startQuestionNumber: exam.trueFalseQuestions[0]?.questionNumber ?? 0,
       endQuestionNumber:
         exam.trueFalseQuestions[exam.trueFalseQuestions.length - 1]?.questionNumber ?? 0,
@@ -779,8 +814,8 @@ function buildFallbackSections(exam: SchoolExamPaper) {
     {
       sectionId: `${exam.examId}-section-3`,
       partCode: 'short_answer' as const,
-      title: 'Pháº§n III. Tráº£ lá»i ngáº¯n',
-      instructions: 'Nhap Ä‘Ã¡p Ã¡n vao o trong.',
+      title: 'Phần III. Trả lời ngắn',
+      instructions: 'Nhập đáp án vào ô trống.',
       startQuestionNumber: exam.shortAnswerQuestions[0]?.questionNumber ?? 0,
       endQuestionNumber:
         exam.shortAnswerQuestions[exam.shortAnswerQuestions.length - 1]?.questionNumber ?? 0,
@@ -871,74 +906,6 @@ function mapQuestionAssets(
 
 function mapAssetPaths(assets: SchoolExamQuestionAssetRow[] | null | undefined) {
   return mapQuestionAssets(assets).map((asset) => asset.assetPath)
-}
-
-async function getSupplementalQuestionBank(subjectId: string) {
-  const mockQuestions = await getMockQuestionBankBySubject(subjectId)
-
-  if (subjectId === 'VAT_LY') {
-    return [
-      ...mockQuestions,
-      ...(await import('../data/supplemental-physics-topic-questions')).supplementalPhysicsTopicQuestions,
-    ]
-  }
-
-  if (subjectId !== 'TOAN') {
-    return mockQuestions
-  }
-
-  const [
-    { supplementalKnowledgeReviewQuestions },
-    { supplementalGTLNGTNNReviewedQuestions },
-    { supplementalKhaoSatDoThiReviewedQuestions },
-    { supplementalGioiHanDaySoReviewedQuestions },
-    { supplementalMuLogaritReviewedQuestions },
-    { supplementalNguyenHamReviewedQuestions },
-    { supplementalTichPhanDienTichReviewedQuestions },
-    { supplementalHinhHocVectoReviewedQuestions },
-    { supplementalMatPhangOxyzReviewedQuestions },
-    { supplementalOxyzReviewedQuestions },
-    { supplementalDuongTiemCanReviewedQuestions },
-    { supplementalQuyHoachTuyenTinhReviewedQuestions },
-    { supplementalToHopXacSuatDemReviewedQuestions },
-    { supplementalXacSuatDocLapReviewedQuestions },
-    { supplementalTuPhanViSoLieuReviewedQuestions },
-  ] = await Promise.all([
-    import('../data/supplemental-knowledge-review-questions'),
-    import('../data/supplemental-gtln-gtnn-reviewed'),
-    import('../data/supplemental-khao-sat-do-thi-reviewed'),
-    import('../data/supplemental-gioi-han-day-so-reviewed'),
-    import('../data/supplemental-mu-logarit-reviewed'),
-    import('../data/supplemental-nguyen-ham-reviewed'),
-    import('../data/supplemental-tich-phan-dien-tich-reviewed'),
-    import('../data/supplemental-hinh-hoc-vecto-reviewed'),
-    import('../data/supplemental-mat-phang-oxyz-reviewed'),
-    import('../data/supplemental-oxyz-reviewed'),
-    import('../data/supplemental-duong-tiem-can-reviewed'),
-    import('../data/supplemental-quy-hoach-tuyen-tinh-reviewed'),
-    import('../data/supplemental-to-hop-xac-suat-dem-reviewed'),
-    import('../data/supplemental-xac-suat-doc-lap-reviewed'),
-    import('../data/supplemental-tu-phan-vi-so-lieu-reviewed'),
-  ])
-
-  return [
-    ...mockQuestions,
-    ...supplementalKnowledgeReviewQuestions,
-    ...supplementalGTLNGTNNReviewedQuestions,
-    ...supplementalKhaoSatDoThiReviewedQuestions,
-    ...supplementalGioiHanDaySoReviewedQuestions,
-    ...supplementalMuLogaritReviewedQuestions,
-    ...supplementalNguyenHamReviewedQuestions,
-    ...supplementalTichPhanDienTichReviewedQuestions,
-    ...supplementalHinhHocVectoReviewedQuestions,
-    ...supplementalMatPhangOxyzReviewedQuestions,
-    ...supplementalOxyzReviewedQuestions,
-    ...supplementalDuongTiemCanReviewedQuestions,
-    ...supplementalQuyHoachTuyenTinhReviewedQuestions,
-    ...supplementalToHopXacSuatDemReviewedQuestions,
-    ...supplementalXacSuatDocLapReviewedQuestions,
-    ...supplementalTuPhanViSoLieuReviewedQuestions,
-  ]
 }
 
 async function loadMockSchoolExams() {

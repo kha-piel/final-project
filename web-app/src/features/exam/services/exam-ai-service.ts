@@ -113,7 +113,8 @@ async function callAiEndpoint(path: string, payload: unknown) {
     return await fetch(`${env.aiApiBaseUrl}${path}`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
+        Accept: 'application/json; charset=utf-8',
+        'Content-Type': 'application/json; charset=utf-8',
       },
       body: JSON.stringify(payload),
     })
