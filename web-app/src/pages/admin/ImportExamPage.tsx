@@ -1299,6 +1299,11 @@ function ManagedExamPanel({
   onSave: () => void
   onDelete: (exam: ManagedImportedExam) => void
 }) {
+  const [activeTab, setActiveTab] = useState<SubjectCode | 'ALL'>('ALL')
+  const filteredExams = exams.filter(
+    (exam) => activeTab === 'ALL' || exam.subjectCode === activeTab
+  )
+
   return (
     <div className="rounded-[28px] border border-slate-200 bg-white p-5 shadow-[0_14px_42px_rgba(15,23,42,0.04)]">
       <div className="flex flex-col gap-3 border-b border-slate-200 pb-4 md:flex-row md:items-end md:justify-between">
@@ -1317,6 +1322,53 @@ function ManagedExamPanel({
         </button>
       </div>
 
+      <div className="mt-4 flex gap-2 overflow-x-auto pb-2">
+        <button
+          className={`whitespace-nowrap rounded-full px-4 py-2 text-sm font-semibold transition ${
+            activeTab === 'ALL'
+              ? 'bg-slate-900 text-white'
+              : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+          }`}
+          onClick={() => setActiveTab('ALL')}
+          type="button"
+        >
+          Tất cả
+        </button>
+        <button
+          className={`whitespace-nowrap rounded-full px-4 py-2 text-sm font-semibold transition ${
+            activeTab === 'TOAN'
+              ? 'bg-emerald-600 text-white'
+              : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+          }`}
+          onClick={() => setActiveTab('TOAN')}
+          type="button"
+        >
+          Toán học
+        </button>
+        <button
+          className={`whitespace-nowrap rounded-full px-4 py-2 text-sm font-semibold transition ${
+            activeTab === 'VAT_LY'
+              ? 'bg-sky-600 text-white'
+              : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+          }`}
+          onClick={() => setActiveTab('VAT_LY')}
+          type="button"
+        >
+          Vật lý
+        </button>
+        <button
+          className={`whitespace-nowrap rounded-full px-4 py-2 text-sm font-semibold transition ${
+            activeTab === 'HOA_HOC'
+              ? 'bg-amber-500 text-white'
+              : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+          }`}
+          onClick={() => setActiveTab('HOA_HOC')}
+          type="button"
+        >
+          Hóa học
+        </button>
+      </div>
+
       {panelError ? <InlineAlert message={panelError} title="Khong the tai danh sach de" /> : null}
 
       {isLoading ? (
@@ -1331,15 +1383,15 @@ function ManagedExamPanel({
         </div>
       ) : null}
 
-      {!isLoading && exams.length === 0 ? (
+      {!isLoading && filteredExams.length === 0 ? (
         <div className="mt-4 rounded-[22px] border border-dashed border-slate-300 bg-slate-50 px-4 py-5 text-sm leading-6 text-slate-500">
-          Chua co de nao duoc luu tu man import nay.
+          Chua co de nao duoc luu hoac khong co de phu hop voi bo loc hien tai.
         </div>
       ) : null}
 
-      {!isLoading && exams.length > 0 ? (
+      {!isLoading && filteredExams.length > 0 ? (
         <div className="mt-4 space-y-4">
-          {exams.map((exam) => {
+          {filteredExams.map((exam) => {
             const isEditing = editingExamId === exam.examId && form?.examId === exam.examId
 
             return (

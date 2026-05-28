@@ -290,10 +290,6 @@ export function PracticeHubPage() {
                 Tạo đề thi thử
               </div>
               <h2 className="mt-2 text-2xl font-bold text-slate-950">Sinh đề ngẫu nhiên theo blueprint</h2>
-              <p className="mt-3 text-sm leading-7 text-slate-600">
-                Đề sẽ được bốc ngẫu nhiên từ kho câu hỏi đề trường trên Supabase, ưu tiên câu của trường
-                bạn chọn, sau đó lấy thêm từ nhiều trường nếu kho không đủ.
-              </p>
 
           <div className="mt-6 grid gap-4">
             <label className="grid gap-2 text-sm">
