@@ -24,28 +24,28 @@ type NavigationItem = {
 
 const baseNavigationItems: NavigationItem[] = [
   {
-    label: 'Lam de thi thu',
+    label: 'Làm đề thi thử',
     to: '/practice',
     icon: FileText,
     match: ['/practice'],
   },
   {
-    label: 'On tap kien thuc',
+    label: 'Ôn tập kiến thức',
     to: '/dashboard',
     icon: BookOpen,
     match: ['/dashboard', '/exam', '/review'],
   },
   {
-    label: 'Lich su lam bai',
+    label: 'Lịch sử làm bài',
     to: '/history',
     icon: Clock3,
     match: ['/history'],
   },
   {
-    label: 'Ho so hoc sinh',
+    label: 'Hồ sơ học sinh',
     to: '/profile',
     icon: User,
-    match: ['/profile', '/home'],
+    match: ['/profile'],
   },
 ]
 
@@ -73,7 +73,7 @@ export function DashboardLayout() {
     <div className="min-h-[100dvh] bg-slate-50 text-slate-950">
       <div className="flex min-h-[100dvh]">
         {!isFullScreenMode && (
-          <aside className="hidden h-screen w-64 shrink-0 border-r border-slate-200 bg-white md:flex md:flex-col">
+          <aside className="sticky top-0 hidden h-screen w-64 shrink-0 border-r border-slate-200 bg-white md:flex md:flex-col">
             <SidebarContent
               currentPath={location.pathname}
               logoutError={logoutError}
@@ -90,7 +90,7 @@ export function DashboardLayout() {
             <header className="sticky top-0 z-20 flex items-center justify-between border-b border-slate-200 bg-white/90 px-4 py-3 backdrop-blur md:hidden">
               <NavLink
               className="bg-gradient-to-r from-indigo-600 to-blue-600 bg-clip-text text-lg font-extrabold tracking-tight text-transparent"
-              to="/home"
+              to="/dashboard"
             >
               THPTQG AI
             </NavLink>
@@ -163,7 +163,7 @@ function SidebarContent({
       <div className="mb-10 px-2">
         <NavLink
           className="inline-block bg-gradient-to-r from-indigo-600 to-blue-600 bg-clip-text text-2xl font-black tracking-tight text-transparent"
-          to="/home"
+          to="/dashboard"
         >
           THPTQG AI
         </NavLink>
@@ -234,13 +234,13 @@ function getNavigationItems(userRole?: string) {
   if (normalizedRole === 'admin' || normalizedRole === 'teacher') {
     items.push(
       {
-        label: 'Nhap de thi',
+        label: 'Nhập đề thi',
         to: '/admin/import-exam',
         icon: Shield,
         match: ['/admin/import-exam'],
       },
       {
-        label: 'Nhap cau on tap',
+        label: 'Nhập câu ôn tập',
         to: '/admin/import-review-questions',
         icon: BookPlus,
         match: ['/admin/import-review-questions'],

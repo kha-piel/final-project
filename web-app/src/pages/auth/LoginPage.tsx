@@ -25,7 +25,7 @@ export function LoginPage() {
 
     try {
       await loginWithIdentity(identity, password)
-      navigate('/home', { replace: true })
+      navigate('/dashboard', { replace: true })
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : 'Đăng nhập thất bại.')
     } finally {

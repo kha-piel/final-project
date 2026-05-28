@@ -3,7 +3,6 @@ import { NavLink } from 'react-router-dom'
 const links = [
   { to: '/login', label: 'Login' },
   { to: '/register', label: 'Register' },
-  { to: '/home', label: 'Home' },
   { to: '/dashboard', label: 'Dashboard' },
 ]
 
