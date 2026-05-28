@@ -5,13 +5,11 @@ import {
   Image as ImageIcon,
   LoaderCircle,
   Save,
-  ShieldCheck,
   Sparkles,
   Upload,
   X,
 } from 'lucide-react'
 import { toast } from 'sonner'
-import { useAuthSessionStore } from '../../features/auth/store/auth-session-store'
 import {
   createEmptyMetadata,
   deleteManagedImportedExam,
@@ -52,7 +50,6 @@ type ManagedExamFormState = {
 }
 
 export function ImportExamPage() {
-  const user = useAuthSessionStore((state) => state.user)
   const fileInputRef = useRef<HTMLInputElement | null>(null)
   const [metadata, setMetadata] = useState<AdminImportMetadata>(createEmptyMetadata())
   const [pdfFile, setPdfFile] = useState<File | null>(null)
@@ -675,27 +672,7 @@ export function ImportExamPage() {
     <section className="space-y-6">
       <TopicSuggestionList subjectCode={metadata.subjectCode} topics={topicSuggestions} />
       <div className="overflow-hidden rounded-[34px] border border-slate-200 bg-white shadow-[0_26px_80px_rgba(15,23,42,0.08)]">
-        <div className="border-b border-slate-200 bg-[linear-gradient(135deg,#0f172a_0%,#1f2937_52%,#111827_100%)] px-6 py-7 text-white md:px-8">
-          <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-100/90">
-            <ShieldCheck className="h-3.5 w-3.5" strokeWidth={1.8} />
-            Teacher PDF Import
-          </div>
-          <div className="mt-5 grid gap-5 lg:grid-cols-[1.2fr_0.8fr]">
-            <div>
-              <h1 className="max-w-[14ch] text-4xl font-extrabold tracking-[-0.04em] text-white md:text-5xl">
-                Nap de bang PDF, con lai de AI xu ly.
-              </h1>
-              <p className="mt-4 max-w-3xl text-sm leading-7 text-slate-300">
-                Giao vien chi can upload PDF, chon mon, nhap truong/thanh pho/nam/ma de va dien dap an theo 3 phan. He thong se tu gan thoi luong theo mon, trich xuat cau hoi, map dap an, tao preview va luu vao Supabase.
-              </p>
-            </div>
-            <div className="grid gap-3 rounded-[28px] border border-white/10 bg-white/5 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
-              <StatusPill label="Nguoi thao tac" value={user?.fullName || user?.email || 'Teacher'} />
-              <StatusPill label="Role" value={user?.role || 'teacher'} />
-              <StatusPill label="Thoi luong mac dinh" value={`${metadata.durationMinutes} phut`} />
-            </div>
-          </div>
-        </div>
+
 
         <div className="grid gap-6 px-6 py-6 xl:grid-cols-[0.9fr_1.1fr]">
           <section className="space-y-5">
@@ -1940,16 +1917,6 @@ function WarningBlock({
   )
 }
 
-function StatusPill({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-[22px] border border-white/10 bg-white/5 px-4 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
-      <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-300">
-        {label}
-      </div>
-      <div className="mt-2 break-all text-sm font-semibold text-white">{value}</div>
-    </div>
-  )
-}
 
 function EmptyPreviewState() {
   return (

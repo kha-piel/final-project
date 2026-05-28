@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { PageCard } from '../../components/ui/PageCard'
+import { useAuthSessionStore } from '../../features/auth/store/auth-session-store'
 import {
   allowedMainSubjects,
   fetchQuestionsForCustomExam,
@@ -8,7 +9,6 @@ import {
   fetchTopicsBySubjectId,
 } from '../../features/dashboard/services/dashboard-service'
 import {
-  difficultyOptions,
   questionTypeOptions,
   type QuestionType,
   type SubjectOption,
@@ -21,13 +21,13 @@ const CUSTOM_EXAM_DURATION_MINUTES = 45
 
 export function DashboardPage() {
   const navigate = useNavigate()
+  const user = useAuthSessionStore((state) => state.user)
   const createSession = useExamDraftStore((state) => state.createSession)
 
   const [subjects, setSubjects] = useState<SubjectOption[]>([])
   const [topics, setTopics] = useState<TopicOption[]>([])
   const [selectedSubjectId, setSelectedSubjectId] = useState('')
   const [selectedTopicId, setSelectedTopicId] = useState('')
-  const [selectedDifficulty, setSelectedDifficulty] = useState('')
   const [selectedQuestionType, setSelectedQuestionType] = useState<'all' | QuestionType>('all')
   const [isLoadingSubjects, setIsLoadingSubjects] = useState(true)
   const [isLoadingTopics, setIsLoadingTopics] = useState(false)
@@ -42,11 +42,6 @@ export function DashboardPage() {
   const selectedTopic = useMemo(
     () => topics.find((topic) => topic.topicId === selectedTopicId) ?? null,
     [selectedTopicId, topics],
-  )
-
-  const selectedDifficultyOption = useMemo(
-    () => difficultyOptions.find((item) => item.level.toString() === selectedDifficulty) ?? null,
-    [selectedDifficulty],
   )
 
   useEffect(() => {
@@ -124,8 +119,8 @@ export function DashboardPage() {
   async function handleCreateExam() {
     setErrorMessage('')
 
-    if (!selectedSubject || !selectedTopic || !selectedDifficultyOption) {
-      setErrorMessage('Vui lòng chọn đầy đủ môn học, chuyên đề, mức độ và dạng câu hỏi.')
+    if (!selectedSubject || !selectedTopic) {
+      setErrorMessage('Vui lòng chọn đầy đủ môn học, chuyên đề và dạng câu hỏi.')
       return
     }
 
@@ -135,7 +130,6 @@ export function DashboardPage() {
       const questions = await fetchQuestionsForCustomExam(
         selectedSubject.subjectId,
         selectedTopic.topicId,
-        selectedDifficultyOption.level,
         selectedQuestionType,
       )
 
@@ -147,13 +141,13 @@ export function DashboardPage() {
       const sessionId = crypto.randomUUID()
       createSession({
         sessionId,
-        title: `Đề tự chọn - ${selectedSubject.subjectName} - ${selectedTopic.topicName} - ${selectedDifficultyOption.label}`,
+        title: `Đề tự chọn - ${selectedSubject.subjectName} - ${selectedTopic.topicName}`,
         subjectId: selectedSubject.subjectId,
         subjectName: selectedSubject.subjectName,
         topicId: selectedTopic.topicId,
         topicName: selectedTopic.topicName,
-        difficultyLevel: selectedDifficultyOption.level,
-        difficultyLabel: selectedDifficultyOption.label,
+        difficultyLevel: resolveAverageDifficulty(questions),
+        difficultyLabel: 'Tổng hợp',
         durationMinutes: CUSTOM_EXAM_DURATION_MINUTES,
         questions,
         deliveryMode: 'local_mock',
@@ -171,7 +165,7 @@ export function DashboardPage() {
   return (
     <PageCard
       title="Dashboard Ôn tập"
-      description="Chọn môn học, chuyên đề, mức độ và dạng câu hỏi để tạo phiên luyện tập riêng."
+      description="Chọn môn học, chuyên đề và dạng câu hỏi để tạo phiên luyện tập riêng."
     >
       <section className="rounded-[28px] border border-slate-200 bg-white p-6 md:p-8 shadow-sm">
         <div className="mb-5 flex flex-wrap items-end justify-between gap-4">
@@ -194,7 +188,7 @@ export function DashboardPage() {
           </button>
         </div>
 
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
           <FilterField label="Môn học">
             <select
               className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-medium text-slate-800 outline-none transition focus:border-blue-400 focus:bg-white"
@@ -227,21 +221,6 @@ export function DashboardPage() {
             </select>
           </FilterField>
 
-          <FilterField label="Mức độ">
-            <select
-              className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-medium text-slate-800 outline-none transition focus:border-blue-400 focus:bg-white"
-              onChange={(event) => setSelectedDifficulty(event.target.value)}
-              value={selectedDifficulty}
-            >
-              <option value="">Chọn mức độ</option>
-              {difficultyOptions.map((difficulty) => (
-                <option key={difficulty.level} value={difficulty.level}>
-                  {difficulty.label}
-                </option>
-              ))}
-            </select>
-          </FilterField>
-
           <FilterField label="Dạng câu hỏi">
             <select
               className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-medium text-slate-800 outline-none transition focus:border-blue-400 focus:bg-white"
@@ -266,15 +245,36 @@ export function DashboardPage() {
         ) : null}
       </section>
 
-      <section className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <section className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         <StatusBlock label="Môn học" value={selectedSubject?.subjectName ?? (isLoadingSubjects ? 'Đang tải...' : '--')} />
         <StatusBlock label="Chuyên đề" value={selectedTopic?.topicName ?? (isLoadingTopics ? 'Đang tải...' : '--')} />
-        <StatusBlock label="Độ khó" value={selectedDifficultyOption?.label ?? '--'} />
         <StatusBlock
           label="Dạng câu hỏi"
           value={questionTypeOptions.find((item) => item.value === selectedQuestionType)?.label ?? '--'}
         />
       </section>
+
+      {user && ['admin', 'teacher'].includes(user?.role ?? '') ? (
+        <section className="mt-8 rounded-[28px] border border-slate-200 bg-slate-50 p-6 shadow-[0_16px_40px_rgba(15,23,42,0.04)]">
+          <h3 className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">Quản trị viên</h3>
+          <div className="mt-4 flex flex-wrap gap-4">
+            <button
+              className="inline-flex items-center justify-center rounded-2xl bg-white border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50"
+              onClick={() => navigate('/admin/manage-review-questions')}
+              type="button"
+            >
+              Quản lý câu hỏi ôn tập
+            </button>
+            <button
+              className="inline-flex items-center justify-center rounded-2xl bg-white border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50"
+              onClick={() => navigate('/admin/import-review-questions')}
+              type="button"
+            >
+              Nhập câu hỏi ôn tập mới
+            </button>
+          </div>
+        </section>
+      ) : null}
     </PageCard>
   )
 }
@@ -299,4 +299,10 @@ function StatusBlock({ label, value }: { label: string; value: string }) {
       <div className="mt-2 text-sm font-bold text-slate-900">{value}</div>
     </div>
   )
+}
+
+function resolveAverageDifficulty(questions: { level?: number | null }[]) {
+  const average =
+    Math.round(questions.reduce((sum, question) => sum + Number(question.level || 1), 0) / questions.length) || 1
+  return Math.min(4, Math.max(1, average))
 }

@@ -77,9 +77,9 @@ export type PersistedAttemptReview = ExamSubmissionSummary & {
 export async function fetchPersistedAttemptReview(attemptId: string) {
   const supabase = getSupabaseBrowserClient()
   const { data, error } = await supabase
-    .from('student_attempts')
+    .from('legacy_student_attempts')
     .select(
-      'attempt_id, score, correct_count, wrong_count, skipped_count, total_time_taken_seconds, completed_at, status, metadata, exams(title), attempt_answers(question_id, is_correct, metadata, question:questions(content, answers(answer_id, option_label, content, is_correct)), selected_answer:answers!attempt_answers_selected_answer_id_fkey(answer_id, option_label, content))',
+      'attempt_id, score, correct_count, wrong_count, skipped_count, total_time_taken_seconds, completed_at, status, metadata, legacy_exams(title), legacy_attempt_answers(question_id, is_correct, metadata, question:legacy_questions(content, legacy_answers(answer_id, option_label, content, is_correct)), selected_answer:answers!legacy_attempt_answers_selected_answer_id_fkey(answer_id, option_label, content))',
     )
     .eq('attempt_id', attemptId)
     .maybeSingle<AttemptReviewRow>()

@@ -1,4 +1,4 @@
-﻿import { getSupabaseBrowserClient } from '../../../lib/supabase/client'
+import { getSupabaseBrowserClient } from '../../../lib/supabase/client'
 import {
   fetchSchoolExamCatalog,
   fetchSchoolExamQuestionBank,
@@ -102,20 +102,33 @@ const subjectAliasByKey: Record<string, SubjectOption> = {
 }
 
 const defaultTopicsBySubjectId: Record<string, TopicOption[]> = {
+  TOAN: [
+    ['school-exam/khao-sat-ham-so-va-ung-dung-dao-ham', 'Khảo sát hàm số và ứng dụng đạo hàm'],
+    ['school-exam/vecto-va-he-toa-do-trong-khong-gian', 'Véctơ và hệ tọa độ trong không gian'],
+    ['school-exam/cac-so-dac-trung-do-muc-do-phan-tan-cho-mau-so-lieu-ghep-nhom', 'Các số đặc trưng đo mức độ phân tán cho mẫu số liệu ghép nhóm'],
+    ['school-exam/nguyen-ham-va-tich-phan', 'Nguyên hàm và tích phân'],
+    ['school-exam/phuong-trinh-mat-phang-duong-thang-mat-cau-trong-khong-gian', 'Phương trình mặt phẳng, đường thẳng, mặt cầu trong không gian'],
+    ['school-exam/xac-suat-co-dieu-kien', 'Xác suất có điều kiện'],
+    ['school-exam/ham-so-luy-thua-ham-so-mu-va-ham-so-logarit', 'Hàm số lũy thừa, hàm số mũ và hàm số lôgarit'],
+    ['school-exam/khoi-da-dien-va-the-tich-khoi-da-dien', 'Khối đa diện và thể tích khối đa diện'],
+    ['school-exam/mat-non-mat-tru-mat-cau', 'Mặt nón, mặt trụ, mặt cầu'],
+  ].map(([topicId, topicName], index) => ({
+    topicId,
+    subjectId: 'TOAN',
+    topicName,
+    topicOrder: index + 1,
+  })),
   VAT_LY: [
+    ['school-exam/vat-li-nhiet', 'Vật lí nhiệt'],
+    ['school-exam/khi-li-tuong', 'Khí lí tưởng'],
+    ['school-exam/tu-truong', 'Từ trường'],
+    ['school-exam/vat-li-hat-nhan', 'Vật lí hạt nhân'],
     ['school-exam/dao-dong-co', 'Dao động cơ'],
-    ['school-exam/song-co', 'Sóng cơ'],
-    ['school-exam/dien-xoay-chieu', 'Điện xoay chiều'],
+    ['school-exam/song-co-va-song-am', 'Sóng cơ và sóng âm'],
+    ['school-exam/dong-dien-xoay-chieu', 'Dòng điện xoay chiều'],
     ['school-exam/dao-dong-va-song-dien-tu', 'Dao động và sóng điện từ'],
     ['school-exam/song-anh-sang', 'Sóng ánh sáng'],
     ['school-exam/luong-tu-anh-sang', 'Lượng tử ánh sáng'],
-    ['school-exam/hat-nhan-nguyen-tu', 'Hạt nhân nguyên tử'],
-    ['school-exam/nhiet-hoc-va-chat-khi', 'Nhiệt học và chất khí'],
-    ['school-exam/dien-tich-va-dien-truong', 'Điện tích và điện trường'],
-    ['school-exam/dong-dien-khong-doi', 'Dòng điện không đổi'],
-    ['school-exam/tu-truong', 'Từ trường'],
-    ['school-exam/cam-ung-dien-tu', 'Cảm ứng điện từ'],
-    ['school-exam/quang-hoc', 'Quang học'],
   ].map(([topicId, topicName], index) => ({
     topicId,
     subjectId: 'VAT_LY',
@@ -123,21 +136,15 @@ const defaultTopicsBySubjectId: Record<string, TopicOption[]> = {
     topicOrder: index + 1,
   })),
   HOA_HOC: [
-    ['hoa-hoc/cau-tao-nguyen-tu-bang-tuan-hoan-lien-ket', 'Cấu tạo nguyên tử, bảng tuần hoàn và liên kết hóa học'],
-    ['hoa-hoc/phan-ung-oxi-hoa-khu', 'Phản ứng oxi hóa khử'],
-    ['hoa-hoc/toc-do-phan-ung-va-can-bang-hoa-hoc', 'Tốc độ phản ứng và cân bằng hóa học'],
-    ['hoa-hoc/dung-dich-ph-va-chuan-do', 'Dung dịch, pH và chuẩn độ'],
-    ['hoa-hoc/este-lipit', 'Este và lipit'],
-    ['hoa-hoc/cacbohidrat', 'Cacbohidrat'],
-    ['hoa-hoc/amin-amino-axit-protein', 'Amin, amino axit và protein'],
-    ['hoa-hoc/polime', 'Polime'],
-    ['hoa-hoc/dai-cuong-kim-loai', 'Đại cương kim loại'],
-    ['hoa-hoc/kim-loai-kiem-kiem-tho-nhom', 'Kim loại kiềm, kiềm thổ và nhôm'],
-    ['hoa-hoc/sat-va-hop-chat', 'Sắt và hợp chất của sắt'],
-    ['hoa-hoc/dien-phan', 'Điện phân'],
-    ['hoa-hoc/tong-hop-vo-co', 'Tổng hợp hóa vô cơ'],
-    ['hoa-hoc/tong-hop-huu-co', 'Tổng hợp hóa hữu cơ'],
-    ['hoa-hoc/hoa-hoc-voi-thuc-tien', 'Hóa học với thực tiễn'],
+    ['school-exam/ester-lipid', 'Ester – Lipid'],
+    ['school-exam/carbohydrate', 'Carbohydrate'],
+    ['school-exam/hop-chat-chua-nitrogen', 'Hợp chất chứa nitrogen'],
+    ['school-exam/polymer', 'Polymer'],
+    ['school-exam/pin-dien-va-dien-phan', 'Pin điện và điện phân'],
+    ['school-exam/dai-cuong-ve-kim-loai', 'Đại cương về kim loại'],
+    ['school-exam/nguyen-to-nhom-ia-va-nhom-iia', 'Nguyên tố nhóm IA và nhóm IIA'],
+    ['school-exam/so-luoc-ve-day-kim-loai-chuyen-tiep-thu-nhat-va-phuc-chat', 'Sơ lược về dãy kim loại chuyển tiếp thứ nhất và phức chất'],
+    ['school-exam/sat-va-mot-so-kim-loai-quan-trong', 'Sắt và một số kim loại quan trọng'],
   ].map(([topicId, topicName], index) => ({
     topicId,
     subjectId: 'HOA_HOC',
@@ -237,14 +244,12 @@ export async function fetchTopicsBySubjectId(subjectId: string): Promise<TopicOp
 export async function fetchQuestionsForCustomExam(
   subjectId: string,
   topicId: string,
-  level: number,
   questionType: 'all' | QuestionType,
 ): Promise<DraftQuestion[]> {
   try {
     const questionBank = await loadSchoolExamQuestionBank(subjectId)
     const questions = questionBank
       .filter((question) => buildSchoolExamTopicId(question.topic) === topicId)
-      .filter((question) => question.difficultyLevel === level)
       .filter((question) => questionType === 'all' || question.questionType === questionType)
       .map((question) => mapSchoolExamQuestionToDraftQuestion(question))
 
@@ -259,14 +264,14 @@ export async function fetchQuestionsForCustomExam(
     // Fall through to legacy questions table.
   }
 
-  return fetchLegacyQuestionsForCustomExam(topicId, level, questionType)
+  return fetchLegacyQuestionsForCustomExam(topicId, questionType)
 }
 
 export async function fetchAttemptHistory(userId: string): Promise<AttemptHistoryItem[]> {
   const supabase = getSupabaseBrowserClient()
   const { data, error } = await supabase
-    .from('student_attempts')
-    .select('attempt_id, score, correct_count, wrong_count, skipped_count, completed_at, status, metadata, exams(title)')
+    .from('legacy_student_attempts')
+    .select('attempt_id, score, correct_count, wrong_count, skipped_count, completed_at, status, metadata, legacy_exams(title)')
     .eq('user_id', userId)
     .order('completed_at', { ascending: false, nullsFirst: false })
     .returns<AttemptHistoryRow[]>()
@@ -335,17 +340,15 @@ async function fetchLegacyTopicsBySubjectId(subjectId: string): Promise<TopicOpt
 
 async function fetchLegacyQuestionsForCustomExam(
   topicId: string,
-  level: number,
   questionType: 'all' | QuestionType,
 ): Promise<DraftQuestion[]> {
   const supabase = getSupabaseBrowserClient()
   let query = supabase
-    .from('questions')
+    .from('legacy_questions')
     .select(
-      'question_id, topic_id, content, level, question_type, explanation, obsidian_source_path, answers(answer_id, option_label, content, is_correct, explanation, display_order)',
+      'question_id, topic_id, content, level, question_type, explanation, obsidian_source_path, legacy_answers(answer_id, option_label, content, is_correct, explanation, display_order)',
     )
     .eq('topic_id', topicId)
-    .eq('level', level)
     .eq('is_active', true)
 
   if (questionType !== 'all') {
@@ -490,6 +493,7 @@ function buildSchoolExamTopicId(input: string | null | undefined) {
   return `school-exam/${normalized
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
+    .replace(/đ/gi, 'd')
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')}`

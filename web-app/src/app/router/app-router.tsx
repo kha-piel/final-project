@@ -49,6 +49,16 @@ const ImportExamPage = lazy(() =>
     default: module.ImportExamPage,
   })),
 )
+const ImportReviewQuestionsPage = lazy(() =>
+  import('../../pages/admin/ImportReviewQuestionsPage').then((module) => ({
+    default: module.ImportReviewQuestionsPage,
+  })),
+)
+const ManageReviewQuestionsPage = lazy(() =>
+  import('../../pages/admin/ManageReviewQuestionsPage').then((module) => ({
+    default: module.ManageReviewQuestionsPage,
+  })),
+)
 
 function withSuspense(children: ReactNode) {
   return <Suspense fallback={<RouteLoading />}>{children}</Suspense>
@@ -156,6 +166,22 @@ export const appRouter = createBrowserRouter([
         element: (
           <ProtectedRoute allowedRoles={['admin', 'teacher']}>
             {withSuspense(<ImportExamPage />)}
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'admin/import-review-questions',
+        element: (
+          <ProtectedRoute allowedRoles={['admin', 'teacher']}>
+            {withSuspense(<ImportReviewQuestionsPage />)}
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'admin/manage-review-questions',
+        element: (
+          <ProtectedRoute allowedRoles={['admin', 'teacher']}>
+            {withSuspense(<ManageReviewQuestionsPage />)}
           </ProtectedRoute>
         ),
       },

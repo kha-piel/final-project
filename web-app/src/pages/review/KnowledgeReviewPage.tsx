@@ -1,11 +1,11 @@
-import { useMemo, useState, type ReactNode } from 'react'
+import { useState, type ReactNode } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { MarkdownContent } from '../../components/ui/MarkdownContent'
 import { PageCard } from '../../components/ui/PageCard'
 import type { DraftQuestion, QuestionType } from '../../features/dashboard/types/dashboard-types'
 import { useExamDraftStore } from '../../features/exam/store/exam-draft-store'
 import { fetchSchoolExamQuestionBank } from '../../features/practice/services/school-exam-service'
-import { useFlaggedWrongQuestionStore } from '../../features/practice/store/flagged-wrong-question-store'
+
 import type { SchoolExamQuestionRecord } from '../../features/practice/types/school-exam-types'
 import {
   getKnowledgeReviewTopic,
@@ -22,33 +22,19 @@ export function KnowledgeReviewPage() {
   const { topicKey = '' } = useParams()
   const navigate = useNavigate()
   const createSession = useExamDraftStore((state) => state.createSession)
-  const flaggedItems = useFlaggedWrongQuestionStore((state) => state.items)
+
   const topic = getKnowledgeReviewTopic(topicKey)
 
   const [selectedLessonKey, setSelectedLessonKey] = useState(topic?.lessons[0]?.lessonKey ?? '')
   const [isCreatingExam, setIsCreatingExam] = useState(false)
   const [actionError, setActionError] = useState('')
   const [actionNotice, setActionNotice] = useState('')
-  const [difficultyFilter, setDifficultyFilter] = useState<DifficultyFilter>('auto')
   const [questionTypeFilter, setQuestionTypeFilter] = useState<QuestionTypeFilter>('all')
   const [questionCount, setQuestionCount] = useState(12)
   const [buildMode, setBuildMode] = useState<BuildMode>('mixed')
 
   const selectedLesson = topic?.lessons.find((lesson) => lesson.lessonKey === selectedLessonKey) ?? topic?.lessons[0]
-  const relatedFlaggedQuestions = useMemo(() => {
-    if (!topic) {
-      return []
-    }
 
-    return Object.values(flaggedItems).filter((item) =>
-      inferKnowledgeReviewTopics([
-        item.topicName,
-        item.topicId,
-        item.question.obsidianSourcePath ?? '',
-        item.question.content,
-      ]).some((matchedTopic) => matchedTopic.key === topic.key),
-    )
-  }, [flaggedItems, topic])
 
   async function handleCreateTopicExam() {
     if (!topic) {
@@ -60,14 +46,17 @@ export function KnowledgeReviewPage() {
     setActionNotice('')
 
     try {
-      const questionBank = await fetchSchoolExamQuestionBank('TOAN', { includeSupplemental: true })
+      const subjectId = topic.key.startsWith('vat-ly') ? 'VAT_LY' : topic.key.startsWith('hoa-hoc') ? 'HOA_HOC' : 'TOAN'
+      const subjectName = subjectId === 'VAT_LY' ? 'Vật Lý' : subjectId === 'HOA_HOC' ? 'Hóa Học' : 'Toán học'
+      
+      const questionBank = await fetchSchoolExamQuestionBank(subjectId, { includeSupplemental: true })
       const topicQuestions = questionBank
         .filter((question) => isQuestionRelatedToTopic(question, topic))
         .filter((question) => matchesQuestionTypeFilter(question, questionTypeFilter))
 
       const { questions: filteredQuestions, fallbackFromLevel, fallbackToLevel } = selectQuestionsForDifficulty({
         questions: topicQuestions,
-        difficultyFilter,
+        difficultyFilter: 'auto',
       })
 
       const matchedQuestions = filteredQuestions.map(mapSchoolExamQuestionToDraftQuestion)
@@ -93,12 +82,12 @@ export function KnowledgeReviewPage() {
       createSession({
         sessionId,
         title: `Ôn chuyên đề - ${topic.title}`,
-        subjectId: 'TOAN',
-        subjectName: 'Toán học',
+        subjectId,
+        subjectName,
         topicId: `knowledge-review/${topic.key}`,
         topicName: topic.title,
         difficultyLevel: resolveAverageDifficulty(questions),
-        difficultyLabel: buildDifficultyLabel(difficultyFilter, buildMode, fallbackFromLevel, fallbackToLevel),
+        difficultyLabel: buildDifficultyLabel('auto', buildMode, fallbackFromLevel, fallbackToLevel),
         durationMinutes: Math.max(15, Math.min(60, questions.length * 3)),
         questions,
         deliveryMode: 'local_mock',
@@ -113,32 +102,7 @@ export function KnowledgeReviewPage() {
     }
   }
 
-  function handleReviewFlaggedQuestions() {
-    if (!topic || relatedFlaggedQuestions.length === 0) {
-      setActionError('Chưa có câu sai nào thuộc chuyên đề này được cắm cờ.')
-      return
-    }
 
-    const questions = relatedFlaggedQuestions.map((item) => item.question)
-    const sessionId = crypto.randomUUID()
-
-    createSession({
-      sessionId,
-      title: `Làm lại câu sai - ${topic.title}`,
-      subjectId: relatedFlaggedQuestions[0]?.subjectId ?? 'TOAN',
-      subjectName: relatedFlaggedQuestions[0]?.subjectName ?? 'Toán học',
-      topicId: `flagged/${topic.key}`,
-      topicName: topic.title,
-      difficultyLevel: resolveAverageDifficulty(questions),
-      difficultyLabel: 'Câu sai đã cắm cờ',
-      durationMinutes: Math.max(15, Math.min(60, questions.length * 3)),
-      questions,
-      deliveryMode: 'local_mock',
-      createdAt: Date.now(),
-    })
-
-    navigate(`/exam/${sessionId}`)
-  }
 
   if (!topic) {
     return (
@@ -182,14 +146,7 @@ export function KnowledgeReviewPage() {
             >
               {isCreatingExam ? 'Đang tạo bài ôn...' : 'Tạo bài ôn theo lựa chọn'}
             </button>
-            <button
-              className="rounded-2xl border border-slate-200 bg-slate-50 px-5 py-3 text-sm font-bold text-slate-700 transition hover:border-sky-300 hover:bg-white disabled:cursor-not-allowed disabled:text-slate-400"
-              disabled={relatedFlaggedQuestions.length === 0}
-              onClick={handleReviewFlaggedQuestions}
-              type="button"
-            >
-              Làm lại câu sai ({relatedFlaggedQuestions.length})
-            </button>
+
           </div>
         </div>
         {actionError ? <p className="mt-4 text-sm font-semibold text-rose-700">{actionError}</p> : null}
@@ -200,31 +157,14 @@ export function KnowledgeReviewPage() {
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <div className="text-xs font-bold uppercase tracking-[0.16em] text-slate-500">Tùy chỉnh bài ôn</div>
-            <h2 className="mt-2 text-xl font-extrabold text-slate-950">Chọn mức độ, dạng câu và số câu</h2>
+            <h2 className="mt-2 text-xl font-extrabold text-slate-950">Chọn dạng câu và số câu</h2>
           </div>
           <div className="rounded-full border border-sky-100 bg-sky-50 px-4 py-2 text-xs font-bold text-sky-700">
             Mặc định: tự động theo điểm yếu
           </div>
         </div>
 
-        <div className="mt-5 grid gap-5 xl:grid-cols-[1fr_1fr_180px]">
-          <FilterGroup label="Mức độ">
-            <SegmentButton active={difficultyFilter === 'auto'} onClick={() => setDifficultyFilter('auto')}>
-              Tự động
-            </SegmentButton>
-            <SegmentButton active={difficultyFilter === '1'} onClick={() => setDifficultyFilter('1')}>
-              Nhận biết
-            </SegmentButton>
-            <SegmentButton active={difficultyFilter === '2'} onClick={() => setDifficultyFilter('2')}>
-              Thông hiểu
-            </SegmentButton>
-            <SegmentButton active={difficultyFilter === '3'} onClick={() => setDifficultyFilter('3')}>
-              Vận dụng
-            </SegmentButton>
-            <SegmentButton active={difficultyFilter === '4'} onClick={() => setDifficultyFilter('4')}>
-              VDC
-            </SegmentButton>
-          </FilterGroup>
+        <div className="mt-5 grid gap-5 xl:grid-cols-[1fr_180px]">
 
           <FilterGroup label="Dạng câu">
             <SegmentButton active={questionTypeFilter === 'all'} onClick={() => setQuestionTypeFilter('all')}>

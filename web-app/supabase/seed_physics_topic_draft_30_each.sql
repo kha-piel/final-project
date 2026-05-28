@@ -1,4 +1,5 @@
 -- Scaffold draft question banks for Physics topics.
+SET client_encoding = 'UTF8';
 -- Safe by default:
 -- - creates internal supplemental exams
 -- - marks them is_active = false so students do not see placeholders

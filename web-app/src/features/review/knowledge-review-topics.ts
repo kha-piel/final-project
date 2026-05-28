@@ -584,6 +584,86 @@ export const knowledgeReviewTopics: KnowledgeReviewTopic[] = [
       },
     ],
   },
+  {
+    key: 'hoa-hoc-polymer',
+    title: 'Polymer',
+    summary: 'Đại cương về polymer, phản ứng trùng hợp, trùng ngưng và các loại vật liệu polymer.',
+    aliases: ['polymer', 'trung hop', 'trung ngung', 'nhua', 'cao su', 'to'],
+    sourcePaths: ['Hoa_Hoc/4_Polymer/1_dai_cuong_ve_polymer.md'],
+    lessons: [
+      {
+        lessonKey: 'tong-quan-polymer',
+        title: 'Tổng quan Polymer',
+        estimatedMinutes: 10,
+        content: `
+## Trọng tâm
+
+- Khái niệm, danh pháp, cấu trúc và phân loại polymer.
+- Phản ứng trùng hợp và phản ứng trùng ngưng.
+- Các loại vật liệu polymer phổ biến: chất dẻo, tơ, cao su, keo dán.
+
+## Mẹo làm bài
+
+- Nắm chắc điều kiện để một monomer có thể tham gia trùng hợp (có liên kết đôi) hoặc trùng ngưng (có ít nhất 2 nhóm chức có thể phản ứng).
+- Phân biệt các loại tơ (tơ tự nhiên, tơ tổng hợp, tơ bán tổng hợp).
+`
+      }
+    ]
+  },
+  {
+    key: 'hoa-hoc-carbohydrate',
+    title: 'Carbohydrate',
+    summary: 'Cấu tạo, tính chất hóa học của glucose, fructose, saccharose, tinh bột và cellulose.',
+    aliases: ['carbohydrate', 'glucose', 'fructose', 'saccharose', 'tinh bot', 'cellulose'],
+    sourcePaths: ['Hoa_Hoc/2_Carbohydrate/1_dai_cuong_carbohydrate.md'],
+    lessons: [
+      {
+        lessonKey: 'tinh-chat-carbohydrate',
+        title: 'Tính chất Carbohydrate',
+        estimatedMinutes: 12,
+        content: `
+## Trọng tâm
+
+- Phân loại carbohydrate: monosaccharide, disaccharide, polysaccharide.
+- Tính chất của nhóm aldehyde trong glucose (tráng bạc, tác dụng Cu(OH)2 đun nóng).
+- Tính chất của polyalcohol (hòa tan Cu(OH)2 tạo dung dịch xanh lam).
+- Phản ứng thủy phân của disaccharide và polysaccharide.
+
+## Mẹo làm bài
+
+- Lập bảng so sánh tính chất của các carbohydrate để dễ nhớ.
+- Chú ý môi trường phản ứng (ví dụ: fructose có thể chuyển thành glucose trong môi trường kiềm).
+`
+      }
+    ]
+  },
+  {
+    key: 'vat-ly-dao-dong-co',
+    title: 'Dao động cơ',
+    summary: 'Dao động điều hòa, con lắc lò xo, con lắc đơn, năng lượng dao động và tổng hợp dao động.',
+    aliases: ['dao dong co', 'dao dong dieu hoa', 'con lac lo xo', 'con lac don'],
+    sourcePaths: ['Vat_Ly/1_Dao_Dong_Co/1_dao_dong_dieu_hoa.md'],
+    lessons: [
+      {
+        lessonKey: 'phuong-trinh-dao-dong',
+        title: 'Phương trình và các đại lượng',
+        estimatedMinutes: 15,
+        content: `
+## Trọng tâm
+
+- Phương trình li độ: $x = A\\cos(\\omega t + \\varphi)$.
+- Vận tốc, gia tốc, lực kéo về.
+- Năng lượng: động năng, thế năng, cơ năng.
+- Con lắc lò xo và con lắc đơn (chu kì, tần số).
+
+## Mẹo làm bài
+
+- Dùng đường tròn lượng giác để giải nhanh các bài toán về thời gian và quãng đường.
+- Nhớ các công thức độc lập với thời gian.
+`
+      }
+    ]
+  }
 ]
 
 export function getKnowledgeReviewTopic(topicKey: string) {

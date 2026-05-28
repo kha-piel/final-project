@@ -226,7 +226,7 @@ export async function persistCompletedAttempt({
 
   const aiFeedback = buildAttemptAiFeedback(summary)
   const { data: createdAttempt, error: attemptError } = await supabase
-    .from('student_attempts')
+    .from('legacy_student_attempts')
     .update(buildAttemptInsertRow({
       createdExamId: cloudSync.examId,
       completedAtIso,
@@ -263,7 +263,7 @@ export async function persistCompletedAttempt({
   })
 
   const { error: attemptAnswersError } = await supabase
-    .from('attempt_answers')
+    .from('legacy_attempt_answers')
     .insert(attemptAnswerRows)
 
   if (attemptAnswersError) {
@@ -287,7 +287,7 @@ export async function syncInProgressAttempt({
   const progressSummary = buildSubmissionSummary(session, runtime)
 
   const { error: attemptUpdateError } = await supabase
-    .from('student_attempts')
+    .from('legacy_student_attempts')
     .update({
       score: null,
       correct_count: progressSummary.correctCount,
@@ -337,7 +337,7 @@ export async function syncInProgressAttempt({
   })
 
   const { error: answerSyncError } = await supabase
-    .from('attempt_answers')
+    .from('legacy_attempt_answers')
     .upsert(attemptAnswerRows, { onConflict: 'attempt_id,question_id' })
 
   if (answerSyncError) {
@@ -350,8 +350,8 @@ export async function syncInProgressAttempt({
 export async function fetchInProgressAttempts(userId: string): Promise<InProgressAttemptListItem[]> {
   const supabase = getSupabaseBrowserClient()
   const { data, error } = await supabase
-    .from('student_attempts')
-    .select('attempt_id, started_at, metadata, exams(title, total_questions), attempt_answers(selected_answer_id)')
+    .from('legacy_student_attempts')
+    .select('attempt_id, started_at, metadata, legacy_exams(title, total_questions), legacy_attempt_answers(selected_answer_id)')
     .eq('user_id', userId)
     .eq('status', 'in_progress')
     .order('updated_at', { ascending: false })
@@ -404,9 +404,9 @@ export async function fetchInProgressAttempts(userId: string): Promise<InProgres
 export async function restoreInProgressAttempt(attemptId: string): Promise<RestoredCloudAttempt | null> {
   const supabase = getSupabaseBrowserClient()
   const { data, error } = await supabase
-    .from('student_attempts')
+    .from('legacy_student_attempts')
     .select(
-      'attempt_id, exam_id, started_at, metadata, exams(title, duration_minutes, exam_questions(question_order, question:questions(question_id, topic_id, content, level, question_type, explanation, obsidian_source_path, answers(answer_id, option_label, content, is_correct, explanation, display_order)))), attempt_answers(question_id, selected_answer_id, metadata)',
+      'attempt_id, exam_id, started_at, metadata, legacy_exams(title, duration_minutes, legacy_exam_questions(question_order, question:legacy_questions(question_id, topic_id, content, level, question_type, explanation, obsidian_source_path, legacy_answers(answer_id, option_label, content, is_correct, explanation, display_order)))), legacy_attempt_answers(question_id, selected_answer_id, metadata)',
     )
     .eq('attempt_id', attemptId)
     .eq('status', 'in_progress')
@@ -549,7 +549,7 @@ async function ensureCloudAttempt(input: {
   let examId = existingExamId
   if (!examId) {
     const { data: createdExam, error: examError } = await supabase
-      .from('exams')
+      .from('legacy_exams')
       .insert({
         title: input.session.title,
         description: `Custom web practice session for ${input.session.topicName}`,
@@ -589,7 +589,7 @@ async function ensureCloudAttempt(input: {
       point_weight: 1,
     }))
 
-    const { error: examQuestionsError } = await supabase.from('exam_questions').insert(examQuestionRows)
+    const { error: examQuestionsError } = await supabase.from('legacy_exam_questions').insert(examQuestionRows)
     if (examQuestionsError) {
       throw new Error(`Không thể lưu exam questions: ${examQuestionsError.message}`)
     }
@@ -598,7 +598,7 @@ async function ensureCloudAttempt(input: {
   let attemptId = existingAttemptId
   if (!attemptId) {
     const { data: createdAttempt, error: attemptError } = await supabase
-      .from('student_attempts')
+      .from('legacy_student_attempts')
       .insert({
         user_id: input.userId,
         exam_id: examId,
@@ -670,7 +670,7 @@ async function ensureCloudChatSessionAndMessages(input: {
 
   if (!chatSessionId) {
     const { data: existingChatSession, error: existingChatSessionError } = await supabase
-      .from('chat_sessions')
+      .from('legacy_chat_sessions')
       .select('session_id')
       .eq('related_attempt_id', input.attemptId)
       .maybeSingle<ChatSessionRow>()
@@ -684,7 +684,7 @@ async function ensureCloudChatSessionAndMessages(input: {
 
   if (!chatSessionId) {
     const { data: createdChatSession, error: createdChatSessionError } = await supabase
-      .from('chat_sessions')
+      .from('legacy_chat_sessions')
       .insert({
         user_id: input.userId,
         title: 'AI gia sư trong bài làm',
@@ -720,14 +720,14 @@ async function ensureCloudChatSessionAndMessages(input: {
       },
     }))
 
-    const { error: insertChatMessagesError } = await supabase.from('chat_messages').insert(rows)
+    const { error: insertChatMessagesError } = await supabase.from('legacy_chat_messages').insert(rows)
     if (insertChatMessagesError) {
       throw new Error(`Không thể đồng bộ cloud chat messages: ${insertChatMessagesError.message}`)
     }
   }
 
   const { error: updateChatSessionError } = await supabase
-    .from('chat_sessions')
+    .from('legacy_chat_sessions')
     .update({
       total_messages: input.runtime.chatHistory.length,
       last_message_at: new Date().toISOString(),
@@ -744,10 +744,10 @@ async function ensureCloudChatSessionAndMessages(input: {
   }
 }
 
-async function fetchAttemptChatMessages(attemptId: string) {
+export async function fetchAttemptChatMessages(attemptId: string) {
   const supabase = getSupabaseBrowserClient()
   const { data: chatSession, error: chatSessionError } = await supabase
-    .from('chat_sessions')
+    .from('legacy_chat_sessions')
     .select('session_id')
     .eq('related_attempt_id', attemptId)
     .maybeSingle<ChatSessionRow>()
@@ -764,7 +764,7 @@ async function fetchAttemptChatMessages(attemptId: string) {
   }
 
   const { data: chatMessages, error: chatMessagesError } = await supabase
-    .from('chat_messages')
+    .from('legacy_chat_messages')
     .select('message_id, role, content, related_question_id, metadata, created_at')
     .eq('session_id', chatSession.session_id)
     .order('created_at', { ascending: true })
