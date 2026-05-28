@@ -46,7 +46,11 @@ build/
 __pycache__/
 *.py[cod]
 *$py.class
+# Env files
 .env
+.env.*
+**/.env
+**/.env.*
 venv/
 .venv/
 
