@@ -61,6 +61,7 @@ export type AdminImportQuestion = {
   options: AdminImportOption[]
   statements: AdminImportStatement[]
   correctAnswer: string
+  obsidianSourcePath?: string
   isValid: boolean
   warnings: string[]
   changes: AdminImportChange[]
@@ -187,43 +188,38 @@ export const subjectOptions: Array<{
 
 export const topicOptionsBySubjectCode: Record<SubjectCode, string[]> = {
   TOAN: [
-    'Hinh hoc khong gian va Oxyz',
-    'Nguyen ham va tich phan',
-    'Khao sat ham so, cuc tri va GTLN/GTNN',
-    'Mu va logarit',
-    'Xac suat, to hop va thong ke',
-    'Quan he vuong goc va khoi da dien',
+    'Khảo sát hàm số và ứng dụng đạo hàm',
+    'Véctơ và hệ tọa độ trong không gian',
+    'Các số đặc trưng đo mức độ phân tán cho mẫu số liệu ghép nhóm',
+    'Nguyên hàm và tích phân',
+    'Phương trình mặt phẳng, đường thẳng, mặt cầu trong không gian',
+    'Xác suất có điều kiện',
+    'Hàm số lũy thừa, hàm số mũ và hàm số lôgarit',
+    'Khối đa diện và thể tích khối đa diện',
+    'Mặt nón, mặt trụ, mặt cầu',
   ],
   VAT_LY: [
-    'Dao dong co',
-    'Song co',
-    'Dien xoay chieu',
-    'Dao dong va song dien tu',
-    'Song anh sang',
-    'Luong tu anh sang',
-    'Hat nhan nguyen tu',
-    'Dien tich va dien truong',
-    'Dong dien khong doi',
-    'Tu truong',
-    'Cam ung dien tu',
-    'Quang hoc',
+    'Vật lí nhiệt',
+    'Khí lí tưởng',
+    'Từ trường',
+    'Vật lí hạt nhân',
+    'Dao động cơ',
+    'Sóng cơ và sóng âm',
+    'Dòng điện xoay chiều',
+    'Dao động và sóng điện từ',
+    'Sóng ánh sáng',
+    'Lượng tử ánh sáng',
   ],
   HOA_HOC: [
-    'Cau tao nguyen tu, bang tuan hoan va lien ket hoa hoc',
-    'Phan ung oxi hoa khu',
-    'Toc do phan ung va can bang hoa hoc',
-    'Dung dich, pH va chuan do',
-    'Este va lipit',
-    'Cacbohidrat',
-    'Amin, amino axit va protein',
-    'Polime',
-    'Dai cuong kim loai',
-    'Kim loai kiem, kiem tho va nhom',
-    'Sat va hop chat cua sat',
-    'Dien phan',
-    'Tong hop hoa vo co',
-    'Tong hop hoa huu co',
-    'Hoa hoc voi thuc tien',
+    'Ester – Lipid',
+    'Carbohydrate',
+    'Hợp chất chứa nitrogen',
+    'Polymer',
+    'Pin điện và điện phân',
+    'Đại cương về kim loại',
+    'Nguyên tố nhóm IA và nhóm IIA',
+    'Sơ lược về dãy kim loại chuyển tiếp thứ nhất và phức chất',
+    'Sắt và một số kim loại quan trọng',
   ],
 }
 
@@ -417,7 +413,7 @@ export async function saveAdminImportedExam(input: SaveAdminImportedExamInput) {
   }
 
   const { data: existingExam, error: existingExamError } = await supabase
-    .from('school_exams')
+    .from('exams')
     .select('exam_id')
     .eq('exam_id', examId)
     .maybeSingle<{ exam_id: string }>()
@@ -518,9 +514,9 @@ export async function saveAdminImportedExam(input: SaveAdminImportedExamInput) {
     }
     hasInsertedExam = true
 
-    const { error: sectionError } = await supabase.from('school_exam_sections').insert(sectionRows)
+    const { error: sectionError } = await supabase.from('exam_sections').insert(sectionRows)
     if (sectionError) {
-      throw new Error(`Khong the tao school_exam_sections: ${sectionError.message}`)
+      throw new Error(`Khong the tao exam_sections: ${sectionError.message}`)
     }
 
     const questionsError = await insertSchoolExamQuestions(supabase, questionRows)
@@ -530,19 +526,19 @@ export async function saveAdminImportedExam(input: SaveAdminImportedExamInput) {
 
     if (optionRows.length > 0) {
       const { error: optionsError } = await supabase
-        .from('school_exam_question_options')
+        .from('question_options')
         .insert(optionRows)
       if (optionsError) {
-        throw new Error(`Khong the tao school_exam_question_options: ${optionsError.message}`)
+        throw new Error(`Khong the tao question_options: ${optionsError.message}`)
       }
     }
 
     if (assetRows.length > 0) {
       const { error: assetsError } = await supabase
-        .from('school_exam_question_assets')
+        .from('question_assets')
         .insert(assetRows)
       if (assetsError) {
-        throw new Error(`Khong the tao school_exam_question_assets: ${assetsError.message}`)
+        throw new Error(`Khong the tao question_assets: ${assetsError.message}`)
       }
     }
 
@@ -552,7 +548,7 @@ export async function saveAdminImportedExam(input: SaveAdminImportedExamInput) {
     }
   } catch (error) {
     if (hasInsertedExam) {
-      await supabase.from('school_exams').delete().eq('exam_id', examId)
+      await supabase.from('exams').delete().eq('exam_id', examId)
     }
     throw error
   }
@@ -562,18 +558,20 @@ export async function fetchManagedImportedExams() {
   const supabase = getSupabaseBrowserClient()
   const queryWithVariant = () =>
     supabase
-      .from('school_exams')
+      .from('exams')
       .select(
         'exam_id, title, school_name, city, subject_code, subject_name, year, duration_minutes, pdf_url, display_variant_code, source_path, is_active, created_at',
       )
+      .not('exam_id', 'like', 'supplemental-%')
       .order('created_at', { ascending: false })
       .limit(24)
   const queryWithoutVariant = () =>
     supabase
-      .from('school_exams')
+      .from('exams')
       .select(
         'exam_id, title, school_name, city, subject_code, subject_name, year, duration_minutes, pdf_url, source_path, is_active, created_at',
       )
+      .not('exam_id', 'like', 'supplemental-%')
       .order('created_at', { ascending: false })
       .limit(24)
 
@@ -637,12 +635,12 @@ export async function updateManagedImportedExam(input: UpdateManagedImportedExam
     display_variant_code: input.variantCode.trim() || 'DEFAULT',
   }
   let { error: examError } = await supabase
-    .from('school_exams')
+    .from('exams')
     .update(payloadWithVariant)
     .eq('exam_id', input.examId)
 
   if (examError && isMissingDisplayVariantCodeError(examError.message)) {
-    const fallback = await supabase.from('school_exams').update(payload).eq('exam_id', input.examId)
+    const fallback = await supabase.from('exams').update(payload).eq('exam_id', input.examId)
     examError = fallback.error
   }
 
@@ -656,7 +654,7 @@ export async function fetchManagedImportedExamDraft(examId: string) {
   const supabase = getSupabaseBrowserClient()
   const queryWithVariant = () =>
     supabase
-      .from('school_exams')
+      .from('exams')
       .select(
         'exam_id, title, school_name, city, subject_code, subject_name, year, duration_minutes, pdf_url, display_variant_code',
       )
@@ -675,7 +673,7 @@ export async function fetchManagedImportedExamDraft(examId: string) {
       }>()
   const queryWithoutVariant = () =>
     supabase
-      .from('school_exams')
+      .from('exams')
       .select(
         'exam_id, title, school_name, city, subject_code, subject_name, year, duration_minutes, pdf_url',
       )
@@ -715,18 +713,18 @@ export async function fetchManagedImportedExamDraft(examId: string) {
 
   const queryQuestionsWithAnswer = () =>
     supabase
-      .from('school_exam_questions')
+      .from('questions')
       .select(
-        'question_id, exam_id, question_number, difficulty_level, question_type, question_text, correct_answer, statement_json, topic, obsidian_source_path, has_image, metadata, options:school_exam_question_options(option_label, option_text, display_order), assets:school_exam_question_assets(asset_type, asset_path, display_order)',
+        'question_id, exam_id, question_number, difficulty_level, question_type, question_text, correct_answer, statement_json, topic, obsidian_source_path, has_image, metadata, options:question_options(option_label, option_text, display_order), assets:question_assets(asset_type, asset_path, display_order)',
       )
       .eq('exam_id', examId)
       .order('question_number', { ascending: true })
       .returns<ManagedExamQuestionRow[]>()
   const queryQuestionsWithoutAnswer = () =>
     supabase
-      .from('school_exam_questions')
+      .from('questions')
       .select(
-        'question_id, exam_id, question_number, difficulty_level, question_type, question_text, statement_json, topic, obsidian_source_path, has_image, metadata, options:school_exam_question_options(option_label, option_text, display_order), assets:school_exam_question_assets(asset_type, asset_path, display_order)',
+        'question_id, exam_id, question_number, difficulty_level, question_type, question_text, statement_json, topic, obsidian_source_path, has_image, metadata, options:question_options(option_label, option_text, display_order), assets:question_assets(asset_type, asset_path, display_order)',
       )
       .eq('exam_id', examId)
       .order('question_number', { ascending: true })
@@ -889,7 +887,7 @@ export async function saveManagedImportedExamDraft(input: {
     ),
   }
   let { error: examUpdateError } = await supabase
-    .from('school_exams')
+    .from('exams')
     .update({
       ...examUpdateBase,
       display_variant_code: draft.examDraft.variantCode || 'DEFAULT',
@@ -897,7 +895,7 @@ export async function saveManagedImportedExamDraft(input: {
     .eq('exam_id', examId)
 
   if (examUpdateError && isMissingDisplayVariantCodeError(examUpdateError.message)) {
-    const fallback = await supabase.from('school_exams').update(examUpdateBase).eq('exam_id', examId)
+    const fallback = await supabase.from('exams').update(examUpdateBase).eq('exam_id', examId)
     examUpdateError = fallback.error
   }
 
@@ -906,7 +904,7 @@ export async function saveManagedImportedExamDraft(input: {
   }
 
   const { error: questionDeleteError } = await supabase
-    .from('school_exam_questions')
+    .from('questions')
     .delete()
     .eq('exam_id', examId)
 
@@ -915,7 +913,7 @@ export async function saveManagedImportedExamDraft(input: {
   }
 
   const { error: sectionDeleteError } = await supabase
-    .from('school_exam_sections')
+    .from('exam_sections')
     .delete()
     .eq('exam_id', examId)
 
@@ -924,7 +922,7 @@ export async function saveManagedImportedExamDraft(input: {
   }
 
   if (sectionRows.length > 0) {
-    const { error: sectionInsertError } = await supabase.from('school_exam_sections').insert(sectionRows)
+    const { error: sectionInsertError } = await supabase.from('exam_sections').insert(sectionRows)
     if (sectionInsertError) {
       throw new Error(`Khong the luu lai cac phan de thi: ${sectionInsertError.message}`)
     }
@@ -938,7 +936,7 @@ export async function saveManagedImportedExamDraft(input: {
 
   if (optionRows.length > 0) {
     const { error: optionInsertError } = await supabase
-      .from('school_exam_question_options')
+      .from('question_options')
       .insert(optionRows)
     if (optionInsertError) {
       throw new Error(`Khong the luu dap an lua chon: ${optionInsertError.message}`)
@@ -947,7 +945,7 @@ export async function saveManagedImportedExamDraft(input: {
 
   if (assetRows.length > 0) {
     const { error: assetInsertError } = await supabase
-      .from('school_exam_question_assets')
+      .from('question_assets')
       .insert(assetRows)
     if (assetInsertError) {
       throw new Error(`Khong the luu hinh anh cau hoi: ${assetInsertError.message}`)
@@ -969,7 +967,7 @@ export async function deleteManagedImportedExam(input: {
     // Keep delete resilient even if some orphaned files cannot be removed from Storage.
   }
 
-  const { error } = await supabase.from('school_exams').delete().eq('exam_id', input.examId)
+  const { error } = await supabase.from('exams').delete().eq('exam_id', input.examId)
   if (error) {
     throw new Error(`Khong the xoa de thi: ${error.message}`)
   }
@@ -985,12 +983,12 @@ function normalizeValidationResponse(payload: AdminImportValidationResponse): Ad
   }
 }
 
-async function insertSchoolExamRow(
+export async function insertSchoolExamRow(
   supabase: ReturnType<typeof getSupabaseBrowserClient>,
   examBaseRow: Record<string, unknown>,
   variantCode: string,
 ) {
-  const withVariantResult = await supabase.from('school_exams').insert({
+  const withVariantResult = await supabase.from('exams').insert({
     ...examBaseRow,
     display_variant_code: variantCode,
   })
@@ -999,21 +997,21 @@ async function insertSchoolExamRow(
     return withVariantResult.error
   }
 
-  const fallbackResult = await supabase.from('school_exams').insert(examBaseRow)
+  const fallbackResult = await supabase.from('exams').insert(examBaseRow)
   return fallbackResult.error
 }
 
-async function insertSchoolExamQuestions(
+export async function insertSchoolExamQuestions(
   supabase: ReturnType<typeof getSupabaseBrowserClient>,
   questionRows: Array<Record<string, unknown>>,
 ) {
-  const withAnswerResult = await supabase.from('school_exam_questions').insert(questionRows)
+  const withAnswerResult = await supabase.from('questions').insert(questionRows)
   if (!withAnswerResult.error || !isMissingCorrectAnswerError(withAnswerResult.error.message)) {
     return withAnswerResult.error
   }
 
   const fallbackRows = questionRows.map(({ correct_answer: _correctAnswer, ...row }) => row)
-  const fallbackResult = await supabase.from('school_exam_questions').insert(fallbackRows)
+  const fallbackResult = await supabase.from('questions').insert(fallbackRows)
   return fallbackResult.error
 }
 
@@ -1027,7 +1025,7 @@ function isMissingCorrectAnswerError(message: string) {
   return MISSING_CORRECT_ANSWER_PATTERNS.some((pattern) => normalized.includes(pattern))
 }
 
-function resolveCorrectAnswer(
+export function resolveCorrectAnswer(
   directAnswer: string | null | undefined,
   metadata: Record<string, unknown> | null | undefined,
 ) {
@@ -1134,7 +1132,7 @@ function normalizeQuestion(question: AdminImportQuestion, fallbackNumber: number
   }
 }
 
-function buildSectionRows(examId: string, questions: AdminImportQuestion[]) {
+export function buildSectionRows(examId: string, questions: AdminImportQuestion[]) {
   const order: SectionPart[] = ['multiple_choice', 'true_false', 'short_answer']
   return order
     .map((partCode, index) => {
@@ -1186,7 +1184,7 @@ async function uploadPdfFile(file: File, storagePath: string) {
   return getStoragePublicUrl(storagePath)
 }
 
-async function uploadQuestionAssets(examDraft: AdminExamDraft, questions: AdminImportQuestion[]) {
+export async function uploadQuestionAssets(examDraft: AdminExamDraft, questions: AdminImportQuestion[]) {
   const supabase = getSupabaseBrowserClient()
   const nextQuestions: AdminImportQuestion[] = []
 
@@ -1264,17 +1262,17 @@ function dataUrlToBlob(dataUrl: string) {
   return new Blob([bytes], { type: contentType })
 }
 
-function buildQuestionId(examId: string, questionNumber: number) {
+export function buildQuestionId(examId: string, questionNumber: number) {
   return `${examId}-q${String(questionNumber).padStart(2, '0')}`
 }
 
 function slugify(value: string) {
   return value
     .trim()
-    .toLowerCase()
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
-    .replace(/đ/g, 'd')
+    .replace(/đ/gi, 'd')
+    .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/-+/g, '-')
     .replace(/^-|-$/g, '')

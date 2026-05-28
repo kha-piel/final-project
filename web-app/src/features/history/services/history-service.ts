@@ -23,6 +23,10 @@ export type UnifiedAiHistoryItem = {
   role: 'user' | 'assistant' | 'system'
   content: string
   createdAt: string
+  attemptId: string | null
+  sessionId: string | null
+  questionId: string | null
+  questionNumber: number | null
 }
 
 type PracticeAiMessageRow = {
@@ -32,7 +36,7 @@ type PracticeAiMessageRow = {
   content: string
   related_question_id: string | null
   created_at: string
-  chat_sessions:
+  legacy_chat_sessions:
     | {
         title: string | null
         related_attempt_id: string | null
@@ -63,9 +67,9 @@ type PracticeAiMessageRow = {
 export async function fetchPracticeAiHistory(userId: string): Promise<PracticeAiHistoryMessage[]> {
   const supabase = getSupabaseBrowserClient()
   const { data, error } = await supabase
-    .from('chat_messages')
-    .select('message_id, session_id, role, content, related_question_id, created_at, chat_sessions!inner(user_id, title, related_attempt_id, exams(title))')
-    .eq('chat_sessions.user_id', userId)
+    .from('legacy_chat_messages')
+    .select('message_id, session_id, role, content, related_question_id, created_at, legacy_chat_sessions!inner(user_id, title, related_attempt_id, legacy_exams(title))')
+    .eq('legacy_chat_sessions.user_id', userId)
     .order('created_at', { ascending: false })
     .returns<PracticeAiMessageRow[]>()
 
@@ -74,7 +78,7 @@ export async function fetchPracticeAiHistory(userId: string): Promise<PracticeAi
   }
 
   return data.map((message) => {
-    const session = unwrapSingle(message.chat_sessions)
+    const session = unwrapSingle(message.legacy_chat_sessions)
     const exam = unwrapSingle(session?.exams)
     return {
       messageId: message.message_id,
@@ -100,10 +104,14 @@ export async function fetchUnifiedAiHistory(userId: string): Promise<UnifiedAiHi
       id: `practice-${message.messageId}`,
       source: 'practice' as const,
       title: message.examTitle,
-      context: message.questionId ? `Cau hoi ${message.questionId}` : 'On tap kien thuc',
+      context: message.questionId ? `Câu hỏi` : 'Ôn tập kiến thức',
       role: message.role,
       content: message.content,
       createdAt: message.createdAt,
+      attemptId: message.attemptId,
+      sessionId: message.sessionId,
+      questionId: message.questionId,
+      questionNumber: null,
     })),
     ...schoolExamMessages.map(mapSchoolExamAiMessage),
   ].sort((left, right) => new Date(right.createdAt).getTime() - new Date(left.createdAt).getTime())
@@ -114,10 +122,14 @@ function mapSchoolExamAiMessage(message: SchoolExamAiHistoryMessage): UnifiedAiH
     id: `school-${message.messageId}`,
     source: 'school_exam',
     title: message.examTitle,
-    context: message.questionNumber ? `${message.schoolName} - Cau ${message.questionNumber}` : message.schoolName,
+    context: message.questionNumber ? `${message.schoolName} - Câu ${message.questionNumber}` : message.schoolName,
     role: message.role,
     content: message.content,
     createdAt: message.createdAt,
+    attemptId: message.attemptId,
+    sessionId: null,
+    questionId: null,
+    questionNumber: message.questionNumber,
   }
 }
 
@@ -127,4 +139,19 @@ function unwrapSingle<T>(value: T | T[] | null | undefined) {
   }
 
   return value ?? null
+}
+
+export async function savePracticeAiMessage(sessionId: string, questionId: string | null, role: 'user' | 'assistant' | 'system', content: string) {
+  const supabase = getSupabaseBrowserClient()
+  const { error } = await supabase.from('legacy_chat_messages').insert({
+    session_id: sessionId,
+    related_question_id: questionId,
+    role,
+    content,
+    metadata: { local_message_id: crypto.randomUUID(), created_at_ms: Date.now() },
+  })
+
+  if (error) {
+    console.error('Error saving practice ai message', error)
+  }
 }

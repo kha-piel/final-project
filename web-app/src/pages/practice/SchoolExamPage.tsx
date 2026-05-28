@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
-import { Link, useBlocker, useParams } from 'react-router-dom'
+import { Link, useBlocker, useParams, useSearchParams } from 'react-router-dom'
 import { PageCard } from '../../components/ui/PageCard'
 import { MarkdownContent } from '../../components/ui/MarkdownContent'
 import { useAuthSessionStore } from '../../features/auth/store/auth-session-store'
@@ -28,6 +28,7 @@ import {
 import {
   persistCompletedSchoolExamAttempt,
   saveSchoolExamAiMessages,
+  fetchSchoolExamAttemptDetail,
   type SchoolExamAiMessageInput,
 } from '../../features/practice/services/school-exam-attempt-service'
 
@@ -57,6 +58,8 @@ type ReviewChatMessage = {
 
 export function SchoolExamPage() {
   const { examId = '' } = useParams()
+  const [searchParams] = useSearchParams()
+  const reviewAttemptId = searchParams.get('reviewAttemptId')
   const authUser = useAuthSessionStore((state) => state.user)
   const [exam, setExam] = useState<SchoolExamPaperRecord | null>(null)
   const [isLoadingExam, setIsLoadingExam] = useState(true)
@@ -163,6 +166,66 @@ export function SchoolExamPage() {
       isMounted = false
     }
   }, [exam])
+
+  useEffect(() => {
+    if (!reviewAttemptId || questionRecords.length === 0 || !exam) {
+      return
+    }
+
+    let isMounted = true
+
+    fetchSchoolExamAttemptDetail(reviewAttemptId)
+      .then((detail) => {
+        if (!isMounted || !detail) return
+
+        const restoredAiHistory: Record<number, ReviewChatMessage[]> = {}
+        detail.aiMessages.forEach((msg) => {
+          if (!msg.questionNumber) return
+          if (!restoredAiHistory[msg.questionNumber]) {
+            restoredAiHistory[msg.questionNumber] = []
+          }
+          restoredAiHistory[msg.questionNumber].push({
+            role: msg.role === 'assistant' ? 'ai' : 'user',
+            content: msg.content,
+          })
+        })
+        
+        const newSelectedChoices: Record<string, string> = {}
+        const newSelectedTrueFalse: Record<string, Record<string, boolean>> = {}
+        const newShortAnswers: Record<string, string> = {}
+
+        detail.answers.forEach((ans) => {
+          const questionKey = String(ans.questionNumber)
+          if (ans.questionType === 'multiple_choice') {
+            newSelectedChoices[questionKey] = ans.selectedAnswer
+          } else if (ans.questionType === 'true_false') {
+            const parts = ans.selectedAnswer.split(', ')
+            const map: Record<string, boolean> = {}
+            parts.forEach(p => {
+              const [label, val] = p.split(':')
+              if (label && val) {
+                map[label.toUpperCase()] = (val === 'Đúng')
+              }
+            })
+            newSelectedTrueFalse[questionKey] = map
+          } else if (ans.questionType === 'short_answer') {
+            newShortAnswers[questionKey] = ans.selectedAnswer
+          }
+        })
+
+        setSelectedChoices(newSelectedChoices)
+        setSelectedTrueFalse(newSelectedTrueFalse)
+        setShortAnswers(newShortAnswers)
+        setAiChatHistoryByQuestion(restoredAiHistory)
+        setSchoolAttemptId(detail.attemptId)
+        setSubmitted(true)
+      })
+      .catch((err) => console.error('Failed to load review attempt:', err))
+
+    return () => {
+      isMounted = false
+    }
+  }, [exam, reviewAttemptId, questionRecords])
 
   useEffect(() => {
     if (!exam || submitted || remainingSeconds <= 0) {

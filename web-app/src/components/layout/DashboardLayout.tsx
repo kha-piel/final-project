@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import {
   BookOpen,
+  BookPlus,
   Clock3,
   FileText,
   LogOut,
@@ -231,12 +232,20 @@ function getNavigationItems(userRole?: string) {
   const normalizedRole = userRole?.trim().toLowerCase() ?? ''
 
   if (normalizedRole === 'admin' || normalizedRole === 'teacher') {
-    items.push({
-      label: 'Nhap de thi',
-      to: '/admin/import-exam',
-      icon: Shield,
-      match: ['/admin'],
-    })
+    items.push(
+      {
+        label: 'Nhap de thi',
+        to: '/admin/import-exam',
+        icon: Shield,
+        match: ['/admin/import-exam'],
+      },
+      {
+        label: 'Nhap cau on tap',
+        to: '/admin/import-review-questions',
+        icon: BookPlus,
+        match: ['/admin/import-review-questions'],
+      }
+    )
   }
 
   return items

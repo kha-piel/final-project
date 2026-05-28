@@ -14,25 +14,24 @@ import { useExamDraftStore } from '../../features/exam/store/exam-draft-store'
 import { useExamRuntimeStore } from '../../features/exam/store/exam-runtime-store'
 import { fetchUnifiedAiHistory, type UnifiedAiHistoryItem } from '../../features/history/services/history-service'
 import {
-  fetchSchoolExamAttemptDetail,
   fetchSchoolExamAttemptHistory,
-  type SchoolExamAttemptDetail,
   type SchoolExamAttemptHistoryItem,
 } from '../../features/practice/services/school-exam-attempt-service'
-import { useFlaggedWrongQuestionStore } from '../../features/practice/store/flagged-wrong-question-store'
+import { HistoryAiChatModal } from './components/HistoryAiChatModal'
 import { hasSupabaseEnv } from '../../lib/config/env'
 
-type HistoryTab = 'school_exams' | 'practice' | 'ai'
+type HistoryTab = 'exams' | 'practice' | 'ai'
 
 export function HistoryPage() {
   const navigate = useNavigate()
   const authUser = useAuthSessionStore((state) => state.user)
-  const [activeTab, setActiveTab] = useState<HistoryTab>('school_exams')
+  const [activeTab, setActiveTab] = useState<HistoryTab>('exams')
   const [schoolExamHistory, setSchoolExamHistory] = useState<SchoolExamAttemptHistoryItem[]>([])
+  const [selectedSubject, setSelectedSubject] = useState<string>('all')
   const [practiceHistory, setPracticeHistory] = useState<AttemptHistoryItem[]>([])
   const [cloudInProgressAttempts, setCloudInProgressAttempts] = useState<InProgressAttemptListItem[]>([])
   const [aiHistory, setAiHistory] = useState<UnifiedAiHistoryItem[]>([])
-  const [selectedSchoolAttempt, setSelectedSchoolAttempt] = useState<SchoolExamAttemptDetail | null>(null)
+  const [selectedAiHistoryMessage, setSelectedAiHistoryMessage] = useState<UnifiedAiHistoryItem | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isRestoringCloudAttemptId, setIsRestoringCloudAttemptId] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
@@ -43,13 +42,6 @@ export function HistoryPage() {
   const runtimeSessions = useExamRuntimeStore((state) => state.sessions)
   const restoreRuntimeSession = useExamRuntimeStore((state) => state.restoreRuntimeSession)
   const clearRuntimeSession = useExamRuntimeStore((state) => state.clearRuntimeSession)
-  const flaggedQuestionMap = useFlaggedWrongQuestionStore((state) => state.items)
-  const clearAllFlaggedQuestions = useFlaggedWrongQuestionStore((state) => state.clearAllFlaggedQuestions)
-
-  const flaggedQuestionItems = useMemo(
-    () => Object.values(flaggedQuestionMap).sort((left, right) => right.flaggedAt - left.flaggedAt),
-    [flaggedQuestionMap],
-  )
 
   const resumableSessions = useMemo(() => {
     return Object.values(draftSessions)
@@ -111,6 +103,19 @@ export function HistoryPage() {
       ),
     [cloudInProgressAttempts, localPersistedAttemptIds],
   )
+
+  const uniqueSubjects = useMemo(() => {
+    const subjects = new Set<string>()
+    schoolExamHistory.forEach((attempt) => {
+      if (attempt.subjectName) subjects.add(attempt.subjectName)
+    })
+    return Array.from(subjects).sort()
+  }, [schoolExamHistory])
+
+  const filteredSchoolExamHistory = useMemo(() => {
+    if (selectedSubject === 'all') return schoolExamHistory
+    return schoolExamHistory.filter((attempt) => attempt.subjectName === selectedSubject)
+  }, [schoolExamHistory, selectedSubject])
 
   useEffect(() => {
     if (!authUser?.id) {
@@ -186,19 +191,8 @@ export function HistoryPage() {
     clearDraftSession(sessionId)
   }
 
-  async function handleOpenSchoolAttempt(attemptId: string) {
-    setErrorMessage('')
-
-    try {
-      const detail = await fetchSchoolExamAttemptDetail(attemptId)
-      if (!detail) {
-        setErrorMessage('Khong tim thay chi tiet bai lam de truong.')
-        return
-      }
-      setSelectedSchoolAttempt(detail)
-    } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : 'Khong the tai chi tiet bai lam.')
-    }
+  function handleOpenSchoolAttempt(attemptId: string, examId: string) {
+    navigate(`/practice/school-exams/${examId}?reviewAttemptId=${attemptId}`)
   }
 
   return (
@@ -212,7 +206,7 @@ export function HistoryPage() {
         </h1>
 
         <div className="mt-6 flex flex-wrap gap-2">
-          <TabButton active={activeTab === 'school_exams'} icon={<FileText className="h-4 w-4" />} onClick={() => setActiveTab('school_exams')}>
+          <TabButton active={activeTab === 'exams'} icon={<FileText className="h-4 w-4" />} onClick={() => setActiveTab('exams')}>
             Lịch sử làm đề thi
           </TabButton>
           <TabButton active={activeTab === 'practice'} icon={<BookOpen className="h-4 w-4" />} onClick={() => setActiveTab('practice')}>
@@ -236,14 +230,30 @@ export function HistoryPage() {
         </Panel>
       ) : null}
 
-      {!isLoading && activeTab === 'school_exams' ? (
+      {!isLoading && activeTab === 'exams' ? (
         <Panel>
-          <SectionTitle title="Lịch sử làm đề thi thử của trường" description="Các bài đã nộp được lưu theo tài khoản học sinh." />
-          {schoolExamHistory.length === 0 ? (
-            <EmptyState text="Chưa có bài làm đề trường nào được lưu." />
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <SectionTitle title="Lịch sử làm đề thi thử của trường" description="Các bài đã nộp được lưu theo tài khoản học sinh." />
+            {uniqueSubjects.length > 0 && (
+              <select
+                className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-semibold text-slate-700 outline-none focus:border-sky-400 focus:bg-white transition"
+                value={selectedSubject}
+                onChange={(e) => setSelectedSubject(e.target.value)}
+              >
+                <option value="all">Tất cả môn</option>
+                {uniqueSubjects.map((subject) => (
+                  <option key={subject} value={subject}>
+                    {subject}
+                  </option>
+                ))}
+              </select>
+            )}
+          </div>
+          {filteredSchoolExamHistory.length === 0 ? (
+            <EmptyState text={schoolExamHistory.length === 0 ? "Chưa có bài làm đề trường nào được lưu." : "Không có bài làm nào cho môn này."} />
           ) : (
             <div className="mt-5 grid gap-4">
-              {schoolExamHistory.map((attempt) => (
+              {filteredSchoolExamHistory.map((attempt) => (
                 <article key={attempt.attemptId} className="rounded-[20px] border border-slate-200 bg-slate-50 p-4">
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div>
@@ -262,7 +272,7 @@ export function HistoryPage() {
                   </div>
                   <button
                     className="mt-4 rounded-2xl bg-slate-950 px-4 py-2 text-sm font-bold text-white transition hover:bg-slate-800"
-                    onClick={() => void handleOpenSchoolAttempt(attempt.attemptId)}
+                    onClick={() => handleOpenSchoolAttempt(attempt.attemptId, attempt.schoolExamId)}
                     type="button"
                   >
                     Xem chi tiết
@@ -363,30 +373,6 @@ export function HistoryPage() {
               </div>
             )}
           </Panel>
-
-          <Panel>
-            <SectionTitle title="Câu sai đã cắm cờ" description="Danh sách lưu trên trình duyệt để tạo phiên ôn lại." />
-            <div className="mt-4 flex flex-wrap gap-3">
-              <Link className="rounded-xl bg-slate-950 px-3 py-2 text-sm font-bold text-white" to="/dashboard">
-                Tạo đề ôn lại
-              </Link>
-              <button className="rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-sm font-bold text-rose-700 disabled:opacity-50" disabled={flaggedQuestionItems.length === 0} onClick={clearAllFlaggedQuestions} type="button">
-                Xóa danh sách cắm cờ
-              </button>
-            </div>
-            {flaggedQuestionItems.length === 0 ? (
-              <EmptyState text="Chưa có câu sai nào được cắm cờ." />
-            ) : (
-              <div className="mt-5 grid gap-3">
-                {flaggedQuestionItems.slice(0, 8).map((item) => (
-                  <article key={item.flaggedId} className="rounded-[18px] border border-slate-200 bg-slate-50 p-4">
-                    <div className="text-sm font-bold text-slate-900">{item.topicName}</div>
-                    <p className="mt-2 line-clamp-2 text-sm leading-6 text-slate-600">{item.question.content}</p>
-                  </article>
-                ))}
-              </div>
-            )}
-          </Panel>
         </div>
       ) : null}
 
@@ -398,7 +384,11 @@ export function HistoryPage() {
           ) : (
             <div className="mt-5 grid gap-4">
               {aiHistory.map((message) => (
-                <article key={message.id} className="rounded-[20px] border border-slate-200 bg-slate-50 p-4">
+                <article 
+                  key={message.id} 
+                  onClick={() => setSelectedAiHistoryMessage(message)}
+                  className="rounded-[20px] border border-slate-200 bg-slate-50 p-4 cursor-pointer hover:border-sky-300 hover:bg-sky-50 transition"
+                >
                   <div className="flex flex-wrap items-center justify-between gap-3">
                     <div>
                       <h3 className="font-bold text-slate-950">{message.title}</h3>
@@ -408,9 +398,6 @@ export function HistoryPage() {
                     </div>
                     <div className="text-xs font-semibold text-slate-500">{formatDateTime(message.createdAt)}</div>
                   </div>
-                  <div className="mt-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm leading-7 text-slate-700">
-                    <strong>{formatRole(message.role)}:</strong> {message.content}
-                  </div>
                 </article>
               ))}
             </div>
@@ -418,41 +405,11 @@ export function HistoryPage() {
         </Panel>
       ) : null}
 
-      {selectedSchoolAttempt ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 px-4 py-6 backdrop-blur-sm">
-          <div className="max-h-[88vh] w-full max-w-5xl overflow-y-auto rounded-[28px] border border-slate-200 bg-white p-6 shadow-[0_40px_120px_rgba(15,23,42,0.24)]">
-            <div className="flex flex-wrap items-start justify-between gap-4">
-              <div>
-                <div className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Chi tiết đề thi</div>
-                <h2 className="mt-2 text-2xl font-extrabold text-slate-950">{selectedSchoolAttempt.examTitle}</h2>
-                <p className="mt-1 text-sm text-slate-600">
-                  {selectedSchoolAttempt.schoolName} | Mã đề {selectedSchoolAttempt.variantCode} | {formatDateTime(selectedSchoolAttempt.completedAt)}
-                </p>
-              </div>
-              <button className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-700" onClick={() => setSelectedSchoolAttempt(null)} type="button">
-                Đóng
-              </button>
-            </div>
-            <div className="mt-6 grid gap-3">
-              {selectedSchoolAttempt.answers.map((answer) => (
-                <article key={answer.questionNumber} className="rounded-[18px] border border-slate-200 bg-slate-50 p-4">
-                  <div className="flex flex-wrap items-center justify-between gap-2">
-                    <div className="font-bold text-slate-950">Câu {answer.questionNumber}</div>
-                    <span className={`rounded-full px-3 py-1 text-xs font-bold ${answer.isCorrect ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}`}>
-                      {answer.isCorrect ? 'Đúng' : 'Sai'}
-                    </span>
-                  </div>
-                  <p className="mt-2 text-sm text-slate-600">
-                    Bạn chọn: {answer.selectedAnswer || '--'} | Đáp án đúng: {answer.correctAnswer || '--'}
-                  </p>
-                  {answer.questionContent ? (
-                    <p className="mt-2 line-clamp-3 text-sm leading-6 text-slate-700">{answer.questionContent}</p>
-                  ) : null}
-                </article>
-              ))}
-            </div>
-          </div>
-        </div>
+      {selectedAiHistoryMessage ? (
+        <HistoryAiChatModal 
+          item={selectedAiHistoryMessage} 
+          onClose={() => setSelectedAiHistoryMessage(null)} 
+        />
       ) : null}
     </section>
   )
@@ -513,11 +470,12 @@ function EmptyState({ text }: { text: string }) {
 
 function ScorePill({ value }: { value: string }) {
   return (
-    <div className="rounded-full border border-sky-200 bg-sky-50 px-4 py-2 text-sm font-black text-sky-700">
+    <div className="inline-flex rounded-full bg-slate-900 px-3 py-1 text-xs font-bold text-white">
       {value}
     </div>
   )
 }
+
 
 function formatDateTime(value: string | null) {
   if (!value) {
@@ -530,14 +488,4 @@ function formatDateTime(value: string | null) {
   }
 
   return date.toLocaleString('vi-VN')
-}
-
-function formatRole(role: 'user' | 'assistant' | 'system') {
-  if (role === 'assistant') {
-    return 'AI'
-  }
-  if (role === 'system') {
-    return 'Hệ thống'
-  }
-  return 'Học sinh'
 }

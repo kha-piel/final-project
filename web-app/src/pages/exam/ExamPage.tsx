@@ -5,8 +5,6 @@ import { PageCard } from '../../components/ui/PageCard'
 import { useAuthSessionStore } from '../../features/auth/store/auth-session-store'
 import type { DraftQuestion } from '../../features/dashboard/types/dashboard-types'
 import {
-  formatCorrectResponse,
-  formatQuestionResponse,
   getRemainingSeconds,
   getSelectedAnswerId,
   getSelectedTrueFalseMap,
@@ -18,7 +16,6 @@ import {
   persistCompletedAttempt,
   syncInProgressAttempt,
 } from '../../features/exam/services/exam-attempt-service'
-import { requestAutoExplanation, sendExamChatMessage } from '../../features/exam/services/exam-ai-service'
 import { useExamDraftStore } from '../../features/exam/store/exam-draft-store'
 import { useExamRuntimeStore } from '../../features/exam/store/exam-runtime-store'
 
@@ -34,9 +31,6 @@ export function ExamPage() {
   const setShortAnswer = useExamRuntimeStore((state) => state.setShortAnswer)
   const goToNextQuestion = useExamRuntimeStore((state) => state.goToNextQuestion)
   const goToPreviousQuestion = useExamRuntimeStore((state) => state.goToPreviousQuestion)
-  const checkCurrentQuestion = useExamRuntimeStore((state) => state.checkCurrentQuestion)
-  const addChatMessage = useExamRuntimeStore((state) => state.addChatMessage)
-  const cacheAiExplanation = useExamRuntimeStore((state) => state.cacheAiExplanation)
   const markCloudSync = useExamRuntimeStore((state) => state.markCloudSync)
   const submitSession = useExamRuntimeStore((state) => state.submitSession)
   const clearRuntimeSession = useExamRuntimeStore((state) => state.clearRuntimeSession)
@@ -44,9 +38,6 @@ export function ExamPage() {
 
   const [remainingSeconds, setRemainingSeconds] = useState<number>(0)
   const [flashMessage, setFlashMessage] = useState<string>('')
-  const [chatInput, setChatInput] = useState('')
-  const [chatStatus, setChatStatus] = useState('')
-  const [isAiBusy, setIsAiBusy] = useState(false)
   const hasCheckedRestoreStateRef = useRef(false)
   const hasShownRestoreNoticeRef = useRef(false)
 
@@ -188,8 +179,6 @@ export function ExamPage() {
   const questionLocked = isQuestionLocked(runtime, question.questionId)
   const answeredCount = session.questions.filter((item) => hasAnsweredQuestion(runtime, item)).length
   const isSubmitted = Boolean(runtime.submittedAt)
-  const selectedAnswerLabel = formatQuestionResponse(runtime, question)
-  const correctAnswerLabel = formatCorrectResponse(question)
   const syncStatus =
     session.deliveryMode === 'local_mock'
       ? 'Local mock'
@@ -197,60 +186,6 @@ export function ExamPage() {
         ? `OK ${formatSyncTime(runtime.lastSyncedAt)}`
         : 'Đang chờ'
 
-  function handleCheckAnswer() {
-    const result = checkCurrentQuestion(session.sessionId, question)
-    if (!result) {
-      return
-    }
-
-    setFlashMessage(result.message)
-
-    if (result.hasSelection && !result.isCorrect) {
-      addChatMessage(session.sessionId, {
-        role: 'system',
-        content: 'Học sinh vừa sai câu này. Hãy giải thích ngắn gọn cách làm và lỗ hổng kiến thức.',
-        questionId: question.questionId,
-      })
-      setChatStatus('AI đang phân tích câu hỏi...')
-      void runAutoExplanation()
-    }
-
-    if (result.hasSelection && runtime.currentIndex < session.questions.length - 1) {
-      goToNextQuestion(session.sessionId, session.questions.length)
-    }
-  }
-
-  async function runAutoExplanation() {
-    setIsAiBusy(true)
-
-    try {
-      const explanation = await requestAutoExplanation({
-        questionContent: question.content,
-        selectedAnswer: selectedAnswerLabel,
-        correctAnswer: correctAnswerLabel,
-        obsidianSourcePath: question.obsidianSourcePath,
-      })
-
-      addChatMessage(session.sessionId, {
-        role: 'ai',
-        content: explanation,
-        questionId: question.questionId,
-      })
-      cacheAiExplanation(session.sessionId, question.questionId, explanation)
-      setChatStatus('AI đã gửi giải thích cho câu hỏi này.')
-    } catch (error) {
-      const message =
-        error instanceof Error ? error.message : 'Không thể nhận phản hồi tu AI backend.'
-      addChatMessage(session.sessionId, {
-        role: 'ai',
-        content: message,
-        questionId: question.questionId,
-      })
-      setChatStatus('Lỗi kết nối AI.')
-    } finally {
-      setIsAiBusy(false)
-    }
-  }
 
   function handleGoNext() {
     if (!isSubmitted) {
@@ -306,55 +241,6 @@ export function ExamPage() {
     }
   }
 
-  async function handleSendChat() {
-    if (isSubmitted) {
-      return
-    }
-
-    const trimmed = chatInput.trim()
-    if (!trimmed) {
-      return
-    }
-
-    addChatMessage(session.sessionId, {
-      role: 'user',
-      content: trimmed,
-      questionId: question.questionId,
-    })
-    setChatInput('')
-    setChatStatus('Đang gửi câu hỏi cho AI...')
-    setIsAiBusy(true)
-
-    try {
-      const explanation = await sendExamChatMessage({
-        questionContent: question.content,
-        selectedAnswer: selectedAnswerLabel,
-        correctAnswer: correctAnswerLabel,
-        prompt: trimmed,
-        obsidianSourcePath: question.obsidianSourcePath,
-      })
-
-      addChatMessage(session.sessionId, {
-        role: 'ai',
-        content: explanation,
-        questionId: question.questionId,
-      })
-      cacheAiExplanation(session.sessionId, question.questionId, explanation)
-      setChatStatus('AI đã trả lời.')
-    } catch (error) {
-      const message =
-        error instanceof Error ? error.message : 'Không thể nhận phản hồi tu AI backend.'
-      addChatMessage(session.sessionId, {
-        role: 'ai',
-        content: message,
-        questionId: question.questionId,
-      })
-      setChatStatus('Lỗi kết nối AI.')
-    } finally {
-      setIsAiBusy(false)
-    }
-  }
-
   return (
     <PageCard
       title={session.title}
@@ -373,7 +259,7 @@ export function ExamPage() {
         <div className="mb-5 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3.5 font-semibold text-emerald-800 shadow-sm">Bài làm đã được nộp. Bạn có thể xem tổng kết và review chi tiết.</div>
       ) : null}
 
-      <div className="grid gap-5 xl:grid-cols-[1.4fr_0.9fr]">
+      <div className="mx-auto max-w-4xl grid gap-5">
         <section className="flex min-h-[320px] flex-col rounded-[28px] border border-slate-200 bg-white p-5 shadow-sm md:p-6 lg:p-8">
           <div className="mb-3 text-sm font-bold uppercase tracking-wider text-slate-400">Câu {runtime.currentIndex + 1}</div>
           <div className="mb-3">
@@ -411,97 +297,28 @@ export function ExamPage() {
             onSetShortAnswer={setShortAnswer}
           />
 
-          <div className="mt-auto pt-6 flex flex-wrap gap-3">
-            <button
-              disabled={runtime.currentIndex === 0}
-              onClick={handleGoPrevious}
-              className="rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-bold text-slate-700 transition-colors hover:bg-slate-50 disabled:opacity-50"
-              type="button"
-            >
-              Câu trước
-            </button>
-            <button
-              disabled={runtime.currentIndex === session.questions.length - 1}
-              onClick={handleGoNext}
-              className="rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-bold text-slate-700 transition-colors hover:bg-slate-50 disabled:opacity-50"
-              type="button"
-            >
-              Câu tiếp theo
-            </button>
-            <button
-              disabled={remainingSeconds <= 0 || questionLocked || isSubmitted}
-              onClick={handleCheckAnswer}
-              className="rounded-xl bg-blue-600 px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-blue-700 shadow-sm disabled:opacity-50 disabled:hover:bg-blue-600"
-              type="button"
-            >
-              Kiểm tra đáp án
-            </button>
-            <button onClick={() => void handleSubmitAttempt()} className="rounded-xl bg-emerald-600 px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-emerald-700 shadow-sm disabled:opacity-50" type="button">
+          <div className="mt-auto pt-6 flex flex-wrap justify-between gap-3">
+            <div className="flex flex-wrap gap-3">
+              <button
+                disabled={runtime.currentIndex === 0}
+                onClick={handleGoPrevious}
+                className="rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-bold text-slate-700 transition-colors hover:bg-slate-50 disabled:opacity-50"
+                type="button"
+              >
+                Câu trước
+              </button>
+              <button
+                disabled={runtime.currentIndex === session.questions.length - 1}
+                onClick={handleGoNext}
+                className="rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-bold text-slate-700 transition-colors hover:bg-slate-50 disabled:opacity-50"
+                type="button"
+              >
+                Câu tiếp theo
+              </button>
+            </div>
+            <button onClick={() => void handleSubmitAttempt()} className="rounded-xl bg-emerald-600 px-8 py-3 text-sm font-bold text-white transition-colors hover:bg-emerald-700 shadow-sm disabled:opacity-50" type="button">
               Nộp bài
             </button>
-          </div>
-        </section>
-
-        <section className="flex min-h-[320px] flex-col rounded-[28px] border border-slate-200 bg-white p-5 shadow-sm md:p-6 lg:p-8">
-          <h3 className="m-0 mb-2 text-xl font-bold text-slate-900">AI Chat</h3>
-          <p className="m-0 text-sm text-slate-500">Lịch sử chat được giữ xuyên suốt trong exam session hiện tại.</p>
-          <div className="my-4 grid max-h-[320px] gap-3 overflow-y-auto pr-1">
-            {runtime.chatHistory.length === 0 ? (
-              <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-4 text-sm text-slate-500">
-                Chưa có tin nhắn nào. AI sẽ được gọi khi bạn trả lời sai hoặc hỏi thêm.
-              </div>
-            ) : (
-              runtime.chatHistory.map((message) => (
-                <div
-                  key={message.id}
-                  className={`rounded-2xl border p-3.5 ${
-                    message.role === 'user'
-                      ? 'border-blue-200 bg-blue-50 text-blue-900'
-                      : message.role === 'ai'
-                        ? 'border-emerald-200 bg-emerald-50 text-emerald-900'
-                        : 'border-orange-200 bg-orange-50 text-orange-900'
-                  }`}
-                >
-                  <strong className="mb-1.5 block text-sm">
-                    {message.role === 'user' ? 'Học sinh' : message.role === 'ai' ? 'AI gia sư' : 'Hệ thống'}
-                  </strong>
-                  <div className="text-sm leading-relaxed">{message.content}</div>
-                </div>
-              ))
-            )}
-          </div>
-          <div className="mb-3 grid grid-cols-[1fr_auto] gap-3">
-            <input
-              disabled={isAiBusy || isSubmitted}
-              onChange={(event) => setChatInput(event.target.value)}
-              onKeyDown={(event) => {
-                if (event.key === 'Enter') {
-                  event.preventDefault()
-                  void handleSendChat()
-                }
-              }}
-              placeholder="Hỏi AI về câu đang làm..."
-              className="rounded-xl border border-slate-200 bg-white px-4 py-3 outline-none transition focus:border-blue-400 focus:ring-1 focus:ring-blue-400"
-              value={chatInput}
-            />
-            <button
-              disabled={isAiBusy || !chatInput.trim() || isSubmitted}
-              onClick={() => void handleSendChat()}
-              className="rounded-xl bg-blue-600 px-5 py-3 font-bold text-white transition-colors hover:bg-blue-700 shadow-sm disabled:opacity-50"
-              type="button"
-            >
-              Gửi
-            </button>
-          </div>
-          {chatStatus ? <p className="mb-4 text-sm text-slate-500">{chatStatus}</p> : null}
-          <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-4">
-            <strong className="text-sm text-slate-900">Trạng thái câu hiện tại</strong>
-            <p className="mt-2 text-sm text-slate-600">
-              {questionLocked
-                ? `Đã khóa. Đáp án của bạn: ${selectedAnswerLabel}`
-                : 'Chưa khóa, bạn vẫn có thể đổi đáp án trước khi check.'}
-            </p>
-            <p className="mt-2 text-sm text-slate-600">Đáp án đúng: {correctAnswerLabel}</p>
           </div>
         </section>
       </div>

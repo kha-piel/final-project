@@ -4,22 +4,13 @@ import { MarkdownContent } from '../../components/ui/MarkdownContent'
 import { PageCard } from '../../components/ui/PageCard'
 import { buildSubmissionSummary } from '../../features/exam/core/exam-session'
 import {
-  requestAutoExplanation,
-  requestWeaknessAnalysis,
-  sendExamChatMessage,
-} from '../../features/exam/services/exam-ai-service'
-import {
   fetchPersistedAttemptReview,
   type PersistedAttemptReview,
 } from '../../features/exam/services/exam-review-service'
 import { useExamDraftStore } from '../../features/exam/store/exam-draft-store'
 import { useExamRuntimeStore } from '../../features/exam/store/exam-runtime-store'
-import { useFlaggedWrongQuestionStore } from '../../features/practice/store/flagged-wrong-question-store'
-import { RecommendedReviewLinks } from '../../features/review/components/RecommendedReviewLinks'
-import {
-  inferKnowledgeReviewTopics,
-  type KnowledgeReviewTopic,
-} from '../../features/review/knowledge-review-topics'
+import { sendExamChatMessage } from '../../features/exam/services/exam-ai-service'
+import { savePracticeAiMessage } from '../../features/history/services/history-service'
 
 export function ReviewPage() {
   const { sessionId = '' } = useParams()
@@ -77,15 +68,12 @@ export function ReviewPage() {
   if (session && runtime && summary) {
     return (
       <LocalReviewContent
-        sessionDifficultyLabel={session.difficultyLabel}
-        sessionDifficultyLevel={session.difficultyLevel}
         sessionQuestions={session.questions}
-        sessionSubjectId={session.subjectId}
         sessionSubjectName={session.subjectName}
-        sessionTopicId={session.topicId}
         sessionTitle={session.title}
         sessionTopicName={session.topicName}
         summary={summary}
+        sessionId={sessionId}
       />
     )
   }
@@ -99,7 +87,7 @@ export function ReviewPage() {
   }
 
   if (persistedReview) {
-    return <PersistedReviewContent review={persistedReview} />
+    return <PersistedReviewContent review={persistedReview} sessionId={sessionId} />
   }
 
   if (!session || !runtime || !summary) {
@@ -118,103 +106,50 @@ export function ReviewPage() {
 }
 
 function LocalReviewContent({
-  sessionDifficultyLabel,
-  sessionDifficultyLevel,
   sessionQuestions,
-  sessionSubjectId,
-  sessionTopicName,
   sessionSubjectName,
-  sessionTopicId,
   sessionTitle,
+  sessionTopicName,
   summary,
+  sessionId,
 }: {
-  sessionDifficultyLabel: string
-  sessionDifficultyLevel: number
   sessionQuestions: ReturnType<typeof useExamDraftStore.getState>['sessions'][string]['questions']
-  sessionSubjectId: string
-  sessionTopicName: string
   sessionSubjectName: string
-  sessionTopicId: string
   sessionTitle: string
+  sessionTopicName: string
   summary: ReturnType<typeof buildSubmissionSummary>
+  sessionId: string
 }) {
   return (
-    <PageCard
-      title="Tổng kết Ôn tập"
-      description={`${sessionTitle} | Điểm ${summary.score}/10 | ${summary.passed ? 'Đạt' : 'Chưa đạt'}`}
-    >
-      <ReviewActionRow />
-      <ReviewSummaryBody
-        allowFlagging
-        difficultyLabel={sessionDifficultyLabel}
-        questionBank={sessionQuestions}
-        sessionDifficultyLevel={sessionDifficultyLevel}
-        sessionSubjectId={sessionSubjectId}
-        sessionSubjectName={sessionSubjectName}
-        sessionTopicId={sessionTopicId}
-        sessionTopicName={sessionTopicName}
-        summary={summary}
-        topicLabel={buildTopicLabel(sessionSubjectName, sessionTopicName)}
-      />
-    </PageCard>
+    <ReviewSummaryBody
+      questionBank={sessionQuestions}
+      summary={summary}
+      topicLabel={buildTopicLabel(sessionSubjectName, sessionTopicName)}
+      title={sessionTitle}
+      sessionId={sessionId}
+    />
   )
 }
 
-function PersistedReviewContent({ review }: { review: PersistedAttemptReview }) {
+function PersistedReviewContent({ review, sessionId }: { review: PersistedAttemptReview, sessionId: string }) {
   return (
-    <PageCard
-      title="Tổng kết Ôn tập"
-      description={`${review.examTitle} | ${review.subjectName} | ${review.topicName} | Điểm ${review.score}/10`}
-    >
-      <p className="mb-4 text-slate-500">
-        Độ khó: {review.difficultyLabel} | Trạng thái: {review.status} | Hoàn tất:{' '}
-        {review.completedAt ? new Date(review.completedAt).toLocaleString('vi-VN') : '--'}
-      </p>
-      <ReviewActionRow />
-      <ReviewSummaryBody
-        allowFlagging={false}
-        difficultyLabel={review.difficultyLabel}
-        sessionTopicName={review.topicName}
-        summary={review}
-        topicLabel={buildTopicLabel(review.subjectName, review.topicName)}
-      />
-    </PageCard>
-  )
-}
-
-function ReviewActionRow() {
-  return (
-    <div className="mb-6 flex flex-wrap gap-3">
-      <Link className="rounded-full border border-slate-200 bg-white px-5 py-2.5 text-sm font-bold text-slate-700 transition hover:bg-slate-50" to="/dashboard">
-        Quay lại dashboard
-      </Link>
-      <Link className="rounded-full bg-slate-900 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-slate-800" to="/home">
-        Về trang chủ
-      </Link>
-    </div>
+    <ReviewSummaryBody
+      summary={review}
+      topicLabel={buildTopicLabel(review.subjectName, review.topicName)}
+      title={review.examTitle}
+      sessionId={sessionId}
+    />
   )
 }
 
 function ReviewSummaryBody({
-  allowFlagging,
-  difficultyLabel,
   questionBank,
-  sessionDifficultyLevel,
-  sessionSubjectId,
-  sessionSubjectName,
-  sessionTopicId,
-  sessionTopicName,
   summary,
   topicLabel,
+  title,
+  sessionId,
 }: {
-  allowFlagging: boolean
-  difficultyLabel: string
   questionBank?: ReturnType<typeof useExamDraftStore.getState>['sessions'][string]['questions']
-  sessionDifficultyLevel?: number
-  sessionSubjectId?: string
-  sessionSubjectName?: string
-  sessionTopicId?: string
-  sessionTopicName: string
   summary: {
     score: number
     correctCount: number
@@ -232,20 +167,13 @@ function ReviewSummaryBody({
     }[]
   }
   topicLabel: string
+  title: string
+  sessionId: string
 }) {
-  const [weaknessAnalysis, setWeaknessAnalysis] = useState('')
-  const [recommendedTopics, setRecommendedTopics] = useState<KnowledgeReviewTopic[]>([])
-  const [analysisError, setAnalysisError] = useState('')
-  const [isAnalyzing, setIsAnalyzing] = useState(false)
-  const [reviewChatInput, setReviewChatInput] = useState('')
-  const [isAiBusyByQuestionId, setIsAiBusyByQuestionId] = useState<Record<string, boolean>>({})
-  const [aiErrorByQuestionId, setAiErrorByQuestionId] = useState<Record<string, string>>({})
-  const [chatHistoryByQuestionId, setChatHistoryByQuestionId] = useState<
-    Record<string, { role: 'user' | 'ai'; content: string }[]>
-  >({})
-  const flaggedItems = useFlaggedWrongQuestionStore((state) => state.items)
-  const upsertFlaggedQuestion = useFlaggedWrongQuestionStore((state) => state.upsertFlaggedQuestion)
-  const removeFlaggedQuestion = useFlaggedWrongQuestionStore((state) => state.removeFlaggedQuestion)
+  
+  const [selectedReviewQuestionId, setSelectedReviewQuestionId] = useState<string | null>(null)
+
+
 
   const questionMap = useMemo(
     () =>
@@ -256,435 +184,307 @@ function ReviewSummaryBody({
     [questionBank],
   )
 
-  const flaggedCount = useMemo(() => {
-    if (!allowFlagging || !sessionSubjectId || !sessionTopicId) {
-      return 0
-    }
 
-    return summary.reviewItems.filter((item) => {
-      if (item.correct) {
-        return false
-      }
-
-      return Boolean(flaggedItems[`${sessionSubjectId}::${sessionTopicId}::${item.questionId}`])
-    }).length
-  }, [allowFlagging, flaggedItems, sessionSubjectId, sessionTopicId, summary.reviewItems])
-
-  async function handleAnalyzeWeaknesses() {
-    const wrongItems = summary.reviewItems
-      .filter((item) => !item.correct)
-      .map((item) => ({
-        questionId: item.questionId,
-        questionContent: item.questionContent,
-        topic: buildWeaknessTopicLabel({
-          fallbackTopicLabel: topicLabel,
-          question: questionMap[item.questionId],
-          sessionTopicName,
-        }),
-        userAnswer: item.selectedAnswerText,
-        correctAnswer: item.correctAnswerText,
-      }))
-    const recommendationInputs = summary.reviewItems
-      .filter((item) => !item.correct)
-      .flatMap((item) => {
-        const question = questionMap[item.questionId]
-        return [
-          item.questionContent,
-          topicLabel,
-          sessionTopicName,
-          question?.topicId ?? '',
-          question?.obsidianSourcePath ?? '',
-        ]
-      })
-
-    if (wrongItems.length === 0) {
-      setAnalysisError('')
-      setRecommendedTopics([])
-      setWeaknessAnalysis(
-        'Bạn không có câu sai nào trong bài này. Hãy tiếp tục nâng độ khó để kiểm tra độ vững kiến thức.',
-      )
-      return
-    }
-
-    setIsAnalyzing(true)
-    setAnalysisError('')
-
-    try {
-      const result = await requestWeaknessAnalysis(wrongItems)
-      setWeaknessAnalysis(result)
-      setRecommendedTopics(
-        inferKnowledgeReviewTopics([...recommendationInputs, result]),
-      )
-    } catch (error) {
-      setAnalysisError(
-        error instanceof Error ? error.message : 'Không thể lấy phân tích tổng quan lúc này.',
-      )
-    } finally {
-      setIsAnalyzing(false)
-    }
-  }
-
-  function handleToggleFlag(questionId: string) {
-    if (!allowFlagging || !sessionSubjectId || !sessionSubjectName || !sessionTopicId || sessionDifficultyLevel === undefined) {
-      return
-    }
-
-    const flaggedId = `${sessionSubjectId}::${sessionTopicId}::${questionId}`
-    if (flaggedItems[flaggedId]) {
-      removeFlaggedQuestion({
-        subjectId: sessionSubjectId,
-        topicId: sessionTopicId,
-        questionId,
-      })
-      return
-    }
-
-    const question = questionMap[questionId]
-    if (!question) {
-      return
-    }
-
-    upsertFlaggedQuestion({
-      questionId,
-      subjectId: sessionSubjectId,
-      subjectName: sessionSubjectName,
-      topicId: sessionTopicId,
-      topicName: sessionTopicName,
-      difficultyLevel: sessionDifficultyLevel,
-      difficultyLabel,
-      question,
-    })
-  }
-
-  function handleFlagAllWrongQuestions() {
-    if (!allowFlagging || !sessionSubjectId || !sessionSubjectName || !sessionTopicId || sessionDifficultyLevel === undefined) {
-      return
-    }
-
+  const reviewItemsByType = useMemo(() => {
+    const mc: typeof summary.reviewItems = []
+    const tf: typeof summary.reviewItems = []
+    const sa: typeof summary.reviewItems = []
+    
     summary.reviewItems.forEach((item) => {
-      if (item.correct) {
-        return
+      const qType = questionMap[item.questionId]?.questionType
+      if (qType === 'multiple_choice') {
+        mc.push(item)
+      } else if (qType === 'true_false') {
+        tf.push(item)
+      } else if (qType === 'short_answer') {
+        sa.push(item)
+      } else {
+        mc.push(item) // fallback
       }
-
-      const question = questionMap[item.questionId]
-      if (!question) {
-        return
-      }
-
-      upsertFlaggedQuestion({
-        questionId: item.questionId,
-        subjectId: sessionSubjectId,
-        subjectName: sessionSubjectName,
-        topicId: sessionTopicId,
-        topicName: sessionTopicName,
-        difficultyLevel: sessionDifficultyLevel,
-        difficultyLabel,
-        question,
-      })
     })
-  }
+    return { mc, tf, sa }
+  }, [summary.reviewItems, questionMap])
 
-  async function handleExplainQuestion(item: (typeof summary.reviewItems)[number]) {
-    const question = questionMap[item.questionId]
-    setIsAiBusyByQuestionId((state) => ({ ...state, [item.questionId]: true }))
-    setAiErrorByQuestionId((state) => ({ ...state, [item.questionId]: '' }))
+  const selectedItem = selectedReviewQuestionId ? summary.reviewItems.find(i => i.questionId === selectedReviewQuestionId) : null
+  const selectedQuestionIndex = selectedItem ? summary.reviewItems.findIndex(i => i.questionId === selectedItem.questionId) : -1
 
-    try {
-      const explanation = await requestAutoExplanation({
-        questionContent: item.questionContent,
-        selectedAnswer: item.selectedAnswerText,
-        correctAnswer: item.correctAnswerText,
-        obsidianSourcePath: question?.obsidianSourcePath ?? '',
-      })
+  return (
+    <section className="space-y-6">
+      <div className="rounded-[28px] border border-emerald-200 bg-white p-6 shadow-[0_20px_60px_rgba(15,23,42,0.06)]">
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <div className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-700">
+              Tổng kết bài làm
+            </div>
+            <h1 className="mt-2 text-3xl font-extrabold text-slate-950">{title}</h1>
+            <p className="mt-2 text-sm leading-7 text-slate-600">
+              {topicLabel} | Điểm {summary.score}/10 | {summary.score >= 5 ? 'Đạt' : 'Chưa đạt'}
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            <MetricPill label="Điểm" value={`${summary.score}/10`} />
+            <MetricPill label="Số câu đúng" value={`${summary.correctCount}/${summary.totalQuestions}`} />
+            <MetricPill label="Bỏ qua" value={`${summary.skippedCount}/${summary.totalQuestions}`} />
+            <MetricPill label="Thời gian" value={formatDuration(summary.timeTakenSeconds)} />
+          </div>
+        </div>
+      </div>
 
-      setChatHistoryByQuestionId((state) => ({
-        ...state,
-        [item.questionId]: [
-          ...(state[item.questionId] ?? []),
-          { role: 'user', content: 'Em muốn AI giải thích câu này.' },
-          { role: 'ai', content: explanation },
-        ],
-      }))
-    } catch (error) {
-      setAiErrorByQuestionId((state) => ({
-        ...state,
-        [item.questionId]: error instanceof Error ? error.message : 'Không thể lấy giải thích AI lúc này.',
-      }))
-    } finally {
-      setIsAiBusyByQuestionId((state) => ({ ...state, [item.questionId]: false }))
-    }
-  }
+      <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr] items-start">
+        <section className="sticky top-6 rounded-[28px] border border-slate-200 bg-white p-6 shadow-[0_20px_60px_rgba(15,23,42,0.06)]">
+          <h2 className="text-xl font-bold text-slate-950">Thống kê nhanh</h2>
+          <div className="mt-5 grid gap-4 sm:grid-cols-2">
+            <SummaryTile label="Đúng" value={`${summary.correctCount}`} tone="emerald" />
+            <SummaryTile label="Sai" value={`${summary.wrongCount}`} tone="rose" />
+            <SummaryTile label="Bỏ qua" value={`${summary.skippedCount}`} tone="slate" />
+            <SummaryTile label="Tổng" value={`${summary.totalQuestions}`} tone="sky" />
+          </div>
 
-  async function handleSendQuestionChat(item: (typeof summary.reviewItems)[number]) {
-    const trimmed = reviewChatInput.trim()
-    if (!trimmed) {
-      return
-    }
 
-    const question = questionMap[item.questionId]
-    setIsAiBusyByQuestionId((state) => ({ ...state, [item.questionId]: true }))
-    setAiErrorByQuestionId((state) => ({ ...state, [item.questionId]: '' }))
-    setChatHistoryByQuestionId((state) => ({
-      ...state,
-      [item.questionId]: [...(state[item.questionId] ?? []), { role: 'user', content: trimmed }],
-    }))
-    setReviewChatInput('')
 
-    try {
-      const explanation = await sendExamChatMessage({
-        questionContent: item.questionContent,
-        selectedAnswer: item.selectedAnswerText,
-        correctAnswer: item.correctAnswerText,
-        prompt: trimmed,
-        obsidianSourcePath: question?.obsidianSourcePath ?? '',
-      })
+          <div className="mt-6 flex flex-wrap gap-3">
+            <Link
+              className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-bold text-slate-700 transition hover:bg-slate-50"
+              to="/dashboard"
+            >
+              Quay lại dashboard
+            </Link>
+            <Link
+              className="rounded-2xl bg-slate-950 px-5 py-3 text-sm font-bold text-white transition hover:bg-slate-800"
+              to="/home"
+            >
+              Về trang chủ
+            </Link>
+          </div>
+        </section>
 
-      setChatHistoryByQuestionId((state) => ({
-        ...state,
-        [item.questionId]: [...(state[item.questionId] ?? []), { role: 'ai', content: explanation }],
-      }))
-    } catch (error) {
-      setAiErrorByQuestionId((state) => ({
-        ...state,
-        [item.questionId]: error instanceof Error ? error.message : 'Không thể gửi câu hỏi tới AI lúc này.',
-      }))
-    } finally {
-      setIsAiBusyByQuestionId((state) => ({ ...state, [item.questionId]: false }))
-    }
+        <section className="rounded-[28px] border border-slate-200 bg-white p-6 shadow-[0_20px_60px_rgba(15,23,42,0.06)]">
+          <div className="flex items-center justify-between gap-3">
+            <h2 className="text-xl font-bold text-slate-950">Chi tiết kết quả</h2>
+            <div className="text-sm text-slate-500">{summary.reviewItems.length} câu</div>
+          </div>
+
+          <p className="mt-3 text-sm leading-7 text-slate-600">
+            Bấm vào từng câu để mở tab review. Tab này hiện câu hỏi, hình ảnh liên quan, đáp án học sinh chọn
+            và khung trò chuyện với AI.
+          </p>
+
+          <div className="mt-5 space-y-5">
+            <ReviewItemSection
+              items={reviewItemsByType.mc}
+              selectedQuestionId={selectedReviewQuestionId}
+              title="Phần I. Trắc nghiệm 4 lựa chọn"
+              onSelect={setSelectedReviewQuestionId}
+              summary={summary}
+            />
+            <ReviewItemSection
+              items={reviewItemsByType.tf}
+              selectedQuestionId={selectedReviewQuestionId}
+              title="Phần II. Trắc nghiệm đúng sai"
+              onSelect={setSelectedReviewQuestionId}
+              summary={summary}
+            />
+            <ReviewItemSection
+              items={reviewItemsByType.sa}
+              selectedQuestionId={selectedReviewQuestionId}
+              title="Phần III. Trả lời ngắn"
+              onSelect={setSelectedReviewQuestionId}
+              summary={summary}
+            />
+          </div>
+        </section>
+      </div>
+
+      {selectedItem ? (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/55 px-4 py-6 backdrop-blur-sm">
+          <div className="flex h-[92vh] w-full max-w-[1320px] flex-col overflow-hidden rounded-[32px] border border-slate-200 bg-white shadow-[0_40px_120px_rgba(15,23,42,0.24)]">
+            <div className="shrink-0 flex items-center justify-between gap-4 border-b border-slate-200 px-6 py-5">
+              <div>
+                <div className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+                  Review câu hỏi
+                </div>
+                <h2 className="mt-2 text-2xl font-extrabold text-slate-950">
+                  Câu {selectedQuestionIndex + 1}
+                </h2>
+              </div>
+              <div className="flex items-center gap-3">
+                <button
+                  aria-label="Đóng tab review"
+                  className="flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-white text-lg font-bold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50"
+                  onClick={() => {
+                    setSelectedReviewQuestionId(null)
+                  }}
+                  type="button"
+                >
+                  X
+                </button>
+              </div>
+            </div>
+
+            <div className={`min-h-0 flex-1 overflow-hidden ${!selectedItem.correct ? 'grid lg:grid-cols-[1fr_400px] xl:grid-cols-[1.2fr_1fr]' : ''}`}>
+              <section className={`min-h-0 overflow-y-auto p-6 ${!selectedItem.correct ? '' : 'mx-auto max-w-4xl'}`}>
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div
+                    className={`rounded-full px-3 py-1 text-xs font-bold uppercase tracking-[0.12em] ${
+                      selectedItem.correct
+                        ? 'bg-emerald-100 text-emerald-700'
+                        : 'bg-rose-100 text-rose-700'
+                    }`}
+                  >
+                    {selectedItem.correct ? 'Đúng' : 'Sai'}
+                  </div>
+                  <div className="text-sm leading-7 text-slate-600">
+                    Topic: {topicLabel}
+                  </div>
+                </div>
+
+                <div className="mt-5 rounded-[24px] border border-slate-200 bg-white p-5">
+                  <div className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">
+                    Nội dung câu hỏi
+                  </div>
+                  <div className="mt-3 text-base leading-8 text-slate-800">
+                    <MarkdownContent
+                      content={selectedItem.questionContent || 'Chưa có nội dung câu hỏi.'}
+                      className="text-base leading-8 text-slate-800"
+                    />
+                  </div>
+                </div>
+
+                {questionMap[selectedItem.questionId] ? (
+                  <div className="mt-5 rounded-[24px] border border-slate-200 bg-white p-5">
+                    <div className="mb-4 text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">
+                      Chi tiết lựa chọn
+                    </div>
+                    <AnswerChoiceReview
+                      correctAnswerText={selectedItem.correctAnswerText}
+                      questionContent={selectedItem.questionContent}
+                      question={questionMap[selectedItem.questionId]!}
+                      selectedAnswerText={selectedItem.selectedAnswerText}
+                    />
+                  </div>
+                ) : null}
+
+                {!questionMap[selectedItem.questionId] || questionMap[selectedItem.questionId]?.questionType === 'short_answer' ? (
+                  <div className="mt-5 grid gap-3 md:grid-cols-2">
+                    <div className="rounded-[22px] border border-slate-200 bg-white px-4 py-4">
+                      <div className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">
+                        Lựa chọn của học sinh
+                      </div>
+                      <div className="mt-2 text-lg font-bold text-slate-950">
+                        <MarkdownContent content={selectedItem.selectedAnswerText} />
+                      </div>
+                    </div>
+                    <div className="rounded-[22px] border border-slate-200 bg-white px-4 py-4">
+                      <div className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">
+                        Đáp án đúng
+                      </div>
+                      <div className="mt-2 text-lg font-bold text-slate-950">
+                        <MarkdownContent content={selectedItem.correctAnswerText} />
+                      </div>
+                    </div>
+                  </div>
+                ) : null}
+              </section>
+
+              {!selectedItem.correct && (
+                <section className="flex min-h-0 flex-col border-l border-slate-200 bg-white p-6">
+                  <PracticeAiChatPanel 
+                    questionId={selectedItem.questionId}
+                    questionContent={selectedItem.questionContent}
+                    selectedAnswer={selectedItem.selectedAnswerText}
+                    correctAnswer={selectedItem.correctAnswerText}
+                    sessionId={sessionId}
+                  />
+                </section>
+              )}
+            </div>
+          </div>
+        </div>
+      ) : null}
+    </section>
+  )
+}
+
+function ReviewItemSection({
+  title,
+  items,
+  selectedQuestionId,
+  onSelect,
+  summary,
+}: {
+  title: string
+  items: any[]
+  selectedQuestionId: string | null
+  onSelect: (questionId: string) => void
+  summary: any
+}) {
+  if (items.length === 0) {
+    return null
   }
 
   return (
-    <div className="space-y-6">
-      <div className="rounded-[28px] border border-slate-200 bg-white p-6 shadow-[0_20px_60px_rgba(15,23,42,0.06)]">
-        <button
-          disabled={isAnalyzing}
-          onClick={() => void handleAnalyzeWeaknesses()}
-          className="mb-4 inline-block rounded-2xl bg-gradient-to-r from-teal-600 to-blue-600 px-5 py-3 font-bold text-white transition hover:from-teal-500 hover:to-blue-500 disabled:opacity-50"
-          type="button"
-        >
-          {isAnalyzing ? 'AI đang phân tích tổng quan...' : 'AI phân tích tổng quan điểm yếu'}
-        </button>
-
-        {isAnalyzing ? (
-          <div className="rounded-[22px] border border-transparent bg-white bg-clip-padding p-5 shadow-[0_14px_30px_rgba(16,35,60,0.08)] [background-image:linear-gradient(white,white),linear-gradient(135deg,#38bdf8,#2563eb,#f59e0b)] [background-origin:border-box]">
-            <div className="mb-3 flex items-start gap-4">
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-amber-500 to-orange-500 font-bold text-white">
-                AI
-              </div>
-              <div>
-                <strong className="block text-slate-900">Đang đọc bài làm và tổng hợp điểm yếu</strong>
-                <p className="m-0 text-slate-500">
-                  Gemini đang xem nhóm câu sai và tìm chuyên đề bạn hổng nhiều nhất.
-                </p>
-              </div>
-            </div>
-            <div className="grid gap-3">
-              <div className="h-3 w-[38%] rounded-full bg-gradient-to-r from-slate-200 via-slate-50 to-slate-200" />
-              <div className="h-3 w-full rounded-full bg-gradient-to-r from-slate-200 via-slate-50 to-slate-200" />
-              <div className="h-3 w-[92%] rounded-full bg-gradient-to-r from-slate-200 via-slate-50 to-slate-200" />
-              <div className="h-3 w-[76%] rounded-full bg-gradient-to-r from-slate-200 via-slate-50 to-slate-200" />
-            </div>
-          </div>
-        ) : null}
-
-        {!isAnalyzing && weaknessAnalysis ? (
-          <div className="rounded-[22px] border border-transparent bg-white bg-clip-padding p-5 shadow-[0_14px_30px_rgba(16,35,60,0.08)] [background-image:linear-gradient(white,white),linear-gradient(135deg,#38bdf8,#2563eb,#f59e0b)] [background-origin:border-box]">
-            <div className="mb-3 flex items-start gap-4">
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-amber-500 to-orange-500 font-bold text-white">
-                AI
-              </div>
-              <div>
-                <strong className="block text-slate-900">AI phân tích tổng quan điểm yếu</strong>
-                <p className="m-0 text-slate-500">
-                  Tóm tắt nhanh các lỗ hổng kiến thức để ưu tiên ôn tập.
-                </p>
-              </div>
-            </div>
-            <p className="m-0 whitespace-pre-wrap leading-relaxed text-slate-700">{weaknessAnalysis}</p>
-            <RecommendedReviewLinks topics={recommendedTopics} />
-          </div>
-        ) : null}
-
-        {!isAnalyzing && analysisError ? <p className="mb-3 font-semibold text-red-600">{analysisError}</p> : null}
+    <section className="rounded-[24px] border border-slate-200 bg-slate-50 p-4">
+      <div className="mb-3 flex items-center justify-between gap-3">
+        <h3 className="text-sm font-bold uppercase tracking-[0.12em] text-slate-700">{title}</h3>
+        <div className="text-xs font-semibold text-slate-500">{items.length} câu</div>
       </div>
-
-      {allowFlagging ? (
-        <div className="flex flex-wrap items-center justify-between gap-4 rounded-[20px] border border-amber-200 bg-amber-50 p-5">
-          <div>
-            <div className="mb-1 font-extrabold text-amber-900">Cắm cờ câu sai để ôn lại</div>
-            <p className="m-0 text-amber-700">
-              Đã cắm cờ {flaggedCount}/{summary.wrongCount} câu sai trong bài này. Các câu này sẽ được đưa vào Dashboard để tạo phiên ôn tập lại.
-            </p>
-          </div>
-          <button
-            disabled={summary.wrongCount === 0}
-            onClick={handleFlagAllWrongQuestions}
-            className="rounded-full bg-amber-500 px-4 py-2 font-extrabold text-white transition hover:bg-amber-600 disabled:opacity-50"
-            type="button"
-          >
-            Cắm cờ tất cả câu sai
-          </button>
-        </div>
-      ) : null}
 
       <div className="flex flex-wrap gap-3">
-        <MetricPill label="Điểm" value={`${summary.score}/10`} />
-        <MetricPill label="Đúng" value={`${summary.correctCount}`} />
-        <MetricPill label="Sai" value={`${summary.wrongCount}`} />
-        <MetricPill label="Bỏ qua" value={`${summary.skippedCount}`} />
-        <MetricPill label="Tổng số câu" value={`${summary.totalQuestions}`} />
-        <MetricPill label="Thời gian" value={formatDuration(summary.timeTakenSeconds)} />
-      </div>
-
-      <div className="space-y-6">
-        {summary.reviewItems.map((item, index) => {
-          const question = questionMap[item.questionId]
-          const isFlagged = allowFlagging && sessionSubjectId && sessionTopicId && flaggedItems[`${sessionSubjectId}::${sessionTopicId}::${item.questionId}`]
-
+        {items.map((item) => {
+          const index = summary.reviewItems.findIndex((i: any) => i.questionId === item.questionId)
           return (
-            <section key={item.questionId} className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-              <div className="mb-4 flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 pb-4">
-                <h3 className="text-xl font-bold text-slate-900">Câu {index + 1}</h3>
-                <div className="flex items-center gap-3">
-                  <span className={`rounded-full px-3 py-1 text-sm font-bold ${item.correct ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                    {item.correct ? 'Đúng' : 'Sai / chưa đúng'}
-                  </span>
-                  {allowFlagging && !item.correct && sessionSubjectId && sessionTopicId ? (
-                    <button
-                      onClick={() => handleToggleFlag(item.questionId)}
-                      className={`rounded-full border px-3 py-1 text-sm font-bold transition ${isFlagged ? 'border-amber-500 bg-amber-500 text-white' : 'border-amber-300 bg-amber-50 text-amber-700 hover:bg-amber-100'}`}
-                      type="button"
-                    >
-                      {isFlagged ? 'Bỏ cắm cờ' : 'Cắm cờ câu này'}
-                    </button>
-                  ) : null}
-                </div>
+            <button
+              key={item.questionId}
+              className={`rounded-2xl border px-4 py-3 text-left transition ${
+                selectedQuestionId === item.questionId
+                  ? 'border-slate-950 bg-slate-950 text-white'
+                  : item.correct
+                    ? 'border-emerald-200 bg-emerald-50 text-emerald-800 hover:border-emerald-300'
+                    : 'border-rose-200 bg-rose-50 text-rose-800 hover:border-rose-300'
+              }`}
+              onClick={() => onSelect(item.questionId)}
+              type="button"
+            >
+              <div className="text-sm font-bold">Câu {index + 1}</div>
+              <div className="mt-1 text-xs font-semibold uppercase tracking-[0.12em] opacity-80">
+                {item.correct ? 'Đúng' : 'Sai'}
               </div>
-
-              <div className="mb-4 inline-block rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-emerald-700">
-                Chuyên đề: {topicLabel}
-              </div>
-
-              <div className="mb-6">
-                <div className="mb-2 text-xs font-extrabold uppercase tracking-widest text-slate-500">Nội dung câu hỏi</div>
-                <MarkdownContent
-                  content={item.questionContent}
-                  className="text-base leading-loose text-slate-800"
-                />
-              </div>
-
-              {question ? (
-                <div className="mb-6">
-                  <div className="mb-2 text-xs font-extrabold uppercase tracking-widest text-slate-500">Các lựa chọn</div>
-                  <AnswerChoiceReview
-                    correctAnswerText={item.correctAnswerText}
-                    questionContent={item.questionContent}
-                    question={question}
-                    selectedAnswerText={item.selectedAnswerText}
-                  />
-                </div>
-              ) : null}
-
-              {!question || question.questionType === 'short_answer' ? (
-                <div className="mb-6 grid gap-4 sm:grid-cols-2">
-                  <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-                    <div className="mb-2 text-xs font-extrabold uppercase tracking-widest text-slate-500">Lựa chọn của học sinh</div>
-                    <MarkdownContent content={item.selectedAnswerText} className="text-sm leading-relaxed text-slate-800" />
-                  </div>
-                  <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-                    <div className="mb-2 text-xs font-extrabold uppercase tracking-widest text-slate-500">Đáp án đúng</div>
-                    <MarkdownContent content={item.correctAnswerText} className="text-sm leading-relaxed text-slate-800" />
-                  </div>
-                </div>
-              ) : null}
-
-              {/* AI Explanation Box */}
-              <div className="mt-8 overflow-hidden rounded-2xl border border-indigo-100 bg-indigo-50/50">
-                <div className="flex flex-wrap items-center justify-between gap-4 border-b border-indigo-100 bg-indigo-50/80 px-5 py-4">
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-600 font-bold text-white">AI</div>
-                    <div>
-                      <h4 className="text-base font-bold text-indigo-950">Trò chuyện với AI</h4>
-                      <p className="text-xs text-indigo-700">AI giải thích câu hỏi dựa trên đáp án đúng và file kiến thức.</p>
-                    </div>
-                  </div>
-                  <button
-                    disabled={Boolean(isAiBusyByQuestionId[item.questionId])}
-                    onClick={() => void handleExplainQuestion(item)}
-                    className="rounded-xl bg-indigo-600 px-4 py-2 text-sm font-bold text-white transition hover:bg-indigo-500 disabled:opacity-50"
-                    type="button"
-                  >
-                    {isAiBusyByQuestionId[item.questionId] ? 'Đang giải thích...' : 'Giải thích câu này'}
-                  </button>
-                </div>
-
-                <div className="p-5">
-                  {(chatHistoryByQuestionId[item.questionId] ?? []).length === 0 ? (
-                    <div className="text-sm italic text-indigo-400">
-                      Chưa có hội thoại nào. Bấm "Giải thích câu này" hoặc hỏi thêm để AI phân tích sâu hơn.
-                    </div>
-                  ) : (
-                    <div className="space-y-4">
-                      {(chatHistoryByQuestionId[item.questionId] ?? []).map((message, idx) => (
-                        <div
-                          key={`${item.questionId}-${idx}-${message.role}`}
-                          className={`rounded-2xl border px-4 py-3 text-sm leading-relaxed ${
-                            message.role === 'user'
-                              ? 'ml-8 border-indigo-100 bg-white text-slate-800'
-                              : 'mr-8 border-indigo-200 bg-indigo-100 text-indigo-900'
-                          }`}
-                        >
-                          <div className="mb-1 text-[11px] font-extrabold uppercase tracking-widest text-indigo-400">
-                            {message.role === 'user' ? 'Học sinh' : 'AI gia sư'}
-                          </div>
-                          <MarkdownContent content={message.content} className="text-sm leading-7" />
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
-                  {aiErrorByQuestionId[item.questionId] ? (
-                    <p className="mt-3 text-sm font-semibold text-red-600">{aiErrorByQuestionId[item.questionId]}</p>
-                  ) : null}
-
-                  <div className="mt-4 flex gap-3 border-t border-indigo-100 pt-4">
-                    <input
-                      disabled={Boolean(isAiBusyByQuestionId[item.questionId])}
-                      onChange={(event) => setReviewChatInput(event.target.value)}
-                      onKeyDown={(event) => {
-                        if (event.key === 'Enter') {
-                          event.preventDefault()
-                          void handleSendQuestionChat(item)
-                        }
-                      }}
-                      placeholder="Hỏi thêm AI về câu này..."
-                      className="flex-1 rounded-xl border border-indigo-200 bg-white px-4 py-3 text-sm text-slate-700 outline-none focus:border-indigo-400"
-                      type="text"
-                      value={reviewChatInput}
-                    />
-                    <button
-                      disabled={Boolean(isAiBusyByQuestionId[item.questionId]) || !reviewChatInput.trim()}
-                      onClick={() => void handleSendQuestionChat(item)}
-                      className="rounded-xl bg-indigo-600 px-5 py-3 text-sm font-bold text-white transition hover:bg-indigo-500 disabled:opacity-50"
-                      type="button"
-                    >
-                      Gửi
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </section>
+            </button>
           )
         })}
       </div>
+    </section>
+  )
+}
+
+function SummaryTile({
+  label,
+  value,
+  tone,
+}: {
+  label: string
+  value: string
+  tone: 'emerald' | 'rose' | 'slate' | 'sky'
+}) {
+  const toneClass = {
+    emerald: 'border-emerald-200 bg-emerald-50 text-emerald-700',
+    rose: 'border-rose-200 bg-rose-50 text-rose-700',
+    slate: 'border-slate-200 bg-slate-50 text-slate-700',
+    sky: 'border-sky-200 bg-sky-50 text-sky-700',
+  }[tone]
+
+  return (
+    <div className={`rounded-[22px] border px-4 py-4 ${toneClass}`}>
+      <div className="text-xs font-semibold uppercase tracking-[0.12em]">{label}</div>
+      <div className="mt-2 text-3xl font-black">{value}</div>
     </div>
   )
 }
 
 function MetricPill({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-full border border-blue-100 bg-blue-50 px-4 py-2 text-sm text-slate-800">
-      <strong className="font-bold text-blue-900">{label}:</strong> {value}
+    <div className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm text-slate-800">
+      <strong className="font-bold text-slate-900">{label}:</strong> {value}
     </div>
   )
 }
@@ -820,23 +620,157 @@ function isAnswerLabelMatch(answerText: string, optionLabel: string) {
   return normalized === label || normalized.startsWith(`${label}.`) || normalized.startsWith(`${label} `)
 }
 
-function extractMultipleChoiceOptions(questionContent: string) {
-  const labelMatches = [...questionContent.matchAll(/(?:^|\s)([A-D])\.\s*/g)]
-  if (labelMatches.length < 2) {
-    return []
-  }
+function extractMultipleChoiceOptions(content: string) {
+  const options = content.match(/^[A-D]\.\s.*(?:(?:\r\n|\r|\n)(?!^[A-D]\.\s).*)*$/gm)
+  if (!options) return []
 
-  return labelMatches.map((match, index) => {
-    const nextMatch = labelMatches[index + 1]
-    const start = (match.index ?? 0) + match[0].length
-    const end = nextMatch?.index ?? questionContent.length
+  return options.map((option) => {
+    const match = option.match(/^([A-D])\.\s(.*)$/s)
+    if (!match) return { id: option, label: 'A', content: option, isCorrect: false }
+
     return {
-      id: `parsed-${match[1]}`,
+      id: option,
       label: match[1],
-      content: questionContent.slice(start, end).trim(),
+      content: match[2].trim(),
       isCorrect: false,
     }
   }).filter((answer) => answer.content.length > 0)
+}
+
+function PracticeAiChatPanel({
+  questionId,
+  questionContent,
+  selectedAnswer,
+  correctAnswer,
+  sessionId,
+}: {
+  questionId: string
+  questionContent: string
+  selectedAnswer: string
+  correctAnswer: string
+  sessionId: string
+}) {
+  const runtimeSession = useExamRuntimeStore((state) => state.sessions[sessionId] ?? null)
+  
+  const [chatHistory, setChatHistory] = useState<{ role: 'user' | 'ai' | 'system'; content: string }[]>([])
+  const [chatInput, setChatInput] = useState('')
+  const [isSending, setIsSending] = useState(false)
+  const [sendError, setSendError] = useState('')
+
+  useEffect(() => {
+    if (runtimeSession) {
+      const messages = runtimeSession.chatHistory
+        .filter((m) => m.questionId === questionId)
+        .map((m) => ({
+          role: m.role,
+          content: m.content
+        }))
+      setChatHistory(messages)
+    } else {
+      setChatHistory([])
+    }
+  }, [runtimeSession, questionId])
+
+  async function handleSendChat() {
+    const trimmed = chatInput.trim()
+    if (!trimmed) return
+
+    setIsSending(true)
+    setSendError('')
+    setChatHistory((prev) => [...prev, { role: 'user', content: trimmed }])
+    setChatInput('')
+
+    try {
+      const explanation = await sendExamChatMessage({
+        questionContent,
+        selectedAnswer,
+        correctAnswer,
+        prompt: trimmed,
+      })
+
+      setChatHistory((prev) => [...prev, { role: 'ai', content: explanation }])
+
+      void savePracticeAiMessage(sessionId, questionId, 'user', trimmed)
+      void savePracticeAiMessage(sessionId, questionId, 'assistant', explanation)
+
+      if (runtimeSession) {
+        useExamRuntimeStore.getState().addChatMessage(sessionId, {
+           role: 'user',
+           content: trimmed,
+           questionId,
+        })
+        useExamRuntimeStore.getState().addChatMessage(sessionId, {
+           role: 'ai',
+           content: explanation,
+           questionId,
+        })
+      }
+    } catch (error) {
+      setSendError(error instanceof Error ? error.message : 'Không thể gửi câu hỏi tới AI lúc này.')
+    } finally {
+      setIsSending(false)
+    }
+  }
+
+  return (
+    <>
+      <div className="mb-4">
+        <h3 className="text-xl font-bold text-slate-950">Trò chuyện với AI</h3>
+        <p className="mt-1 text-sm text-slate-600">
+          AI đọc câu hỏi, đáp án đã chọn và đáp án đúng để hỗ trợ giải thích.
+        </p>
+      </div>
+
+      <div className="flex-1 min-h-0 overflow-y-auto rounded-[24px] border border-slate-200 bg-slate-50 p-4">
+        {chatHistory.length === 0 ? (
+          <div className="text-sm text-slate-500">
+            Chưa có hội thoại nào. Gõ vào ô bên dưới để AI giải thích tại sao bạn chọn sai.
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {chatHistory.map((message, index) => (
+              <div
+                key={index}
+                className={`rounded-2xl px-4 py-3 text-sm leading-7 ${
+                  message.role === 'user'
+                    ? 'ml-8 border border-slate-200 bg-white text-slate-900'
+                    : 'mr-8 border border-sky-200 bg-sky-50 text-slate-800'
+                }`}
+              >
+                <div className="mb-1 text-xs font-bold uppercase tracking-[0.12em] text-slate-500">
+                  {message.role === 'user' ? 'Học sinh' : 'AI gia sư'}
+                </div>
+                <MarkdownContent content={message.content} />
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <div className="mt-4 shrink-0 space-y-4">
+        {sendError && <p className="text-sm font-medium text-rose-700">{sendError}</p>}
+        <div className="flex gap-3">
+          <input
+            className="flex-1 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700 outline-none focus:border-sky-400 focus:bg-white transition"
+            disabled={isSending}
+            placeholder="Hỏi thêm AI về câu này..."
+            value={chatInput}
+            onChange={(e) => setChatInput(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') void handleSendChat()
+            }}
+          />
+          <button
+            onClick={() => void handleSendChat()}
+            disabled={isSending || !chatInput.trim()}
+            className="rounded-2xl bg-sky-600 px-5 py-3 text-sm font-bold text-white transition hover:bg-sky-500 disabled:bg-slate-300"
+          >
+            {isSending ? 'Đang gửi...' : 'Gửi'}
+          </button>
+        </div>
+      </div>
+    </>
+  )
 }
 
 function formatDuration(totalSeconds: number) {
@@ -861,20 +795,4 @@ function buildTopicLabel(subjectName?: string | null, topicName?: string | null)
   return 'Chưa xác định chuyên đề'
 }
 
-function buildWeaknessTopicLabel(input: {
-  fallbackTopicLabel: string
-  question?: ReturnType<typeof useExamDraftStore.getState>['sessions'][string]['questions'][number]
-  sessionTopicName: string
-}) {
-  const sourcePath = input.question?.obsidianSourcePath?.trim()
-  if (sourcePath) {
-    return `${input.fallbackTopicLabel} | ${sourcePath}`
-  }
 
-  const topicId = input.question?.topicId?.trim()
-  if (topicId && topicId !== 'practice-mock') {
-    return `${input.sessionTopicName} | ${topicId}`
-  }
-
-  return input.fallbackTopicLabel
-}

@@ -1,3 +1,4 @@
+SET client_encoding = 'UTF8';
 begin;
 
 create table if not exists public.backup_school_exam_variants as
