@@ -260,7 +260,7 @@ export function PracticeHubPage() {
                     </button>
                     {item.schoolExamPageId ? (
                       <Link
-                        className="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 hover:shadow"
+                        className="inline-flex min-h-11 items-center justify-center rounded-xl bg-blue-600 px-4 py-2.5 text-center text-sm font-semibold !text-white no-underline shadow-sm transition hover:bg-blue-700 hover:!text-white hover:shadow visited:!text-white"
                         to={`/practice/school-exams/${item.schoolExamPageId}`}
                       >
                         Làm đề trường

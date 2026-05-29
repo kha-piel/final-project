@@ -258,6 +258,9 @@ export async function fetchSchoolExamAttemptHistory(
     .returns<SchoolExamAttemptRow[]>()
 
   if (error) {
+    if (isMissingStudentLearningHistorySchema(error.message)) {
+      return []
+    }
     throw new Error(formatStudentLearningHistoryError(error.message, 'tai lich su de thi truong'))
   }
 
@@ -275,6 +278,9 @@ export async function fetchSchoolExamAttemptDetail(
     .maybeSingle<SchoolExamAttemptDetailRow>()
 
   if (error) {
+    if (isMissingStudentLearningHistorySchema(error.message)) {
+      return null
+    }
     throw new Error(formatStudentLearningHistoryError(error.message, 'tai chi tiet de thi truong'))
   }
 
@@ -323,6 +329,9 @@ export async function fetchSchoolExamAiHistory(
     .returns<SchoolExamAiMessageRow[]>()
 
   if (error) {
+    if (isMissingStudentLearningHistorySchema(error.message)) {
+      return []
+    }
     throw new Error(formatStudentLearningHistoryError(error.message, 'tai lich su AI de truong'))
   }
 
@@ -399,4 +408,25 @@ function formatStudentLearningHistoryError(rawMessage: string | undefined, actio
   }
 
   return `Khong the ${action}: ${message}`
+}
+
+function isMissingStudentLearningHistorySchema(rawMessage: string | undefined) {
+  const message = rawMessage?.trim() || ''
+
+  if (!message) {
+    return false
+  }
+
+  const normalized = message.toLowerCase()
+  const mentionsStudentLearningTables =
+    normalized.includes('student_school_exam_attempts') ||
+    normalized.includes('student_school_exam_answers') ||
+    normalized.includes('student_school_exam_ai_messages')
+
+  const missingTableSignal =
+    normalized.includes('schema cache') ||
+    normalized.includes('could not find the table') ||
+    normalized.includes('does not exist')
+
+  return mentionsStudentLearningTables && missingTableSignal
 }

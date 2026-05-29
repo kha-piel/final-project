@@ -51,6 +51,7 @@ type ManagedExamFormState = {
 
 export function ImportExamPage() {
   const fileInputRef = useRef<HTMLInputElement | null>(null)
+  const managedQuestionEditorRef = useRef<HTMLElement | null>(null)
   const [metadata, setMetadata] = useState<AdminImportMetadata>(createEmptyMetadata())
   const [pdfFile, setPdfFile] = useState<File | null>(null)
   const partOneQuestionCount = getPartOneQuestionCount(metadata.subjectCode)
@@ -108,6 +109,21 @@ export function ImportExamPage() {
   useEffect(() => {
     void loadManagedExams()
   }, [])
+
+  useEffect(() => {
+    if (!editingQuestionExamId) {
+      return
+    }
+
+    const frameId = window.requestAnimationFrame(() => {
+      managedQuestionEditorRef.current?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      })
+    })
+
+    return () => window.cancelAnimationFrame(frameId)
+  }, [editingQuestionExamId])
 
   async function loadManagedExams() {
     try {
@@ -403,8 +419,17 @@ export function ImportExamPage() {
   }
 
   async function openManagedQuestionEditor(exam: ManagedImportedExam) {
+    if (editingQuestionExamId === exam.examId && managedQuestionEditorRef.current) {
+      managedQuestionEditorRef.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      })
+      return
+    }
+
     try {
       setEditingQuestionExamId(exam.examId)
+      setManagedDraft(null)
       setIsLoadingManagedDraft(true)
       const draft = await fetchManagedImportedExamDraft(exam.examId)
       setManagedDraft(draft)
@@ -919,9 +944,11 @@ export function ImportExamPage() {
             <ManagedExamPanel
               deletingExamId={deletingExamId}
               editingExamId={editingExamId}
+              editingQuestionExamId={editingQuestionExamId}
               exams={managedExams}
               form={managedForm}
               isLoading={isLoadingManagedExams}
+              isLoadingQuestionEditor={isLoadingManagedDraft}
               isSaving={isUpdatingManagedExam}
               onDelete={handleDeleteManagedExam}
               onEdit={startEditingManagedExam}
@@ -937,7 +964,10 @@ export function ImportExamPage() {
       </div>
 
       {editingQuestionExamId ? (
-        <section className="rounded-[32px] border border-slate-200 bg-white p-6 shadow-[0_22px_60px_rgba(15,23,42,0.06)]">
+        <section
+          className="rounded-[32px] border border-slate-200 bg-white p-6 shadow-[0_22px_60px_rgba(15,23,42,0.06)]"
+          ref={managedQuestionEditorRef}
+        >
           <div className="flex flex-col gap-3 border-b border-slate-200 pb-5 md:flex-row md:items-end md:justify-between">
             <div>
               <div className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
@@ -1237,8 +1267,10 @@ function ManagedExamPanel({
   isLoading,
   panelError,
   editingExamId,
+  editingQuestionExamId,
   form,
   isSaving,
+  isLoadingQuestionEditor,
   deletingExamId,
   onRefresh,
   onEdit,
@@ -1252,8 +1284,10 @@ function ManagedExamPanel({
   isLoading: boolean
   panelError: string
   editingExamId: string | null
+  editingQuestionExamId: string | null
   form: ManagedExamFormState | null
   isSaving: boolean
+  isLoadingQuestionEditor: boolean
   deletingExamId: string | null
   onRefresh: () => void
   onEdit: (exam: ManagedImportedExam) => void
@@ -1360,6 +1394,8 @@ function ManagedExamPanel({
         <div className="mt-4 space-y-4">
           {filteredExams.map((exam) => {
             const isEditing = editingExamId === exam.examId && form?.examId === exam.examId
+            const isQuestionEditorOpen = editingQuestionExamId === exam.examId
+            const isOpeningQuestionEditor = isQuestionEditorOpen && isLoadingQuestionEditor
 
             return (
               <div
@@ -1397,11 +1433,20 @@ function ManagedExamPanel({
                       Sua thong tin
                     </button>
                     <button
-                      className="inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100"
+                      className={[
+                        'inline-flex items-center justify-center rounded-2xl border px-4 py-2 text-sm font-semibold transition',
+                        isQuestionEditorOpen
+                          ? 'border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
+                          : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-100',
+                      ].join(' ')}
                       onClick={() => void onEditQuestions(exam)}
                       type="button"
                     >
-                      Sua cau hoi
+                      {isOpeningQuestionEditor
+                        ? 'Dang mo editor...'
+                        : isQuestionEditorOpen
+                          ? 'Dang sua cau hoi'
+                          : 'Sua cau hoi'}
                     </button>
                     <button
                       className="inline-flex items-center justify-center rounded-2xl border border-rose-200 bg-rose-50 px-4 py-2 text-sm font-semibold text-rose-700 transition hover:bg-rose-100 disabled:cursor-not-allowed disabled:opacity-60"

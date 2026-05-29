@@ -64,6 +64,7 @@ export function SchoolExamPage() {
   const [exam, setExam] = useState<SchoolExamPaperRecord | null>(null)
   const [isLoadingExam, setIsLoadingExam] = useState(true)
   const [loadErrorMessage, setLoadErrorMessage] = useState('')
+  const [submitWarningMessage, setSubmitWarningMessage] = useState('')
   const [remainingSeconds, setRemainingSeconds] = useState(0)
   const [selectedChoices, setSelectedChoices] = useState<QuestionSelectionMap>({})
   const [selectedTrueFalse, setSelectedTrueFalse] = useState<TrueFalseSelectionMap>({})
@@ -102,6 +103,7 @@ export function SchoolExamPage() {
         setSelectedTrueFalse({})
         setShortAnswers({})
         setSubmitted(false)
+        setSubmitWarningMessage('')
         setQuestionRecords([])
         setAiExplanationByQuestion({})
         setAiErrorByQuestion({})
@@ -614,6 +616,7 @@ export function SchoolExamPage() {
     }
 
     setLoadErrorMessage('')
+    setSubmitWarningMessage('')
     setIsSavingAttempt(true)
 
     try {
@@ -661,7 +664,14 @@ export function SchoolExamPage() {
       setSchoolAttemptId(attemptId)
       setSubmitted(true)
     } catch (error) {
-      setLoadErrorMessage(error instanceof Error ? error.message : 'Không thể lưu lịch sử bài làm.')
+      const warningMessage =
+        error instanceof Error
+          ? `${error.message} Bạn vẫn có thể xem kết quả, nhưng lần làm này chưa được lưu vào lịch sử.`
+          : 'Không thể lưu lịch sử bài làm. Bạn vẫn có thể xem kết quả, nhưng lần làm này chưa được lưu.'
+
+      setSchoolAttemptId('')
+      setSubmitted(true)
+      setSubmitWarningMessage(warningMessage)
     } finally {
       setIsSavingAttempt(false)
     }
@@ -1101,6 +1111,12 @@ export function SchoolExamPage() {
       {submitted && summary ? (
         <div className="rounded-[24px] border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm font-medium text-emerald-800">
           Đã nộp bài. Số câu đúng: {summary.correctCount}/{summary.totalCount} | Điểm tạm tính: {summary.score}/10
+        </div>
+      ) : null}
+
+      {submitWarningMessage ? (
+        <div className="rounded-[24px] border border-amber-200 bg-amber-50 px-5 py-4 text-sm font-medium text-amber-800">
+          {submitWarningMessage}
         </div>
       ) : null}
 
